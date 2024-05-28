@@ -1,11 +1,14 @@
 // SignUpView.tsx
 import React from 'react';
 import { Button, TextField } from '@mui/material';
+import { PasswordField } from '../../../components/input/inputIndex';
 
 interface SignUpViewProps {
+  name: string;
   email: string;
   password: string;
   error: string;
+  onNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onEmailChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onPasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onEmailSignUp: (e: React.FormEvent) => void;
@@ -13,9 +16,11 @@ interface SignUpViewProps {
 }
 
 const SignUpView: React.FC<SignUpViewProps> = ({
+  name,
   email,
   password,
   error,
+  onNameChange,
   onEmailChange,
   onPasswordChange,
   onEmailSignUp,
@@ -23,12 +28,24 @@ const SignUpView: React.FC<SignUpViewProps> = ({
 }) => {
   return (
     <div className='flex items-center justify-center w-screen h-screen bg-blue-50'>
-        <div className='flex flex-col items-center w-2/5 h-3/4 bg-white'>
-          <h2 className='text-4xl font-bold mt-16'>Sign Up</h2>
+        <div className='flex flex-col items-center w-2/5 h-5/6 bg-white'>
+          <h2 className='text-4xl font-bold mt-16 my-8'>Sign Up</h2>
           {error && <p style={{ color: 'red' }}>{error}</p>}
           <form onSubmit={onEmailSignUp}>
-            <div className='my-8'>
+          <div className='my-4'>
               <TextField 
+                className='w-full'
+                id="standard-basic"
+                label="User Name"
+                variant="standard"
+                type="text"
+                value={name}
+                onChange={onNameChange}
+              />
+            </div>
+            <div className='my-4'>
+              <TextField 
+                className='w-full'
                 id="standard-basic"
                 label="Email"
                 variant="standard"
@@ -37,14 +54,10 @@ const SignUpView: React.FC<SignUpViewProps> = ({
                 onChange={onEmailChange}
               />
             </div>
-            <div className='my-8'>
-              <TextField
-                id="standard-basic"
-                label="Password"
-                variant="standard"
-                type="password"
-                value={password}
-                onChange={onPasswordChange}
+            <div className='my-4'>
+              <PasswordField
+                password={password}
+                onPasswordChange={onPasswordChange}
               />
             </div>
             <div className='my-16'>

@@ -5,6 +5,7 @@ import { auth, googleProvider } from '../../../firebase/firebase';
 import SignUpView from './SignUpView';
 
 const SignUpPage: React.FC = () => {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -30,9 +31,11 @@ const SignUpPage: React.FC = () => {
 
   return (
     <SignUpView
+      name={name}
       email={email}
       password={password}
       error={error}
+      onNameChange={(e) => setName(e.target.value)}
       onEmailChange={(e) => setEmail(e.target.value)}
       onPasswordChange={(e) => setPassword(e.target.value)}
       onEmailSignUp={handleEmailSignUp}
