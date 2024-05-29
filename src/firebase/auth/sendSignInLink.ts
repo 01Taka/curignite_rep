@@ -4,7 +4,7 @@ import { sendSignInLinkToEmail } from "firebase/auth";
 import { FirebaseError } from '@firebase/util';
 
 const actionCodeSettings = {
-    url: 'https://www.example.com/finishSignUp?cartId=1234',
+    url: 'http://localhost:3000/create-account',
     handleCodeInApp: true,
     iOS: {
         bundleId: 'com.example.ios'
@@ -14,7 +14,6 @@ const actionCodeSettings = {
         installApp: true,
         minimumVersion: '12'
     },
-    dynamicLinkDomain: 'example.page.link'
 };
 
 export const sendSignInLink = async (email: string) => {
@@ -23,6 +22,8 @@ export const sendSignInLink = async (email: string) => {
         window.localStorage.setItem('emailForSignIn', email);
         alert('Sign-in link sent!');
     } catch (error) {
+        console.log(error);
+        
         if (error instanceof FirebaseError) {
             console.error('Error sending email:', error.code, error.message);
         } else {
