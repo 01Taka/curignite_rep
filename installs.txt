@@ -13,3 +13,8 @@ npm install firebase
 npm install -g firebase-tools
 
 npm install @mui/icons-material @mui/material @emotion/styled @emotion/react
+
+npm install @emotion/css
+
+npm install uuid
+npm install --save-dev @types/uuid

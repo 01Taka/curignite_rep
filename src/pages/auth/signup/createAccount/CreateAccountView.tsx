@@ -1,17 +1,14 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Button, TextField } from '@mui/material';
-import IconButton from '@mui/material/IconButton';
-import Input from '@mui/material/Input';
-import InputLabel from '@mui/material/InputLabel';
-import InputAdornment from '@mui/material/InputAdornment';
-import FormControl from '@mui/material/FormControl';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { FormContainer, Heading } from '../../../../components/container/containerIndex';
+import { EmailField, PasswordField, UserNameField } from '../../../../components/input/inputIndex';
+
 interface CreateAccountViewProps {
     name: string;
     email: string;
     password: string;
     error: string;
+    submitDisabled: boolean;
     onNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onEmailChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onPasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -21,79 +18,40 @@ interface CreateAccountViewProps {
   const CreateAccountView: React.FC<CreateAccountViewProps> = ({
     name,
     email,
+    password,
     error,
+    submitDisabled,
     onNameChange,
     onEmailChange,
+    onPasswordChange,
     onEmailSignUp,
   }) => {
-    const [showPassword, setShowPassword] = useState(false);
-    const switchShowPassword = () => {
-        setShowPassword(!showPassword);
-    }
-  return (
-    <div>
-        <div className='flex items-center justify-center w-screen h-screen bg-blue-50'>
-            <div className='flex flex-col items-center w-2/5 h-5/6 bg-white'>
-                <h1 className='text-4xl font-bold mt-20'>アカウントを作成</h1>
-                <form>
-                    <div className='my-4'>
-                        <TextField 
-                            className='w-full'
-                            id="standard-basic"
-                            label="Email"
-                            variant="standard"
-                            type="email"
-                            value={email}
-                            onChange={onEmailChange}
-                        />
-                    </div>
-                    <div className='my-4'>
-                        <TextField 
-                            className='w-full'
-                            id="standard-basic"
-                            label="UserName"
-                            variant="standard"
-                            type="text"
-                            value={name}
-                            onChange={onNameChange}
-                        />
-                    </div>
-                    <div>
-                    <FormControl variant="standard">
-                        <InputLabel htmlFor="standard-adornment-password">Password</InputLabel>
-                        <Input
-                            id="standard-adornment-password"
-                            type={showPassword ? 'text' : 'password'}
-                            endAdornment={
-                            <InputAdornment position="end">
-                                <IconButton
-                                    aria-label="toggle password visibility"
-                                    onClick={switchShowPassword}
-                                    onMouseDown={switchShowPassword}
-                                >
-                                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                                </IconButton>
-                            </InputAdornment>
-                            }
-                        />
-                        </FormControl>
-                    </div>
-                    <div className='my-16'>
+    const handleSubmit = (e: React.FormEvent<Element>) => {
+        e.preventDefault();
+        onEmailSignUp(e);
+    };
+
+    return (
+            <FormContainer>
+                <Heading children='アカウントを作成' level={1} className='mt-20'/>
+                <form onSubmit={handleSubmit} className='flex flex-col items-center w-64 mt-12'>
+                    <EmailField email={email} onEmailChange={onEmailChange} />
+                    <UserNameField username={name} onUserNameChange={onNameChange} />
+                    <PasswordField password={password} onPasswordChange={onPasswordChange} />
+                    <div className='w-full my-16'>
                         <Button
+                            disabled={submitDisabled}
+                            type='submit'
                             size="large"
                             variant="contained"
                             className='w-full'
-                            children="次へ"
-                            onClick={onEmailSignUp}
-                            onMouseDown={onEmailSignUp}
+                            children="登録する"
                         />
                     </div>
                 </form>
                 {error && <p style={{ color: 'red' }}>{error}</p>}
-            </div>
-        </div>
-    </div>
-  )
+        </ FormContainer>
+    )
 }
 
 export default CreateAccountView;

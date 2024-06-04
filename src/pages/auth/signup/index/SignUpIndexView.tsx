@@ -1,42 +1,49 @@
 // SignUpIndexView.tsx
 import React from 'react';
 import Divider from '@mui/material/Divider';
-import { Button, TextField } from '@mui/material';
-import { Link } from 'react-router-dom';
-
-
+import { Button } from '@mui/material';
+import { FormContainer, Heading } from '../../../../components/container/containerIndex';
 
 interface SignUpIndexViewProps {
     error: string;
     onCreateAccount: () => void;
     onGoogleSignUp: () => void;
+    onSignIn: () => void;
 }
 
 const SignUpIndexView: React.FC<SignUpIndexViewProps> = ({
     error,
     onCreateAccount,
     onGoogleSignUp,
+    onSignIn,
 }) => {
   return (
-    <div className='flex items-center justify-center w-screen h-screen bg-blue-50'>
-        <div className='flex flex-col items-center w-2/5 h-5/6 bg-white'>
-            <h1 className='text-6xl font-extrabold text-end w-96 mt-20'>みんなの知識がここに。</h1>
-            <h2 className='text-4xl font-bold mt-16'>今すぐ参加しよう</h2>
-            <div className='mt-10'>
+        <FormContainer>
+            <div className='px-6 py-12 mx-2 mt-4 bg-gray-100 rounded-xl'>
+                <Heading children='みんなの知識がここに。' level={0} className='text-end mr-4'/>
+            </div>
+            
+            <Heading children='今すぐ参加しよう' level={1} className='mt-8'/>
+            <div className='mt-8'>
                 <Button variant="outlined" size="large" onClick={onGoogleSignUp}>Googleで登録</Button>
             </div>
             <div className='mt-4 w-3/5'>
                 <Divider>または</Divider>
             </div>
             <div className='mt-4'>
-                <Button variant="contained" size="large">
-                    <Link to={'/create-account'} children='アカウントを作成'/>
+                <Button onClick={onCreateAccount} variant="contained" size="large">
+                    アカウントを作成
+                </Button>
+            </div>
+            <div className='flex flex-col justify-center mt-16 mb-12'>
+                <Heading children='アカウントをお持ちの場合' level={3} className='mb-1'/>
+                <Button onClick={onSignIn} variant="outlined" size="large">
+                    ログイン
                 </Button>
             </div>
             {error && <p style={{ color: 'red' }}>{error}</p>}
-        </div>
-    </div>
-  );
+        </FormContainer>
+    )
 };
 
 export default SignUpIndexView;

@@ -1,6 +1,6 @@
-import { checkSignInMethod } from "./checkSignInMethod";
-import { completeSignIn } from "./completeSignIn";
-import { sendSignInLink } from "./sendSignInLink";
-import { signOutUser } from "./signOutUser";
+import { checkSignInMethod } from "./magicLink/checkSignInMethod";
+import { completeSignIn } from "./magicLink/completeSignIn";
+import { sendSignInLink } from "./magicLink/sendSignInLink";
+import { signOutUser } from "./magicLink/signOutUser";
 
 export { checkSignInMethod, completeSignIn, sendSignInLink, signOutUser };

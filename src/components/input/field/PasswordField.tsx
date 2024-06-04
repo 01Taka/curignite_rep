@@ -1,47 +1,52 @@
 import React, { useState } from 'react';
-import TextField from '@mui/material/TextField';
-import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
+import Input from '@mui/material/Input';
+import InputLabel from '@mui/material/InputLabel';
+import InputAdornment from '@mui/material/InputAdornment';
+import FormControl from '@mui/material/FormControl';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 interface PasswordFieldProps {
   password: string;
+  label?: string;
   onPasswordChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const PasswordField: React.FC<PasswordFieldProps> = ({ password, onPasswordChange }) => {
-  const [showPassword, setShowPassword] = useState(false);
+const PasswordField: React.FC<PasswordFieldProps> = ({
+    password,
+    label = 'Password',
+    onPasswordChange
+}) => {
+    const [showPassword, setShowPassword] = useState(false);
 
-  const handleClickShowPassword = () => {
-    setShowPassword((prev) => !prev);
-  };
+    const switchShowPassword = () => {
+        setShowPassword((prev) => !prev);
+    };
 
-  return (
-    <div className='flex items-center'>
-        <TextField
-            className='w-full'
-            id="standard-basic"
-            label="Password"
-            variant="standard"
-            type={showPassword ? 'text' : 'password'}
-            value={password}
-            onChange={onPasswordChange}
-        />
-        <InputAdornment
-            position="end"
-            className='pt-4'
-        >
-            <IconButton
-                aria-label="toggle password visibility"
-                onClick={handleClickShowPassword}
-                onMouseDown={(event) => event.preventDefault()}
-            >
-            {showPassword ? <VisibilityOff /> : <Visibility />}
-            </IconButton>
-        </InputAdornment>
-    </div>
+    return (
+        <FormControl variant="standard" className='w-full h-14'>
+            <InputLabel htmlFor="password">{label}</InputLabel>
+            <Input
+                id="password"
+                name="password"
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={onPasswordChange}
+                endAdornment={
+                <InputAdornment position="end">
+                    <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={switchShowPassword}
+                        onMouseDown={switchShowPassword}
+                    >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                </InputAdornment>
+                }
+            />
+        </FormControl>
     );
 };
 
-export default PasswordField;
+export default PasswordField

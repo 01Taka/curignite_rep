@@ -1,5 +1,5 @@
 // src/firebase/sendSignInLink.ts
-import { auth } from '../firebase';
+import { auth } from '../../firebase';
 import { sendSignInLinkToEmail } from "firebase/auth";
 import { FirebaseError } from '@firebase/util';
 

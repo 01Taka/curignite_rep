@@ -1,4 +1,4 @@
-import { auth } from '../firebase';
+import { auth } from '../../firebase';
 import { isSignInWithEmailLink, signInWithEmailLink } from "firebase/auth";
 import { FirebaseError } from '@firebase/util';
 

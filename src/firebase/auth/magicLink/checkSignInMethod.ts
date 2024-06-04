@@ -1,4 +1,4 @@
-import { auth } from '../firebase';
+import { auth } from '../../firebase';
 import { fetchSignInMethodsForEmail, EmailAuthProvider } from "firebase/auth";
 import { FirebaseError } from '@firebase/util';
 
