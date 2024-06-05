@@ -21,6 +21,62 @@ interface UserInitialSetupViewProps {
   onSetUserInfo: () => void;
 }
 
+const LoadingComponent: React.FC = () => (
+  <Box>
+    <div className='my-64'>
+      <CircularProgress />
+    </div>
+  </Box>
+);
+
+const UserSection: React.FC<{
+  username: string;
+  grade: string;
+  classNumber: string;
+  onUserNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onGradeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onClassNumberChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}> = ({ username, grade, classNumber, onUserNameChange, onGradeChange, onClassNumberChange }) => (
+  <div>
+    <Heading children='ユーザー' level={2} className='mb-2' />
+    <UserNameField username={username} onUserNameChange={onUserNameChange} />
+    <div className='flex justify-between'>
+      <NumberField value={grade} label='Grade' name='grade' min={1} max={6} onValueChange={onGradeChange} />
+      <NumberField value={classNumber} label='Class' name='classNumber' min={1} max={16} onValueChange={onClassNumberChange} />
+    </div>
+  </div>
+);
+
+const SchoolSection: React.FC<{
+  schoolName: string;
+  schoolPassword: string;
+  onSchoolNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onSchoolPasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}> = ({ schoolName, schoolPassword, onSchoolNameChange, onSchoolPasswordChange }) => (
+  <div className='mt-12'>
+    <Heading children='学校' level={2} className='mb-2' />
+    <StringField text={schoolName} label='School Name' name='schoolName' onTextChange={onSchoolNameChange} />
+    <PasswordField password={schoolPassword} label='School Password' name='schoolPassword' onPasswordChange={onSchoolPasswordChange} />
+  </div>
+);
+
+const SubmitButton: React.FC<{ submitDisabled: boolean }> = ({ submitDisabled }) => (
+  <div className='my-16'>
+    <Button
+      type='submit'
+      size="large"
+      variant="contained"
+      disabled={submitDisabled}
+      className='w-full'
+      children="完了"
+    />
+  </div>
+);
+
+const ErrorMessage: React.FC<{ error: string }> = ({ error }) => (
+  error ? <p style={{ color: 'red' }}>{error}</p> : null
+);
+
 const UserInitialSetupView: React.FC<UserInitialSetupViewProps> = ({
   isLoading,
   username,
@@ -45,60 +101,28 @@ const UserInitialSetupView: React.FC<UserInitialSetupViewProps> = ({
   return (
     <FormContainer>
       {isLoading ? (
-        <Box>
-          <div className='my-64'>
-            <CircularProgress />
-          </div>
-        </Box>
+        <LoadingComponent />
       ) : (
         <>
           <Heading children='初期設定' level={1} className='mt-16'/>
           <form className='w-64 mt-12' onSubmit={handleSubmit}>
-            <div>
-              <Heading children='ユーザー' level={2} className='mb-2' />
-              <UserNameField username={username} onUserNameChange={onUserNameChange} />
-              <div className='flex justify-between'>
-                <NumberField 
-                  value={grade}
-                  label='Grade'
-                  min={1}
-                  max={6}
-                  onValueChange={onGradeChange}
-                />
-                <NumberField 
-                  value={classNumber}
-                  label='Class'
-                  min={1}
-                  max={16}
-                  onValueChange={onClassNumberChange}
-                />
-              </div>
-            </div>
-            <div className='mt-12'>
-              <Heading children='学校' level={2} className='mb-2'/>
-              <StringField 
-                text={schoolName}
-                label='School Name'
-                onTextChange={onSchoolNameChange}
-              />
-              <PasswordField
-                password={schoolPassword}
-                label='School Password'
-                onPasswordChange={onSchoolPasswordChange}
-              />
-            </div>
-            <div className='my-16'>
-                <Button
-                    type='submit'
-                    size="large"
-                    variant="contained"
-                    disabled={submitDisabled}
-                    className='w-full'
-                    children="完了"
-                />
-            </div>
+            <UserSection 
+              username={username}
+              grade={grade}
+              classNumber={classNumber}
+              onUserNameChange={onUserNameChange}
+              onGradeChange={onGradeChange}
+              onClassNumberChange={onClassNumberChange}
+            />
+            <SchoolSection
+              schoolName={schoolName}
+              schoolPassword={schoolPassword}
+              onSchoolNameChange={onSchoolNameChange}
+              onSchoolPasswordChange={onSchoolPasswordChange}
+            />
+            <SubmitButton submitDisabled={submitDisabled} />
           </form>
-          {error && <p style={{ color: 'red' }}>{error}</p>}
+          <ErrorMessage error={error} />
         </>
       )}
     </FormContainer>

@@ -10,10 +10,6 @@ export const getUserRef = async (type: string, value: string): Promise<DocumentR
     return await getRefFirst('users', type, value);
 }
 
-const getUserData = async (type: string, value: string): Promise<DocumentData | null> => {
-    return getDataFirst('users', type, value);
-}
-
 // ユーザー名の重複をチェックする関数
 export const isUsernameTaken = async (username: string): Promise<boolean> => {
     const querySnapshot = await getUserSnapshot('studentInfo.username', username);

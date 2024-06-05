@@ -32,7 +32,7 @@ const getSchoolPasswordFromDoc = (schoolDoc: QueryDocumentSnapshot<DocumentData>
  * @param password - The password to validate.
  * @returns A promise resolving to the school document ID if validation is successful.
  */
-export const validateSchool = async (schoolName: string, password: string): Promise<string> => {
+export const getSchoolIdWithNameAndPassword = async (schoolName: string, password: string): Promise<string> => {
     const schoolDoc = await getSchoolDocByName(schoolName);
 
     if (!schoolDoc) {
@@ -42,10 +42,6 @@ export const validateSchool = async (schoolName: string, password: string): Prom
     const storedPassword = getSchoolPasswordFromDoc(schoolDoc);
 
     if (storedPassword && password === storedPassword) {
-        console.log(schoolDoc);
-        console.log(schoolDoc.id);
-        
-        
         return schoolDoc.id;
     } else {
         throw new Error("学校名とパスワードが一致しません。");

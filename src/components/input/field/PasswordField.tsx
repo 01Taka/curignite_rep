@@ -10,12 +10,14 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 interface PasswordFieldProps {
   password: string;
   label?: string;
+  name?: string;
   onPasswordChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const PasswordField: React.FC<PasswordFieldProps> = ({
     password,
     label = 'Password',
+    name = 'password',
     onPasswordChange
 }) => {
     const [showPassword, setShowPassword] = useState(false);
@@ -26,10 +28,10 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
 
     return (
         <FormControl variant="standard" className='w-full h-14'>
-            <InputLabel htmlFor="password">{label}</InputLabel>
+            <InputLabel htmlFor={name}>{label}</InputLabel>
             <Input
-                id="password"
-                name="password"
+                id={name}
+                name={name}
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={onPasswordChange}

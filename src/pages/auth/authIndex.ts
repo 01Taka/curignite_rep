@@ -1,7 +1,7 @@
 // authのページリスト
 
-export { default as TopPage } from "../app/top/TopPage";
-export { default as SignInPage } from "./signin/SignInPage";
+export { default as SignInPage } from "./signin//index/SignInIndexPage";
+export { default as SignInWithEmailPage } from "./signin/SignInWithEmailPage";
 export { default as SignUpPage } from "./signup/index/SignUpIndexPage";
 export { default as CreateAccountPage } from "./signup/createAccount/CreateAccountPage";
 export { default as CreateAccountEndpointPage } from "./signup/createAccount/CreateAccountEndPointPage";

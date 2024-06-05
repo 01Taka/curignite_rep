@@ -2,8 +2,9 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import './styles/tailwind.css';
 import { NotFound } from './pages/error/errorIndex';
-import { CreateAccountEndpointPage, CreateAccountPage, SignInPage, SignUpPage, TopPage, UserInitialSetupPage, ViaActionUrlPage } from './pages/auth/authIndex';
+import { CreateAccountEndpointPage, CreateAccountPage, SignInPage, SignInWithEmailPage, SignUpPage, UserInitialSetupPage, ViaActionUrlPage } from './pages/auth/authIndex';
 import Home from './pages/app/Home';
+import TopPage from './pages/app/top/TopPage';
 
 const App: React.FC = () => {
   return (
@@ -12,6 +13,7 @@ const App: React.FC = () => {
         <Route path='/' element={<TopPage />}/>
         <Route path='home' element={<Home />}/>
         <Route path='signin' element={<SignInPage />}/>
+        <Route path='signin-email' element={<SignInWithEmailPage />}/>
         <Route path='signup' element={<SignUpPage />}/>
         <Route path='create-account' element={<CreateAccountPage />}/>
         <Route path='create-account-endpoint' element={<CreateAccountEndpointPage />}/>

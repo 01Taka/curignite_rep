@@ -4,19 +4,21 @@ import { TextField } from '@mui/material';
 interface StringFieldProps {
     text: string;
     label: string;
+    name?: string;
     onTextChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const StringField: React.FC<StringFieldProps> = ({
     text,
     label,
+    name = label,
     onTextChange,
 }) => {
   return (
     <TextField
         className='w-full h-14'
-        id={label}
-        name={label}
+        id={name}
+        name={name}
         label={label}
         variant="standard"
         type="text"

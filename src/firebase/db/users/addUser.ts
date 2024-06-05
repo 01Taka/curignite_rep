@@ -24,6 +24,8 @@ const addUser = async (user: UserDB): Promise<void> => {
  * @param studentInfo - The student information associated with the user.
  */
 export const addNewUser = async (uid: string, studentInfo: StudentInfoDB): Promise<void> => {
+    console.log(studentInfo.toFirestore());
+    
     const newUser = new UserDB(uid, studentInfo.toFirestore());
     await addUser(newUser);
 };

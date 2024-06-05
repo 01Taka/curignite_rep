@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
-import SignInView from './SignInView';
+import SignInView from './SignInWithEmailView';
 import { signInWithProvider } from '../../../firebase/auth/signInAccount';
 import { googleProvider } from '../../../firebase/firebase';
 import { useNavigate } from 'react-router-dom';
 
-const SignInPage: React.FC = () => {
+const SignInWithEmailPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -34,4 +34,4 @@ const SignInPage: React.FC = () => {
   )
 }
 
-export default SignInPage;
+export default SignInWithEmailPage;

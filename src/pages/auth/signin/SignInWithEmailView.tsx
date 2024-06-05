@@ -3,7 +3,7 @@ import { Button, TextField } from '@mui/material';
 import { FormContainer, Heading } from '../../../components/container/containerIndex';
 import { EmailField, PasswordField } from '../../../components/input/inputIndex';
 
-interface SignInViewProps {
+interface SignInWithEmailViewProps {
     email: string;
     password: string;
     error: string;
@@ -12,7 +12,7 @@ interface SignInViewProps {
     onEmailSignIn: (e: React.FormEvent) => void;
 }
 
-const SignInView: React.FC<SignInViewProps> = ({
+const SignInWithEmailView: React.FC<SignInWithEmailViewProps> = ({
     email,
     password,
     error,
@@ -46,4 +46,4 @@ const SignInView: React.FC<SignInViewProps> = ({
     )
 }
 
-export default SignInView;
+export default SignInWithEmailView;

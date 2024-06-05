@@ -15,12 +15,10 @@ export class StudentInfoDB {
 
     toFirestore(): DocumentData {
         return {
-            studentInfo: {
-                username: this.username,
-                grade: this.grade,
-                classNumber: this.classNumber,
-                schoolId: this.schoolId,
-            }
+            username: this.username,
+            grade: this.grade,
+            classNumber: this.classNumber,
+            schoolId: this.schoolId,
         };
     }    
 

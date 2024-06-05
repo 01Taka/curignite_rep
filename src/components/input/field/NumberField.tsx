@@ -4,13 +4,16 @@ import { TextField } from '@mui/material';
 interface NumberFieldProps {
   value: number | string;
   label: string;
+  name?: string;
   initialValue?: number;
   min?: number;
   max?: number;
   onValueChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const NumberField: React.FC<NumberFieldProps> = ({ value, label, min = -Infinity, max = Infinity, onValueChange }) => {
+const NumberField: React.FC<NumberFieldProps> = ({
+    value, label, name = label, min = -Infinity, max = Infinity, onValueChange
+}) => {
     const clamp = (value: number, min: number, max: number): number => {
         return Math.min(Math.max(value, min), max);
     }
@@ -37,8 +40,8 @@ const NumberField: React.FC<NumberFieldProps> = ({ value, label, min = -Infinity
     return (
         <TextField
         className='w-full h-14'
-        id={label}
-        name={label}
+        id={name}
+        name={name}
         label={label}
         variant="standard"
         type="number"
