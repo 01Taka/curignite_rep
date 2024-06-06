@@ -16,7 +16,7 @@ const SignInIndexView: React.FC<SignInIndexViewProps> = ({
 }) => {
   return (
         <FormContainer>
-            <Heading children='ログイン' level={0} className='px-8 py-4 mt-12 border-b-4 border-gray-500'/>
+            <Heading children='ログインする' level={1} className='mt-20'/>
             <div className='mt-16'>
                 <Button variant="outlined" size="large" onClick={onGoogleSignIn}>Googleでログイン</Button>
             </div>
