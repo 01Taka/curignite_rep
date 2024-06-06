@@ -70,15 +70,15 @@ export const clearNameForSignUp = () => {
     localStorage.removeItem('nameForSignUp');
 }
 
-export const setEmailForSignUp = (email: string) => {
-    localStorage.setItem('emailForSignUp', email);
+export const setEmailForAuth = (email: string) => {
+    localStorage.setItem('emailForAuth', email);
 }
 
-export const getEmailForSignUp = (): string => {
-    const email = localStorage.getItem('emailForSignUp');
+export const getEmailForAuth = (): string => {
+    const email = localStorage.getItem('emailForAuth');
     return email ? email : '';
 }
 
-export const clearEmailForSignUp = () => {
-    localStorage.removeItem('emailForSignUp');
+export const clearEmailForAuth = () => {
+    localStorage.removeItem('emailForAuth');
 }

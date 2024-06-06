@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import CreateAccountView from './CreateAccountView';
 import { useNavigate } from 'react-router-dom';
-import { setEmailForSignUp, setNameForSignUp, signUpWithEmail } from '../../../../firebase/auth/signUp';
+import { setEmailForAuth, setNameForSignUp, signUpWithEmail } from '../../../../firebase/auth/signUp';
 
 const CreateAccountPage: React.FC = () => {
   const [name, setName] = useState('');
@@ -20,7 +20,7 @@ const CreateAccountPage: React.FC = () => {
     if (!result.isSuccessful) {
       setError(result.errorMessage);
     } else {
-      setEmailForSignUp(email);
+      setEmailForAuth(email);
       setNameForSignUp(name);
       navigate('/create-account-endpoint')
     }

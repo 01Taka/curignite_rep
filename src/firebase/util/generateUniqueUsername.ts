@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { isUsernameTaken } from '../db/users/getUser';
+import { checkIfUsernameTaken } from '../db/users/getUser';
 
 // ランダムな一意の文字列を生成する関数
 const generateUniqueString = (): string => {
@@ -10,7 +10,7 @@ const generateUniqueString = (): string => {
 export const getUniqueUsername = async (username: string): Promise<string> => {
   let uniqueUsername: string = username;
   
-  while (await isUsernameTaken(uniqueUsername)) {
+  while (await checkIfUsernameTaken(uniqueUsername)) {
     uniqueUsername = `${username}${generateUniqueString().slice(0, 8)}`; // 8文字のランダムな文字列を追加
   }
   

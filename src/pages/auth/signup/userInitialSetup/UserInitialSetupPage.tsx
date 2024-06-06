@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import UserInitialSetupView from './UserInitialSetupView';
 import { useNavigate } from 'react-router-dom';
 import { getCurrentUser } from '../../../../firebase/auth/signIn';
-import { clearEmailForSignUp, getNameForSignUp } from '../../../../firebase/auth/signUp';
+import { clearEmailForAuth, getNameForSignUp } from '../../../../firebase/auth/signUp';
 import { getUniqueUsername } from '../../../../firebase/util/generateUniqueUsername';
 import { createUser } from './handleUserInitialSetup';
+import { checkIfExistUidInDB } from '../../../../firebase/db/users/getUser';
 
 const UserInitialSetupPage: React.FC = () => {
   const [isLoadingName, setIsLoadingName] = useState(true);
@@ -20,6 +21,16 @@ const UserInitialSetupPage: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const handleCheckAuthStatus = async () => {
+      const uid = getCurrentUser()?.uid;
+      if (!uid) {
+        throw new Error('ログインをしてください');
+      }
+      const isExist = await checkIfExistUidInDB(uid);
+      if (isExist) {
+        navigate('/home');
+      }
+    }
     const updateUserName = async () => {
       setIsLoadingName(true);
       const user = getCurrentUser();
@@ -28,8 +39,12 @@ const UserInitialSetupPage: React.FC = () => {
       setFormData(prev => ({ ...prev, username: name }));
       setIsLoadingName(false);
     };
-    updateUserName();
-    clearEmailForSignUp();
+    const preprocessing = async () => {
+      handleCheckAuthStatus();
+      updateUserName();
+      clearEmailForAuth();
+    }
+    preprocessing();
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -6,6 +6,7 @@ import { EmailField, PasswordField } from '../../../components/input/inputIndex'
 interface SignInWithEmailViewProps {
     email: string;
     password: string;
+    submitDisabled: boolean;
     error: string;
     onEmailChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onPasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -15,6 +16,7 @@ interface SignInWithEmailViewProps {
 const SignInWithEmailView: React.FC<SignInWithEmailViewProps> = ({
     email,
     password,
+    submitDisabled,
     error,
     onEmailChange,
     onPasswordChange,
@@ -38,6 +40,7 @@ const SignInWithEmailView: React.FC<SignInWithEmailViewProps> = ({
                         variant="contained"
                         className='w-full'
                         children="ログイン"
+                        disabled={submitDisabled}
                     />
                 </div>
             </form>

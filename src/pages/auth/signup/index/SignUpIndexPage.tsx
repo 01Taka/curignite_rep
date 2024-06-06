@@ -14,17 +14,19 @@ const SignUpPage: React.FC = () => {
   }
 
   const handleGoogleSignUp = async () => {
-    const result =  await signInWithProvider(googleProvider);
-
-    if (result.errorMessage) {
-      setError(result.errorMessage);
-    } else if (result.isNewUser) {
-      navigate('/user-initial-setup');
-    } else {
-      // 登録済みの場合、アプリのホームページに移動
-      navigate('/home');
+    try {
+      const isNewUser = await signInWithProvider(googleProvider);
+      if (isNewUser) {
+        navigate('/user-initial-setup');
+      } else {
+        navigate('/home');
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+      }
     }
-  };
+  }
 
   const handleSignIn = () => {
     navigate('/signin');

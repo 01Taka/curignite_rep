@@ -1,8 +1,10 @@
 import React, { useEffect, useCallback, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { verifyActionCode } from '../../../firebase/auth/signUp';
+import { getEmailForAuth, verifyActionCode } from '../../../firebase/auth/signUp';
+import ViaActionUrlView from './ViaActionUrlView';
 
 const ViaActionUrlPage: React.FC = () => {
+    const [isFailed, setIsFailed] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
   
@@ -42,14 +44,31 @@ const ViaActionUrlPage: React.FC = () => {
       
       if (modeParam && isValidCode) {
         handleNavigation(modeParam);
+      } else {
+        setIsFailed(true);
       }
     }
   
     useEffect(() => {
       handleTransition();
     }, [location.search]);
+
+
+    // 認証失敗時用の関数
+    const onResendEmail = () => {
+      
+    }
+
+    const onRecreateAccount = () => {
+      navigate('/create-account');
+    }
   
-    return <div>Loading...</div>;
+    return <ViaActionUrlView 
+      isFailed={isFailed}
+      emailForSignIn={getEmailForAuth()}
+      onResendEmail={onResendEmail}
+      onRecreateAccount={onRecreateAccount}
+    />;
 }
 
 export default ViaActionUrlPage;

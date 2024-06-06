@@ -1,25 +1,33 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import SignInView from './SignInWithEmailView';
-import { signInWithProvider } from '../../../firebase/auth/signInAccount';
-import { googleProvider } from '../../../firebase/firebase';
 import { useNavigate } from 'react-router-dom';
+import { getEmailForAuth, setEmailForAuth } from '../../../firebase/auth/signUp';
+import { signInWithEmail } from '../../../firebase/auth/signIn';
 
 const SignInWithEmailPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [submitDisabled, setSubmitDisabled] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
+  useEffect(() => {
+    setEmail(getEmailForAuth());
+  }, []);
+
   const handleEmailSignIn = async () => {
-    const { error, registeredUser } = await signInWithProvider(googleProvider);
-    if (error !== null) {
-      setError(error);
-    } else if (registeredUser) {
+    setEmailForAuth(email);
+    setSubmitDisabled(true);
+    setError('');
+    try {
+      await signInWithEmail(email, password);
       navigate('/home');
-    } else {
-      // 未登録の場合、初期設定ページに移動
-      navigate('/user-initial-setup');
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+      }
     }
+    setSubmitDisabled(false);
   }
   
   return (
@@ -27,6 +35,7 @@ const SignInWithEmailPage: React.FC = () => {
     email={email}
     password={password}
     error={error}
+    submitDisabled={submitDisabled}
     onEmailChange={(e) => setEmail(e.target.value)}
     onPasswordChange={(e) => setPassword(e.target.value)}
     onEmailSignIn={handleEmailSignIn}
