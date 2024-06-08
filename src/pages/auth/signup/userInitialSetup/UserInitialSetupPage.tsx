@@ -22,16 +22,18 @@ const UserInitialSetupPage: React.FC = () => {
 
   useEffect(() => {
     const handleCheckAuthStatus = async () => {
-      const uid = getCurrentUser()?.uid;
+      const user = await getCurrentUser()
+      const uid = user?.uid;
       if (uid && await checkIfExistUidInDB(uid)) {
-        navigate('/home');
+        throw new Error('ログインをしてください');
       }
+      navigate('/home');
     }
     const updateUserName = async () => {
       setIsLoadingName(true);
-      const user = getCurrentUser();
-      let name = user?.displayName || getUserNameData();
-      name = await getUniqueUserName(name);
+      const user = await getCurrentUser();
+      let name = user?.displayName || getNameForSignUp();
+      name = await getUniqueUsername(name);
       setFormData(prev => ({ ...prev, username: name }));
       setIsLoadingName(false);
     };

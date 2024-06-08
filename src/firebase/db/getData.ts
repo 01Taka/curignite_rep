@@ -30,6 +30,8 @@ export const getDocFirst = async (collectionName: string, field: string, value: 
     try {
         const querySnapshot = await getSnapshotFirst(collectionName, field, value);
         if (!querySnapshot.empty) {
+            console.log("#######", querySnapshot.docs);
+            
             return querySnapshot.docs[0];
         }
         return null;

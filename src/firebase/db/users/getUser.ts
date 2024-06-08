@@ -11,6 +11,11 @@ export const checkIfUserNameTaken = async (username: string): Promise<boolean> =
     return !querySnapshot.empty;
 }
 
+
+export const getUserData = async (uid: string) => {    
+    
+}
+
 export const checkIfExistUidInDB = async (uid: string): Promise<boolean> => {
     const snapshot = await getUserSnapshot('uid', uid);
     return !snapshot.empty;

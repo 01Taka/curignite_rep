@@ -1,2 +1,2 @@
-path
-C:\Users\Cs10121\Desktop\Directories\curignite_rep
+cd C:\Users\Cs10121\Desktop\Directories\curignite_rep
+npm start

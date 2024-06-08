@@ -3,7 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import './styles/tailwind.css';
 import { NotFound } from './pages/error/errorIndex';
 import { CreateAccountEndpointPage, CreateAccountPage, SignInPage, SignInWithEmailPage, SignUpPage, UserInitialSetupPage, ViaActionUrlPage } from './pages/auth/authIndex';
-import Home from './pages/app/Home';
+import Home from './pages/app/home/Home';
 import TopPage from './pages/app/top/TopPage';
 
 const App: React.FC = () => {

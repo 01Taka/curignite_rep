@@ -40,7 +40,8 @@ export const createUser = async (
     throw error;
   }
 
-  const uid = getCurrentUser()?.uid;
+  const user = await getCurrentUser();
+  const uid = user?.uid;
   if (!uid) {
     throw new Error('ログインをしてください');
   }
@@ -48,7 +49,13 @@ export const createUser = async (
   try {
     const schoolId = await getSchoolIdWithNameAndPassword(schoolName, schoolPassword);
     const studentInfo = await createStudentInfoDB(username, Number(grade), Number(classNumber), schoolId);
-    
+
+    const user = await getCurrentUser();
+    const uid = user?.uid;
+    if (!uid) {
+      throw new Error('ログインをしてください');
+    }
+
     await addNewUser(uid, studentInfo);
   } catch (error) {
     throw error;
