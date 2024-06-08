@@ -3,35 +3,38 @@ import { googleProvider } from '../../../../firebase/firebase';
 import SignInIndexView from './SignInIndexView';
 import { useNavigate } from 'react-router-dom';
 import { signInWithProvider } from '../../../../firebase/auth/signIn';
+import { setEmailForAuth } from '../../../../firebase/auth/signUp';
 
 const SignInPage: React.FC = () => {
+  const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleCreateAccount = () => {
-    navigate('/create-account');
+  const handleGoogleSignIn = async () => {
+    try {
+      const isNewUser = await signInWithProvider(googleProvider);
+      if (isNewUser) {
+        navigate('/user-initial-setup');
+      } else {
+        navigate('/home');
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+      }
+    }
   }
 
-  const handleGoogleSignIn = async () => {
-    const result =  await signInWithProvider(googleProvider);
-
-    if (result.errorMessage) {
-      setError(result.errorMessage);
-    } else if (result.isNewUser) {
-      navigate('/user-initial-setup');
-    } else {
-      // 登録済みの場合、アプリのホームページに移動
-      navigate('/home');
-    }
-  };
-
   const handleEmailSignIn = () => {
+    setEmailForAuth(email);
     navigate('/signin-email');
   }
 
   return (
     <SignInIndexView
+      email={email}
       error={error}
+      onEmailChange={(e) => setEmail(e.target.value)}
       onGoogleSignIn={handleGoogleSignIn}
       onEmailSignIn={handleEmailSignIn}
     />

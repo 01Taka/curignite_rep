@@ -5,46 +5,34 @@ import { auth } from '../firebase';
 
 const LANGUAGE = 'ja';
 
-interface SignUpResult {
-    uid: string;
-    errorMessage: string;
-    isNewUser: boolean;
-}
-
 // 外部プロバイダーを使用したユーザーアカウントの作成
-export const signInWithProvider = async (provider: AuthProvider): Promise<SignUpResult> => {
+export const signInWithProvider = async (provider: AuthProvider): Promise<boolean> => {
     try {
       const result = await signInWithPopup(auth, provider);
-      const uid = result.user.uid;
       const isNewUser = checkIfNewUser(result);
-      return { uid, errorMessage: '', isNewUser };
+      return isNewUser;
     } catch (error) {
       const errorMessage = throwFirebaseError(error, LANGUAGE);
-      return { uid: '', errorMessage, isNewUser: false };
+      throw new Error(errorMessage);
     }
-};
-
-interface VerifyEmailResult {
-    isValid: boolean,
-    errorMessage: string,
 }
 
-export const verifyEmail = async (email: string, password: string): Promise<VerifyEmailResult> => {
-    try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        
-        const user: User = userCredential.user;
-    
-        // ユーザー情報をリロードして最新の状態を取得
-        await user.reload();
-
-        const isValid = user.emailVerified;
-        return { isValid , errorMessage: '' };
-    } catch (error) {
-        const errorMessage =  throwFirebaseError(error, LANGUAGE);
-        return { isValid: false, errorMessage };
+export const signInWithEmail = async (email: string, password: string) => {
+    if (!email) {
+        throw new Error("メールを入力してください");
     }
-};
+
+    if (!password) {
+        throw new Error("パスワードを入力してください");
+    }
+
+    try {
+        await signInWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+        console.error(error);
+        throw new Error('メールとパスワードが一致しません');
+    }
+}
 
 export const getCurrentUser = (): Promise<User | null> => {
     return new Promise((resolve, reject) => {

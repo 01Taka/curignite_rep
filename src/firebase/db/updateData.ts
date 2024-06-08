@@ -1,7 +1,7 @@
 import { DocumentData, updateDoc } from "firebase/firestore";
 import { getRefFirst } from "./getData";
 
-export const updateData = async (collectionName: string, type: string, value: string, data: DocumentData) => {
+const updateData = async (collectionName: string, type: string, value: string, data: DocumentData) => {
     try {
         const userRef = await getRefFirst(collectionName, type, value);
 

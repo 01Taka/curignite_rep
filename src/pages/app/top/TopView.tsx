@@ -1,14 +1,21 @@
 import React from 'react'
 import { Button } from '@mui/material';
-import { Link } from 'react-router-dom';
-import { verifyEmail } from '../../../firebase/auth/signIn';
+import { getCurrentUser } from '../../../firebase/auth/signIn';
+import { setEmailForAuth } from '../../../firebase/auth/signUp';
 
-const TopPageView: React.FC = () => {
+interface TopPageViewProps {
+    onSignUp: () => void;
+}
+
+const TopPageView: React.FC<TopPageViewProps> = ({
+    onSignUp
+}) => {
 
     const test = async () => {
         console.log('Clicked');
         // 関数呼び出しテスト用
-        console.log(await verifyEmail('killkas01@gmail.com', 'Killkas-3030'));
+        setEmailForAuth('AAA@gmail.com')
+        console.log(getCurrentUser());
         
 
     }
@@ -24,9 +31,7 @@ const TopPageView: React.FC = () => {
                 </div>
 
                 <div className='flex flex-col items-center py-32 '>
-                    <Button variant="contained">
-                        <Link to={'/signup'} children='CURIGNITEに登録する'/>
-                    </Button>
+                    <Button variant="contained" children={"CURIGNITEに登録する"} onClick={onSignUp} />
                 </div>
                 <Button children='テスト' onClick={test} />
             </div>
@@ -37,4 +42,4 @@ const TopPageView: React.FC = () => {
     )
 }
 
-export default TopPageView;
+export default TopPageView

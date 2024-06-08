@@ -14,6 +14,7 @@ const errorMessages: Record<string, Record<string, string>> = {
     'auth/too-many-requests': 'Too many unsuccessful login attempts. Please try again later.',
     'auth/invalid-credential': 'The provided credential is invalid. Please try again with valid credentials.',
     'auth/invalid-action-code': 'Access was via an invalid email.',
+    'auth/missing-password': 'Passwords do not match.',
     default: 'An unknown error occurred.',
   },
   ja: {
@@ -27,6 +28,7 @@ const errorMessages: Record<string, Record<string, string>> = {
     'auth/too-many-requests': 'ログイン試行が多すぎます。後でもう一度お試しください。',
     'auth/invalid-credential': '提供された情報が無効です。',
     'auth/invalid-action-code': '無効なメールからアクセスされました。',
+    'auth/missing-password': 'パスワードが一致しません',
     default: '不明なエラーが発生しました。',
   }
   // 他の言語も追加可能

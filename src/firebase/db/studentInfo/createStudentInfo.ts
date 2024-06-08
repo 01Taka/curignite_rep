@@ -1,11 +1,11 @@
 import { validateSchoolId } from "../schools/validateSchools";
-import { isUsernameTaken } from "../users/getUser";
+import { checkIfUsernameTaken } from "../users/getUser";
 import { StudentInfoDB } from "./studentInfo";
 
 export const createStudentInfoDB = async (
     username: string, grade: number, classNumber: number, schoolId: string
 ): Promise<StudentInfoDB> => {
-    if (await isUsernameTaken(username)) {
+    if (await checkIfUsernameTaken(username)) {
         throw new Error(`このユーザー名は既に使用されています。${username}`);
     }
 

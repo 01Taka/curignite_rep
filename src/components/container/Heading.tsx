@@ -10,7 +10,7 @@ interface HeadingProps {
 const Heading: React.FC<HeadingProps> = ({ children, level, className }) => {
   // レベルに応じたTailwind CSSのクラス名を定義
   const levelClasses = [
-    'sm:text-6xl text-5xl font-extrabold',
+    'sm:text-6xl text-4xl font-extrabold',
     'sm:text-4xl text-3xl font-bold',
     'sm:text-2xl text-xl font-bold',
     'sm:text-xl text-lg font-bold',

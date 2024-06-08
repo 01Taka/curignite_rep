@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { getEmailForSignUp } from '../../../../firebase/auth/signUp';
+import { getEmailForAuth } from '../../../../firebase/auth/signUp';
 
 const CreateAccountEndPointPage: React.FC = () => {
   const [email, setEmail] = useState('@Emails');
 
   useEffect(() => {
-    const emailForSignIn = getEmailForSignUp();
+    const emailForSignIn = getEmailForAuth();
     if (emailForSignIn) {
       setEmail(emailForSignIn);
     }

@@ -2,7 +2,7 @@ import { getCurrentUser } from "../../../../firebase/auth/signIn";
 import { getSchoolIdWithNameAndPassword } from "../../../../firebase/db/schools/validateSchools";
 import { createStudentInfoDB } from "../../../../firebase/db/studentInfo/createStudentInfo";
 import { addNewUser } from "../../../../firebase/db/users/addUser";
-import { isUsernameTaken } from "../../../../firebase/db/users/getUser";
+import { checkIfUsernameTaken } from "../../../../firebase/db/users/getUser";
 
 export const errorHandling = async (
   username: string, grade: string, classNumber: string, schoolName: string, schoolPassword: string
@@ -11,7 +11,7 @@ export const errorHandling = async (
     return new Error('ユーザ名を入力してください');
   }
 
-  if (await isUsernameTaken(username)) {
+  if (await checkIfUsernameTaken(username)) {
     return new Error('このユーザ名は既に使用されています');
   }
 
@@ -40,14 +40,22 @@ export const createUser = async (
     throw error;
   }
 
+  const user = await getCurrentUser();
+  const uid = user?.uid;
+  if (!uid) {
+    throw new Error('ログインをしてください');
+  }
+
   try {
     const schoolId = await getSchoolIdWithNameAndPassword(schoolName, schoolPassword);
     const studentInfo = await createStudentInfoDB(username, Number(grade), Number(classNumber), schoolId);
+
     const user = await getCurrentUser();
     const uid = user?.uid;
     if (!uid) {
       throw new Error('ログインをしてください');
     }
+
     await addNewUser(uid, studentInfo);
   } catch (error) {
     throw error;
