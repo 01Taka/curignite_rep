@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import UserInitialSetupView from './UserInitialSetupView';
 import { useNavigate } from 'react-router-dom';
 import { getCurrentUser } from '../../../../firebase/auth/signIn';
-import { clearEmailForAuth, getNameForSignUp } from '../../../../firebase/auth/signUp';
-import { getUniqueUsername } from '../../../../firebase/util/generateUniqueUsername';
+import { getUniqueUserName } from '../../../../firebase/util/generateUniqueUserName';
 import { createUser } from './handleUserInitialSetup';
 import { checkIfExistUidInDB } from '../../../../firebase/db/users/getUser';
+import { getUserNameData } from '../../../../functions/storage/authData';
 
 const UserInitialSetupPage: React.FC = () => {
   const [isLoadingName, setIsLoadingName] = useState(true);
@@ -23,29 +23,24 @@ const UserInitialSetupPage: React.FC = () => {
   useEffect(() => {
     const handleCheckAuthStatus = async () => {
       const uid = getCurrentUser()?.uid;
-      if (!uid) {
-        throw new Error('ログインをしてください');
-      }
-      const isExist = await checkIfExistUidInDB(uid);
-      if (isExist) {
+      if (uid && await checkIfExistUidInDB(uid)) {
         navigate('/home');
       }
     }
     const updateUserName = async () => {
       setIsLoadingName(true);
       const user = getCurrentUser();
-      let name = user?.displayName || getNameForSignUp();
-      name = await getUniqueUsername(name);
+      let name = user?.displayName || getUserNameData();
+      name = await getUniqueUserName(name);
       setFormData(prev => ({ ...prev, username: name }));
       setIsLoadingName(false);
     };
     const preprocessing = async () => {
       handleCheckAuthStatus();
       updateUserName();
-      clearEmailForAuth();
     }
     preprocessing();
-  }, []);
+  }, [navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -56,6 +51,11 @@ const UserInitialSetupPage: React.FC = () => {
     setSubmitDisabled(true);
     setError("");
     try {
+      const uid = getCurrentUser()?.uid;
+      if (!uid) {
+        throw new Error('ログインをしてください');
+      }
+
       await createUser(
         formData.username,
         formData.grade,
@@ -63,6 +63,7 @@ const UserInitialSetupPage: React.FC = () => {
         formData.schoolName,
         formData.schoolPassword
       );
+      
       navigate('/home');
     } catch (error) {
       if (error instanceof Error) {

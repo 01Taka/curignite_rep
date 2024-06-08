@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import CreateAccountView from './CreateAccountView';
 import { useNavigate } from 'react-router-dom';
-import { setEmailForAuth, setNameForSignUp, signUpWithEmail } from '../../../../firebase/auth/signUp';
+import { signUpWithEmail } from '../../../../firebase/auth/signUp';
+import { setAuthData } from '../../../../functions/storage/authData';
 
 const CreateAccountPage: React.FC = () => {
-  const [name, setName] = useState('');
+  const [username, setUserName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -20,20 +21,19 @@ const CreateAccountPage: React.FC = () => {
     if (!result.isSuccessful) {
       setError(result.errorMessage);
     } else {
-      setEmailForAuth(email);
-      setNameForSignUp(name);
+      setAuthData(username, email, password);
       navigate('/create-account-endpoint')
     }
   };
 
   return (
     <CreateAccountView 
-      name={name}
+      username={username}
       email={email}
       password={password}
       error={error}
       submitDisabled={submitDisabled}
-      onNameChange={(e) => setName(e.target.value)}
+      onUserNameChange={(e) => setUserName(e.target.value)}
       onEmailChange={(e) => setEmail(e.target.value)}
       onPasswordChange={(e) => setPassword(e.target.value)}
       onEmailSignUp={handleEmailSignUp}

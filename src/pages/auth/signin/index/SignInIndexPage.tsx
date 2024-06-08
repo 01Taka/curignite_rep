@@ -3,10 +3,10 @@ import { googleProvider } from '../../../../firebase/firebase';
 import SignInIndexView from './SignInIndexView';
 import { useNavigate } from 'react-router-dom';
 import { signInWithProvider } from '../../../../firebase/auth/signIn';
-import { setEmailForAuth } from '../../../../firebase/auth/signUp';
+import { setEmailData } from '../../../../functions/storage/authData';
 
 const SignInPage: React.FC = () => {
-  const [email, setEmail] = useState('');
+  const [email, setEmailState] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
@@ -26,7 +26,7 @@ const SignInPage: React.FC = () => {
   }
 
   const handleEmailSignIn = () => {
-    setEmailForAuth(email);
+    setEmailData(email);
     navigate('/signin-email');
   }
 
@@ -34,7 +34,7 @@ const SignInPage: React.FC = () => {
     <SignInIndexView
       email={email}
       error={error}
-      onEmailChange={(e) => setEmail(e.target.value)}
+      onEmailChange={(e) => setEmailState(e.target.value)}
       onGoogleSignIn={handleGoogleSignIn}
       onEmailSignIn={handleEmailSignIn}
     />

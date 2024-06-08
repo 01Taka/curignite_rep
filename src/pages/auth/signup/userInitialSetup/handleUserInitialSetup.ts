@@ -2,7 +2,7 @@ import { getCurrentUser } from "../../../../firebase/auth/signIn";
 import { getSchoolIdWithNameAndPassword } from "../../../../firebase/db/schools/validateSchools";
 import { createStudentInfoDB } from "../../../../firebase/db/studentInfo/createStudentInfo";
 import { addNewUser } from "../../../../firebase/db/users/addUser";
-import { checkIfUsernameTaken } from "../../../../firebase/db/users/getUser";
+import { checkIfUserNameTaken } from "../../../../firebase/db/users/getUser";
 
 export const errorHandling = async (
   username: string, grade: string, classNumber: string, schoolName: string, schoolPassword: string
@@ -11,7 +11,7 @@ export const errorHandling = async (
     return new Error('ユーザ名を入力してください');
   }
 
-  if (await checkIfUsernameTaken(username)) {
+  if (await checkIfUserNameTaken(username)) {
     return new Error('このユーザ名は既に使用されています');
   }
 

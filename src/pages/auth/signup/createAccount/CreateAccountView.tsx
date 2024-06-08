@@ -1,27 +1,27 @@
 import React from 'react'
-import { Button, TextField } from '@mui/material';
+import { Button } from '@mui/material';
 import { FormContainer, Heading } from '../../../../components/container/containerIndex';
 import { EmailField, PasswordField, UserNameField } from '../../../../components/input/inputIndex';
 
 interface CreateAccountViewProps {
-    name: string;
+    username: string;
     email: string;
     password: string;
     error: string;
     submitDisabled: boolean;
-    onNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onUserNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onEmailChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onPasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onEmailSignUp: (e: React.FormEvent) => void;
   }
   
   const CreateAccountView: React.FC<CreateAccountViewProps> = ({
-    name,
+    username,
     email,
     password,
     error,
     submitDisabled,
-    onNameChange,
+    onUserNameChange,
     onEmailChange,
     onPasswordChange,
     onEmailSignUp,
@@ -36,7 +36,7 @@ interface CreateAccountViewProps {
                 <Heading children='アカウントを作成' level={1} className='mt-20'/>
                 <form onSubmit={handleSubmit} className='flex flex-col items-center w-64 mt-12'>
                     <EmailField email={email} onEmailChange={onEmailChange} />
-                    <UserNameField username={name} onUserNameChange={onNameChange} />
+                    <UserNameField username={username} onUserNameChange={onUserNameChange} />
                     <PasswordField password={password} onPasswordChange={onPasswordChange} />
                     <div className='w-full my-16'>
                         <Button
@@ -49,7 +49,7 @@ interface CreateAccountViewProps {
                         />
                     </div>
                 </form>
-                {error && <p style={{ color: 'red' }}>{error}</p>}
+                {error && <p className='text-red-500 text-lg mb-8'>{error}</p>}
         </ FormContainer>
     )
 }

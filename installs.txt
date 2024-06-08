@@ -18,3 +18,5 @@ npm install @emotion/css
 
 npm install uuid
 npm install --save-dev @types/uuid
+
+npm i --save-dev @types/crypto-js

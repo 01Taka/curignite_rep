@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, TextField } from '@mui/material';
+import { Button } from '@mui/material';
 import { FormContainer, Heading } from '../../../components/container/containerIndex';
 import { EmailField, PasswordField } from '../../../components/input/inputIndex';
 
@@ -44,7 +44,7 @@ const SignInWithEmailView: React.FC<SignInWithEmailViewProps> = ({
                     />
                 </div>
             </form>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+            {error && <p className='text-red-500 text-lg mb-8'>{error}</p>}
         </FormContainer>
     )
 }

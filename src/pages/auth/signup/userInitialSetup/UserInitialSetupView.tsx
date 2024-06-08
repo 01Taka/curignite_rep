@@ -73,10 +73,6 @@ const SubmitButton: React.FC<{ submitDisabled: boolean }> = ({ submitDisabled })
   </div>
 );
 
-const ErrorMessage: React.FC<{ error: string }> = ({ error }) => (
-  error ? <p style={{ color: 'red' }}>{error}</p> : null
-);
-
 const UserInitialSetupView: React.FC<UserInitialSetupViewProps> = ({
   isLoading,
   username,
@@ -122,7 +118,7 @@ const UserInitialSetupView: React.FC<UserInitialSetupViewProps> = ({
             />
             <SubmitButton submitDisabled={submitDisabled} />
           </form>
-          <ErrorMessage error={error} />
+          {error && <p className='text-red-500 text-lg mb-8'>{error}</p>}
         </>
       )}
     </FormContainer>

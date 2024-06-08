@@ -16,7 +16,7 @@ const actionCodeSettings = {
     },
 };
 
-export const sendSignInLink = async (email: string) => {
+const sendSignInLink = async (email: string) => {
     try {
         await sendSignInLinkToEmail(auth, email, actionCodeSettings);
         window.localStorage.setItem('emailForSignIn', email);

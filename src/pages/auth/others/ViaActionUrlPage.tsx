@@ -1,74 +1,73 @@
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { getEmailForAuth, verifyActionCode } from '../../../firebase/auth/signUp';
 import ViaActionUrlView from './ViaActionUrlView';
+import { actionNavigation, checkActionCode } from './handleViaActionUrl';
+import { getEmailData, getPasswordData } from '../../../functions/storage/authData';
+import { resendEmail } from '../../../firebase/auth/signUp';
 
 const ViaActionUrlPage: React.FC = () => {
-    const [isFailed, setIsFailed] = useState(false);
-    const location = useLocation();
-    const navigate = useNavigate();
-  
-    const handleNavigation = useCallback((action: string) => {
-      switch (action) {
-        case 'resetPassword':
-          navigate('/reset-password');
-          break;
-        case 'verifyEmail':
-          navigate('/user-initial-setup');
-          break;
-      }
-    }, [navigate]);
+  const [isFailed, setIsFailed] = useState(false);
+  const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
+  const [resendDisabled, setResendDisabled] = useState(false);
 
-    const checkActionCode = async (actionCode: string | null, lang: string): Promise<boolean> => {
-      if (!actionCode) {
-        console.error('アクションコードが取得できませんでした。');
-        return false;
-      }
+  const navigate = useNavigate();
+  const location = useLocation();
 
-      const result = await verifyActionCode(actionCode, lang);
-      if (result.errorMessage) {
-        console.error(result.errorMessage);
-      }
-      return result.isValid;
-    }
-
+  useEffect(() => {
     const handleTransition = async () => {
-      const query = new URLSearchParams(location.search);
-      
-      const modeParam = query.get('mode');
-      const actionCode = query.get('oobCode');
-      const lang = query.get('lang') || 'en';
+      const queryParams = new URLSearchParams(location.search);
+      const modeParam = queryParams.get('mode');
+      const actionCode = queryParams.get('oobCode');
+      const lang = queryParams.get('lang') || 'en';
 
       const isValidCode = await checkActionCode(actionCode, lang);
-      console.log(modeParam, isValidCode);
-      
+
       if (modeParam && isValidCode) {
-        handleNavigation(modeParam);
+        actionNavigation(modeParam, navigate);
       } else {
         setIsFailed(true);
       }
-    }
-  
-    useEffect(() => {
-      handleTransition();
-    }, [location.search]);
+    };
 
+    handleTransition();
+  }, [location.search, navigate]);
 
-    // 認証失敗時用の関数
-    const onResendEmail = () => {
-      
+  // Function to handle resend email action
+  const handleResendEmail = async () => {
+    setResendDisabled(true);
+    setError('');
+    setMessage('');
+    const email = getEmailData();
+    const password = getPasswordData();
+    try {
+      await resendEmail(email, password);
+      setMessage('メールを再送信しました。')
+    } catch (error) {
+      console.log(error);
+      if (error instanceof Error) {
+        setError(error.message);
+      }
     }
+    setResendDisabled(false);
+  };
 
-    const onRecreateAccount = () => {
-      navigate('/create-account');
-    }
-  
-    return <ViaActionUrlView 
+  // Function to handle account recreation
+  const handleRecreateAccount = () => {
+    navigate('/create-account');
+  };
+
+  return (
+    <ViaActionUrlView 
       isFailed={isFailed}
-      emailForSignIn={getEmailForAuth()}
-      onResendEmail={onResendEmail}
-      onRecreateAccount={onRecreateAccount}
-    />;
-}
+      emailForSignIn={getEmailData()}
+      error={error}
+      message={message}
+      resendDisabled={resendDisabled}
+      onResendEmail={handleResendEmail}
+      onRecreateAccount={handleRecreateAccount}
+    />
+  );
+};
 
 export default ViaActionUrlPage;

@@ -44,7 +44,7 @@ const SignUpIndexView: React.FC<SignUpIndexViewProps> = ({
                     </div>
                 </div>
             </div>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+            {error && <p className='text-red-500 text-lg mb-8'>{error}</p>}
         </FormContainer>
     )
 };

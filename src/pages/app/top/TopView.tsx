@@ -1,7 +1,6 @@
 import React from 'react'
 import { Button } from '@mui/material';
 import { getCurrentUser } from '../../../firebase/auth/signIn';
-import { setEmailForAuth } from '../../../firebase/auth/signUp';
 
 interface TopPageViewProps {
     onSignUp: () => void;
@@ -14,7 +13,6 @@ const TopPageView: React.FC<TopPageViewProps> = ({
     const test = async () => {
         console.log('Clicked');
         // 関数呼び出しテスト用
-        setEmailForAuth('AAA@gmail.com')
         console.log(getCurrentUser());
         
 
