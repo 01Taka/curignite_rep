@@ -15,3 +15,15 @@ export const isUsernameTaken = async (username: string): Promise<boolean> => {
     const querySnapshot = await getUserSnapshot('studentInfo.username', username);
     return !querySnapshot.empty;
 }
+
+export const getUserData = async (uid: string) => {
+    const snapshot = await getUserSnapshot('uid', uid);
+    const ref = await getUserRef('uid', uid);
+    const data = await getDataFirst('users', 'uid', uid)
+    console.log(snapshot);
+    console.log(ref);
+    console.log(data);
+    
+    
+    
+}

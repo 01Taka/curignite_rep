@@ -1,4 +1,4 @@
-import { AuthProvider, signInWithEmailAndPassword, signInWithPopup, User } from 'firebase/auth';
+import { AuthProvider, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, User } from 'firebase/auth';
 import { checkIfNewUser } from '../util/authUtil';
 import { throwFirebaseError } from '../util/error';
 import { auth } from '../firebase';
@@ -46,6 +46,12 @@ export const verifyEmail = async (email: string, password: string): Promise<Veri
     }
 };
 
-export const getCurrentUser = (): User | null => {
-    return auth.currentUser;
-}
+export const getCurrentUser = (): Promise<User | null> => {
+    return new Promise((resolve, reject) => {
+      const auth = getAuth();
+      const unsubscribe = onAuthStateChanged(auth, user => {
+        unsubscribe(); // リスナーを解除して、一度だけ実行
+        resolve(user);
+      }, reject);
+    });
+  };

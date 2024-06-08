@@ -22,7 +22,7 @@ const UserInitialSetupPage: React.FC = () => {
   useEffect(() => {
     const updateUserName = async () => {
       setIsLoadingName(true);
-      const user = getCurrentUser();
+      const user = await getCurrentUser();
       let name = user?.displayName || getNameForSignUp();
       name = await getUniqueUsername(name);
       setFormData(prev => ({ ...prev, username: name }));

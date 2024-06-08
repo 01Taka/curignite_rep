@@ -43,7 +43,8 @@ export const createUser = async (
   try {
     const schoolId = await getSchoolIdWithNameAndPassword(schoolName, schoolPassword);
     const studentInfo = await createStudentInfoDB(username, Number(grade), Number(classNumber), schoolId);
-    const uid = getCurrentUser()?.uid;
+    const user = await getCurrentUser();
+    const uid = user?.uid;
     if (!uid) {
       throw new Error('ログインをしてください');
     }
