@@ -1,6 +1,6 @@
 import { DocumentData, QueryDocumentSnapshot, doc, getDoc } from "firebase/firestore";
-import { getDocFirst } from "../getData";
-import { db } from "../../firebase";
+import { getDocFirst } from "../../getData";
+import { db } from "../../../firebase";
 
 /**
  * Fetches the document snapshot of a school by its name.

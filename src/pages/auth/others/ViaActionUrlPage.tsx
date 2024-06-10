@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ViaActionUrlView from './ViaActionUrlView';
 import { actionNavigation, checkActionCode } from './handleViaActionUrl';
-import { getEmailData, getPasswordData } from '../../../functions/storage/authData';
+import { getEmailData, getPasswordData } from '../../../functions/localStorage/authData';
 import { resendEmail } from '../../../firebase/auth/signUp';
 
 const ViaActionUrlPage: React.FC = () => {

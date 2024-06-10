@@ -3,7 +3,7 @@ import { googleProvider } from '../../../../firebase/firebase';
 import SignInIndexView from './SignInIndexView';
 import { useNavigate } from 'react-router-dom';
 import { signInWithProvider } from '../../../../firebase/auth/signIn';
-import { setEmailData } from '../../../../functions/storage/authData';
+import { setEmailData } from '../../../../functions/localStorage/authData';
 
 const SignInPage: React.FC = () => {
   const [email, setEmailState] = useState('');

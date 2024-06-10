@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getEmailData } from '../../../../functions/storage/authData';
+import { getEmailData } from '../../../../functions/localStorage/authData';
 
 const CreateAccountEndPointPage: React.FC = () => {
   const [email, setEmail] = useState('@Emails');

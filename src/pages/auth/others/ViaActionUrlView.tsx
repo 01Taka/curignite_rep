@@ -1,7 +1,7 @@
 import React from 'react';
 import FormContainer from '../../../components/container/FormContainer';
 import Heading from '../../../components/container/Heading';
-import { Box, Button, CircularProgress, Divider } from '@mui/material';
+import { Alert, Box, Button, CircularProgress, Divider } from '@mui/material';
 
 // ロード中のコンポーネント
 const LoadingComponent: React.FC = () => (
@@ -122,7 +122,7 @@ const ViaActionUrlView: React.FC<ViaActionUrlViewProps> = ({
         </>
       )}
       {message && <p className='text-green-500 text-lg mb-8'>{message}</p>}
-      {error && <p className='text-red-500 text-lg mb-8'>{error}</p>}
+      {error && <Alert severity='error'>{error}</Alert>}
     </FormContainer>
   );
 }

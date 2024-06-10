@@ -1,8 +1,8 @@
 import { getCurrentUser } from "../../../../firebase/auth/signIn";
-import { getSchoolIdWithNameAndPassword } from "../../../../firebase/db/schools/validateSchools";
-import { createStudentInfoDB } from "../../../../firebase/db/studentInfo/createStudentInfo";
-import { addNewUser } from "../../../../firebase/db/users/addUser";
-import { checkIfUserNameTaken } from "../../../../firebase/db/users/getUser";
+import { getSchoolIdWithNameAndPassword } from "../../../../firebase/db/auth/schools/validateSchools";
+import { createStudentInfoDB } from "../../../../firebase/db/auth/studentInfo/createStudentInfo";
+import { addNewUser } from "../../../../firebase/db/auth/users/addUser";
+import { checkIfUserNameTaken } from "../../../../firebase/db/auth/users/getUser";
 
 export const errorHandling = async (
   username: string, grade: string, classNumber: string, schoolName: string, schoolPassword: string

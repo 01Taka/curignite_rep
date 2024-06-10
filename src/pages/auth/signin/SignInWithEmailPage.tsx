@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import SignInView from './SignInWithEmailView';
 import { useNavigate } from 'react-router-dom';
 import { signInWithEmail } from '../../../firebase/auth/signIn';
-import { getEmailData, setEmailData } from '../../../functions/storage/authData';
+import { getEmailData, setEmailData } from '../../../functions/localStorage/authData';
 
 const SignInWithEmailPage: React.FC = () => {
   const [email, setEmailState] = useState('');

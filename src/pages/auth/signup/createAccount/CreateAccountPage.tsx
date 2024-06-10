@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import CreateAccountView from './CreateAccountView';
 import { useNavigate } from 'react-router-dom';
 import { signUpWithEmail } from '../../../../firebase/auth/signUp';
-import { setAuthData } from '../../../../functions/storage/authData';
+import { setAuthData } from '../../../../functions/localStorage/authData';
 
 const CreateAccountPage: React.FC = () => {
   const [username, setUserName] = useState('');

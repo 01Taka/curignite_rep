@@ -1,6 +1,6 @@
 import React from 'react';
 import FormContainer from '../../../../components/container/FormContainer';
-import { Box, Button, CircularProgress } from '@mui/material';
+import { Alert, Box, Button, CircularProgress } from '@mui/material';
 import { NumberField, PasswordField, StringField, UserNameField } from '../../../../components/input/inputIndex';
 import Heading from '../../../../components/container/Heading';
 
@@ -118,7 +118,7 @@ const UserInitialSetupView: React.FC<UserInitialSetupViewProps> = ({
             />
             <SubmitButton submitDisabled={submitDisabled} />
           </form>
-          {error && <p className='text-red-500 text-lg mb-8'>{error}</p>}
+          {error && <Alert severity='error'>{error}</Alert>}
         </>
       )}
     </FormContainer>

@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { getCurrentUser } from '../../../../firebase/auth/signIn';
 import { getUniqueUserName } from '../../../../firebase/util/generateUniqueUserName';
 import { createUser } from './handleUserInitialSetup';
-import { checkIfExistUidInDB } from '../../../../firebase/db/users/getUser';
-import { getUserNameData } from '../../../../functions/storage/authData';
+import { checkIfExistUidInDB } from '../../../../firebase/db/auth/users/getUser';
+import { getUserNameData } from '../../../../functions/localStorage/authData';
 
 const UserInitialSetupPage: React.FC = () => {
   const [isLoadingName, setIsLoadingName] = useState(true);
@@ -22,18 +22,20 @@ const UserInitialSetupPage: React.FC = () => {
 
   useEffect(() => {
     const handleCheckAuthStatus = async () => {
-      const user = await getCurrentUser()
+      const user = await getCurrentUser();
       const uid = user?.uid;
-      if (uid && await checkIfExistUidInDB(uid)) {
-        throw new Error('ログインをしてください');
+      if (!uid) {
+        throw new Error('アカウントを作成してください');
       }
-      navigate('/home');
+      else if (await checkIfExistUidInDB(uid)) {
+        navigate('/home');
+      }
     }
     const updateUserName = async () => {
       setIsLoadingName(true);
       const user = await getCurrentUser();
-      let name = user?.displayName || getNameForSignUp();
-      name = await getUniqueUsername(name);
+      let name = user?.displayName || getUserNameData();
+      name = await getUniqueUserName(name);
       setFormData(prev => ({ ...prev, username: name }));
       setIsLoadingName(false);
     };
@@ -53,8 +55,8 @@ const UserInitialSetupPage: React.FC = () => {
     setSubmitDisabled(true);
     setError("");
     try {
-      const uid = getCurrentUser()?.uid;
-      if (!uid) {
+      const user = await getCurrentUser();
+      if (!user) {
         throw new Error('ログインをしてください');
       }
 

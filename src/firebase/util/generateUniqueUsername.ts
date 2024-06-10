@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { checkIfUserNameTaken } from '../db/users/getUser';
+import { checkIfUserNameTaken } from '../db/auth/users/getUser';
 
 // ランダムな一意の文字列を生成する関数
 const generateUniqueString = (): string => {

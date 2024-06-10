@@ -1,7 +1,7 @@
 // SignUpIndexView.tsx
 import React from 'react';
 import Divider from '@mui/material/Divider';
-import { Button } from '@mui/material';
+import { Alert, Button } from '@mui/material';
 import { FormContainer, Heading } from '../../../../components/container/containerIndex';
 
 interface SignUpIndexViewProps {
@@ -44,7 +44,7 @@ const SignUpIndexView: React.FC<SignUpIndexViewProps> = ({
                     </div>
                 </div>
             </div>
-            {error && <p className='text-red-500 text-lg mb-8'>{error}</p>}
+            {error && <Alert severity='error'>{error}</Alert>}
         </FormContainer>
     )
 };

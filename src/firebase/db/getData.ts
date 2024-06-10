@@ -30,8 +30,6 @@ export const getDocFirst = async (collectionName: string, field: string, value: 
     try {
         const querySnapshot = await getSnapshotFirst(collectionName, field, value);
         if (!querySnapshot.empty) {
-            console.log("#######", querySnapshot.docs);
-            
             return querySnapshot.docs[0];
         }
         return null;
@@ -49,6 +47,11 @@ export const getDocFirst = async (collectionName: string, field: string, value: 
  * @returns A promise resolving to the data of the first document or null if no document matches.
  */
 export const getDataFirst = async (collectionName: string, field: string, value: string): Promise<DocumentData | null> => {
+    if (!value) {
+        console.error(`Invalid value for field: ${field}`);
+        return null;
+    }
+    
     try {
         const doc = await getDocFirst(collectionName, field, value);
         if (doc) {

@@ -20,3 +20,8 @@ npm install uuid
 npm install --save-dev @types/uuid
 
 npm i --save-dev @types/crypto-js
+
+npm install date-fns
+
+npm install classnames
+npm install --save-dev @types/classnames

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button } from '@mui/material';
+import { Alert, Button } from '@mui/material';
 import { FormContainer, Heading } from '../../../../components/container/containerIndex';
 import { EmailField, PasswordField, UserNameField } from '../../../../components/input/inputIndex';
 
@@ -49,7 +49,7 @@ interface CreateAccountViewProps {
                         />
                     </div>
                 </form>
-                {error && <p className='text-red-500 text-lg mb-8'>{error}</p>}
+                {error && <Alert severity='error'>{error}</Alert>}
         </ FormContainer>
     )
 }

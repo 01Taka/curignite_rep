@@ -1,5 +1,5 @@
 import { collection, addDoc } from "firebase/firestore";
-import { db } from "../../firebase";
+import { db } from "../../../firebase";
 import { UserDB } from "./user";
 import { StudentInfoDB } from "../studentInfo/studentInfo";
 
