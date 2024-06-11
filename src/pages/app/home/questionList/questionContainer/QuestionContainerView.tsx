@@ -8,6 +8,7 @@ interface QuestionContainerViewProps {
     postDateStr: string;
     expanded: boolean;
     handleExpandClick: () => void;
+    onQuestionClick: () => void;
 }
 
 const QuestionContainerView: React.FC<QuestionContainerViewProps> = ({
@@ -17,9 +18,9 @@ const QuestionContainerView: React.FC<QuestionContainerViewProps> = ({
     postDateStr,
     expanded,
     handleExpandClick,
+    onQuestionClick,
 }) => {
   const post = (
-    <React.Fragment>
         <CardContent>
             <Typography variant="h5" component="div">
                 {title}
@@ -38,12 +39,15 @@ const QuestionContainerView: React.FC<QuestionContainerViewProps> = ({
                 </CardActions>
             )}
         </CardContent>
-    </React.Fragment>
-  );
+    );
 
   return (
     <Box sx={{ minWidth: 275 }}>
-      <Card variant="outlined" className='my-4'>{post}</Card>
+      <Card variant="outlined" className='my-4'>
+        <div onClick={onQuestionClick}>
+            {post}
+        </div>
+    </Card>
     </Box>
   );
 }

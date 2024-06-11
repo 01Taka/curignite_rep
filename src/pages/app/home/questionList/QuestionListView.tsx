@@ -7,13 +7,13 @@ interface QuestionListViewProps {
 }
 
 const QuestionListView: React.FC<QuestionListViewProps> = ({
-  questionPosts
+  questionPosts,
 }) => {
   return (
     <div>
       {questionPosts.map((post, index) => (
         <div key={index}>
-          <QuestionContainer title={post.question.title} content={post.question.content} postDate={post.question.createdAt}/>
+          <QuestionContainer question={post.question} studentInfo={post.studentInfo}/>
         </div>
       ))}
     </div>

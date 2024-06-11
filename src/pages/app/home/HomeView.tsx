@@ -11,8 +11,7 @@ const HomeView: React.FC<HomeViewProps> = ({
   routeItems,
 }) => {
   return (
-    <div className=''>
-      <Drawer>
+    <Drawer>
         <div className='pl-6 pr-8 py-4'>
           <Routes>
             {routeItems.map((item, index) => (
@@ -21,7 +20,6 @@ const HomeView: React.FC<HomeViewProps> = ({
           </Routes>
         </div>
       </Drawer>
-    </div>
   )
 }
 
