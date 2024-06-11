@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import ProfileView from './ProfileView'
-import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import { uploadFile } from '../../../firebase/storage/upload';
-import { setIconUrl } from '../../../redux/slices/studentDataSlice';
+import { useAppDispatch, useAppSelector } from '../../../../redux/hooks';
+import { uploadFile } from '../../../../firebase/storage/upload';
+import { setIconUrl } from '../../../../redux/slices/studentDataSlice';
 
 const Profile: React.FC = () => {
     const dispatch = useAppDispatch(); 

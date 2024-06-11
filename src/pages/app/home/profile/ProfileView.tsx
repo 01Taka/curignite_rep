@@ -1,5 +1,5 @@
 import React from 'react'
-import StudentInfoView from '../../../components/app/profile/StudentInfoView';
+import StudentInfoView from '../../../../components/app/profile/StudentInfoView';
 
 interface ProfileViewProps {
     username: string;

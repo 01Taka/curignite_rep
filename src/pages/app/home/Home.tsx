@@ -2,14 +2,11 @@ import React, { useEffect } from "react";
 import HomeView from "./HomeView";
 import { getCurrentUser } from "../../../firebase/auth/signIn";
 import { checkIfExistUidInDB, getStudentInfo } from "../../../firebase/db/auth/users/getUser";
-import { HomeRouteItem } from "../../../types/app/home";
-import Profile from "../../../features/app/profile/Profile";
-import CreateQuestion from "../../../features/app/question/createQuestion/CreateQuestion";
 import { useAppDispatch } from "../../../redux/hooks";
 import { resetStudentData, setStudentData, setUid } from "../../../redux/slices/studentDataSlice";
-import QuestionList from "../../../features/app/question/questionList/QuestionList";
 import { getFileUrl } from "../../../firebase/storage/get";
 import { defaultIconUrl } from "../../../types/app/appTypes";
+import { routeItems } from "./routing";
 
 const Home: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -52,13 +49,6 @@ const Home: React.FC = () => {
         }
         setStudentDataToStore();
     }, [dispatch]);
-
-
-    const routeItems: HomeRouteItem[] = [
-        {path: 'profile', element: <Profile />},
-        {path: 'question', element: <CreateQuestion />},
-        {path: 'answer', element: <QuestionList />},
-    ]
 
     return <HomeView 
         routeItems={routeItems}

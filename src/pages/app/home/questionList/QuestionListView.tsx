@@ -1,6 +1,6 @@
 import React from 'react'
 import { QuestionPost } from '../../../../types/app/appTypes';
-import QuestionContainer from '../../../../components/app/question/QuestionContainer';
+import QuestionContainer from './questionContainer/QuestionContainer';
 
 interface QuestionListViewProps {
   questionPosts: QuestionPost[];
