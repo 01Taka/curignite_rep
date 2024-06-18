@@ -33,4 +33,8 @@ export class StudentInfoDB {
         const { username, grade, classNumber, schoolId, anonymousStatus, joinedAt } = data;
         return new StudentInfoDB(username, grade, classNumber, schoolId, anonymousStatus, joinedAt);
     }
+
+    static getEmptyStudentInfo() {
+        return new StudentInfoDB("", 0, 0, "", "private", Timestamp.now());
+    }
 }

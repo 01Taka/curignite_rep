@@ -11,3 +11,7 @@ export const getFileUrl = async (path: string, fileName: string): Promise<string
         return "";
     }
 };
+
+export const getIconUrl = async (uid: string) => {
+    return  await getFileUrl("userIcons", uid);
+}

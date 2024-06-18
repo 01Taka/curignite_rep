@@ -1,4 +1,4 @@
-import { getCurrentUser } from "../../../../firebase/auth/signIn";
+import { getCurrentUser } from "../../../../firebase/auth/auth";
 import { getSchoolIdWithNameAndPassword } from "../../../../firebase/db/auth/schools/validateSchools";
 import { createStudentInfoDB } from "../../../../firebase/db/auth/studentInfo/createStudentInfo";
 import { addNewUser } from "../../../../firebase/db/auth/users/addUser";

@@ -1,19 +1,19 @@
 import { DocumentData, QueryConstraint, Timestamp } from "firebase/firestore";
 import BaseDB from "../../base";
 
-class QuestionDB extends BaseDB {
+class AnswerDB extends BaseDB {
     id: string;
-    title: string;
+    questionId: string;
     content: string;
     authorUid: string;
     createdAt: Timestamp;
 
-    static dbPath = "questions";
+    static dbPath = "answers";
 
-    constructor(title: string, content: string, authorUid: string, createdAt: Timestamp = Timestamp.now(), id: string = "") {
+    constructor(questionId: string, content: string, authorUid: string, createdAt: Timestamp = Timestamp.now(), id: string = "") {
         super();
+        this.questionId = questionId;
         this.id = id;
-        this.title = title;
         this.content = content;
         this.authorUid = authorUid;
         this.createdAt = createdAt;
@@ -21,19 +21,19 @@ class QuestionDB extends BaseDB {
 
     toFirestore(): DocumentData {
         return {
-            title: this.title,
+            questionId: this.questionId,
             content: this.content,
             authorUid: this.authorUid,
             createdAt: this.createdAt,
         };
     }
 
-    static fromFirestore(data: DocumentData, id: string): QuestionDB {
-        const { title, content, authorUid, createdAt } = data;
-        return new QuestionDB(title, content, authorUid, createdAt, id);
+    static fromFirestore(data: DocumentData, id: string): AnswerDB {
+        const { questionId, content, authorUid, createdAt } = data;
+        return new AnswerDB(questionId, content, authorUid, createdAt, id);
     }
 
-    static async getFromFirestore(id: string): Promise<QuestionDB | null> {
+    static async getFromFirestore(id: string): Promise<AnswerDB | null> {
         const data = await this.getData(id);
         if (data) {
             return this.fromFirestore(data, id);
@@ -41,10 +41,10 @@ class QuestionDB extends BaseDB {
         return null;
     }
 
-    static async getAll(constraints: QueryConstraint[] = []): Promise<QuestionDB[]> {
+    static async getAll(constraints: QueryConstraint[] = []): Promise<AnswerDB[]> {
         const snapshots = await this.getAllSnapshots(constraints);
         return snapshots.map(snapshot => this.fromFirestore(snapshot.data, snapshot.id));
     }
 }
 
-export default QuestionDB;
+export default AnswerDB;

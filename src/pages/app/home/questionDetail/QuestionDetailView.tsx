@@ -1,6 +1,10 @@
-import React, { useEffect } from 'react';
-import { QuestionDB } from '../../../../firebase/db/app/questions/question';
+import React from 'react';
+import QuestionDB from '../../../../firebase/db/app/questions/question';
 import { StudentInfoDB } from '../../../../firebase/db/auth/studentInfo/studentInfo';
+import Question from './question/Question';
+import CreateAnswer from './createAnswer/CreateAnswer';
+import AnswerList from './answerList/AnswerList';
+import TopTab from '../../../../components/app/tab/TopTab';
 
 interface QuestionDetailViewProps {
   loading: boolean;
@@ -15,12 +19,6 @@ const QuestionDetailView: React.FC<QuestionDetailViewProps> = ({
   question,
   studentInfo,
 }) => {
-  useEffect(() => {
-    if (question) {
-      console.log(question, studentInfo);
-    }
-  }, [question, studentInfo]);
-
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -34,15 +32,25 @@ const QuestionDetailView: React.FC<QuestionDetailViewProps> = ({
   }
 
   return (
-    <div>
-      <h1>{question.title}</h1>
-      <p>{question.content}</p>
-      {studentInfo && (
-        <div>
-          <h2>Author: {studentInfo.username}</h2>
-          <p>Grade: {studentInfo.grade}</p>
-        </div>
-      )}
+    <div className='flex'>
+      <div className='w-1/2'>
+        <TopTab
+          titles={[
+            "回答する",
+            "回答一覧"
+          ]}
+          childrenList={[
+            <CreateAnswer />,
+            <AnswerList />
+          ]}
+        />
+      </div>
+      <div className='w-1/2'>
+        <Question 
+          question={question}
+          studentInfo={studentInfo ? studentInfo : StudentInfoDB.getEmptyStudentInfo()}
+        />
+      </div>
     </div>
   );
 }

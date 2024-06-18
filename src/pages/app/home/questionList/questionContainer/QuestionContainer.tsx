@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import QuestionContainerView from './QuestionContainerView'
 import { format } from 'date-fns';
-import { QuestionDB } from '../../../../../firebase/db/app/questions/question';
+import QuestionDB from '../../../../../firebase/db/app/questions/question';
 import { StudentInfoDB } from '../../../../../firebase/db/auth/studentInfo/studentInfo';
 import { useNavigate } from 'react-router-dom';
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import CreateQuestionView from './CreateQuestionView'
 import { useAppSelector } from '../../../../redux/hooks';
-import { QuestionDB } from '../../../../firebase/db/app/questions/question';
+import QuestionDB from '../../../../firebase/db/app/questions/question';
 
 const CreateQuestion: React.FC = () => {
   const studentData = useAppSelector((state) => state.studentDataSlice);

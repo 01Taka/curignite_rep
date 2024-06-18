@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import QuestionListView from './QuestionListView';
-import { QuestionDB } from '../../../../firebase/db/app/questions/question';
+import QuestionDB from '../../../../firebase/db/app/questions/question';
 import { getStudentInfoWithUidDict } from '../../../../firebase/db/auth/users/getUser';
 import { QuestionPost } from '../../../../types/app/appTypes';
 

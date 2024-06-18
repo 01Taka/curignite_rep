@@ -52,7 +52,7 @@ const CreateQuestionView: React.FC<CreateQuestionViewProps> = ({
             fullWidth
             value={content}
             onChange={onContentChange}
-          />
+        />
         </div>
         <div className='flex justify-end w-full mt-8'>
           {message && <Alert severity='info'>{message}</Alert>}

@@ -1,16 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-interface StudentDataState {
-    uid: string;
-    iconUrl: string;
-    name: string;
-    grade: number;
-    classNumber: number;
-    joinedAt: number;
-    signUpCompleted: boolean;
-}
+import { AuthStates, StudentDataState } from '../../types/app/appTypes';
 
 const initialState: StudentDataState = {
+    authState: "new",
     uid: "",
     iconUrl: "",
     name: "",
@@ -24,6 +16,9 @@ const StudentDataSlice = createSlice({
     name: 'studentData',
     initialState: initialState,
     reducers: {
+        setAuthState: (state, action: PayloadAction<AuthStates>) => {
+            state.authState = action.payload;
+        },
         setUid: (state, action: PayloadAction<string>) => {
             state.uid = action.payload;
         },
@@ -46,6 +41,7 @@ const StudentDataSlice = createSlice({
             state.signUpCompleted = action.payload;
         },
         resetStudentData: (state) => {
+            state.authState = "new";
             state.uid = "";
             state.iconUrl = "";
             state.name = "";
@@ -60,5 +56,5 @@ const StudentDataSlice = createSlice({
     }
 })
 
-export const { setUid, setIconUrl, setName, setGrade, setClassNumber, setSignUpCompleted, resetStudentData, setStudentData } = StudentDataSlice.actions;
+export const { setAuthState, setUid, setIconUrl, setName, setGrade, setClassNumber, setSignUpCompleted, resetStudentData, setStudentData } = StudentDataSlice.actions;
 export default StudentDataSlice.reducer;

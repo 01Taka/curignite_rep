@@ -1,6 +1,6 @@
 import React from 'react'
 import { Button } from '@mui/material';
-import { getCurrentUser } from '../../../firebase/auth/signIn';
+import { getCurrentUser } from '../../../firebase/auth/auth';
 
 interface TopPageViewProps {
     onSignUp: () => void;

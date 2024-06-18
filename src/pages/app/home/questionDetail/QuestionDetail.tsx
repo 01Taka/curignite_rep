@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import QuestionDetailView from './QuestionDetailView';
 import { useParams } from 'react-router-dom';
-import { QuestionDB } from '../../../../firebase/db/app/questions/question';
+import QuestionDB from '../../../../firebase/db/app/questions/question';
 import { StudentInfoDB } from '../../../../firebase/db/auth/studentInfo/studentInfo';
 import { getStudentInfo } from '../../../../firebase/db/auth/users/getUser';
 
