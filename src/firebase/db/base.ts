@@ -1,104 +1,191 @@
-import { DocumentData, addDoc, collection, doc, getDoc, updateDoc, deleteDoc, query, limit, getDocs, QueryConstraint } from "firebase/firestore";
+import { Firestore, DocumentData, DocumentReference, DocumentSnapshot, QuerySnapshot, addDoc, collection, deleteDoc, doc, getDoc, getDocs, updateDoc, CollectionReference, QueryConstraint, query } from "firebase/firestore";
 import { db } from "../firebase";
 
-interface DBSnapshot {
-    id: string;
-    data: DocumentData;
+export interface DbData extends DocumentData {
+  documentId: string;
 }
 
-abstract class BaseDB {
-    static dbPath: string;
-    abstract id: string;
+class BaseDB<T extends DbData> {
+  protected collectionRef: CollectionReference<T>;
+  private firestore: Firestore;
 
-    abstract toFirestore(): DocumentData;
+  constructor(collectionPath: string) {
+    this.firestore = db;
+    this.collectionRef = collection(this.firestore, collectionPath) as CollectionReference<T>;
+  }
 
-    // サブクラスでオーバーライドされる実装メソッド
-    /*
-    static fromFirestore(data: DocumentData, id: string): MyDB {
-        const {  } = data;
-        return new MyDB(, id);
+  async create(data: T): Promise<DocumentReference<T>> {
+    try {
+      const docRef = await addDoc(this.collectionRef, data);
+      return docRef;
+    } catch (error) {
+      console.error("Error creating document: ", error);
+      throw new Error("Failed to create document");
     }
+  }
 
-    static async getFromFirestore(id: string): Promise<MyDB | null> {
-        const data = await this.getData(id);
-        if (data) {
-            return this.fromFirestore(data, id);
-        }
+  async readAsDocumentSnapshot(documentId: string): Promise<DocumentSnapshot<T>> {
+    try {
+      const docRef = doc(this.collectionRef, documentId);
+      const docSnapshot = await getDoc(docRef);
+      return docSnapshot;
+    } catch (error) {
+      console.error("Error reading document snapshot: ", error);
+      throw new Error("Failed to read document snapshot");
+    }
+  }
+
+  async read(documentId: string): Promise<T | null> {
+    try {
+      const docSnapshot = await this.readAsDocumentSnapshot(documentId);
+      if (docSnapshot.exists()) {
+        const data = docSnapshot.data() as T;
+        data.documentId = docSnapshot.id;
+        return data;
+      } else {
         return null;
+      }
+    } catch (error) {
+      console.error("Error reading document: ", error);
+      throw new Error("Failed to read document");
     }
+  }
 
-    static async getAll(constraints: QueryConstraint[] = []): Promise<MyDB[]> {
-        const snapshots = await this.getAllSnapshots(constraints);
-        return snapshots.map(snapshot => this.fromFirestore(snapshot.data, snapshot.id));
+  async update(data: Partial<T>): Promise<void> {
+    try {
+      const docRef = doc(this.collectionRef, data.documentId) as DocumentReference<T>;
+      await updateDoc(docRef, data as T);
+    } catch (error) {
+      console.error("Error updating document: ", error);
+      throw new Error("Failed to update document");
     }
-    */
-   
-    async addToFirestore(): Promise<void> {
-        try {
-            const data = this.toFirestore();
-            const docRef = await addDoc(collection(db, (this.constructor as typeof BaseDB).dbPath), data);
-            this.id = docRef.id;
-        } catch (error) {
-            console.error("Error adding document: ", error);
-            throw new Error("Failed to add document");
-        }
+  }
+
+  async delete(documentId: string): Promise<void> {
+    try {
+      const docRef = doc(this.collectionRef, documentId);
+      await deleteDoc(docRef);
+    } catch (error) {
+      console.error("Error deleting document: ", error);
+      throw new Error("Failed to delete document");
     }
+  }
 
-    static async getData(id: string): Promise<DocumentData | null> {
-        try {
-            const docRef = doc(db, this.dbPath, id);
-            const docSnap = await getDoc(docRef);
-
-            if (docSnap.exists()) {
-                return docSnap.data();
-            } else {
-                console.log("No such document!");
-                return null;
-            }
-        } catch (error) {
-            console.error("Error getting document: ", error);
-            return null;
-        }
+  async getAllAsQuerySnapshot(...queryConstraints: QueryConstraint[]): Promise<QuerySnapshot<T>> {
+    try {
+      const q = query(this.collectionRef, ...queryConstraints);
+      const querySnapshot = await getDocs(q);
+      return querySnapshot;
+    } catch (error) {
+      console.error("Error getting query snapshot: ", error);
+      throw new Error("Failed to get query snapshot");
     }
+  }
 
-    static async getAllSnapshots(constraints: QueryConstraint[] = [], limitNumber: number = 100): Promise<DBSnapshot[]> {
-        try {
-            const q = query(collection(db, this.dbPath), ...constraints, limit(limitNumber));
-            const querySnapshots = await getDocs(q);
-
-            return querySnapshots.docs.map(snapshot => ({
-                data: snapshot.data(),
-                id: snapshot.id
-            }));
-        } catch (error) {
-            console.error("Error getting documents: ", error);
-            throw new Error("Failed to get documents");
-        }
+  async getAll(...queryConstraints: QueryConstraint[]): Promise<T[]> {
+    try {
+      const querySnapshot = await this.getAllAsQuerySnapshot(...queryConstraints);
+      return querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        data.documentId = doc.id;
+        return data;
+      });
+    } catch (error) {
+      console.error("Error getting all documents: ", error);
+      throw new Error("Failed to get all documents");
     }
+  }
 
-    async updateInFirestore(): Promise<void> {
-        try {
-            if (!this.id) throw new Error("ID is required to update document.");
-            const docRef = doc(db, (this.constructor as typeof BaseDB).dbPath, this.id);
-            const data = this.toFirestore();
-            await updateDoc(docRef, data);
-            console.log(`${this.id} updated`);
-        } catch (error) {
-            console.error("Error updating document: ", error);
-            throw new Error("Failed to update document");
-        }
-    }
+  getSubCollection<K extends DbData>(parentId: string, subCollectionPath: string): CollectionReference<K> {
+    return collection(this.firestore, `${this.collectionRef.path}/${parentId}/${subCollectionPath}`) as CollectionReference<K>;
+  }
 
-    static async deleteFromFirestore(id: string): Promise<void> {
-        try {
-            const docRef = doc(db, this.dbPath, id);
-            await deleteDoc(docRef);
-            console.log(`${id} deleted`);
-        } catch (error) {
-            console.error("Error deleting document: ", error);
-            throw new Error("Failed to delete document");
-        }
+  async createInSubCollection<K extends DbData>(parentId: string, subCollectionPath: string, data: K): Promise<DocumentReference<K>> {
+    try {
+      const subCollectionRef = this.getSubCollection<K>(parentId, subCollectionPath);
+      const docRef = await addDoc(subCollectionRef, data);
+      return docRef;
+    } catch (error) {
+      console.error("Error creating document in subcollection: ", error);
+      throw new Error("Failed to create document in subcollection");
     }
+  }
+
+  async readAsDocumentSnapshotFromSubCollection<K extends DbData>(parentId: string, subCollectionPath: string, id: string): Promise<DocumentSnapshot<K>> {
+    try {
+      const subCollectionRef = this.getSubCollection<K>(parentId, subCollectionPath);
+      const docRef = doc(subCollectionRef, id);
+      const docSnapshot = await getDoc(docRef);
+      return docSnapshot;
+    } catch (error) {
+      console.error("Error reading document snapshot from subcollection: ", error);
+      throw new Error("Failed to read document snapshot from subcollection");
+    }
+  }
+
+  async readFromSubCollection<K extends DbData>(parentId: string, subCollectionPath: string, id: string): Promise<K | null> {
+    try {
+      const docSnapshot = await this.readAsDocumentSnapshotFromSubCollection<K>(parentId, subCollectionPath, id);
+      if (docSnapshot.exists()) {
+        const data = docSnapshot.data() as K;
+        data.documentId = docSnapshot.id;
+        return data;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error("Error reading document from subcollection: ", error);
+      throw new Error("Failed to read document from subcollection");
+    }
+  }
+
+  async updateInSubCollection<K extends DbData>(parentId: string, subCollectionPath: string, data: Partial<K>): Promise<void> {
+    try {
+      const subCollectionRef = this.getSubCollection<K>(parentId, subCollectionPath);
+      const docRef = doc(subCollectionRef, data.documentId) as DocumentReference<K>;
+      await updateDoc(docRef, data as K);
+    } catch (error) {
+      console.error("Error updating document in subcollection: ", error);
+      throw new Error("Failed to update document in subcollection");
+    }
+  }
+
+  async deleteFromSubCollection<K extends DbData>(parentId: string, subCollectionPath: string, id: string): Promise<void> {
+    try {
+      const subCollectionRef = this.getSubCollection<K>(parentId, subCollectionPath);
+      const docRef = doc(subCollectionRef, id);
+      await deleteDoc(docRef);
+    } catch (error) {
+      console.error("Error deleting document from subcollection: ", error);
+      throw new Error("Failed to delete document from subcollection");
+    }
+  }
+
+  async getAllAsQuerySnapshotFromSubCollection<K extends DbData>(parentId: string, subCollectionPath: string, ...queryConstraints: QueryConstraint[]): Promise<QuerySnapshot<K>> {
+    try {
+      const subCollectionRef = this.getSubCollection<K>(parentId, subCollectionPath);
+      const q = query(subCollectionRef, ...queryConstraints);
+      const querySnapshot = await getDocs(q);
+      return querySnapshot;
+    } catch (error) {
+      console.error("Error getting query snapshot from subcollection: ", error);
+      throw new Error("Failed to get query snapshot from subcollection");
+    }
+  }
+
+  async getAllFromSubCollection<K extends DbData>(parentId: string, subCollectionPath: string, ...queryConstraints: QueryConstraint[]): Promise<K[]> {
+    try {
+      const querySnapshot = await this.getAllAsQuerySnapshotFromSubCollection(parentId, subCollectionPath, ...queryConstraints);
+      return querySnapshot.docs.map(doc => {
+        const data = doc.data() as K;
+        data.documentId = doc.id;
+        return data;
+      });
+    } catch (error) {
+      console.error("Error getting all documents from subcollection: ", error);
+      throw new Error("Failed to get all documents from subcollection");
+    }
+  }
 }
 
 export default BaseDB;

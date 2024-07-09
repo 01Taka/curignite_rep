@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { SidebarElement } from "../../../../types/app/home";
+import { SidebarElement } from "../../../../types/app/main";
 import { Button } from "@mui/material";
 
 interface SidebarItemProps {

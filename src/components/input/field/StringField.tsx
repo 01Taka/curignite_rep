@@ -1,31 +1,26 @@
-import React from 'react'
-import { TextField } from '@mui/material';
+import React from 'react';
+import { TextField, TextFieldProps } from '@mui/material';
 
-interface StringFieldProps {
-    text: string;
-    label: string;
-    name?: string;
-    onTextChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+interface StringFieldProps extends Omit<TextFieldProps, 'variant'> {
+  label: string;
+  disabled?: boolean;
+  required?: boolean;
+  errorMessage?: string;
 }
 
-const StringField: React.FC<StringFieldProps> = ({
-    text,
-    label,
-    name = label,
-    onTextChange,
-}) => {
+const StringField: React.FC<StringFieldProps> = ({ label, disabled, required, errorMessage, ...props }) => {
   return (
     <TextField
-        className='w-full h-14'
-        id={name}
-        name={name}
-        label={label}
-        variant="standard"
-        type="text"
-        value={text}
-        onChange={onTextChange}
+      {...props}
+      label={label}
+      disabled={disabled}
+      required={required}
+      variant="filled"
+      error={!!errorMessage}
+      helperText={errorMessage}
+      fullWidth
     />
-  )
-}
+  );
+};
 
-export default StringField
+export default StringField;

@@ -1,7 +1,7 @@
 import { Divider, IconButton } from "@mui/material";
 import classNames from "classnames";
 import SidebarItems from "./SidebarItems";
-import { SidebarElement } from "../../../../types/app/home";
+import { SidebarElement } from "../../../../types/app/main";
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
@@ -20,7 +20,7 @@ const Sidebar: React.FC<SidebarProps> = ({ elements, open, handleToggleOpen }) =
         'w-64': open,
         'w-16': !open,
       },
-      'fixed top-0 left-0',
+      'fixed top-0 left-0 h-screen bg-main',
     )}
   >
     <div className="flex justify-end items-center px-2 sm:h-16 h-14">

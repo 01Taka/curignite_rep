@@ -1,17 +1,6 @@
-import AnswerDB from "../../firebase/db/app/answers/answers";
-import QuestionDB from "../../firebase/db/app/questions/question";
+import AnswerDB from "../../firebase/db/app/QandA/answers/answers";
+import QuestionDB from "../../firebase/db/app/QandA/questions/questions";
 import { StudentInfoDB } from "../../firebase/db/auth/studentInfo/studentInfo";
-
-export interface StudentDataState {
-    authState: AuthStates;
-    uid: string;
-    iconUrl: string;
-    name: string;
-    grade: number;
-    classNumber: number;
-    joinedAt: number;
-    signUpCompleted: boolean;
-}
 
 export interface StudentInfoWithUid {
     uid: string;

@@ -21,7 +21,7 @@ const SignInWithEmailPage: React.FC = () => {
     setError('');
     try {
       await signInWithEmail(email, password);
-      navigate('/home');
+      navigate('/main');
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);

@@ -55,7 +55,7 @@ const SchoolSection: React.FC<{
 }> = ({ schoolName, schoolPassword, onSchoolNameChange, onSchoolPasswordChange }) => (
   <div className='mt-12'>
     <Heading children='学校' level={2} className='mb-2' />
-    <StringField text={schoolName} label='School Name' name='schoolName' onTextChange={onSchoolNameChange} />
+    <StringField value={schoolName} label='School Name' name='schoolName' onChange={onSchoolNameChange} />
     <PasswordField password={schoolPassword} label='School Password' name='schoolPassword' onPasswordChange={onSchoolPasswordChange} />
   </div>
 );

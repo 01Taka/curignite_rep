@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AuthStates, StudentDataState } from '../../types/app/appTypes';
+import { AuthStates } from '../../types/app/appTypes';
+import { StudentDataState } from '../../types/app/reduxStateTypes';
 
 const initialState: StudentDataState = {
     authState: "new",

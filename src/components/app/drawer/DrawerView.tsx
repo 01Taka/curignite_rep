@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { SidebarElement } from "../../../types/app/home";
+import { SidebarElement } from "../../../types/app/main";
 import Sidebar from "./sidebar/Sidebar";
 import TopDrawer from "./TopDrawer";
 
@@ -10,11 +10,7 @@ interface DrawerViewProps {
 }
 
 const DrawerView: React.FC<DrawerViewProps> = ({ elements, children }) => {
-  const [open, setOpen] = useState(true);
-
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
+  const [open, setOpen] = useState(false);
 
   const handleToggleOpen = () => {
     setOpen(!open);
@@ -24,9 +20,8 @@ const DrawerView: React.FC<DrawerViewProps> = ({ elements, children }) => {
     <div className="flex">
       <Sidebar elements={elements} open={open} handleToggleOpen={handleToggleOpen} />
       <TopDrawer
-        items={'Curignite'}
-        open={open}
-        handleDrawerOpen={handleDrawerOpen}
+        startItems={['Curignite', 'H']}
+        endItems={['Curignite', 'G']}
       />
       <div className={`mt-16 ${open ? 'pl-64' : 'pl-16'} w-full transition-all duration-300`}>
         {children}

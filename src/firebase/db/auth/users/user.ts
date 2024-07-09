@@ -1,35 +1,52 @@
-import { Timestamp, DocumentData } from "firebase/firestore"; 
+// import { Timestamp, DocumentData, QueryConstraint } from "firebase/firestore"; 
+// import BaseDB from "../../base";
 
-export class UserDB {
-    uid: string;
-    studentInfo: DocumentData;
-    createdAt: Timestamp; // FirestoreのTimestamp型を使用する
-    updatedAt: Timestamp;
+// export class UserDB extends BaseDB{
+//     uid: string;
+//     studentInfo: DocumentData;
+//     createdAt: Timestamp; // FirestoreのTimestamp型を使用する
+//     updatedAt: Timestamp;
+//     documentId: string;
 
-    constructor(uid: string, studentInfo: DocumentData, createdAt?: Timestamp, updatedAt?: Timestamp) {
-        this.uid = uid;
-        this.studentInfo = studentInfo;
-        this.createdAt = createdAt ? createdAt : Timestamp.now(); // FirestoreのTimestamp型に変換
-        this.updatedAt = updatedAt ? updatedAt : Timestamp.now();
-    }
+//     constructor(uid: string, studentInfo: DocumentData, createdAt: Timestamp = Timestamp.now(), updatedAt: Timestamp = Timestamp.now(), documentId: string = "") {
+//         super();
+//         this.uid = uid;
+//         this.studentInfo = studentInfo;
+//         this.createdAt = createdAt; // FirestoreのTimestamp型に変換
+//         this.updatedAt = updatedAt;
+//         this.documentId = documentId;
+//     }
 
-    // Firestoreのデータ形式に変換するメソッド
-    toFirestore() {
-        return {
-            uid: this.uid,
-            studentInfo: this.studentInfo,
-            createdAt: this.createdAt,
-            updatedAt: this.updatedAt,
-        };
-    }
+//     getPath(): string {
+//         return 'users'
+//     }
 
-    // FirestoreからのデータをUserクラスに変換するメソッド
-    static fromFirestore(data: DocumentData) {
-        const { uid, studentInfo, createdAt, updatedAt } = data;
-        return new UserDB(uid, studentInfo, createdAt, updatedAt);
-    }
+//     // Firestoreのデータ形式に変換するメソッド
+//     toFirestore(): DocumentData {
+//         return {
+//             uid: this.uid,
+//             studentInfo: this.studentInfo,
+//             createdAt: this.createdAt,
+//             updatedAt: this.updatedAt,
+//         };
+//     }
 
-    getStudentInfo() {
-        return this.studentInfo;
-    }
-}
+//     // FirestoreからのデータをUserクラスに変換するメソッド
+//     static fromFirestore(data: DocumentData, documentId: string): UserDB {
+//         const { uid, studentInfo, createdAt, updatedAt } = data;
+//         return new UserDB(uid, studentInfo, createdAt, updatedAt, documentId);
+//     }
+
+//     static async getFromFirestore(documentId: string): Promise<UserDB | null> {
+//         const data = await this.getData(documentId);
+//         if (data) {
+//             return this.fromFirestore(data, documentId);
+//         }
+//         return null;
+//     }
+
+//     static async getAll(constraints: QueryConstraint[] = []): Promise<UserDB[]> {
+//         const snapshots = await this.getAllSnapshots(constraints);
+//         return snapshots.map(snapshot => this.fromFirestore(snapshot.data, snapshot.documentId));
+//     }
+// }

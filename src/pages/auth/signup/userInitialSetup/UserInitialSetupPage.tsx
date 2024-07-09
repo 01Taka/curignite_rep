@@ -28,7 +28,7 @@ const UserInitialSetupPage: React.FC = () => {
         throw new Error('アカウントを作成してください');
       }
       else if (await checkIfExistUidInDB(uid)) {
-        navigate('/home');
+        navigate('/main');
       }
     }
     const updateUserName = async () => {
@@ -68,7 +68,7 @@ const UserInitialSetupPage: React.FC = () => {
         formData.schoolPassword
       );
       
-      navigate('/home');
+      navigate('/main');
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);

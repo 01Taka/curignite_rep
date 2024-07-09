@@ -1,13 +1,21 @@
 import React, { ReactNode } from 'react';
+import { cn } from '../../lib/utils';
 
 interface FormContainerProps {
   children: ReactNode;
+  className?: string;
+  flexCenter?: boolean;
 }
 
-const FormContainer: React.FC<FormContainerProps> = ({ children }) => {
+const FormContainer: React.FC<FormContainerProps> = ({ children, className, flexCenter }) => {
   return (
-    <div className='flex items-center justify-center min-h-screen bg-blue-50 p-4'>
-      <div className='flex flex-col items-center w-full max-w-lg bg-white shadow-lg p-6 my-4 rounded-lg overflow-y-auto'>
+    <div className='flex items-center justify-center w-full max-w-lg mx-auto'>
+      <div className={
+        cn(
+          'w-full max-w-lg h-screen max-h-[calc(100vh-7rem)] p-6 bg-primaryBase shadow-lg rounded-lg overflow-y-auto border-main border-2',
+          flexCenter && 'flex flex-col items-center',
+          className,
+        )}>
         {children}
       </div>
     </div>

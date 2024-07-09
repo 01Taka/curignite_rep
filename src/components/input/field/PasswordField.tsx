@@ -27,7 +27,7 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
     };
 
     return (
-        <FormControl variant="standard" className='w-full h-14'>
+        <FormControl variant="filled" className='w-full h-14'>
             <InputLabel htmlFor={name}>{label}</InputLabel>
             <Input
                 id={name}

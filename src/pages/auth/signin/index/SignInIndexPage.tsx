@@ -16,7 +16,7 @@ const SignInPage: React.FC = () => {
       if (isNewUser) {
         navigate('/user-initial-setup');
       } else {
-        navigate('/home');
+        navigate('/main');
       }
     } catch (error) {
       if (error instanceof Error) {

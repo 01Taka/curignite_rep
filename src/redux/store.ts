@@ -1,11 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
-import sampleCounterReducer from './slices/sampleCounterSlice';
 import studentDataSlice from './slices/studentDataSlice';
+import userDataSlice from './slices/userDataSilce';
 
 const store = configureStore({
   reducer: {
-    sampleCounter: sampleCounterReducer,
     studentDataSlice: studentDataSlice,
+    userDataSlice: userDataSlice,
   },
 });
 

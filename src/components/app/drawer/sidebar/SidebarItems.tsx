@@ -1,5 +1,5 @@
 import { Divider } from "@mui/material";
-import { SidebarElement } from "../../../../types/app/home";
+import { SidebarElement } from "../../../../types/app/main";
 import SidebarItem from "./SidebarItem";
 
 interface SidebarItemsProps {

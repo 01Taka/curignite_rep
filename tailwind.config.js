@@ -1,14 +1,34 @@
-// tailwind.config.js
-
 module.exports = {
-    purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'], // 未使用のスタイルを削除する設定（後述の内容を追加することで最適化できます）
-    darkMode: false,
-    theme: {
-      extend: {}, 
+  content: [
+    './src/**/*.{js,jsx,ts,tsx}',
+    './public/index.html',
+  ],
+  darkMode: false, // または 'media' または 'class'
+  theme: {
+    extend: {
+      colors: {
+        main: {
+          DEFAULT: '#3B5998',
+          hover: '#2d4373',
+        },
+        primaryBase: {
+          DEFAULT: '#F0F8FF',
+          hover: '#d4e1ff',
+        },
+        secondaryBase: {
+          DEFAULT: '#D1D3E3',
+          hover: '#b4b6c8',
+        },
+        accent: {
+          DEFAULT: '#FFA500',
+          hover: '#cc8400',
+        },
+        grayText: '#6B6B6B',
+      }
     },
-    variants: {
-      extend: {}, 
-    },
-    plugins: [], 
-  };
-  
+  },
+  variants: {
+    extend: {},
+  },
+  plugins: [],
+};

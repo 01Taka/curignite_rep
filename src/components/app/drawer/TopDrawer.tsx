@@ -1,42 +1,27 @@
-import { IconButton, Toolbar, Typography } from "@mui/material";
-import MenuIcon from '@mui/icons-material/Menu';
-import classNames from "classnames";
 import { ReactNode } from "react";
 
 interface TopDrawerProps {
-    items?: ReactNode;
-    open: boolean;
-    handleDrawerOpen: () => void;
-  }
-  
-  const TopDrawer: React.FC<TopDrawerProps> = ({ open, handleDrawerOpen, items }) => (
-    <div
-      className={classNames(
-        'fixed top-0 left-0 w-full transition-all duration-300',
-        {
-          'ml-64 w-[calc(100%-256px)]': open, // 16rem = 240px
-          'w-full': !open,
-        },
-        'bg-blue-500 z-50' // Ensure z-index is high enough
-      )}
-    >
-      <Toolbar className="flex justify-between">
-        <IconButton
-          color="inherit"
-          aria-label="open drawer"
-          onClick={handleDrawerOpen}
-          edge="start"
-          className={classNames('transition-all duration-300', { hidden: open })}
-        >
-          <MenuIcon />
-        </IconButton>
-        <Typography variant="h6" noWrap component="div" className="text-white">
-          {items}
-        </Typography>
-      </Toolbar>
+    startItems?: ReactNode[];
+    endItems?: ReactNode[];
+}
+
+const TopDrawer: React.FC<TopDrawerProps> = ({ startItems, endItems }) => (
+    <div className='fixed top-0 left-0 flex justify-between items-center w-full h-12 bg-main px-6'>
+      <div className="flex space-x-4">
+        {startItems?.map((item, index) => (
+          <div key={index}>
+            {item}
+          </div>
+        ))}
+      </div>
+      <div className="flex space-x-4">
+        {endItems?.map((item, index) => (
+          <div key={index}>
+            {item}
+          </div>
+        ))}
+      </div>
     </div>
 );
 
-export default TopDrawer
-  
-
+export default TopDrawer;
