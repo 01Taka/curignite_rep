@@ -1,25 +1,33 @@
 import { DocumentData, DocumentReference, QueryConstraint, Timestamp } from "firebase/firestore";
 import BaseDB, { DbData } from "../../../base";
 
-export interface Questions extends DbData{
+export interface Question extends DbData{
     title: string;
     content: string;
     authorUid: string;
     createdAt: Timestamp;
 }
 
-class QuestionsDB extends BaseDB<Questions> {
+export const questionInitialState: Question = {
+    documentId: "",
+    title: "",
+    content: "",
+    authorUid: "",
+    createdAt: Timestamp.fromDate(new Date(0)),
+}
+
+class QuestionsDB extends BaseDB<Question> {
     constructor() {
         super("questions");
     }
 
     async createQuestions(title: string, content: string, authorUid: string, createdAt: Timestamp = Timestamp.now()): Promise<DocumentReference<DocumentData>> {
-        const data: Questions = { documentId: "", title, content, authorUid, createdAt };
+        const data: Question = { documentId: "", title, content, authorUid, createdAt };
         return this.create(data);
     }
     
     async updateQuestions(documentId: string, title: string, content: string, authorUid: string, createdAt: Timestamp): Promise<void> {
-        const data: Questions = { documentId, title, content, authorUid, createdAt};
+        const data: Question = { documentId, title, content, authorUid, createdAt};
         return this.update(data);
     }
 }

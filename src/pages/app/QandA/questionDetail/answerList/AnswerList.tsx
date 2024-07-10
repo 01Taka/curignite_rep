@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import AnswerListView from '../../../QandA/questionDetail/answerList/AnswerListView'
 import { AnswerPost } from '../../../../../types/app/appTypes';
-import AnswerDB from '../../../../../firebase/db/app/QandA//answers/answers';
+import { Answer } from '../../../../../firebase/db/app/QandA//answers/answers';
 import { getStudentInfoWithUidDict } from '../../../../../firebase/db/auth/users/getUser';
-import { QueryConstraint, where } from 'firebase/firestore';
+import { where } from 'firebase/firestore';
 import { useParams } from 'react-router-dom';
+import { answersDB } from '../../../../../firebase/db/dbs';
 
 const AnswerList: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -12,12 +13,8 @@ const AnswerList: React.FC = () => {
 
   useEffect(() => {
       const fetchAnswersAndStudentInfo = async () => {
-        const constraints: QueryConstraint[] = [
-            where("questionId", "==", id)
-        ];
-
         try {
-            const fetchedAnswers = await AnswerDB.getAll(constraints);
+            const fetchedAnswers = await answersDB.getAll(where("questionId", "==", id));
             await getStudentInfoFromAnswer(fetchedAnswers);
         } catch (error) {
             console.error("Error fetching answers or student info: ", error);
@@ -29,7 +26,7 @@ const AnswerList: React.FC = () => {
     }
   }, [id]);
 
-  const getStudentInfoFromAnswer = async (answers: AnswerDB[]) => {
+  const getStudentInfoFromAnswer = async (answers: Answer[]) => {
       const uidList: string[] = answers.map(answer => answer.authorUid);
       const info = await getStudentInfoWithUidDict(uidList);
       

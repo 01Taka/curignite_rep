@@ -1,4 +1,4 @@
-import { Firestore, DocumentData, DocumentReference, DocumentSnapshot, QuerySnapshot, addDoc, collection, deleteDoc, doc, getDoc, getDocs, updateDoc, CollectionReference, QueryConstraint, query } from "firebase/firestore";
+import { Firestore, DocumentData, DocumentReference, DocumentSnapshot, QuerySnapshot, addDoc, collection, deleteDoc, doc, getDoc, getDocs, updateDoc, CollectionReference, QueryConstraint, query, where, limit, setDoc } from "firebase/firestore";
 import { db } from "../firebase";
 
 export interface DbData extends DocumentData {
@@ -23,6 +23,12 @@ class BaseDB<T extends DbData> {
       throw new Error("Failed to create document");
     }
   }
+
+  async createWithId(documentId: string, data: T): Promise<DocumentReference<T>> {
+    const docRef = doc(this.collectionRef, documentId);
+    await setDoc(docRef, data);
+    return docRef;
+  }  
 
   async readAsDocumentSnapshot(documentId: string): Promise<DocumentSnapshot<T>> {
     try {
@@ -93,6 +99,25 @@ class BaseDB<T extends DbData> {
     } catch (error) {
       console.error("Error getting all documents: ", error);
       throw new Error("Failed to get all documents");
+    }
+  }
+
+  async getFirstMatch(field: keyof T, value: any): Promise<T | null> {
+    try {
+      const q = query(this.collectionRef, where(field as string, "==", value), limit(1));
+      const querySnapshot: QuerySnapshot<T> = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        const doc = querySnapshot.docs[0];
+        const data = doc.data() as T;
+        data.documentId = doc.id;
+        return data;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error("Error getting first match: ", error);
+      throw new Error("Failed to get first match");
     }
   }
 

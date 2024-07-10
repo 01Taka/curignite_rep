@@ -1,20 +1,15 @@
-import AnswerDB from "../../firebase/db/app/QandA/answers/answers";
-import QuestionDB from "../../firebase/db/app/QandA/questions/questions";
-import { StudentInfoDB } from "../../firebase/db/auth/studentInfo/studentInfo";
-
-export interface StudentInfoWithUid {
-    uid: string;
-    studentInfo: StudentInfoDB | null;
-}
+import { Answer } from "../../firebase/db/app/QandA/answers/answers";
+import { Question } from "../../firebase/db/app/QandA/questions/questions";
+import { OrganizationExtendsUser } from "../../firebase/db/app/user/users";
 
 export interface QuestionPost {
-    studentInfo: StudentInfoDB | null;
-    question: QuestionDB;
+    studentInfo: OrganizationExtendsUser | null;
+    question: Question;
 }
 
 export interface AnswerPost {
-    studentInfo: StudentInfoDB | null;
-    answer: AnswerDB;
+    studentInfo: OrganizationExtendsUser | null;
+    answer: Answer;
 }
 
 export type AnonymousStatus =

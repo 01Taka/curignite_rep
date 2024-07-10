@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react'
-import QuestionView from './QuestionView'
-import { Questions } from '../../../../../firebase/db/app/QandA/questions/questions';
-import { StudentInfoDB } from '../../../../../firebase/db/auth/studentInfo/studentInfo';
+import QuestionDisplayView from './QuestionDisplayView'
+import { Question } from '../../../../../firebase/db/app/QandA/questions/questions';
 import { getIconUrl } from '../../../../../firebase/storage/get';
 import { format } from 'date-fns';
+import { OrganizationExtendsUser } from '../../../../../firebase/db/app/user/users';
 
 interface QuestionProps {
-  question: Questions;
-  studentInfo: StudentInfoDB;
+  question: Question;
+  organizationExtendsUser: OrganizationExtendsUser;
 }
 
-const Question: React.FC<QuestionProps> = ({
+const QuestionDisplay: React.FC<QuestionProps> = ({
   question,
-  studentInfo,
+  organizationExtendsUser,
 }) => {
   const [iconUrl, setIconUrl] = useState('');
   const date = question.createdAt.toDate();
@@ -25,14 +25,14 @@ const Question: React.FC<QuestionProps> = ({
     setIcon();
   }, [question])
 
-  return <QuestionView 
+  return <QuestionDisplayView 
     iconUrl={iconUrl}
-    username={studentInfo.username}
-    grade={studentInfo.grade === 0 ? "" : studentInfo.grade.toString()}
+    username={organizationExtendsUser.username}
+    grade={organizationExtendsUser.grade === 0 ? "" : organizationExtendsUser.grade.toString()}
     title={question.title}
     content={question.content}
     postDateStr={format(date, 'MM/dd, HH:mm  (yyyy)')}
   />
 }
 
-export default Question
+export default QuestionDisplay

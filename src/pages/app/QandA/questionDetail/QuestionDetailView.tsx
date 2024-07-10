@@ -1,23 +1,23 @@
 import React from 'react';
-import QuestionDB from '../../../../firebase/db/app/QandA/questions/questions';
-import { StudentInfoDB } from '../../../../firebase/db/auth/studentInfo/studentInfo';
-import Question from './question/Question';
+import { Question } from '../../../../firebase/db/app/QandA/questions/questions';
 import CreateAnswer from './createAnswer/CreateAnswer';
 import AnswerList from './answerList/AnswerList';
 import TopTab from '../../../../components/app/tab/TopTab';
+import { initialOrganizationExtendsUserState, OrganizationExtendsUser } from '../../../../firebase/db/app/user/users';
+import QuestionDisplay from './question/QuestionDisplay';
 
 interface QuestionDetailViewProps {
   loading: boolean;
   error: string | null;
-  question: QuestionDB | null;
-  studentInfo: StudentInfoDB | null;
+  question: Question | null;
+  organizationExtendsUser: OrganizationExtendsUser | null;
 }
 
 const QuestionDetailView: React.FC<QuestionDetailViewProps> = ({
   loading,
   error,
   question,
-  studentInfo,
+  organizationExtendsUser,
 }) => {
   if (loading) {
     return <div>Loading...</div>;
@@ -46,9 +46,9 @@ const QuestionDetailView: React.FC<QuestionDetailViewProps> = ({
         />
       </div>
       <div className='w-1/2'>
-        <Question 
+        <QuestionDisplay
           question={question}
-          studentInfo={studentInfo ? studentInfo : StudentInfoDB.getEmptyStudentInfo()}
+          organizationExtendsUser={organizationExtendsUser ? organizationExtendsUser : initialOrganizationExtendsUserState}
         />
       </div>
     </div>

@@ -1,7 +1,7 @@
 import { User, getAuth, onAuthStateChanged } from "firebase/auth";
-import { getStudentInfo } from "../db/auth/users/getUser";
 import { AuthStates } from "../../types/app/appTypes";
 import { validateSchoolId } from "../db/auth/schools/validateSchools";
+import { usersDB } from "../db/dbs";
 
 export const getCurrentUser = (): Promise<User | null> => {
     return new Promise((resolve, reject) => {
@@ -18,13 +18,13 @@ export const  getUserAuthState = async (): Promise<AuthStates> => {
     const user = await getCurrentUser();
     if (user) {
         const uid = user.uid;
-        const studentInfo = await getStudentInfo(uid);
-        if (!studentInfo) {
+        const organizationExtendsUser = await usersDB.readOrganizationByUid(uid);
+        if (!organizationExtendsUser) {
             return "signingUp";
         } else {
-            if (studentInfo.schoolId) {
+            if (organizationExtendsUser.schoolId) {
                 try {
-                    await validateSchoolId(studentInfo.schoolId);
+                    await validateSchoolId(organizationExtendsUser.schoolId);
                     return "verified";
                 } catch (error) {
                     console.error(error);

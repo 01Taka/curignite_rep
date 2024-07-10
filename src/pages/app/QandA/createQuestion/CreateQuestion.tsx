@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import CreateQuestionView from './CreateQuestionView'
 import { useAppSelector } from '../../../../redux/hooks';
-import QuestionDB from '../../../../firebase/db/app/QandA/questions/questions';
 import { questionsDB } from '../../../../firebase/db/dbs';
 
 const CreateQuestion: React.FC = () => {

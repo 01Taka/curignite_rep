@@ -1,13 +1,13 @@
 import React, { useEffect } from "react";
 import IndexPageView from "./IndexPageView";
 import { getCurrentUser, getUserAuthState } from "../../../firebase/auth/auth";
-import { getStudentInfo } from "../../../firebase/db/auth/users/getUser";
 import { useAppDispatch } from "../../../redux/hooks";
 import { resetStudentData, setAuthState, setStudentData, setUid } from "../../../redux/slices/studentDataSlice";
 import { getFileUrl } from "../../../firebase/storage/get";
 import { defaultIconUrl } from "../../../types/app/appTypes";
 import { routeItems } from "./routing";
 import { StudentDataState } from "../../../types/app/reduxStateTypes";
+import { usersDB } from "../../../firebase/db/dbs";
 
 const IndexPage: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -31,22 +31,22 @@ const IndexPage: React.FC = () => {
                 const user = await getCurrentUser();
                 const uid = user?.uid;
                 if (uid) {
-                    const studentInfo = await getStudentInfo(uid);
+                    const organizationExtendsUser = await usersDB.readOrganizationByUid(uid);
                     let iconUrl: string = await getFileUrl("userIcons", uid);
 
                     if (!iconUrl) {
                         iconUrl = defaultIconUrl;
                     }
                     
-                    if (studentInfo) {
+                    if (organizationExtendsUser) {
                         const studentData: StudentDataState = {
                             authState: state,
                             uid: uid,
                             iconUrl: iconUrl,
-                            name: studentInfo.username,
-                            grade: studentInfo.grade,
-                            classNumber: studentInfo.classNumber,
-                            joinedAt: studentInfo.joinedAt.toMillis(),
+                            name: organizationExtendsUser.username,
+                            grade: organizationExtendsUser.grade,
+                            classNumber: organizationExtendsUser.classNumber,
+                            joinedAt: organizationExtendsUser.joinedAt.toMillis(),
                             signUpCompleted: true,
                         }
                         dispatch(setStudentData(studentData));

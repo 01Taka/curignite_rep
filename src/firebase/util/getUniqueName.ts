@@ -8,11 +8,8 @@ const generateUniqueString = (): string => {
 
 // 重複を避けるためにユーザー名にランダムな文字列を追加する関数
 export const getUniqueUserName = async (username: string): Promise<string> => {
-  let uniqueUserName: string = username;
-  
-  while (await checkIfUserNameTaken(uniqueUserName)) {
-    uniqueUserName = `${username}${generateUniqueString().slice(0, 8)}`; // 8文字のランダムな文字列を追加
+  if (await checkIfUserNameTaken(username)) {
+    return `${username}${generateUniqueString().slice(0, 8)}`
   }
-  
-  return uniqueUserName;
+  return username;
 }

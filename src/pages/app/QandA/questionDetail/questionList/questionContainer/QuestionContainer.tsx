@@ -3,10 +3,10 @@ import QuestionContainerView from './QuestionContainerView'
 import { format } from 'date-fns';
 import { StudentInfoDB } from '../../../../../../firebase/db/auth/studentInfo/studentInfo';
 import { useNavigate } from 'react-router-dom';
-import { Questions } from '../../../../../../firebase/db/app/QandA/questions/questions';
+import { Question } from '../../../../../../firebase/db/app/QandA/questions/questions';
 
 interface QuestionContainerProps {
-    question: Questions;
+    question: Question;
     studentInfo: StudentInfoDB | null;
 }
 

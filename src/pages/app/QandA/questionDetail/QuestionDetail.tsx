@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import QuestionDetailView from '../../QandA/questionDetail/QuestionDetailView';
 import { useParams } from 'react-router-dom';
-import QuestionDB from '../../../../firebase/db/app/QandA/questions/questions';
-import { StudentInfoDB } from '../../../../firebase/db/auth/studentInfo/studentInfo';
-import { getStudentInfo } from '../../../../firebase/db/auth/users/getUser';
+import { Question } from '../../../../firebase/db/app/QandA/questions/questions';
+import { questionsDB, usersDB } from '../../../../firebase/db/dbs';
+import { OrganizationExtendsUser } from '../../../../firebase/db/app/user/users';
 
 const QuestionDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [question, setQuestion] = useState<QuestionDB | null>(null);
-  const [studentInfo, setStudentInfo] = useState<StudentInfoDB | null>(null);
+  const [question, setQuestion] = useState<Question | null>(null);
+  const [organizationExtendsUser, setOrganizationExtendsUser] = useState<OrganizationExtendsUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -23,11 +23,11 @@ const QuestionDetail: React.FC = () => {
 
   const fetchQuestionDetails = async (questionId: string) => {
     try {
-      const question = await QuestionDB.getFromFirestore(questionId);
+      const question = await questionsDB.read(questionId);
       if (question) {
         const uid = question.authorUid;
-        const studentInfo = await getStudentInfo(uid);
-        setStudentInfo(studentInfo);
+        const organizationExtendsUser = await usersDB.readOrganizationByUid(uid);
+        setOrganizationExtendsUser(organizationExtendsUser);
         setQuestion(question);
       } else {
         setError("Question not found.");
@@ -44,7 +44,7 @@ const QuestionDetail: React.FC = () => {
       loading={loading}
       error={error}
       question={question}
-      studentInfo={studentInfo}
+      organizationExtendsUser={organizationExtendsUser}
     />
   );
 };

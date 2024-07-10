@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import UserInitialSetupView from './UserInitialSetupView';
 import { useNavigate } from 'react-router-dom';
 import { getCurrentUser } from '../../../../firebase/auth/auth';
-import { getUniqueUserName } from '../../../../firebase/util/generateUniqueUserName';
 import { createUser } from './handleUserInitialSetup';
 import { checkIfExistUidInDB } from '../../../../firebase/db/auth/users/getUser';
 import { getUserNameData } from '../../../../functions/localStorage/authData';
+import { getUniqueUserName } from '../../../../firebase/util/getUniqueName';
 
 const UserInitialSetupPage: React.FC = () => {
   const [isLoadingName, setIsLoadingName] = useState(true);

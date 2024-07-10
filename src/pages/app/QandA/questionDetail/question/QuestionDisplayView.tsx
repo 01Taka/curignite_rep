@@ -1,7 +1,7 @@
 import React from 'react'
 import PosterInfo from './PosterInfo';
 
-interface QuestionViewProps {
+interface QuestionDisplayViewProps {
   iconUrl: string;
   username: string;
   grade: string;
@@ -10,7 +10,7 @@ interface QuestionViewProps {
   content: string;
 }
 
-const QuestionView: React.FC<QuestionViewProps> = ({
+const QuestionDisplayView: React.FC<QuestionDisplayViewProps> = ({
   iconUrl,
   username,
   grade,
@@ -29,4 +29,4 @@ const QuestionView: React.FC<QuestionViewProps> = ({
   )
 }
 
-export default QuestionView
+export default QuestionDisplayView

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import CreateAnswerView from './CreateAnswerView'
-import AnswerDB from '../../../../../firebase/db/app/QandA//answers/answers';
 import { useAppSelector } from '../../../../../redux/hooks';
 import { useParams } from 'react-router-dom';
 import { answersDB } from '../../../../../firebase/db/dbs';

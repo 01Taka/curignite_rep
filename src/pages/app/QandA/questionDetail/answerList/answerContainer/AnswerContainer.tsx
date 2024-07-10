@@ -1,12 +1,12 @@
 import React from 'react'
 import AnswerContainerView from './AnswerContainerView'
-import AnswerDB from '../../../../../../firebase/db/app/QandA//answers/answers'
-import { StudentInfoDB } from '../../../../../../firebase/db/auth/studentInfo/studentInfo';
+import { Answer } from '../../../../../../firebase/db/app/QandA//answers/answers'
 import { format } from 'date-fns';
+import { OrganizationExtendsUser } from '../../../../../../firebase/db/app/user/users';
 
 interface AnswerContainerProps {
-    answer: AnswerDB;
-    studentInfo: StudentInfoDB | null;
+    answer: Answer;
+    studentInfo: OrganizationExtendsUser | null;
 }
 
 const AnswerContainer: React.FC<AnswerContainerProps> = ({ answer, studentInfo }) => {
