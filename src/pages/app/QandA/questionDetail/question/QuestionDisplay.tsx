@@ -3,16 +3,16 @@ import QuestionDisplayView from './QuestionDisplayView'
 import { Question } from '../../../../../firebase/db/app/QandA/questions/questions';
 import { getIconUrl } from '../../../../../firebase/storage/get';
 import { format } from 'date-fns';
-import { OrganizationExtendsUser } from '../../../../../firebase/db/app/user/users';
+import { UserOrganizationInfo } from '../../../../../firebase/db/app/user/usersTypes';
 
 interface QuestionProps {
   question: Question;
-  organizationExtendsUser: OrganizationExtendsUser;
+  userOrganizationInfo: UserOrganizationInfo;
 }
 
 const QuestionDisplay: React.FC<QuestionProps> = ({
   question,
-  organizationExtendsUser,
+  userOrganizationInfo,
 }) => {
   const [iconUrl, setIconUrl] = useState('');
   const date = question.createdAt.toDate();
@@ -27,8 +27,8 @@ const QuestionDisplay: React.FC<QuestionProps> = ({
 
   return <QuestionDisplayView 
     iconUrl={iconUrl}
-    username={organizationExtendsUser.username}
-    grade={organizationExtendsUser.grade === 0 ? "" : organizationExtendsUser.grade.toString()}
+    username={userOrganizationInfo.username}
+    grade={userOrganizationInfo.grade === 0 ? "" : userOrganizationInfo.grade.toString()}
     title={question.title}
     content={question.content}
     postDateStr={format(date, 'MM/dd, HH:mm  (yyyy)')}

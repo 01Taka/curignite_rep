@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react'
 import ProfileView from './ProfileView'
 import { useAppDispatch, useAppSelector } from '../../../../redux/hooks';
 import { uploadFile } from '../../../../firebase/storage/upload';
-import { setIconUrl } from '../../../../redux/slices/studentDataSlice';
 
 const Profile: React.FC = () => {
     const dispatch = useAppDispatch(); 
-    const studentData = useAppSelector((state) => state.studentDataSlice);
+    // const studentData = useAppSelector((state) => state.studentDataSlice);
 
     const [iconUrl, setIconLink] = useState("");
     const [username, setUserName] = useState("");
@@ -19,17 +18,17 @@ const Profile: React.FC = () => {
       const setStudentInfo = async () => {
         setIsSignUpCompleted(false);
 
-        if (studentData && studentData.signUpCompleted) {
-          setIconLink(studentData.iconUrl);
-          setUserName(studentData.name);
-          setGrade(studentData.grade);
-          setClassNumber(studentData.classNumber);
-          setJoinedAt(studentData.joinedAt);
-          setIsSignUpCompleted(true);
-        }
+        // if (studentData && studentData.signUpCompleted) {
+        //   setIconLink(studentData.iconUrl);
+        //   setUserName(studentData.name);
+        //   setGrade(studentData.grade);
+        //   setClassNumber(studentData.classNumber);
+        //   setJoinedAt(studentData.joinedAt);
+        //   setIsSignUpCompleted(true);
+        // }
       }
       setStudentInfo();
-    }, [studentData]);
+    }, []);
 
     const onIconChange = () => {
       const fileInput = document.createElement('input');
@@ -40,9 +39,9 @@ const Profile: React.FC = () => {
           if (file) {
               const reader = new FileReader();
               reader.onloadend = () => {
-                  uploadFile('userIcons', studentData.uid, file);
+                  //uploadFile('userIcons', studentData.uid, file);
                   const fileUrl = reader.result as string;
-                  dispatch(setIconUrl(fileUrl));
+                  //dispatch(setIconUrl(fileUrl));
                   setIconLink(fileUrl);
               };
               reader.readAsDataURL(file);

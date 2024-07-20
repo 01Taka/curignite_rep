@@ -2,18 +2,20 @@ import React from 'react'
 import TopPageView from './TopView';
 import { useNavigate } from 'react-router-dom';
 import { getUserAuthState } from '../../firebase/auth/auth';
+import { authPaths, rootPaths } from '../../types/appPaths';
 
 const TopPage: React.FC = () => {
     const navigate = useNavigate();
 
     const onSignUp = async () => {
         const state = await getUserAuthState();
+        
         if (state === 'new') {
-            navigate('/signup');
-        } else if (state ==='signingUp') {
-            navigate('/user-initial-setup');
+            navigate(rootPaths.auth);
+        } else if (state ==='noUserData') {
+            navigate(authPaths.initialSetup);
         } else {
-            navigate('/main');
+            navigate(rootPaths.main);
         }
     }
 

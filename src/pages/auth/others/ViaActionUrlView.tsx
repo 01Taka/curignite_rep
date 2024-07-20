@@ -57,7 +57,7 @@ const RecreateAccount: React.FC<RecreateAccountProps> = ({ onRecreateAccount }) 
 
 // 条件分岐用のコンポーネント
 interface AuthFailureProps {
-  emailForSignIn: string;
+  emailForSignIn: string | null;
   resendDisabled: boolean;
   onResendEmail: () => void;
   onRecreateAccount: () => void;
@@ -88,7 +88,7 @@ const AuthFailure: React.FC<AuthFailureProps> = ({
 
 interface ViaActionUrlViewProps {
   isFailed: boolean;
-  emailForSignIn: string;
+  emailForSignIn: string | null;
   error: string;
   message: string;
   resendDisabled: boolean;

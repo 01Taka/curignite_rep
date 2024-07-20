@@ -4,7 +4,7 @@ import { useAppSelector } from '../../../../redux/hooks';
 import { questionsDB } from '../../../../firebase/db/dbs';
 
 const CreateQuestion: React.FC = () => {
-  const studentData = useAppSelector((state) => state.studentDataSlice);
+  const userInfo = useAppSelector((state) => state.userDataSlice);
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -21,9 +21,12 @@ const CreateQuestion: React.FC = () => {
 
   const onCreateQuestion = () => {
     try {
-      questionsDB.createQuestions(title, content, studentData.uid);
-      setMessage('質問を追加しました。');
-      resetForm();
+      const uid = userInfo.uid;
+      if (uid) {
+        questionsDB.createQuestions(title, content, uid);
+        setMessage('質問を追加しました。');
+        resetForm();
+      }
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);

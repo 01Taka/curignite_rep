@@ -1,29 +1,33 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import './styles/styles.css';
 import './styles/tailwind.css';
-import { NotFound } from './pages/error/errorIndex';
-import { CreateAccountEndpointPage, CreateAccountPage, SignInPage, SignInWithEmailPage, SignUpPage, UserInitialSetupPage, ViaActionUrlPage } from './pages/auth/authIndex';
-import IndexPage from './pages/app/index/IndexPage';
+import { rootPaths } from './types/appPaths';
 import TopPage from './pages/top/TopPage';
+import NotFound from './pages/error/NotFound';
+import AuthRoutes from './pages/auth/AuthRoutes';
+import MainRoutes from './pages/app/routes/MainRoutes';
+import Navigation from './pages/navigation/Navigation';
+import appPreprocessing from './appPreprocessing';
+import { useAppDispatch } from './redux/hooks';
 
 const App: React.FC = () => {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    appPreprocessing(dispatch);
+  }, [dispatch])
+
   return (
-    <div>
+    <Navigation>
       <Routes>
-        <Route path='/' element={<TopPage />}/>
-        <Route path='/main/*' element={<IndexPage />}/>
-        <Route path='/signin' element={<SignInPage />}/>
-        <Route path='/signin-email' element={<SignInWithEmailPage />}/>
-        <Route path='/signup' element={<SignUpPage />}/>
-        <Route path='/create-account' element={<CreateAccountPage />}/>
-        <Route path='/create-account-endpoint' element={<CreateAccountEndpointPage />}/>
-        <Route path='/via-action-url' element={<ViaActionUrlPage />}/>
-        <Route path='/user-initial-setup' element={<UserInitialSetupPage />}/>
+        <Route path={rootPaths.top} element={<TopPage />} />
+        <Route path={`${rootPaths.auth}/*`} element={<AuthRoutes />} />
+        <Route path={`${rootPaths.main}/*`} element={<MainRoutes />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
-    </div>
+    </Navigation>
   );
-}
+};
 
 export default App;

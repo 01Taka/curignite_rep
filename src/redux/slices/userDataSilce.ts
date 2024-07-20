@@ -1,20 +1,41 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { UserDataState } from "../../types/app/reduxStateTypes";
-import { UsersDB } from "../../firebase/db/app/user/users";
 
-const initialState:  UserDataState = {
-    userData: null,
+export interface UserInfoForRedux {
+    uid: string;
+    username: string;
+    birthDate: number;
+    createdAt: number;
 }
 
-const UserDataSlice = createSlice({
+// export interface UserOrganizationInfoForRedux {
+//     documentId: string;
+//     organizationId: string;
+//     organizationName: string;
+//     grade: number;
+//     classNumber: number;
+//     joinedAt: number;
+// }
+
+export interface UserDataState {
+    uid: string | null;
+    userInfo: UserInfoForRedux | null;
+}
+
+const initialState: UserDataState = {
+    uid: null,
+    userInfo: null,
+}
+
+const userDataSlice = createSlice({
     name: 'userData',
     initialState: initialState,
     reducers: {
-        setUserData: (state, action: PayloadAction<UsersDB>) => {
-            state.userData = action.payload;
-        }
+        setUserInfo: (state, action: PayloadAction<UserInfoForRedux>) => {
+            state.uid = action.payload.uid;
+            state.userInfo = action.payload;
+        },
     }
 })
 
-export const { setUserData } = UserDataSlice.actions;
-export default UserDataSlice.reducer;
+export const { setUserInfo } = userDataSlice.actions;
+export default userDataSlice.reducer;

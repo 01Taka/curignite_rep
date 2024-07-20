@@ -1,6 +1,7 @@
 import React, { FC, useState } from 'react';
 import JoinTeamView from './JoinTeamView';
 import { useNavigate } from 'react-router-dom';
+import { teamPaths } from '../../../../types/appPaths';
 
 const JoinTeam: FC = () => {
     const navigate = useNavigate();
@@ -22,7 +23,7 @@ const JoinTeam: FC = () => {
 
     const handleCreateEnter = () => {
         // チームを作成する処理をここに追加
-        navigate(`/main/team/create/${createTeamValue}`);
+        navigate(`${teamPaths.base}/${createTeamValue}`);
         console.log('Creating team with name:', createTeamValue);
     }
 

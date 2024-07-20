@@ -2,14 +2,14 @@ import React from 'react'
 import AnswerContainerView from './AnswerContainerView'
 import { Answer } from '../../../../../../firebase/db/app/QandA//answers/answers'
 import { format } from 'date-fns';
-import { OrganizationExtendsUser } from '../../../../../../firebase/db/app/user/users';
+import { UserOrganizationInfo } from '../../../../../../firebase/db/app/user/usersTypes';
 
 interface AnswerContainerProps {
     answer: Answer;
-    studentInfo: OrganizationExtendsUser | null;
+    userOrganizationInfo: UserOrganizationInfo | null;
 }
 
-const AnswerContainer: React.FC<AnswerContainerProps> = ({ answer, studentInfo }) => {
+const AnswerContainer: React.FC<AnswerContainerProps> = ({ answer, userOrganizationInfo }) => {
     const date = answer.createdAt.toDate();
     const content = answer.content;
 

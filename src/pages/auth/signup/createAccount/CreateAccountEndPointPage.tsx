@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { getEmailData } from '../../../../functions/localStorage/authData';
+import { authStorage } from '../../../../functions/localStorage/handleData';
 
 const CreateAccountEndPointPage: React.FC = () => {
   const [email, setEmail] = useState('@Emails');
 
   useEffect(() => {
-    const emailForSignIn = getEmailData();
+    const emailForSignIn = authStorage.getData("email");
     if (emailForSignIn) {
       setEmail(emailForSignIn);
     }

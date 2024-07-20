@@ -2,7 +2,7 @@ import { Typography } from '@mui/material';
 import React, { FC, ReactNode } from 'react';
 import { StringField } from '../../../../../components/input/inputIndex';
 import CircularButton from '../../../../../components/input/button/CircularButton';
-import { cn } from '../../../../../lib/utils';
+import { cn } from '../../../../../functions/utils';
 
 interface ActionContainerProps {
     heading: string;

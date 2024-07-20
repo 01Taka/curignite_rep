@@ -1,5 +1,6 @@
 import { NavigateFunction } from "react-router-dom";
 import { verifyActionCode } from "../../../firebase/auth/signUp";
+import { authPaths } from "../../../types/appPaths";
 
 export const actionNavigation = (action: string, navigate: NavigateFunction) => {
     switch (action) {
@@ -10,7 +11,7 @@ export const actionNavigation = (action: string, navigate: NavigateFunction) => 
           // Display email recovery handler and UI.
           break;
         case 'verifyEmail':
-          navigate('/user-initial-setup');
+          navigate(authPaths.accountEndpoint);
           break;
         default:
           console.error('Unknown action:', action);

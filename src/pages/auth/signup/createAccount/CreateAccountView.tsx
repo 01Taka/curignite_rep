@@ -1,29 +1,27 @@
-import React from 'react'
+import React, { ChangeEvent, FormEvent } from 'react'
 import { Alert, Button } from '@mui/material';
 import { FormContainer, Heading } from '../../../../components/container/containerIndex';
 import { EmailField, PasswordField, UserNameField } from '../../../../components/input/inputIndex';
 
-interface CreateAccountViewProps {
+export interface CreateAccountFormState {
     username: string;
     email: string;
     password: string;
+}
+
+interface CreateAccountViewProps {
+    formState: CreateAccountFormState;
     error: string;
     submitDisabled: boolean;
-    onUserNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    onEmailChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    onPasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    onEmailSignUp: (e: React.FormEvent) => void;
+    onFormStateChange: (e: ChangeEvent<HTMLInputElement>) => void;
+    onEmailSignUp: (e: FormEvent) => void;
   }
   
   const CreateAccountView: React.FC<CreateAccountViewProps> = ({
-    username,
-    email,
-    password,
+    formState,
     error,
     submitDisabled,
-    onUserNameChange,
-    onEmailChange,
-    onPasswordChange,
+    onFormStateChange,
     onEmailSignUp,
   }) => {
     const handleSubmit = (e: React.FormEvent<Element>) => {
@@ -35,9 +33,9 @@ interface CreateAccountViewProps {
             <FormContainer>
                 <Heading children='アカウントを作成' level={1} className='mt-20'/>
                 <form onSubmit={handleSubmit} className='flex flex-col items-center w-64 mt-12'>
-                    <EmailField email={email} onEmailChange={onEmailChange} />
-                    <UserNameField username={username} onUserNameChange={onUserNameChange} />
-                    <PasswordField password={password} onPasswordChange={onPasswordChange} />
+                    <EmailField email={formState.email} onEmailChange={onFormStateChange} />
+                    <UserNameField username={formState.username} onUserNameChange={onFormStateChange} />
+                    <PasswordField password={formState.password} onPasswordChange={onFormStateChange} />
                     <div className='w-full my-16'>
                         <Button
                             disabled={submitDisabled}

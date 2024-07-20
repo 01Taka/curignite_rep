@@ -1,41 +1,28 @@
+import { Timestamp } from "firebase/firestore";
 import { getCurrentUser } from "../../../../firebase/auth/auth";
-import { getSchoolIdWithNameAndPassword } from "../../../../firebase/db/auth/schools/validateSchools";
-import { createStudentInfoDB } from "../../../../firebase/db/auth/studentInfo/createStudentInfo";
-import { addNewUser } from "../../../../firebase/db/auth/users/addUser";
-import { checkIfUserNameTaken } from "../../../../firebase/db/auth/users/getUser";
+import { usersDB } from "../../../../firebase/db/dbs";
+import { checkIfUserNameExists } from "../../../../firebase/db/app/user/userDBUtil";
 
 export const errorHandling = async (
-  username: string, grade: string, classNumber: string, schoolName: string, schoolPassword: string
+  username: string, birthday: Date,
 ) => {
   if (!username) {
     return new Error('ユーザ名を入力してください');
   }
 
-  if (await checkIfUserNameTaken(username)) {
+  if (await checkIfUserNameExists(username)) {
     return new Error('このユーザ名は既に使用されています');
   }
 
-  if (!grade || !classNumber) {
-    return new Error('学年とクラスを入力してください');
-  }
-
-  if (isNaN(Number(grade)) || isNaN(Number(classNumber))) {
-    return new Error("学年とクラスは数値で入力してください。");
-  }
-
-  if (!schoolName) {
-    return new Error('学校名を入力してください');
-  }
-
-  if (!schoolPassword) {
-    return new Error('学校パスワードを入力してください');
+  if (!birthday) {
+    return new Error('生年月日を入力してください');
   }
 };
 
-export const createUser = async (
-  username: string, grade: string, classNumber: string, schoolName: string, schoolPassword: string
+export const processingCreateUser = async (
+  username: string, birthday: Date,
 ) => {
-  const error = await errorHandling(username, grade, classNumber, schoolName, schoolPassword);
+  const error = await errorHandling(username, birthday);
   if (error) {
     throw error;
   }
@@ -47,16 +34,13 @@ export const createUser = async (
   }
 
   try {
-    const schoolId = await getSchoolIdWithNameAndPassword(schoolName, schoolPassword);
-    const studentInfo = await createStudentInfoDB(username, Number(grade), Number(classNumber), schoolId);
-
     const user = await getCurrentUser();
     const uid = user?.uid;
     if (!uid) {
       throw new Error('ログインをしてください');
     }
 
-    await addNewUser(uid, studentInfo);
+    await usersDB.createUser(uid, username, Timestamp.fromDate(birthday));
   } catch (error) {
     throw error;
   }

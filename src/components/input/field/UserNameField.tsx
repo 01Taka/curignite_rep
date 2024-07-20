@@ -1,5 +1,6 @@
 import React from 'react'
 import { TextField } from '@mui/material';
+import StringField from './StringField';
 
 interface UserNameFieldProps {
     username: string;
@@ -11,15 +12,13 @@ const UserNameField: React.FC<UserNameFieldProps> = ({
     onUserNameChange,
 }) => {
   return (
-    <TextField
-        className='w-full h-14'
-        id="username"
-        name="username"
-        label="UserName"
-        variant="filled"
-        type="text"
-        value={username}
-        onChange={onUserNameChange}
+    <StringField 
+      id="username"
+      name="username"
+      label="UserName"
+      value={username}
+      type="text"
+      onChange={onUserNameChange}
     />
   )
 }

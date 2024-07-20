@@ -1,6 +1,6 @@
 import { VariantProps, cva } from 'class-variance-authority';
 import { ButtonHTMLAttributes, FC, ReactNode } from 'react';
-import { cn } from '../../../lib/utils';
+import { cn } from '../../../functions/utils';
 
 // CircularButtonProps インターフェースを定義
 interface CircularButtonProps extends ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof circularButtonVariants> {

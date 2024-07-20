@@ -1,4 +1,4 @@
-import { DocumentData, DocumentReference, Timestamp } from "firebase/firestore";
+import { DocumentData, DocumentReference, Firestore, Timestamp } from "firebase/firestore";
 import BaseDB, { DbData } from "../../../base";
 
 export interface Answer extends DbData {
@@ -9,8 +9,8 @@ export interface Answer extends DbData {
 }
 
 class AnswersDB extends BaseDB<Answer> {
-    constructor() {
-        super("answers");
+    constructor(firestore: Firestore) {
+        super(firestore, "answers");
     }
 
     async createAnswers(questionId: string, content: string, authorUid: string, createdAt: Timestamp = Timestamp.now()): Promise<DocumentReference<DocumentData>> {
@@ -20,7 +20,7 @@ class AnswersDB extends BaseDB<Answer> {
     
     async updateAnswers(documentId: string, questionId: string, content: string, authorUid: string, createdAt: Timestamp): Promise<void> {
         const data: Answer = { documentId, questionId, content, authorUid, createdAt};
-        return this.update(data);
+        return this.update(documentId, data);
     }
 }
 

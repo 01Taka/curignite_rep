@@ -1,5 +1,6 @@
 import React from 'react'
 import { TextField } from '@mui/material';
+import StringField from './StringField';
 
 interface EmailFieldProps {
     email: string;
@@ -11,15 +12,13 @@ const EmailField: React.FC<EmailFieldProps> = ({
     onEmailChange,
 }) => {
   return (
-    <TextField 
-        className='w-full h-14'
-        id="email"
-        name="email"
-        label="Email"
-        variant="filled"
-        type="email"
-        value={email}
-        onChange={onEmailChange}
+    <StringField 
+      id="email"
+      name="email"
+      label="Email"
+      type="email"
+      value={email}
+      onChange={onEmailChange}
     />
   )
 }

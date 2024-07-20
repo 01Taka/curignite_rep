@@ -1,40 +1,39 @@
 import React, { useEffect, useState } from 'react';
-import QuestionListView from '../../../QandA/questionDetail/questionList/QuestionListView';
-import { getStudentInfoWithUidDict } from '../../../../../firebase/db/auth/users/getUser';
-import { QuestionPost } from '../../../../../types/app/appTypes';
-import { questionsDB } from '../../../../../firebase/db/dbs';
-import { Questions } from '../../../../../firebase/db/app/QandA/questions/questions';
+import QuestionListView, { QuestionPost } from '../../../QandA/questionDetail/questionList/QuestionListView';
+import { questionsDB, usersDB } from '../../../../../firebase/db/dbs';
+import { Question } from '../../../../../firebase/db/app/QandA/questions/questions';
 
 const QuestionList: React.FC = () => {
-    const [studentInfoList, setStudentInfoList] = useState<QuestionPost[]>([]);
+    const [questionPosts, setQuestionPosts] = useState<QuestionPost[]>([]);
 
     useEffect(() => {
-        const fetchQuestionsAndStudentInfo = async () => {
+        const fetchQuestionPosts = async () => {
             try {
                 const fetchedQuestions = await questionsDB.getAll();
-                await getStudentInfoFromQuestion(fetchedQuestions);
+                const questionPosts = await getUserOrganizationInfoWithQuestion(fetchedQuestions);
+                setQuestionPosts(questionPosts);
             } catch (error) {
                 console.error("Error fetching questions or student info: ", error);
             }
         };
 
-        fetchQuestionsAndStudentInfo();
+        fetchQuestionPosts();
     }, []);
 
-    const getStudentInfoFromQuestion = async (questions: Questions[]) => {
-        const uidList: string[] = questions.map(question => question.authorUid);
-        const info = await getStudentInfoWithUidDict(uidList);
-        
-        const studentInfoList = questions.map((question) => ({
-            studentInfo: info[question.authorUid] || null,
-            question,
+    const getUserOrganizationInfoWithQuestion = async (questions: Question[]): Promise<QuestionPost[]> => {
+        const questionPosts = await Promise.all(questions.map(async (question) => {
+            const userOrganizationInfo = await usersDB.readOrganizationByUid(question.authorUid);
+            const res: QuestionPost = {
+                userOrganizationInfo,
+                question,
+            };
+            return res;
         }));
-    
-        // setStudentInfoList(studentInfoList);
+        return questionPosts;
     };
     
     return <QuestionListView 
-        questionPosts={studentInfoList}
+        questionPosts={questionPosts}
     />;
 }
 

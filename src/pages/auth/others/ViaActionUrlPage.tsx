@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ViaActionUrlView from './ViaActionUrlView';
 import { actionNavigation, checkActionCode } from './handleViaActionUrl';
-import { getEmailData, getPasswordData } from '../../../functions/localStorage/authData';
 import { resendEmail } from '../../../firebase/auth/signUp';
+import { authStorage, AuthStorageProps } from '../../../functions/localStorage/handleData';
+import { authPaths } from '../../../types/appPaths';
 
 const ViaActionUrlPage: React.FC = () => {
+  const [authData, setAuthData] = useState<Partial<AuthStorageProps>>();
   const [isFailed, setIsFailed] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
@@ -13,6 +15,13 @@ const ViaActionUrlPage: React.FC = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    const data = authStorage.getDataAllAtOnce();
+    if (data) {
+      setAuthData(data);
+    }
+  }, [])
 
   useEffect(() => {
     const handleTransition = async () => {
@@ -38,29 +47,34 @@ const ViaActionUrlPage: React.FC = () => {
     setResendDisabled(true);
     setError('');
     setMessage('');
-    const email = getEmailData();
-    const password = getPasswordData();
-    try {
-      await resendEmail(email, password);
-      setMessage('メールを再送信しました。')
-    } catch (error) {
-      console.log(error);
-      if (error instanceof Error) {
-        setError(error.message);
+    const email = authData?.email;
+    const password = authData?.password;
+    if (password && email) {
+      try {
+        await resendEmail(email, password);
+        setMessage('メールを再送信しました。')
+      } catch (error) {
+        console.log(error);
+        if (error instanceof Error) {
+          setError(error.message);
+        }
       }
+    } else {
+      setError("パスワードとメールの情報が不足しています。")
     }
+
     setResendDisabled(false);
   };
 
   // Function to handle account recreation
   const handleRecreateAccount = () => {
-    navigate('/create-account');
+    navigate(authPaths.createAccount);
   };
 
   return (
     <ViaActionUrlView 
       isFailed={isFailed}
-      emailForSignIn={getEmailData()}
+      emailForSignIn={authData?.email || null}
       error={error}
       message={message}
       resendDisabled={resendDisabled}

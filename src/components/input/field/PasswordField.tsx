@@ -1,24 +1,23 @@
 import React, { useState } from 'react';
 import IconButton from '@mui/material/IconButton';
-import Input from '@mui/material/Input';
+import Input, { InputProps } from '@mui/material/Input';
 import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
-interface PasswordFieldProps {
-  password: string;
+interface PasswordFieldProps extends InputProps {
   label?: string;
-  name?: string;
+  password: string,
   onPasswordChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const PasswordField: React.FC<PasswordFieldProps> = ({
-    password,
     label = 'Password',
-    name = 'password',
-    onPasswordChange
+    password,
+    onPasswordChange,
+    ...props
 }) => {
     const [showPassword, setShowPassword] = useState(false);
 
@@ -28,11 +27,11 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
 
     return (
         <FormControl variant="filled" className='w-full h-14'>
-            <InputLabel htmlFor={name}>{label}</InputLabel>
+            <InputLabel htmlFor={"password"}>{label}</InputLabel>
             <Input
-                id={name}
-                name={name}
-                type={showPassword ? 'text' : 'password'}
+                {...props}
+                id="password"
+                name="password"
                 value={password}
                 onChange={onPasswordChange}
                 endAdornment={

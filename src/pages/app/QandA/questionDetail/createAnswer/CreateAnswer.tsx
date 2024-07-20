@@ -6,7 +6,7 @@ import { answersDB } from '../../../../../firebase/db/dbs';
 
 const CreateAnswer: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const studentData = useAppSelector((state) => state.studentDataSlice);
+  const userData = useAppSelector((state) => state.userDataSlice);
 
   const [content, setContent] = useState('');
   const [submitDisabled, setSubmitDisabled] = useState(true);
@@ -21,9 +21,10 @@ const CreateAnswer: React.FC = () => {
   }, [content])
 
   const onCreateAnswer = async () => {
-    if (id) {
+    const uid = userData.uid;
+    if (id && uid) {
       try {
-        await answersDB.createAnswers(id, content, studentData.uid);
+        await answersDB.createAnswers(id, content, uid);
         setMessage('回答を送信しました。');
         resetForm();
       } catch (error) {

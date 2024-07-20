@@ -2,11 +2,11 @@ import React, { FC, useEffect, useState } from 'react';
 import CreateTeamView, { CreateTeamFormState } from './CreateTeamView';
 import { useParams } from 'react-router-dom';
 import { useAppSelector } from '../../../../redux/hooks';
-import { teamCodesDB, teamsDB } from '../../../../firebase/db/dbs';
+import { createTeam } from '../../../../firebase/db/app/team/teamDBUtil';
 
 const CreateTeam: FC = () => {
   const { name } = useParams<{ name: string }>();
-  const studentData = useAppSelector(state => state.studentDataSlice);
+  const userData = useAppSelector(state => state.userDataSlice);
 
   const [formState, setFormState] = useState<CreateTeamFormState>({
     teamName: '',
@@ -30,18 +30,19 @@ const CreateTeam: FC = () => {
   const handleCreateTeam = async () => {
     try {
       // チームの作成と追加
-      const res = await teamsDB.createTeam( 
-        formState.teamName,
-        formState.iconPath, 
-        formState.password, 
-        formState.requiredApproval, 
-        formState.introduction, 
-        studentData.uid, 
-        [studentData.uid]
-      )
-  
-      // チームコードの作成と追加
-      await teamCodesDB.createTeamCode(res.id);
+      const uid = userData.uid;
+      if (uid) {
+        await createTeam(
+          uid,
+          formState.teamName,
+          formState.iconPath, 
+          formState.password, 
+          formState.requiredApproval, 
+          formState.introduction
+        )
+      } else {
+        throw new Error("uidが取得できませんでした。");
+      }
     } catch (error) {
       // エラーハンドリング
       console.error('Error creating team:', error);

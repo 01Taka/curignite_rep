@@ -1,18 +1,18 @@
 import React, { useState } from 'react'
 import QuestionContainerView from './QuestionContainerView'
 import { format } from 'date-fns';
-import { StudentInfoDB } from '../../../../../../firebase/db/auth/studentInfo/studentInfo';
 import { useNavigate } from 'react-router-dom';
 import { Question } from '../../../../../../firebase/db/app/QandA/questions/questions';
+import { UserOrganizationInfo } from '../../../../../../firebase/db/app/user/usersTypes';
 
 interface QuestionContainerProps {
     question: Question;
-    studentInfo: StudentInfoDB | null;
+    userOrganizationInfo: UserOrganizationInfo | null;
 }
 
 const QuestionContainer: React.FC<QuestionContainerProps> = ({
     question,
-    studentInfo,
+    userOrganizationInfo,
 }) => {
     const navigate = useNavigate();
     const [expanded, setExpanded] = useState(false);

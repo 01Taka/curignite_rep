@@ -1,30 +1,23 @@
-import { DocumentData, DocumentReference, QueryConstraint, Timestamp } from "firebase/firestore";
-import BaseDB, { DbData } from "../../base";
+import { DocumentData, DocumentReference, Firestore, Timestamp } from "firebase/firestore";
+import BaseDB from "../../base";
+import { TeamInfo, TeamRoles } from "./teamsTypes";
 
-interface Team extends DbData {
-    teamName: string;
-    iconPath: string;
-    password: string;
-    requiredApproval: boolean;
-    introduction: string;
-    authorUid: string;
-    participantsUid: string[];
-    createdAt: Timestamp;
-}
-
-class TeamsDB extends BaseDB<Team> {
-    constructor() {
-        super("teams");
+class TeamsDB extends BaseDB<TeamInfo> {
+    constructor(firestore: Firestore) {
+        super(firestore, "teams");
     }
 
-    async createTeam(teamName: string, iconPath: string, password: string, requiredApproval: boolean, introduction: string, authorUid: string, participantsUid: string[], createdAt: Timestamp = Timestamp.now()): Promise<DocumentReference<DocumentData>> {
-        const data: Team = { documentId: "", teamName, iconPath, password, requiredApproval, introduction, authorUid, participantsUid, createdAt };
+    async createTeam(teamName: string, iconPath: string, password: string, requiredApproval: boolean, introduction: string, authorUid: string, roles: Partial<TeamRoles>, createdAt: Timestamp = Timestamp.now()): Promise<DocumentReference<DocumentData>> {
+        const fullRoles: TeamRoles = {
+            admin: roles.admin || [],
+            member: roles.member || [],
+            invitee: roles.invitee || [],
+            pending: roles.pending || [],
+            rejected: roles.rejected || []
+        };
+        const data: TeamInfo = { documentId: "", teamName, iconPath, password, requiredApproval, introduction, authorUid, roles: fullRoles, createdAt };
         return this.create(data);
-    }
-    
-    async updateTeam(documentId: string, teamName: string, iconPath: string, password: string, requiredApproval: boolean, introduction: string, authorUid: string, participantsUid: string[], createdAt: Timestamp): Promise<void> {
-        const data: Team = { documentId, teamName, iconPath, password, requiredApproval, introduction, authorUid, participantsUid, createdAt };
-        return this.update(data);
+        
     }
 }
 

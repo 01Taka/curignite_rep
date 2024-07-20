@@ -1,50 +1,20 @@
-import { DocumentData, DocumentReference, Timestamp } from "firebase/firestore";
-import BaseDB, { DbData } from "../../base";
+import { DocumentData, DocumentReference, Firestore, Timestamp } from "firebase/firestore";
+import BaseDB from "../../base";
+import { User, UserOrganizationInfo, UserTeamInfo } from "./usersTypes";
+import { TeamRolesKey } from "../team/teamsTypes";
 
-export interface User extends DbData {
-  uid: string;
-  username: string;
-  birthDate: Timestamp;
-  createdAt: Timestamp;
-}
-
-export interface OrganizationExtendsUser extends DbData {
-  uid: string;
-  organizationId: string;
-  organizationName: string;
-  grade: number;
-  classNumber: number;
-  joinedAt: Timestamp;
-}
-
-export const userInitialUserState: User = {
-  documentId: "",
-  uid: '',
-  username: '',
-  birthDate: Timestamp.fromDate(new Date(0)),
-  createdAt: Timestamp.fromDate(new Date(0)),
-};
-
-export const initialOrganizationExtendsUserState: OrganizationExtendsUser = {
-  documentId: "",
-  uid: "",
-  organizationId: '',
-  organizationName: '',
-  grade: 0,
-  classNumber: 0,
-  joinedAt: Timestamp.fromDate(new Date(0)),
-};
 
 export class UsersDB extends BaseDB<User> {
   organizationPath: string = "organization";
+  teamPath: string = "team";
 
-  constructor() {
-    super('users');
+  constructor(firestore: Firestore) {
+    super(firestore, 'users');
   }
 
-  async createUser(uid: string, username: string, birthDate: Timestamp, createdAt: Timestamp): Promise<DocumentReference<DocumentData>> {
+  async createUser(uid: string, username: string, birthDate: Timestamp, createdAt: Timestamp = Timestamp.now()): Promise<DocumentReference<DocumentData> | void> {
     try {
-      const data: User = { documentId: uid, uid, username, birthDate, createdAt }; // UIDをdocumentIdとして設定
+      const data: User = { documentId: uid, username, birthDate, createdAt }; // UIDをdocumentIdとして設定
       return this.createWithId(uid, data); // createWithIdを使用
     } catch (error) {
       console.error("Error creating user: ", error);
@@ -52,61 +22,107 @@ export class UsersDB extends BaseDB<User> {
     }
   }
 
-  async updateUser(documentId: string, uid: string, username: string, birthDate: Timestamp, createdAt: Timestamp): Promise<void> {
-    try {
-      const data: User = { documentId, uid, username, birthDate, createdAt };
-      return this.update(data);
-    } catch (error) {
-      console.error("Error updating user: ", error);
-      throw new Error("Failed to update user");
-    }
-  }
-
   // Organizationデータに関するCRUD操作
-  async createOrganizationData(parentId: string, uid: string, organizationId: string, organizationName: string, grade: number, classNumber: number, joinedAt: Timestamp): Promise<DocumentReference<OrganizationExtendsUser>> {
+  async createUserOrganizationInfo(parentId: string, uid: string, organizationId: string, organizationName: string, grade: number, classNumber: number, joinedAt: Timestamp): Promise<DocumentReference<UserOrganizationInfo>> {
     try {
-      const data: OrganizationExtendsUser = { documentId: "", uid, organizationId, organizationName, grade, classNumber, joinedAt };
-      return this.createInSubCollection<OrganizationExtendsUser>(parentId, this.organizationPath, data);
+      const data: UserOrganizationInfo = { documentId: "", uid, organizationId, organizationName, grade, classNumber, joinedAt };
+      return this.createInSubCollection<UserOrganizationInfo>(parentId, this.organizationPath, data);
     } catch (error) {
       console.error("Error creating organization data: ", error);
       throw new Error("Failed to create organization data");
     }
   }
 
-  async readOrganizationData(parentId: string, id: string): Promise<OrganizationExtendsUser | null> {
+  async readUserOrganizationInfo(parentId: string, id: string): Promise<UserOrganizationInfo | null> {
     try {
-      return this.readFromSubCollection<OrganizationExtendsUser>(parentId, this.organizationPath, id);
+      return this.readFromSubCollection<UserOrganizationInfo>(parentId, this.organizationPath, id);
     } catch (error) {
       console.error("Error reading organization data: ", error);
       throw new Error("Failed to read organization data");
     }
   }
 
-  async updateOrganizationData(parentId: string, documentId: string, uid: string, organizationId: string, organizationName: string, grade: number, classNumber: number, joinedAt: Timestamp): Promise<void> {
+  async updateUserOrganizationInfo(parentId: string, documentId: string, data: Partial<UserOrganizationInfo>): Promise<void> {
     try {
-      const data: OrganizationExtendsUser = { documentId, uid, organizationId, organizationName, grade, classNumber, joinedAt };
-      return this.updateInSubCollection<OrganizationExtendsUser>(parentId, this.organizationPath, data);
+      return await this.updateInSubCollection<UserOrganizationInfo>(parentId, this.organizationPath, documentId, data);
     } catch (error) {
       console.error("Error updating organization data: ", error);
       throw new Error("Failed to update organization data");
     }
   }
 
-  async deleteOrganizationData(parentId: string, id: string): Promise<void> {
+  async deleteUserOrganizationInfo(parentId: string, id: string): Promise<void> {
     try {
-      return this.deleteFromSubCollection<OrganizationExtendsUser>(parentId, this.organizationPath, id);
+      return this.deleteFromSubCollection<UserOrganizationInfo>(parentId, this.organizationPath, id);
     } catch (error) {
       console.error("Error deleting organization data: ", error);
       throw new Error("Failed to delete organization data");
     }
   }
 
-  async readOrganizationByUid(uid: string): Promise<OrganizationExtendsUser | null> {
+  async readOrganizationByUid(uid: string): Promise<UserOrganizationInfo | null> {
     const user = await this.getFirstMatch("uid", uid);
     if (user) {
-      const organizations = await this.readOrganizationData(user.documentId, this.organizationPath);
+      const organizations = await this.readUserOrganizationInfo(user.documentId, this.organizationPath);
       return organizations;
     }
     return null;
+  }
+
+  
+  // teamデータに関するCRUD操作
+  async createUserTeamInfo(parentId: string, teamId: string, teamName: string, teamIconPath: string, roles: TeamRolesKey, myTeam: boolean): Promise<DocumentReference<UserTeamInfo>> {
+    try {
+      const data: UserTeamInfo = { documentId: "", teamId, teamName, teamIconPath, roles, myTeam };
+      return await this.createInSubCollection<UserTeamInfo>(parentId, this.teamPath, data);
+    } catch (error) {
+      console.error("Error creating team data: ", error);
+      throw new Error("Failed to create team data");
+    }
+  }
+
+  async readUserTeamInfo(parentId: string, id: string): Promise<UserTeamInfo | null> {
+    try {
+      return await this.readFromSubCollection<UserTeamInfo>(parentId, this.teamPath, id);
+    } catch (error) {
+      console.error("Error reading team data: ", error);
+      throw new Error("Failed to read team data");
+    }
+  }
+
+  async updateUserTeamInfo(parentId: string, documentId: string, data: Partial<UserTeamInfo>): Promise<void> {
+    try {
+      return await this.updateInSubCollection<UserTeamInfo>(parentId, this.teamPath, documentId, data);
+    } catch (error) {
+      console.error("Error updating team data: ", error);
+      throw new Error("Failed to update team data");
+    }
+  }
+
+  async deleteUserTeamInfo(parentId: string, id: string): Promise<void> {
+    try {
+      return await this.deleteFromSubCollection<UserTeamInfo>(parentId, this.teamPath, id);
+    } catch (error) {
+      console.error("Error deleting team data: ", error);
+      throw new Error("Failed to delete team data");
+    }
+  }
+
+  async getAllUserTeamsInfo(parentId: string): Promise<UserTeamInfo[]> {
+    try {
+      return await this.getAllFromSubCollection(parentId, this.teamPath);
+    } catch (error) {
+      console.error("Error getting all team data: ", error);
+      throw new Error("Failed to getting all team data");
+    }
+  }
+
+  async getUserTeamInfoByTeamId(parentId: string, teamId: string): Promise<UserTeamInfo | null> {
+    try {
+      return await this.getFirstMatchFromSubCollection(parentId, this.teamPath, "teamId", teamId);
+    } catch (error) {
+      console.error("Error getting team data by teamId: ", error);
+      throw new Error("Failed to get team data by teamId");
+    }
   }
 }

@@ -1,6 +1,5 @@
 import { User, getAuth, onAuthStateChanged } from "firebase/auth";
 import { AuthStates } from "../../types/app/appTypes";
-import { validateSchoolId } from "../db/auth/schools/validateSchools";
 import { usersDB } from "../db/dbs";
 
 export const getCurrentUser = (): Promise<User | null> => {
@@ -13,24 +12,16 @@ export const getCurrentUser = (): Promise<User | null> => {
     });
 };
 
-
 export const  getUserAuthState = async (): Promise<AuthStates> => {
     const user = await getCurrentUser();
+
     if (user) {
         const uid = user.uid;
-        const organizationExtendsUser = await usersDB.readOrganizationByUid(uid);
-        if (!organizationExtendsUser) {
-            return "signingUp";
+        const userData = await usersDB.read(uid);
+        if (!userData) {
+            return "noUserData";
         } else {
-            if (organizationExtendsUser.schoolId) {
-                try {
-                    await validateSchoolId(organizationExtendsUser.schoolId);
-                    return "verified";
-                } catch (error) {
-                    console.error(error);
-                }
-            }
-            return "noAffiliation";
+            return "verified";
         }
     } else {
         return "new";

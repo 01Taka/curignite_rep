@@ -1,45 +1,44 @@
 import React, { useEffect, useState } from 'react'
-import AnswerListView from '../../../QandA/questionDetail/answerList/AnswerListView'
-import { AnswerPost } from '../../../../../types/app/appTypes';
+import AnswerListView, { AnswerPost } from '../../../QandA/questionDetail/answerList/AnswerListView'
 import { Answer } from '../../../../../firebase/db/app/QandA//answers/answers';
-import { getStudentInfoWithUidDict } from '../../../../../firebase/db/auth/users/getUser';
 import { where } from 'firebase/firestore';
 import { useParams } from 'react-router-dom';
-import { answersDB } from '../../../../../firebase/db/dbs';
+import { answersDB, usersDB } from '../../../../../firebase/db/dbs';
 
 const AnswerList: React.FC = () => {
     const { id } = useParams<{ id: string }>();
-  const [posts, setPosts] = useState<AnswerPost[]>([]);
+  const [answerPosts, setAnswerPosts] = useState<AnswerPost[]>([]);
 
   useEffect(() => {
-      const fetchAnswersAndStudentInfo = async () => {
+      const fetchAnswersAndUserOrganizationInfo = async () => {
         try {
             const fetchedAnswers = await answersDB.getAll(where("questionId", "==", id));
-            await getStudentInfoFromAnswer(fetchedAnswers);
+            const answerPosts = await getUserOrganizationInfoWithAnswer(fetchedAnswers);
+            setAnswerPosts(answerPosts);
         } catch (error) {
             console.error("Error fetching answers or student info: ", error);
         }
     };
 
     if (id) {
-        fetchAnswersAndStudentInfo();
+        fetchAnswersAndUserOrganizationInfo();
     }
   }, [id]);
 
-  const getStudentInfoFromAnswer = async (answers: Answer[]) => {
-      const uidList: string[] = answers.map(answer => answer.authorUid);
-      const info = await getStudentInfoWithUidDict(uidList);
-      
-      const posts = answers.map((answer) => ({
-          studentInfo: info[answer.authorUid] || null,
-          answer,
-      }));
-  
-      setPosts(posts);
-  };
-  
+    const getUserOrganizationInfoWithAnswer = async (answers: Answer[]): Promise<AnswerPost[]> => {
+        const answerPosts = await Promise.all(answers.map(async (answer) => {
+            const userOrganizationInfo = await usersDB.readOrganizationByUid(answer.authorUid);
+            const res: AnswerPost = {
+                userOrganizationInfo,
+                answer,
+            };
+            return res;
+        }));
+        return answerPosts;
+    };
+
   return <AnswerListView 
-    answers={posts}
+    answers={answerPosts}
   />
 }
 

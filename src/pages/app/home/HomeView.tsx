@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import CircularButton from '../../../components/input/button/CircularButton';
-import { routeElement } from '../index/routing';
+import { routeElement } from '../routes/mainItems';
 
 interface HomeViewProps {
   radius: number;
