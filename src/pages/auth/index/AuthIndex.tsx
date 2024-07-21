@@ -4,7 +4,7 @@ import { googleProvider } from '../../../firebase/firebase';
 import AuthIndexView from './AuthIndexView';
 import { useNavigate } from 'react-router-dom';
 import { signInWithProvider } from '../../../firebase/auth/signIn';
-import { authPaths, rootPaths } from '../../../types/appPaths';
+import { authPaths, rootPaths } from '../../../types/path/appPaths';
 
 const AuthIndex: React.FC = () => {
   const [error, setError] = useState('');

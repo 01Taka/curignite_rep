@@ -53,22 +53,27 @@ export const mainPaths = {
 // Specific Path Groups
 export const spacePaths = {
   base: mainPaths.space,
+  index: `${mainPaths.space}/index`,
 }
 
 export const chatPaths = {
   base: mainPaths.chat,
+  index: `${mainPaths.chat}/index`,
 }
 
 export const whiteboardPaths = {
   base: mainPaths.whiteboard,
+  index: `${mainPaths.whiteboard}/index`,
 }
 
 export const calendarPaths = {
   base: mainPaths.calendar,
+  index: `${mainPaths.calendar}/index`,
 }
 
 export const todoPaths = {
   base: mainPaths.todo,
+  index: `${mainPaths.todo}/index`,
 }
 
 export const teamPaths = {
@@ -80,10 +85,12 @@ export const teamPaths = {
 
 export const goalPaths = {
   base: mainPaths.goal,
+  index: `${mainPaths.goal}/index`,
 }
 
 export const qAndAPaths = {
   base: mainPaths.qAndA,
+  index: `${mainPaths.qAndA}/index`,
 }
 
 // Export Paths
@@ -102,6 +109,17 @@ export const paths = {
     qAndA: qAndAPaths,
   }
 }
+
+export const mainIndexPaths = {
+  space: paths.main.space.index,
+  chat: paths.main.chat.index,
+  whiteboard: paths.main.whiteboard.index,
+  calendar: paths.main.calendar.index,
+  todo: paths.main.todo.index,
+  team: paths.main.team.index,
+  goal: paths.main.goal.index,
+  qAndA: paths.main.qAndA.index,
+};
 
 type PathOption = "" | "/" | "/*" | `/:${string}`;
 /**

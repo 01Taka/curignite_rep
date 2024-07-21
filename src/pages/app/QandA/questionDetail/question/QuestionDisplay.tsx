@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import QuestionDisplayView from './QuestionDisplayView'
-import { Question } from '../../../../../firebase/db/app/QandA/questions/questions';
 import { getIconUrl } from '../../../../../firebase/storage/get';
 import { format } from 'date-fns';
-import { UserOrganizationInfo } from '../../../../../firebase/db/app/user/usersTypes';
+import { Question } from '../../../../../types/firebase/db/qAndA/questionTypes';
+import { UserOrganizationInfo } from '../../../../../types/firebase/db/usersTypes';
 
 interface QuestionProps {
   question: Question;

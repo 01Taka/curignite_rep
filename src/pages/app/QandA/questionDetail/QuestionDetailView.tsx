@@ -1,10 +1,10 @@
 import React from 'react';
-import { Question } from '../../../../firebase/db/app/QandA/questions/questions';
 import CreateAnswer from './createAnswer/CreateAnswer';
 import AnswerList from './answerList/AnswerList';
 import TopTab from '../../../../components/app/tab/TopTab';
 import QuestionDisplay from './question/QuestionDisplay';
-import { initialUserOrganizationInfoState, UserOrganizationInfo } from '../../../../firebase/db/app/user/usersTypes';
+import { initialUserOrganizationInfoState, UserOrganizationInfo } from '../../../../types/firebase/db/usersTypes';
+import { Question } from '../../../../types/firebase/db/qAndA/questionTypes';
 
 interface QuestionDetailViewProps {
   loading: boolean;

@@ -1,6 +1,13 @@
 import { Timestamp } from "firebase/firestore";
-import { DbData } from "../../base";
+import { DbData } from "./baseTypes";
 
+export interface TeamCode extends DbData {
+    teamId: string;
+    period: Timestamp | null;
+    valid: boolean;
+}
+
+// teamsDBの型
 export interface TeamRoles {
     admin: string[],
     member: string[],
@@ -19,7 +26,7 @@ export const initialTeamRolesState: TeamRoles = {
     rejected: [],
 }
 
-export interface TeamInfo extends DbData {
+interface TeamInfoBase extends DbData {
     teamName: string;
     iconPath: string;
     password: string;
@@ -27,7 +34,14 @@ export interface TeamInfo extends DbData {
     introduction: string;
     authorUid: string;
     roles: TeamRoles;
+}
+
+export interface TeamInfo extends TeamInfoBase {
     createdAt: Timestamp;
+}
+
+export interface SerializableTeamInfo extends TeamInfoBase {
+    createdAt: number;
 }
 
 export const initialTeamInfoState: TeamInfo = {

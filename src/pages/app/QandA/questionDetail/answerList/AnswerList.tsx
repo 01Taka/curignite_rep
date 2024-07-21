@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import AnswerListView, { AnswerPost } from '../../../QandA/questionDetail/answerList/AnswerListView'
-import { Answer } from '../../../../../firebase/db/app/QandA//answers/answers';
 import { where } from 'firebase/firestore';
 import { useParams } from 'react-router-dom';
 import { answersDB, usersDB } from '../../../../../firebase/db/dbs';
+import { Answer } from '../../../../../types/firebase/db/qAndA/answerTypes';
 
 const AnswerList: React.FC = () => {
     const { id } = useParams<{ id: string }>();

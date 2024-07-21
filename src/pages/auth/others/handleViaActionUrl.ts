@@ -1,6 +1,6 @@
 import { NavigateFunction } from "react-router-dom";
 import { verifyActionCode } from "../../../firebase/auth/signUp";
-import { authPaths } from "../../../types/appPaths";
+import { authPaths } from "../../../types/path/appPaths";
 
 export const actionNavigation = (action: string, navigate: NavigateFunction) => {
     switch (action) {

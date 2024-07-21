@@ -1,6 +1,6 @@
 import React, { FC, useEffect } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
-import { relativeMainPaths } from '../../../types/appPaths';
+import { relativeMainPaths } from '../../../types/path/appPaths';
 import Home from '../home/Home';
 import TeamRoutes from '../team/TeamRoutes';
 import mainPreprocessing from './mainPreprocessing';
@@ -17,7 +17,7 @@ const MainRoutes: FC = () => {
 
 
   return (
-    <div className='w-full h-full bg-primaryBase'>
+    <div className='w-full h-full bg-primaryBase overflow-auto'>
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path='*' element={<NotFound />} />

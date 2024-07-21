@@ -1,20 +1,6 @@
 import { DocumentData, DocumentReference, Firestore, Timestamp } from "firebase/firestore";
-import BaseDB, { DbData } from "../../../base";
-
-export interface Question extends DbData{
-    title: string;
-    content: string;
-    authorUid: string;
-    createdAt: Timestamp;
-}
-
-export const questionInitialState: Question = {
-    documentId: "",
-    title: "",
-    content: "",
-    authorUid: "",
-    createdAt: Timestamp.fromDate(new Date(0)),
-}
+import BaseDB from "../../../base";
+import { Question } from "../../../../../types/firebase/db/qAndA/questionTypes";
 
 class QuestionsDB extends BaseDB<Question> {
     constructor(firestore: Firestore) {

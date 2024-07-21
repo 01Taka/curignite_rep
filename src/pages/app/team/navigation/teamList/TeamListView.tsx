@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 
 import { Skeleton } from '@mui/material';
-import { TeamInfo } from '../../../../../firebase/db/app/team/teamsTypes';
+import { TeamInfo } from '../../../../../types/firebase/db/teamsTypes';
 import TeamContainer from './TeamListItem';
 import { getParticipantsNumber } from '../../../../../firebase/db/app/team/teamDBUtil';
 
@@ -9,30 +9,30 @@ interface TeamListViewProps {
   teamInfoList: TeamInfo[];
   uid: string;
   loading: boolean;
+  onTeamClick: (team: TeamInfo) => void;
 }
 
-const TeamListView: FC<TeamListViewProps> = ({ teamInfoList, uid, loading }) => {
+const TeamListView: FC<TeamListViewProps> = ({ teamInfoList, uid, loading, onTeamClick }) => {
   return (
-    <div className='flex flex-col'>
+    <div className='flex flex-col items-center w-full'>
       {!loading ?
         <>
-          {teamInfoList.map((info, index) => (
-            <div className='my-4'>
+          {teamInfoList.map((team, index) => (
+            <div className='w-11/12 my-4' key={index} onClick={() => onTeamClick(team)}>
               <TeamContainer
-                key={index}
-                teamName={info.teamName}
-                iconPath={info.iconPath}
-                participantsName={info.participantsName}
-                myTeam={info.authorUid === uid}
-                participantsNumber={getParticipantsNumber(info.roles)}
+                teamName={team.teamName}
+                iconPath={team.iconPath}
+                participantsName={team.participantsName}
+                myTeam={team.authorUid === uid}
+                participantsNumber={getParticipantsNumber(team.roles)}
               />
             </div>
           ))}
         </>
       :
-        <div className='my-4'>
+        <div className='w-11/12'>
           {Array.from({ length: 3 }, (_, index) => (
-            <Skeleton key={index} className='rounded-lg my-4' variant="rectangular" width={384} height={72} />
+            <Skeleton key={`skeleton-${index}`} className='rounded-lg my-4' variant="rectangular" height={70} />
           ))}
         </div>
       }

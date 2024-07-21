@@ -3,7 +3,7 @@ import { SideListProps } from "../navigationTypes";
   
 const SideList: React.FC<SideListProps> = ({ children, width = "w-80" }) => {
     return (
-      <div className={cn("bg-gray-100", width)}>
+      <div className={cn("bg-gray-100 z-10", width)}>
         {children}
       </div>
     );

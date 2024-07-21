@@ -4,7 +4,7 @@ import SignInIndexView from './SignInIndexView';
 import { useNavigate } from 'react-router-dom';
 import { signInWithProvider } from '../../../../firebase/auth/signIn';
 import { authStorage } from '../../../../functions/localStorage/handleData';
-import { authPaths, rootPaths } from '../../../../types/appPaths';
+import { authPaths, rootPaths } from '../../../../types/path/appPaths';
 
 const SignInIndex: React.FC = () => {
   const [email, setEmailState] = useState('');

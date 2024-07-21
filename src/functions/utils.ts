@@ -16,7 +16,3 @@ export const handleFormStateChange = <T>(
       [name]: value,
     }));
 };
-
-export const convertTimestampToNumber = (timestamp: Timestamp): number => {
-    return timestamp.toMillis(); // ミリ秒単位の UNIX タイムスタンプに変換
-};

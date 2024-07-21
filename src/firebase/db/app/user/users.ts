@@ -1,7 +1,7 @@
 import { DocumentData, DocumentReference, Firestore, Timestamp } from "firebase/firestore";
 import BaseDB from "../../base";
-import { User, UserOrganizationInfo, UserTeamInfo } from "./usersTypes";
-import { TeamRolesKey } from "../team/teamsTypes";
+import { User, UserOrganizationInfo, UserTeamInfo } from "../../../../types/firebase/db/usersTypes";
+import { TeamRolesKey } from "../../../../types/firebase/db/teamsTypes";
 
 
 export class UsersDB extends BaseDB<User> {

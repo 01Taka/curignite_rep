@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import './styles/styles.css';
 import './styles/tailwind.css';
-import { rootPaths } from './types/appPaths';
+import { rootPaths } from './types/path/appPaths';
 import TopPage from './pages/top/TopPage';
 import NotFound from './pages/error/NotFound';
 import AuthRoutes from './pages/auth/AuthRoutes';

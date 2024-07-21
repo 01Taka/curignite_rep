@@ -1,7 +1,7 @@
 import { Timestamp } from "firebase/firestore";
 import { teamCodesDB, teamsDB, usersDB } from "../../dbs";
-import { TeamInfo, TeamRoles, TeamRolesKey } from "./teamsTypes";
-import { UserTeamInfo } from "../user/usersTypes";
+import { TeamInfo, TeamRoles, TeamRolesKey } from "../../../../types/firebase/db/teamsTypes";
+import { UserTeamInfo } from "../../../../types/firebase/db/usersTypes";
 
 // 役割が承認されているか確認する関数
 const checkIfRoleApproved = (role: TeamRolesKey): boolean => {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import QuestionListView, { QuestionPost } from '../../../QandA/questionDetail/questionList/QuestionListView';
 import { questionsDB, usersDB } from '../../../../../firebase/db/dbs';
-import { Question } from '../../../../../firebase/db/app/QandA/questions/questions';
+import { Question } from '../../../../../types/firebase/db/qAndA/questionTypes';
 
 const QuestionList: React.FC = () => {
     const [questionPosts, setQuestionPosts] = useState<QuestionPost[]>([]);

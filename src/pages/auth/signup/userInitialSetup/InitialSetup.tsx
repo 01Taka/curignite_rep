@@ -7,7 +7,7 @@ import { checkIfUidExists } from '../../../../firebase/db/app/user/userDBUtil';
 import { authStorage } from '../../../../functions/localStorage/handleData';
 import { processingCreateUser } from './handleUserInitialSetup';
 import { handleFormStateChange } from '../../../../functions/utils';
-import { rootPaths } from '../../../../types/appPaths';
+import { rootPaths } from '../../../../types/path/appPaths';
 
 const InitialSetup: React.FC = () => {
   const navigate = useNavigate();

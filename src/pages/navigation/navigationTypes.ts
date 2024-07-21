@@ -1,30 +1,37 @@
 import { ReactNode } from "react";
-import { HeightValueClasses, WidthValueClasses } from "../../types/app/appTypes";
+import { HeightValueClasses, WidthValueClasses } from "../../types/tailwindTypes";
 
 export interface NavigationItems {
-    path: string;
+    path: string | string[];
+    exclusionPaths?: string[];
     pathParameters?: boolean;
     topBar?: TopBarProps;
+    contentsTopBar?: ContentsTopBarProps;
+    contentsBottomBar?: ContentsBottomBarProps;
     sideList?: SideListProps;
-    bottomBar?: BottomBarProps;
     sideBar?: SideBarProps;
     fab?: FloatingActionButtonProps;
 }
-  
 
-export interface TopBarProps {
-    children: ReactNode;
+export interface FreeContentsNavigation {
+    children: ReactNode | null;
+}
+
+export interface TopBarProps extends FreeContentsNavigation {
     height?: HeightValueClasses;
 }
-  
-export interface SideListProps {
-    children: ReactNode;
+
+export interface ContentsTopBarProps extends FreeContentsNavigation {
+    height?: HeightValueClasses;
+    bgTransparent?: boolean;
+}
+
+export interface ContentsBottomBarProps extends FreeContentsNavigation {
+    height?: HeightValueClasses;
+}
+
+export interface SideListProps extends FreeContentsNavigation {
     width?: WidthValueClasses;
-}
-
-export interface BottomBarProps {
-    children: ReactNode;
-    height?: HeightValueClasses;
 }
   
 export interface SideBarItem {

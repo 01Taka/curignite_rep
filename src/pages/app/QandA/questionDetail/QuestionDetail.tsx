@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import QuestionDetailView from '../../QandA/questionDetail/QuestionDetailView';
 import { useParams } from 'react-router-dom';
-import { Question } from '../../../../firebase/db/app/QandA/questions/questions';
 import { questionsDB, usersDB } from '../../../../firebase/db/dbs';
-import { UserOrganizationInfo } from '../../../../firebase/db/app/user/usersTypes';
+import { UserOrganizationInfo } from '../../../../types/firebase/db/usersTypes';
+import { Question } from '../../../../types/firebase/db/qAndA/questionTypes';
 
 const QuestionDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();

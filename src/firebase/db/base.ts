@@ -1,8 +1,5 @@
-import { Firestore, DocumentData, DocumentReference, DocumentSnapshot, QuerySnapshot, addDoc, collection, deleteDoc, doc, getDoc, getDocs, updateDoc, CollectionReference, QueryConstraint, query, where, limit, setDoc } from "firebase/firestore";
-
-export interface DbData extends DocumentData {
-  documentId: string;
-}
+import { Firestore, DocumentReference, DocumentSnapshot, QuerySnapshot, addDoc, collection, deleteDoc, doc, getDoc, getDocs, updateDoc, CollectionReference, QueryConstraint, query, where, limit, setDoc } from "firebase/firestore";
+import { DbData } from "../../types/firebase/db/baseTypes";
 
 class BaseDB<T extends DbData> {
   protected collectionRef: CollectionReference<T>;

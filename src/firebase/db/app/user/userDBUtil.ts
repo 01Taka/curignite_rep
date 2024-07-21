@@ -1,5 +1,5 @@
 import { usersDB } from "../../dbs";
-import { UserOrganizationInfo } from "./usersTypes";
+import { UserOrganizationInfo } from "../../../../types/firebase/db/usersTypes";
 
 // Uid(ドキュメントID)がDBに存在するかどうかをチェックする関数
 export const checkIfUidExists = async (uid: string): Promise<boolean> => {

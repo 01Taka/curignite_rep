@@ -1,21 +1,36 @@
 import { Timestamp } from "firebase/firestore";
-import { DbData } from "../../base";
-import { TeamRolesKey } from "../team/teamsTypes";
+import { DbData } from "./baseTypes";
+import { TeamRolesKey } from "./teamsTypes";
 
 // UserDB関連のインターフェース
-export interface User extends DbData {
+interface UserBase extends DbData {
     username: string;
+}
+
+export interface User extends UserBase {
     birthDate: Timestamp;
     createdAt: Timestamp;
 }
 
-export interface UserOrganizationInfo extends DbData {
+export interface SerializableUser extends UserBase {
+    birthDate: number;
+    createdAt: number;
+}
+
+interface UserOrganizationInfoBase extends DbData {
     uid: string;
     organizationId: string;
     organizationName: string;
     grade: number;
     classNumber: number;
+}
+
+export interface UserOrganizationInfo extends UserOrganizationInfoBase {
     joinedAt: Timestamp;
+}
+
+export interface SerializableUserOrganizationInfo {
+    joinedAt: number;
 }
 
 export interface UserTeamInfo extends DbData {

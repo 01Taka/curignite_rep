@@ -11,9 +11,14 @@ interface TeamContainerProps {
 }
 
 const TeamContainer: FC<TeamContainerProps> = ({ teamName, iconPath, participantsName, myTeam, participantsNumber = 0 }) => {
-  const classes = cn("bg-secondaryBase rounded-lg shadow-md max-w-96", myTeam && "border-l-8 border-main");
   return (
-    <div className={classes}>
+    <div className={cn(
+        "bg-secondaryBase rounded-lg shadow-md ",
+        "hover:shadow-lg hover:scale-105 hover:cursor-pointer",
+        "transition duration-300",
+        myTeam && "border-l-8 border-main"
+      )}
+    >
       <CardHeader
         avatar={<Avatar src={iconPath} alt="チームアイコン" />}
         title={<TitleContent teamName={teamName} participantsNumber={participantsNumber} myTeam={myTeam} />}

@@ -1,8 +1,8 @@
 import React from 'react'
 import AnswerContainerView from './AnswerContainerView'
-import { Answer } from '../../../../../../firebase/db/app/QandA//answers/answers'
 import { format } from 'date-fns';
-import { UserOrganizationInfo } from '../../../../../../firebase/db/app/user/usersTypes';
+import { UserOrganizationInfo } from '../../../../../../types/firebase/db/usersTypes';
+import { Answer } from '../../../../../../types/firebase/db/qAndA/answerTypes';
 
 interface AnswerContainerProps {
     answer: Answer;

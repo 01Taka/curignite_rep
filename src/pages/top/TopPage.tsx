@@ -2,7 +2,7 @@ import React from 'react'
 import TopPageView from './TopView';
 import { useNavigate } from 'react-router-dom';
 import { getUserAuthState } from '../../firebase/auth/auth';
-import { authPaths, rootPaths } from '../../types/appPaths';
+import { authPaths, rootPaths } from '../../types/path/appPaths';
 
 const TopPage: React.FC = () => {
     const navigate = useNavigate();

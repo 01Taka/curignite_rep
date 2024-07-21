@@ -1,24 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
-export interface UserInfoForRedux {
-    uid: string;
-    username: string;
-    birthDate: number;
-    createdAt: number;
-}
-
-// export interface UserOrganizationInfoForRedux {
-//     documentId: string;
-//     organizationId: string;
-//     organizationName: string;
-//     grade: number;
-//     classNumber: number;
-//     joinedAt: number;
-// }
+import { SerializableUser } from "../../types/firebase/db/usersTypes";
 
 export interface UserDataState {
     uid: string | null;
-    userInfo: UserInfoForRedux | null;
+    userInfo: SerializableUser | null;
 }
 
 const initialState: UserDataState = {
@@ -30,9 +15,9 @@ const userDataSlice = createSlice({
     name: 'userData',
     initialState: initialState,
     reducers: {
-        setUserInfo: (state, action: PayloadAction<UserInfoForRedux>) => {
-            state.uid = action.payload.uid;
-            state.userInfo = action.payload;
+        setUserInfo: (state, action: PayloadAction<SerializableUser>) => {
+            state.uid = action.payload.documentId;
+            state.userInfo = action.payload
         },
     }
 })

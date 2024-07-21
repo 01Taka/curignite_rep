@@ -1,10 +1,10 @@
 import { getCurrentUser, getUserAuthState } from "../../../firebase/auth/auth";
 import { usersDB } from "../../../firebase/db/dbs";
 import { NavigateFunction } from "react-router-dom";
-import { setUserInfo, UserDataState, UserInfoForRedux } from "../../../redux/slices/userDataSilce";
+import { setUserInfo, UserDataState } from "../../../redux/slices/userDataSilce";
 import { Dispatch, ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
-import { convertTimestampToNumber } from "../../../functions/utils";
-import { authPaths, rootPaths } from "../../../types/appPaths";
+import { authPaths, rootPaths } from "../../../types/path/appPaths";
+import { serializeUserInfo } from "../../../functions/serialization/user/userSerialization";
 
 const mainPreprocessing = (
     navigate: NavigateFunction,
@@ -20,13 +20,7 @@ const mainPreprocessing = (
             // reduxにユーザーデータを設定
             const userInfo = await usersDB.read(uid);
             if (userInfo) {
-              const userInfoForRedux: UserInfoForRedux = {
-                uid,
-                username: userInfo.username,
-                birthDate: convertTimestampToNumber(userInfo.birthDate),
-                createdAt: convertTimestampToNumber(userInfo.createdAt),
-              }
-              dispatch(setUserInfo(userInfoForRedux));
+              dispatch(setUserInfo(serializeUserInfo(userInfo)));
             }
           }
         } catch (error) {

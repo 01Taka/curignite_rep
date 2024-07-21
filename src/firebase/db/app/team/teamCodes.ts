@@ -1,11 +1,6 @@
 import { DocumentData, DocumentReference, Firestore, Timestamp } from "firebase/firestore";
-import BaseDB, { DbData } from "../../base";
-
-export interface TeamCode extends DbData {
-    teamId: string;
-    period: Timestamp | null;
-    valid: boolean;
-}
+import BaseDB from "../../base";
+import { TeamCode } from "../../../../types/firebase/db/teamsTypes";
 
 class TeamCodesDB extends BaseDB<TeamCode> {
     constructor(firestore: Firestore) {

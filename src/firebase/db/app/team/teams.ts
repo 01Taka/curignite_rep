@@ -1,6 +1,6 @@
 import { DocumentData, DocumentReference, Firestore, Timestamp } from "firebase/firestore";
 import BaseDB from "../../base";
-import { TeamInfo, TeamRoles } from "./teamsTypes";
+import { TeamInfo, TeamRoles } from "../../../../types/firebase/db/teamsTypes";
 
 class TeamsDB extends BaseDB<TeamInfo> {
     constructor(firestore: Firestore) {
