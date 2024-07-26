@@ -36,3 +36,5 @@ npm install @mui/material @emotion/react @emotion/styled @mui/x-date-pickers
 
 npm install react-responsive
 npm install @types/react-responsive
+
+npm install argon2

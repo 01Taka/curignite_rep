@@ -1,33 +1,33 @@
 import { Timestamp } from "firebase/firestore";
-import { SerializableTeamInfo, TeamInfo } from "../../../types/firebase/db/teamsTypes";
+import { SerializableTeamData, TeamData } from "../../../types/firebase/db/teamsTypes";
 
 // シリアライズ関数
-export const serializeTeamInfo = (teamInfo: TeamInfo): SerializableTeamInfo => {
+export const serializeTeamData = (teamData: TeamData): SerializableTeamData => {
     return {
-        ...teamInfo,
-        createdAt: teamInfo.createdAt.toMillis(),
+        ...teamData,
+        createdAt: teamData.createdAt.toMillis(),
     };
 };
 
-export const serializeTeamInfoArray = (teamInfo: TeamInfo[]): SerializableTeamInfo[] => {
-    return teamInfo.map(info => ({
-        ...info,
-        createdAt: info.createdAt.toMillis(),
+export const serializeTeamDataArray = (teamData: TeamData[]): SerializableTeamData[] => {
+    return teamData.map(Data => ({
+        ...Data,
+        createdAt: Data.createdAt.toMillis(),
     }));
 };
 
 // デシリアライズ関数
-export const deserializeTeamInfo = (data: SerializableTeamInfo): TeamInfo => {
+export const deserializeTeamData = (data: SerializableTeamData): TeamData => {
     return {
         ...data,
         createdAt: Timestamp.fromMillis(data.createdAt),
     };
 };
 
-export const deserializeTeamInfoArray = (data: SerializableTeamInfo[]): TeamInfo[] => {
-    return data.map(info => ({
-        ...info,
-        createdAt: Timestamp.fromMillis(info.createdAt),
+export const deserializeTeamDataArray = (data: SerializableTeamData[]): TeamData[] => {
+    return data.map(Data => ({
+        ...Data,
+        createdAt: Timestamp.fromMillis(Data.createdAt),
     }));
 };
 

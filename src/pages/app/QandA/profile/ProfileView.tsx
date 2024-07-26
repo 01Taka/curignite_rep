@@ -1,5 +1,5 @@
 import React from 'react'
-import StudentInfoView from '../../../../components/app/profile/StudentInfoView';
+import StudentDataView from '../../../../components/app/profile/StudentInfoView';
 
 interface ProfileViewProps {
     username: string;
@@ -24,7 +24,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
     <div className='h-full'>
         {isSignUpCompleted && joinedAt &&
           <div>
-          <StudentInfoView
+          <StudentDataView
             iconUrl={iconUrl}
             username={username}
             grade={grade}

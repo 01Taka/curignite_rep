@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 
-export interface NavigationItem {
-    path: string;
+export interface NavigationItem<P = string> {
+    path: P;
     icon: ReactNode;
     name?: string;
 }

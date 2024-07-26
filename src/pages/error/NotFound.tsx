@@ -10,7 +10,7 @@ const NotFound: React.FC = () => {
         <h2 className='text-4xl font-bold mb-8'>404 - Page Not Found</h2>
         <p className='text-xl'>Sorry, the page you are looking for does not exist.</p>
         <p className='flex text-xl'>
-          Go back to <div className='font-bold mx-1 border-b-2 border-gray-500 hover:cursor-pointer' onClick={() => navigate(rootPaths.top)}>Home</div>.
+          Go back to <span className='font-bold mx-1 border-b-2 border-gray-500 hover:cursor-pointer' onClick={() => navigate(rootPaths.top)}>Home</span>.
         </p>
       </div>
     </div>

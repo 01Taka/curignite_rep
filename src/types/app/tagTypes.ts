@@ -37,7 +37,7 @@ export type Social =
 export type ForeginLanguage = 
  |'英語'
 
-export type Infomation =
+export type Datamation =
  |'情報'
 
 export type Supplementary = 
@@ -56,5 +56,5 @@ export type Subject =
  |Science
  |Social
  |ForeginLanguage
- |Infomation
+ |Datamation
  |Supplementary

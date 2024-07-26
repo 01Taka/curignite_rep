@@ -1,7 +1,7 @@
 import { Avatar } from '@mui/material';
 import React from 'react';
 
-interface StudentInfoViewProps {
+interface StudentDataViewProps {
     iconUrl: string;
     username: string;
     grade: number;
@@ -10,7 +10,7 @@ interface StudentInfoViewProps {
     onIconChange: () => void;
 }
 
-const StudentInfoView: React.FC<StudentInfoViewProps> = ({
+const StudentDataView: React.FC<StudentDataViewProps> = ({
     iconUrl,
     username,
     grade,
@@ -48,4 +48,4 @@ const StudentInfoView: React.FC<StudentInfoViewProps> = ({
     );
 }
 
-export default StudentInfoView;
+export default StudentDataView;

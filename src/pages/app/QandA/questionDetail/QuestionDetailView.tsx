@@ -3,21 +3,21 @@ import CreateAnswer from './createAnswer/CreateAnswer';
 import AnswerList from './answerList/AnswerList';
 import TopTab from '../../../../components/app/tab/TopTab';
 import QuestionDisplay from './question/QuestionDisplay';
-import { initialUserOrganizationInfoState, UserOrganizationInfo } from '../../../../types/firebase/db/usersTypes';
+import { initialUserOrganizationDataState, UserOrganizationData } from '../../../../types/firebase/db/usersTypes';
 import { Question } from '../../../../types/firebase/db/qAndA/questionTypes';
 
 interface QuestionDetailViewProps {
   loading: boolean;
   error: string | null;
   question: Question | null;
-  userOrganizationInfo: UserOrganizationInfo | null;
+  userOrganizationData: UserOrganizationData | null;
 }
 
 const QuestionDetailView: React.FC<QuestionDetailViewProps> = ({
   loading,
   error,
   question,
-  userOrganizationInfo,
+  userOrganizationData,
 }) => {
   if (loading) {
     return <div>Loading...</div>;
@@ -48,7 +48,7 @@ const QuestionDetailView: React.FC<QuestionDetailViewProps> = ({
       <div className='w-1/2'>
         <QuestionDisplay
           question={question}
-          userOrganizationInfo={userOrganizationInfo ? userOrganizationInfo : initialUserOrganizationInfoState}
+          userOrganizationData={userOrganizationData ? userOrganizationData : initialUserOrganizationDataState}
         />
       </div>
     </div>

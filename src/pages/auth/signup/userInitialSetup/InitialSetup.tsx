@@ -84,7 +84,7 @@ const InitialSetup: React.FC = () => {
       error={error}
       onFormStateChange={e => handleFormStateChange(e, setFormState)}
       onBirthdayChange={handleBirthdayChange}
-      onSetUserInfo={handleCreateUser}
+      onSetUserData={handleCreateUser}
     />
   );
 };

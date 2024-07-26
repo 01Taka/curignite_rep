@@ -7,16 +7,18 @@ interface TeamContainerProps {
   iconPath: string;
   participantsName: string[];
   myTeam: boolean;
+  currentDisplay: boolean;
   participantsNumber?: number;
 }
 
-const TeamContainer: FC<TeamContainerProps> = ({ teamName, iconPath, participantsName, myTeam, participantsNumber = 0 }) => {
+const TeamContainer: FC<TeamContainerProps> = ({ teamName, iconPath, participantsName, myTeam, currentDisplay, participantsNumber = 0 }) => {
   return (
     <div className={cn(
+        currentDisplay && "border-2 scale-105",
         "bg-secondaryBase rounded-lg shadow-md ",
         "hover:shadow-lg hover:scale-105 hover:cursor-pointer",
         "transition duration-300",
-        myTeam && "border-l-8 border-main"
+        myTeam && "border-l-8 border-main",
       )}
     >
       <CardHeader

@@ -40,7 +40,7 @@ export const processingCreateUser = async (
       throw new Error('ログインをしてください');
     }
 
-    await usersDB.createUser(uid, username, Timestamp.fromDate(birthday));
+    await usersDB.createUser(uid, username, [], Timestamp.fromDate(birthday));
   } catch (error) {
     throw error;
   }

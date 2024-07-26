@@ -4,7 +4,7 @@ import { useAppSelector } from '../../../../redux/hooks';
 import { questionsDB } from '../../../../firebase/db/dbs';
 
 const CreateQuestion: React.FC = () => {
-  const userInfo = useAppSelector((state) => state.userDataSlice);
+  const userData = useAppSelector((state) => state.userDataSlice);
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -21,7 +21,7 @@ const CreateQuestion: React.FC = () => {
 
   const onCreateQuestion = () => {
     try {
-      const uid = userInfo.uid;
+      const uid = userData.uid;
       if (uid) {
         questionsDB.createQuestions(title, content, uid);
         setMessage('質問を追加しました。');

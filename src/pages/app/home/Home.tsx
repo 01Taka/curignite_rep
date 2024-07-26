@@ -8,7 +8,7 @@ const Home: FC = () => {
 
   return <HomeView
     routeElements={routeElements}
-    radius={200}
+    radius={190}
     centerItem={centerElement}
     angleAdjustment={-90}
     onNavigate={(path) => navigate(path)}

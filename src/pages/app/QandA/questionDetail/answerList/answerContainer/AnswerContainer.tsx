@@ -1,15 +1,15 @@
 import React from 'react'
 import AnswerContainerView from './AnswerContainerView'
 import { format } from 'date-fns';
-import { UserOrganizationInfo } from '../../../../../../types/firebase/db/usersTypes';
+import { UserOrganizationData } from '../../../../../../types/firebase/db/usersTypes';
 import { Answer } from '../../../../../../types/firebase/db/qAndA/answerTypes';
 
 interface AnswerContainerProps {
     answer: Answer;
-    userOrganizationInfo: UserOrganizationInfo | null;
+    userOrganizationData: UserOrganizationData | null;
 }
 
-const AnswerContainer: React.FC<AnswerContainerProps> = ({ answer, userOrganizationInfo }) => {
+const AnswerContainer: React.FC<AnswerContainerProps> = ({ answer, userOrganizationData }) => {
     const date = answer.createdAt.toDate();
     const content = answer.content;
 

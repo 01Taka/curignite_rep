@@ -14,7 +14,7 @@ interface HomeViewProps {
 const HomeView: FC<HomeViewProps> = ({ radius, routeElements, centerItem, angleAdjustment = 0, onNavigate }) => {
   const angle = 360 / routeElements.length;
   const buttonSize = 128; // CircularButtonのサイズ (px)
-  const centerButtonSize = 208; // 中心のCircularButtonのサイズ (px)
+  const centerButtonSize = 192; // 中心のCircularButtonのサイズ (px)
 
   return (
     <div className='flex justify-center items-center w-auto h-full'>
@@ -28,7 +28,7 @@ const HomeView: FC<HomeViewProps> = ({ radius, routeElements, centerItem, angleA
           }}>
             <CircularButton
               children={centerItem.text}
-              size='xl'
+              size='x8l'
               bgColor='main'
               invalidation={centerItem.invalidation}
               onClick={() => onNavigate(centerItem.path)}
@@ -45,7 +45,7 @@ const HomeView: FC<HomeViewProps> = ({ radius, routeElements, centerItem, angleA
             <div key={index} style={{ position: 'absolute', left: `${x}px`, top: `${y}px`, transform: `translate(-${buttonSize / 2}px, -${buttonSize / 2}px)` }}>
               <CircularButton
                 children={route.text}
-                size='lg'
+                size='x4l'
                 bgColor='secondaryBase'
                 invalidation={route.invalidation}
                 onClick={() => onNavigate(route.path)}

@@ -1,15 +1,16 @@
-import React, { FC, useEffect } from 'react'
+import React, { FC } from 'react'
 import TeamNavigationView from './TeamNavigationView'
-import { useNavigate } from 'react-router-dom'
 import { NavigationItem } from '../../../../../types/path/path'
 import GroupsIcon from '@mui/icons-material/Groups';
 import ChatIcon from '@mui/icons-material/Chat';
 import PictureInPictureIcon from '@mui/icons-material/PictureInPicture';
-import { useAppSelector } from '../../../../../redux/hooks';
+import { TeamPages } from '../../team/Team';
+import { useAppDispatch } from '../../../../../redux/hooks';
+import { setDisplayTeamPage } from '../../../../../redux/slices/teamSlice';
 
-const navigationItems: NavigationItem[] = [
+const navigationItems: NavigationItem<TeamPages>[] = [
 	{
-		path: "users",
+		path: "participants",
 		icon: <GroupsIcon />,
 	},
 	{
@@ -19,15 +20,14 @@ const navigationItems: NavigationItem[] = [
 	{
 		path: "whiteboard",
 		icon: <PictureInPictureIcon />,
-	}
+	},
 ]
 
 const TeamNavigation: FC = () => {
-	const navigate = useNavigate();
-	const teamSlice = useAppSelector(state => state.teamSlice);
-	
-	const handleNavigation = (path: string) => {
-			navigate(path);
+	const dispatch = useAppDispatch();
+
+	const handleNavigation = (path: TeamPages) => {
+		dispatch(setDisplayTeamPage(path));
 	}
 
   return <TeamNavigationView

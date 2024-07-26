@@ -1,23 +1,24 @@
 import { Timestamp } from "firebase/firestore";
 import { DbData } from "./baseTypes";
-import { TeamRolesKey } from "./teamsTypes";
+import { TeamRoles } from "./teamsTypes";
 
 // UserDB関連のインターフェース
-interface UserBase extends DbData {
+interface UserBaseData extends DbData {
     username: string;
+    spaceIds: string[];
 }
 
-export interface User extends UserBase {
+export interface UserData extends UserBaseData {
     birthDate: Timestamp;
     createdAt: Timestamp;
 }
 
-export interface SerializableUser extends UserBase {
+export interface SerializableUserData extends UserBaseData {
     birthDate: number;
     createdAt: number;
 }
 
-interface UserOrganizationInfoBase extends DbData {
+interface OrganizationBaseData extends DbData {
     uid: string;
     organizationId: string;
     organizationName: string;
@@ -25,32 +26,33 @@ interface UserOrganizationInfoBase extends DbData {
     classNumber: number;
 }
 
-export interface UserOrganizationInfo extends UserOrganizationInfoBase {
+export interface UserOrganizationData extends OrganizationBaseData {
     joinedAt: Timestamp;
 }
 
-export interface SerializableUserOrganizationInfo {
+export interface SerializableUserOrganizationData extends OrganizationBaseData {
     joinedAt: number;
 }
 
-export interface UserTeamInfo extends DbData {
+export interface UserTeamData extends DbData {
     teamId: string;
     teamName: string;
     teamIconPath: string;
-    roles: TeamRolesKey;
+    role: TeamRoles;
     myTeam: boolean;
 }
 
 
 // UserDB関連の初期値
-export const userInitialUserState: User = {
+export const userInitialUserState: UserData = {
     documentId: '',
     username: '',
+    spaceIds: [],
     birthDate: Timestamp.fromDate(new Date(0)),
     createdAt: Timestamp.fromDate(new Date(0)),
 };
 
-export const initialUserOrganizationInfoState: UserOrganizationInfo = {
+export const initialUserOrganizationDataState: UserOrganizationData = {
     documentId: "",
     uid: "",
     organizationId: '',
@@ -60,11 +62,11 @@ export const initialUserOrganizationInfoState: UserOrganizationInfo = {
     joinedAt: Timestamp.fromDate(new Date(0)),
 };
 
-export const initialUserTeamInfoState: UserTeamInfo = {
+export const initialUserTeamDataState: UserTeamData = {
     documentId: "",
     teamId: "",
     teamName: "",
     teamIconPath: "",
-    roles: "pending",
+    role: "pending",
     myTeam: false,
 }

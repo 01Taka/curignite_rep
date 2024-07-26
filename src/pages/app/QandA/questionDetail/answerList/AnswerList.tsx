@@ -10,26 +10,26 @@ const AnswerList: React.FC = () => {
   const [answerPosts, setAnswerPosts] = useState<AnswerPost[]>([]);
 
   useEffect(() => {
-      const fetchAnswersAndUserOrganizationInfo = async () => {
+      const fetchAnswersAndUserOrganizationData = async () => {
         try {
             const fetchedAnswers = await answersDB.getAll(where("questionId", "==", id));
-            const answerPosts = await getUserOrganizationInfoWithAnswer(fetchedAnswers);
+            const answerPosts = await getUserOrganizationDataWithAnswer(fetchedAnswers);
             setAnswerPosts(answerPosts);
         } catch (error) {
-            console.error("Error fetching answers or student info: ", error);
+            console.error("Error fetching answers or student Data: ", error);
         }
     };
 
     if (id) {
-        fetchAnswersAndUserOrganizationInfo();
+        fetchAnswersAndUserOrganizationData();
     }
   }, [id]);
 
-    const getUserOrganizationInfoWithAnswer = async (answers: Answer[]): Promise<AnswerPost[]> => {
+    const getUserOrganizationDataWithAnswer = async (answers: Answer[]): Promise<AnswerPost[]> => {
         const answerPosts = await Promise.all(answers.map(async (answer) => {
-            const userOrganizationInfo = await usersDB.readOrganizationByUid(answer.authorUid);
+            const userOrganizationData = await usersDB.readOrganizationByUid(answer.authorUid);
             const res: AnswerPost = {
-                userOrganizationInfo,
+                userOrganizationData,
                 answer,
             };
             return res;

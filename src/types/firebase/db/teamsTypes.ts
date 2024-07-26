@@ -1,5 +1,6 @@
 import { Timestamp } from "firebase/firestore";
 import { DbData } from "./baseTypes";
+import { UserData } from "./usersTypes";
 
 export interface TeamCode extends DbData {
     teamId: string;
@@ -8,50 +9,66 @@ export interface TeamCode extends DbData {
 }
 
 // teamsDBの型
-export interface TeamRoles {
-    admin: string[],
-    member: string[],
-    invitee: string[],
-    pending: string[],
-    rejected: string[],
+// uidを保存する
+export interface TeamParticipants {
+    admin: string[], // 管理者
+    regularMember: string[], // 一般メンバー
+    invitee: string[], // 招待を送った人
+    pending: string[], // 参加の承認待ちの人
+    rejected: string[], // 参加が禁止された人
 }
 
-export type TeamRolesKey = keyof TeamRoles;
+export type TeamRoles = keyof TeamParticipants;
 
-export const initialTeamRolesState: TeamRoles = {
+export const activeRoles: TeamRoles[] = ["regularMember", "admin"];
+export const passiveRoles: TeamRoles[] = ["invitee", "rejected", "pending"];
+
+export const initialTeamParticipantsState: TeamParticipants = {
     admin: [],
-    member: [],
+    regularMember: [],
     invitee: [],
     pending: [],
     rejected: [],
 }
 
-interface TeamInfoBase extends DbData {
+export interface UserWithTeamRole {
+    userData: UserData;
+    teamId: string;
+    role: TeamRoles;
+}
+
+export interface UserRoleAssignment {
+    uid: string;
+    teamId: string;
+    role: TeamRoles;
+}
+
+interface TeamDataBase extends DbData {
     teamName: string;
     iconPath: string;
-    password: string;
+    hashedPassword: string;
     requiredApproval: boolean;
     introduction: string;
     authorUid: string;
-    roles: TeamRoles;
+    participants: TeamParticipants;
 }
 
-export interface TeamInfo extends TeamInfoBase {
+export interface TeamData extends TeamDataBase {
     createdAt: Timestamp;
 }
 
-export interface SerializableTeamInfo extends TeamInfoBase {
+export interface SerializableTeamData extends TeamDataBase {
     createdAt: number;
 }
 
-export const initialTeamInfoState: TeamInfo = {
+export const initialTeamDataState: TeamData = {
     documentId: "",
     teamName: "",
     iconPath: "",
-    password: "",
+    hashedPassword: "",
     requiredApproval: true,
     introduction: "",
     authorUid: "",
-    roles: initialTeamRolesState,
+    participants: initialTeamParticipantsState,
     createdAt: Timestamp.fromDate(new Date(0)),
 }

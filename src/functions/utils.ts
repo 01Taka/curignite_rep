@@ -1,18 +1,24 @@
 import clsx, { ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { Timestamp } from "firebase/firestore";
+import { FormStateChangeEvent } from "../types/componentsTypes";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
 export const handleFormStateChange = <T>(
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    setFormState: React.Dispatch<React.SetStateAction<T>>,
-  ) => {
-    const { name, value } = event.target;
-    setFormState((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+  event: FormStateChangeEvent,
+  setFormState: React.Dispatch<React.SetStateAction<T>>,
+) => {
+  const { name, value, type } = event.target;
+  const fieldValue = type === 'checkbox' ? (event.target as HTMLInputElement).checked : value;
+  
+  setFormState((prevState) => ({
+    ...prevState,
+    [name]: fieldValue,
+  }));
 };
+
+export const isMobileMode = () => {
+  return window.innerWidth <= 768;
+}

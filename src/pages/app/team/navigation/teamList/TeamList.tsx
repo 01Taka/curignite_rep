@@ -1,35 +1,33 @@
 import React, { FC } from 'react'
 import TeamListView from './TeamListView';
 import { useAppDispatch, useAppSelector } from '../../../../../redux/hooks';
-import { TeamInfo } from '../../../../../types/firebase/db/teamsTypes';
+import { TeamData } from '../../../../../types/firebase/db/teamsTypes';
 import { setCurrentDisplayTeam } from '../../../../../redux/slices/teamSlice';
-import { deserializeTeamInfoArray, serializeTeamInfo } from '../../../../../functions/serialization/team/teamSerialization';
+import { deserializeTeamDataArray, serializeTeamData } from '../../../../../functions/serialization/team/teamSerialization';
 import { useNavigate } from 'react-router-dom';
 import { paths } from '../../../../../types/path/appPaths';
+import { isMobileMode } from '../../../../../functions/utils';
 
 const TeamList: FC = () => {
   const userData = useAppSelector(state => state.userDataSlice);
   const teamSlice = useAppSelector(state => state.teamSlice);
-  const appSlice = useAppSelector(state => state.appSlice);
   const dispatch = useAppDispatch();
 
   const navigate = useNavigate();
 
-  const setDisplayTeam = (team: TeamInfo) => {
-    console.log("nav");
-    dispatch(setCurrentDisplayTeam(serializeTeamInfo(team)));
+  const setDisplayTeam = (team: TeamData) => {
+    dispatch(setCurrentDisplayTeam(serializeTeamData(team)));
     
-    if (appSlice.isMobile) {
+    if (isMobileMode()) {
       navigate(paths.main.team.index);
-      console.log("nav");
-      
     }
   }
 
   return <TeamListView
-    teamInfoList={deserializeTeamInfoArray(teamSlice.teams)}
+    teamDataList={deserializeTeamDataArray(teamSlice.teams)}
     uid={userData.uid || ""}
-    loading={teamSlice.teams.length === 0}
+    currentDisplayTeamId={teamSlice.currentDisplayTeam?.documentId}
+    requestState={teamSlice.requestState}
     onTeamClick={setDisplayTeam}
   />
 }

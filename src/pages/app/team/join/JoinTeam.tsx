@@ -23,7 +23,7 @@ const JoinTeam: FC = () => {
 
     const handleCreateEnter = () => {
         // チームを作成する処理をここに追加
-        navigate(`${teamPaths.base}/${createTeamValue}`);
+        navigate(`${teamPaths.create}/${createTeamValue}`);
         console.log('Creating team with name:', createTeamValue);
     }
 

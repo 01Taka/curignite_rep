@@ -1,11 +1,22 @@
 import { VariantProps, cva } from 'class-variance-authority';
 import { ButtonHTMLAttributes, FC, ReactNode } from 'react';
-import { cn } from '../../../functions/utils';
+import { cn, isMobileMode } from '../../../functions/utils';
 
 // CircularButtonProps インターフェースを定義
+const size = {
+    xs: 'w-9 h-9 text-xs border-2',
+    sm: 'w-12 h-12 text-xs border-2',
+    md: 'w-16 h-16 text-sm border-4',
+    lg: 'w-20 h-20 text-md border-4',
+    xl: 'w-24 h-24 text-xl border-4',
+    x4l: 'w-32 h-32 text-2xl border-4',
+    x8l: 'w-48 h-48 text-4xl border-8',
+}
+
 interface CircularButtonProps extends ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof circularButtonVariants> {
     children: ReactNode;
     invalidation?: boolean;
+    mobileSize?: keyof typeof size;
 }
 
 // class-variance-authority を使ってスタイルのバリエーションを定義
@@ -18,16 +29,7 @@ const circularButtonVariants = cva("rounded-full flex items-center justify-cente
                 secondaryBase: 'bg-secondaryBase hover:bg-secondaryBase-hover border-secondaryBase hover:border-secondaryBase-hover',
                 accent: 'bg-accent hover:bg-accent-hover border-accent hover:border-accent-hover',
             },
-            size: {
-                xs: 'w-9 h-9 text-xs border-2',
-                sm: 'w-12 h-12 text-sm border-2',
-                md: 'w-14 h-14 text-sm border-2',
-                lg: 'w-16 h-16 text-md border-4',
-                xl: 'w-20 h-20 text-lg border-4',
-                x2l: 'w-24 h-24 text-lg border-4',
-                x4l: 'w-32 h-32 text-2xl border-4',
-                x8l: 'w-48 h-48 text-4xl border-8',
-            },
+            size: size,
             looks: {
                 fill: 'border-none',
                 frame: 'bg-transparent text-black hover:bg-transparent',
@@ -50,8 +52,9 @@ const circularButtonVariants = cva("rounded-full flex items-center justify-cente
 )
 
 // CircularButton コンポーネントを定義
-const CircularButton: FC<CircularButtonProps> = ({ children, className, bgColor, size, textColor, looks, invalidation, ...props }) => {
-    const buttonClass = cn(circularButtonVariants({ bgColor, size, looks, textColor }), className, {
+const CircularButton: FC<CircularButtonProps> = ({ children, className, bgColor, size, mobileSize, textColor, looks, invalidation, ...props }) => {
+    const applySize = mobileSize ? (isMobileMode() ? mobileSize : size) : size;
+    const buttonClass = cn(circularButtonVariants({ bgColor, size: applySize, looks, textColor }), className, {
         'bg-gray-400 hover:bg-gray-400 hover:scale-100': invalidation,
     });
 

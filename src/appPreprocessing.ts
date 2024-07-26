@@ -1,5 +1,6 @@
 import { Dispatch, ThunkDispatch, UnknownAction } from '@reduxjs/toolkit';
 import { AppSliceState, setIsMobile } from './redux/slices/appSlice';
+import { isMobileMode } from './functions/utils';
 
 const appPreprocessing = (
     dispatch: ThunkDispatch<{
@@ -8,7 +9,7 @@ const appPreprocessing = (
 ) => {
   // デバイスモードを更新する関数
   const updateDeviceMode = () => {
-    const isMobile = window.innerWidth <= 768;
+    const isMobile = isMobileMode();
     dispatch(setIsMobile(isMobile));
   };
 

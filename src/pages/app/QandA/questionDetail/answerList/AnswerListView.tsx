@@ -1,10 +1,10 @@
 import React from 'react'
 import AnswerContainer from './answerContainer/AnswerContainer'
 import { Answer } from '../../../../../types/firebase/db/qAndA/answerTypes';
-import { UserOrganizationInfo } from '../../../../../types/firebase/db/usersTypes';
+import { UserOrganizationData } from '../../../../../types/firebase/db/usersTypes';
 
 export interface AnswerPost {
-  userOrganizationInfo: UserOrganizationInfo | null;
+  userOrganizationData: UserOrganizationData | null;
   answer: Answer;
 }
 
@@ -19,7 +19,7 @@ const AnswerListView: React.FC<AnswerListViewProps> = ({
     <div>
       {answers.map((post, index) => (
         <div key={index}>
-          <AnswerContainer answer={post.answer} userOrganizationInfo={post.userOrganizationInfo}/>
+          <AnswerContainer answer={post.answer} userOrganizationData={post.userOrganizationData}/>
         </div>
       ))}
     </div>

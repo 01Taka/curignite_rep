@@ -1,8 +1,8 @@
 import { Timestamp } from "firebase/firestore";
-import { SerializableUser, User } from "../../../types/firebase/db/usersTypes";
+import { SerializableUserData, UserData } from "../../../types/firebase/db/usersTypes";
 
 // シリアライズ関数
-export const serializeUserInfo = (user: User): SerializableUser => {
+export const serializeUserData = (user: UserData): SerializableUserData => {
     return {
         ...user,
         createdAt: user.createdAt.toMillis(),
@@ -11,7 +11,7 @@ export const serializeUserInfo = (user: User): SerializableUser => {
 };
 
 // デシリアライズ関数
-export const deserializeUserInfo = (data: SerializableUser): User => {
+export const deserializeUserData = (data: SerializableUserData): UserData => {
     return {
         ...data,
         createdAt: Timestamp.fromMillis(data.createdAt),

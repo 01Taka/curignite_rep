@@ -17,7 +17,7 @@ interface InitialSetupViewProps {
   error: string;
   onFormStateChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onBirthdayChange: (value: Date | null) => void;
-  onSetUserInfo: () => void;
+  onSetUserData: () => void;
 }
 
 const LoadingComponent: React.FC = () => (
@@ -48,11 +48,11 @@ const InitialSetupView: React.FC<InitialSetupViewProps> = ({
   error,
   onFormStateChange,
   onBirthdayChange,
-  onSetUserInfo,
+  onSetUserData,
 }) => {
   const handleSubmit = (e: React.FormEvent<Element>) => {
     e.preventDefault();
-    onSetUserInfo();
+    onSetUserData();
   };
 
   return (

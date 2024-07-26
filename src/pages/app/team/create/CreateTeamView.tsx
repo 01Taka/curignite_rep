@@ -6,6 +6,8 @@ import CheckBoxFiled from '../../../../components/input/field/CheckBoxFiled';
 import EvenlyList from '../../../../components/container/EvenlyList';
 import CircularButton from '../../../../components/input/button/CircularButton';
 import FormContainer from '../../../../components/container/FormContainer';
+import { hashString } from '../../../../functions/hash';
+import * as argon2 from 'argon2';
 
 export type CreateTeamFormState = {
   teamName: string;
@@ -28,11 +30,15 @@ const CreateTeamView: FC<CreateTeamViewProps> = ({
   onCheckboxChange,
   onCreate,
 }) => {
+
   return (
     <FormContainer>
       <Typography variant='h4' className='flex justify-center py-8'>
             チームを作成
       </Typography>
+      <CircularButton onClick={handleHash}>
+        HASH
+      </CircularButton>
       <EvenlyList 
         elements={[
           <StringField
@@ -62,7 +68,9 @@ const CreateTeamView: FC<CreateTeamViewProps> = ({
             onChange={onFormStateChange}
           />,
           <div className='flex justify-end'>
-            <CircularButton bgColor='main' className='mr-6' onClick={onCreate}><>チームを<br/>作成する</></CircularButton>
+            <CircularButton bgColor='main' size="lg" className='mr-6' onClick={onCreate}>
+              <>チームを<br/>作成する</>
+            </CircularButton>
           </div>
         ]}
         betweenElement={<div className='my-4'/>}

@@ -10,21 +10,21 @@ const QuestionList: React.FC = () => {
         const fetchQuestionPosts = async () => {
             try {
                 const fetchedQuestions = await questionsDB.getAll();
-                const questionPosts = await getUserOrganizationInfoWithQuestion(fetchedQuestions);
+                const questionPosts = await getUserOrganizationDataWithQuestion(fetchedQuestions);
                 setQuestionPosts(questionPosts);
             } catch (error) {
-                console.error("Error fetching questions or student info: ", error);
+                console.error("Error fetching questions or student Data: ", error);
             }
         };
 
         fetchQuestionPosts();
     }, []);
 
-    const getUserOrganizationInfoWithQuestion = async (questions: Question[]): Promise<QuestionPost[]> => {
+    const getUserOrganizationDataWithQuestion = async (questions: Question[]): Promise<QuestionPost[]> => {
         const questionPosts = await Promise.all(questions.map(async (question) => {
-            const userOrganizationInfo = await usersDB.readOrganizationByUid(question.authorUid);
+            const userOrganizationData = await usersDB.readOrganizationByUid(question.authorUid);
             const res: QuestionPost = {
-                userOrganizationInfo,
+                userOrganizationData,
                 question,
             };
             return res;

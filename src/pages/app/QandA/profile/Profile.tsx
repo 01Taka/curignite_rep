@@ -15,7 +15,7 @@ const Profile: React.FC = () => {
     const [isSignUpCompleted, setIsSignUpCompleted] = useState(false);
     
     useEffect(() => {
-      const setStudentInfo = async () => {
+      const setStudentData = async () => {
         setIsSignUpCompleted(false);
 
         // if (studentData && studentData.signUpCompleted) {
@@ -27,7 +27,7 @@ const Profile: React.FC = () => {
         //   setIsSignUpCompleted(true);
         // }
       }
-      setStudentInfo();
+      setStudentData();
     }, []);
 
     const onIconChange = () => {

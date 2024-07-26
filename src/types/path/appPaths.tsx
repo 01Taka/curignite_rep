@@ -26,6 +26,17 @@ export const relativeMainPaths = {
   qAndA: 'q-and-a',
 };
 
+export const mainRootPaths = {
+  space: `${relativeMainPaths.space}/*`,
+  chat: `${relativeMainPaths.chat}/*`,
+  whiteboard: `${relativeMainPaths.whiteboard}/*`,
+  calendar: `${relativeMainPaths.calendar}/*`,
+  todo: `${relativeMainPaths.todo}/*`,
+  team: `${relativeMainPaths.team}/*`,
+  goal: `${relativeMainPaths.goal}/*`,
+  qAndA: `${relativeMainPaths.qAndA}/*`,
+}
+
 // Auth Paths
 export const authPaths = {
   base: rootPaths.auth,
@@ -53,7 +64,10 @@ export const mainPaths = {
 // Specific Path Groups
 export const spacePaths = {
   base: mainPaths.space,
-  index: `${mainPaths.space}/index`,
+  start: `${mainPaths.space}/start`,
+  startChildren: {
+    setting: `${mainPaths.space}/start/setting`,
+  },
 }
 
 export const chatPaths = {
@@ -79,6 +93,7 @@ export const todoPaths = {
 export const teamPaths = {
   base: mainPaths.team,
   index: `${mainPaths.team}/index`,
+  list: `${mainPaths.team}/list`,
   create: `${mainPaths.team}/create`,
   join: `${mainPaths.team}/join`,
 }
@@ -109,17 +124,6 @@ export const paths = {
     qAndA: qAndAPaths,
   }
 }
-
-export const mainIndexPaths = {
-  space: paths.main.space.index,
-  chat: paths.main.chat.index,
-  whiteboard: paths.main.whiteboard.index,
-  calendar: paths.main.calendar.index,
-  todo: paths.main.todo.index,
-  team: paths.main.team.index,
-  goal: paths.main.goal.index,
-  qAndA: paths.main.qAndA.index,
-};
 
 type PathOption = "" | "/" | "/*" | `/:${string}`;
 /**

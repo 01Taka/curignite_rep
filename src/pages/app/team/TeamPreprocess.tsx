@@ -1,48 +1,56 @@
-import React, { useEffect } from 'react';
-import { getTeamsFromUserTeamsInfo } from "../../../firebase/db/app/team/teamDBUtil";
-import { initialTeamInfoState, TeamInfo } from "../../../types/firebase/db/teamsTypes";
+import { useEffect } from 'react';
+import { fetchApprovedTeamsFromUserData } from "../../../firebase/db/app/team/teamDBUtil";
+import { initialTeamDataState, TeamData } from "../../../types/firebase/db/teamsTypes";
 import { usersDB } from "../../../firebase/db/dbs";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { setCurrentDisplayTeam, setTeams } from "../../../redux/slices/teamSlice";
-import { serializeTeamInfo, serializeTeamInfoArray } from '../../../functions/serialization/team/teamSerialization';
+import { setCurrentDisplayTeam, setTeamsNotFound, updateTeams, updateTeamsSuccess } from "../../../redux/slices/teamSlice";
+import { serializeTeamData, serializeTeamDataArray } from '../../../functions/serialization/team/teamSerialization';
 
 const TeamPreprocess = () => {
-  const userData = useAppSelector(state => state.userDataSlice);
+  const { currentDisplayTeam } = useAppSelector(state => state.teamSlice);
+  const { uid } = useAppSelector(state => state.userDataSlice);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    const updateTeamInfo = async () => {
+    const updateTeamData = async () => {
       try {
-        const uid = userData.uid;
         if (uid) {
-          const userTeamsInfo = await usersDB.getAllUserTeamsInfo(uid);
-          const temporaryTeamInfoList: TeamInfo[] = userTeamsInfo.map(value => {
-            const temporaryTeamInfo: TeamInfo = {
-              ...initialTeamInfoState,
-              teamName: value.teamName,
-              iconPath: value.teamIconPath,
-            };
-            return temporaryTeamInfo;
-          });
+          const userTeamsData = await usersDB.getAllUserTeamsData(uid);
 
-          // reduxに仮チーム情報を登録
-          dispatch(setTeams(serializeTeamInfoArray(temporaryTeamInfoList)));
+          if (userTeamsData.length === 0) {
+            dispatch(setTeamsNotFound());
+            return;
+          }
 
-          const teamsInfo = await getTeamsFromUserTeamsInfo(uid, userTeamsInfo);
+          const temporaryTeamDataList: TeamData[] = userTeamsData.map(value => ({
+            ...initialTeamDataState,
+            teamName: value.teamName,
+            iconPath: value.teamIconPath,
+          }));
 
-          // reduxにチーム情報を設定
-          dispatch(setTeams(serializeTeamInfoArray(teamsInfo)));
-          dispatch(setCurrentDisplayTeam(serializeTeamInfo(teamsInfo[0])));
+          dispatch(updateTeams(serializeTeamDataArray(temporaryTeamDataList)));
+
+          const teamsData = await fetchApprovedTeamsFromUserData(uid, userTeamsData);
+
+          if (teamsData.length === 0) {
+            dispatch(setTeamsNotFound());
+          } else {
+            dispatch(updateTeamsSuccess(serializeTeamDataArray(teamsData)));
+
+            if (!currentDisplayTeam) {
+              dispatch(setCurrentDisplayTeam(serializeTeamData(teamsData[0])));
+            }
+          }
         }
       } catch (error) {
-        console.error("Error updating team info: ", error);
+        console.error("Error updating team data: ", error);
       }
     };
 
-    updateTeamInfo();
-  }, [dispatch, userData.uid]); // userData.uidが変わったときのみ再実行される
+    updateTeamData();
+  }, [dispatch, uid, currentDisplayTeam]);
 
-  return null; // 何も表示しない
+  return null;
 };
 
 export default TeamPreprocess;

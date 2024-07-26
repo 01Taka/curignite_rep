@@ -1,18 +1,18 @@
 import { Timestamp } from "firebase/firestore";
 import { teamCodesDB, teamsDB, usersDB } from "../../dbs";
-import { TeamInfo, TeamRoles, TeamRolesKey } from "../../../../types/firebase/db/teamsTypes";
-import { UserTeamInfo } from "../../../../types/firebase/db/usersTypes";
+import { TeamData, TeamParticipants, TeamRoles, UserWithTeamRole, UserRoleAssignment, activeRoles } from "../../../../types/firebase/db/teamsTypes";
+import { UserTeamData } from "../../../../types/firebase/db/usersTypes";
 
-// 役割が承認されているか確認する関数
-const checkIfRoleApproved = (role: TeamRolesKey): boolean => {
-    return role === "admin" || role === "member";
+// 役割がアクティブであるかを確認する関数
+export const isActiveRole = (role: TeamRoles): boolean => {
+    return activeRoles.includes(role);
 };
 
-// ユーザーがチームに属しているか確認する関数
-const checkIfUserOnTheTeam = (uid: string, roles: TeamRoles): boolean => {
+// ユーザーがチームのアクティブメンバーに含まれるかを確認する関数
+const isUserActiveInTeam = (uid: string, participants: TeamParticipants): boolean => {
     return (
-        roles.rejected?.includes(uid) === false &&
-        (roles.member?.includes(uid) || roles.admin?.includes(uid))
+        participants.rejected?.includes(uid) === false &&
+        (participants.regularMember?.includes(uid) || participants.admin?.includes(uid))
     );
 }
 
@@ -20,19 +20,29 @@ export const createTeam = async (uid: string, teamName: string, iconPath: string
     try {
         const teamData = await teamsDB.createTeam(teamName, iconPath, password, requiredApproval, introduction, uid, { admin: [uid] }, createdAt);
         
-        // userDBのTeamInfoに作成したチームを追加
-        await usersDB.createUserTeamInfo(uid, teamData.id, teamName, iconPath, "admin", true);
+        // userDBのTeamDataに作成したチームを追加
+        await usersDB.createUserTeamData(uid, teamData.id, teamName, iconPath, "admin", true);
     } catch (error) {
         
     }
 }
 
-export const getTeamsFromUserTeamsInfo = async (uid: string, userTeamsInfo: UserTeamInfo[]): Promise<TeamInfo[]> => {
+export const getParticipatingTeamsByUid = async (uid: string): Promise<TeamData[]> => {
+    const userTeamsData = await usersDB.getAllUserTeamsData(uid);
+
+    if (userTeamsData) {
+        return await fetchApprovedTeamsFromUserData(uid, userTeamsData);
+    }
+    return [];
+}
+
+// UserデータのサブコレクションのUserTeamsDataに含まるチームデータを取得
+export const fetchApprovedTeamsFromUserData = async (uid: string, userTeamsData: UserTeamData[]): Promise<TeamData[]> => {
     // ユーザーのチーム情報から参加中のチームのIdを取得する。
     // その際、実際に参加が完了しているチームIdのみを取得する
-    const teamIdList = userTeamsInfo
+    const teamIdList = userTeamsData
         .map(value => {
-            if (checkIfRoleApproved(value.roles)) {
+            if (isActiveRole(value.role)) {
                 return value.teamId;
             }
             return null;
@@ -42,17 +52,17 @@ export const getTeamsFromUserTeamsInfo = async (uid: string, userTeamsInfo: User
     const teams = await Promise.all(teamIdList.map(async (id) => {
         const team = await teamsDB.read(id);
 
-        if (team && checkIfUserOnTheTeam(uid, team.roles)) {
+        if (team && isUserActiveInTeam(uid, team.participants)) {
             return team;
         }
         return null;
     }));
 
-    return teams.filter(team => team !== null) as TeamInfo[];
+    return teams.filter(team => team !== null) as TeamData[];
 };
 
-export const getParticipantsNumber = (roles: TeamRoles): number => {
-    return roles.admin.length + roles.member.length;
+export const countActiveMember = (participants: TeamParticipants): number => {
+    return participants.admin.length + participants.regularMember.length;
 }
 
 export const getNewTeamCode = async (teamId: string): Promise<string> => {
@@ -60,26 +70,76 @@ export const getNewTeamCode = async (teamId: string): Promise<string> => {
     return codeData.id;
 }
 
-export const joinRequest = async (uid: string, teamCode: string) => {
+// チームコードに対応するチームの保留中に新しくUidを追加
+export const sendRequestToJoinTeam = async (uid: string, teamCode: string) => {
     try {
         const res = await teamCodesDB.read(teamCode);
         if (res) {
             const team = await teamsDB.read(res.teamId);
-            if (team && !team.roles.rejected?.includes(uid)) {
-                const pending = team.roles.pending;
+            if (team && !team.participants.rejected?.includes(uid)) {
+                const pending = team.participants.pending;
                 pending.push(uid);
-                const roles: TeamRoles = {
-                    ...team.roles,
+                const participants: TeamParticipants = {
+                    ...team.participants,
                     pending,
                 }
 
-                await teamsDB.update(team.documentId, { roles });
+                await teamsDB.update(team.documentId, { participants });
 
-                // userDBのTeamInfoに参加要請をしたチームを追加
-                await usersDB.createUserTeamInfo(uid, team.documentId, team.teamName, team.iconPath, "pending", true);
+                // userDBのTeamDataに参加要請をしたチームを追加
+                await usersDB.createUserTeamData(uid, team.documentId, team.teamName, team.iconPath, "pending", true);
             }
         }
     } catch (error) {
         
     }
+}
+
+export const getTeamParticipantsUserData = async (participants: TeamParticipants, teamId: string): Promise<UserWithTeamRole[]> => {
+    const usersRoleInTeam = mapParticipantsToUserRoles(participants, teamId);
+    const teamUsersData: UserWithTeamRole[] = [];
+
+    await Promise.all(usersRoleInTeam.map(async (userInfo) => {
+        const user = await usersDB.read(userInfo.uid);
+        if (user) {
+            teamUsersData.push({ userData: user, teamId: userInfo.teamId, role: userInfo.role, });
+        }
+    }))
+
+    return teamUsersData;
+};
+
+export const mapParticipantsToUserRoles = (participants: TeamParticipants, teamId: string, excludeRoles: TeamRoles[] = []): UserRoleAssignment[] => {
+    const usersRoleInTeam: UserRoleAssignment[] = [];
+    console.log(participants);
+    
+    for (const key of Object.keys(participants)) {
+        const role = key as keyof TeamParticipants; // keyをTeamParticipantsのキーとして扱う
+
+        if (excludeRoles.includes(role)) {
+            continue;
+        }
+
+        const uids = participants[role];
+
+        for (const uid of uids) {
+            usersRoleInTeam.push({
+                uid,
+                role,
+                teamId,
+            })
+        }
+    }
+    return usersRoleInTeam;
+}
+
+// 同じチームに参加している他のユーザーを取得
+export const fetchAllUsersInTeamsByUser = async (uid: string, excludeRoles: TeamRoles[] = []): Promise<UserRoleAssignment[]> => {
+    const teams = await getParticipatingTeamsByUid(uid);
+    console.log(teams);
+    
+    const usersRoleInTeam: UserRoleAssignment[] = teams.flatMap(team => {
+        return mapParticipantsToUserRoles(team.participants, team.documentId, excludeRoles);
+    })
+    return usersRoleInTeam;
 }

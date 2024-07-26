@@ -45,7 +45,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
                 <StringField value={value} label={label} onChange={onValueChange} />
                 <CircularButton 
                     onClick={onEnter} 
-                    size="sm"
+                    size="md"
                     bgColor="main" 
                     invalidation={!value} 
                     className="ml-2"
