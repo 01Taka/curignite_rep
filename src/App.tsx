@@ -7,15 +7,15 @@ import TopPage from './pages/top/TopPage';
 import NotFound from './pages/error/NotFound';
 import AuthRoutes from './pages/auth/AuthRoutes';
 import MainRoutes from './pages/app/routes/MainRoutes';
-import Navigation from './pages/navigation/Navigation';
-import appPreprocessing from './appPreprocessing';
+import Navigation from './features/navigation/Navigation';
 import { useAppDispatch } from './redux/hooks';
+import { initializeApp } from './redux/actions/app/appThunks';
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    appPreprocessing(dispatch);
+    initializeApp();
   }, [dispatch])
 
   return (

@@ -94,6 +94,7 @@ export const teamPaths = {
   base: mainPaths.team,
   index: `${mainPaths.team}/index`,
   list: `${mainPaths.team}/list`,
+  joinCreate: `${mainPaths.team}/actions`,
   create: `${mainPaths.team}/create`,
   join: `${mainPaths.team}/join`,
 }

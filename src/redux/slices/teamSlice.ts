@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { SerializableTeamData } from '../../types/firebase/db/teamsTypes';
-import { RequestStatus } from '../../types/stateTypes';
-import { TeamPages } from '../../pages/app/team/team/Team';
+import { RequestStatus } from '../../types/util/stateTypes';
+import { TeamPages } from '../../pages/app/team/index/TeamIndex';
 
 interface TeamSliceState {
     currentDisplayTeam: SerializableTeamData | null;

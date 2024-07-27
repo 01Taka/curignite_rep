@@ -1,5 +1,5 @@
 import { useDispatch, useSelector, TypedUseSelectorHook } from 'react-redux';
-import type { RootState, AppDispatch } from './store';
+import type { RootState, AppDispatch } from '../types/module/reduxTypes';
 
 // 型付きのuseDispatchとuseSelectorフック
 export const useAppDispatch = () => useDispatch<AppDispatch>();

@@ -1,55 +1,38 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
 import { Route, Routes } from 'react-router-dom'
-import CreateTeam from './create/CreateTeam'
-import JoinTeam from './join/JoinTeam'
+import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
+import { updateTeamData } from '../../../redux/actions/team/updateTeamData'
 import { toRelativePaths, teamPaths } from '../../../types/path/appPaths'
-import Team from './team/Team'
-import { NavigationItems } from '../../navigation/navigationTypes'
-import TeamPreprocess from './TeamPreprocess'
-import TeamNavigation from './navigation/teamNavigation/TeamNavigation'
+import JoinCreateTeam from './actions/JoinCreateTeam'
+import TeamIndex from './index/TeamIndex'
 import OnMobilePages from '../../util/OnMobilePages'
 import TeamBasePage from './TeamBasePage'
-import IndexNavigation from './navigation/indexNavigation/IndexNavigation'
+import CreateTeam from './actions/CreateTeam'
+import TeamIndexNavigation from '../../../features/app/team/navigation/indexNavigation/TeamIndexNavigation'
 
 const TeamRoutes: FC = () => {
+  const { uid } = useAppSelector(state => state.userDataSlice);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (uid) {
+      dispatch(updateTeamData(uid));
+    }
+  }, [dispatch, uid]);
+
   return (
     <>
-      <TeamPreprocess />
       <Routes>
         <Route path='' element={<TeamBasePage />} />
-        <Route path={toRelativePaths(teamPaths.index)} element={<Team />}/>
+        <Route path={toRelativePaths(teamPaths.index)} element={<TeamIndex />}/>
         <Route path={toRelativePaths(teamPaths.create, "/:name")} element={<CreateTeam />} />
-        <Route path={toRelativePaths(teamPaths.join)} element={<JoinTeam />} />
+        <Route path={toRelativePaths(teamPaths.joinCreate)} element={<JoinCreateTeam />} />
       </Routes>
       <OnMobilePages>
-        <Route path={toRelativePaths(teamPaths.list)} element={<IndexNavigation />}/>
+        <Route path={toRelativePaths(teamPaths.list)} element={<TeamIndexNavigation />}/>
       </OnMobilePages>
     </>
   )
 }
-
-export const teamDesktopNavigation: NavigationItems[] = [
-  {
-    path: teamPaths.index,
-    pathParameters: true,
-    contentsTopBar: {
-      children: <TeamNavigation />
-    },
-    sideList: {
-      children: <IndexNavigation />,
-    },
-  }
-]
-
-export const teamMobileNavigation: NavigationItems[] = [
-  {
-    path: teamPaths.index,
-    exclusionPaths: [teamPaths.list],
-    pathParameters: true,
-    contentsTopBar: {
-      children: <TeamNavigation />,
-    },
-  }
-]
 
 export default TeamRoutes

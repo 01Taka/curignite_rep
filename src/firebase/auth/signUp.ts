@@ -2,8 +2,8 @@ import { auth } from '../../firebase/firebase';  // Firestoreをインポート
 import { applyActionCode, createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword, UserCredential } from 'firebase/auth';
 
 import { throwFirebaseError } from '../util/error';
-import { Languages } from '../../types/app/languages';
 
+type Languages = "ja" | "en";
 const LANGUAGE = 'ja';
 
 const sendEmail = async (userCredential: UserCredential) => {

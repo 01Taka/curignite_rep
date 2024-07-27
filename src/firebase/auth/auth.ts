@@ -1,5 +1,5 @@
 import { User, getAuth, onAuthStateChanged } from "firebase/auth";
-import { AuthStates } from "../../types/stateTypes";
+import { AuthStates } from "../../types/util/stateTypes";
 import { usersDB } from "../db/dbs";
 
 export const getCurrentUser = (): Promise<User | null> => {

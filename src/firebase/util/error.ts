@@ -1,6 +1,6 @@
 import { FirebaseError } from "firebase/app";
 import { getAuthErrorMessage } from "../../functions/error/firebaseErrorMessages";
-import { Languages } from "../../types/app/languages";
+type Languages = "ja" | "en";
 
 export const throwFirebaseError = (error: any, language: Languages, logging: boolean = true): string => {
     if (error instanceof FirebaseError) {

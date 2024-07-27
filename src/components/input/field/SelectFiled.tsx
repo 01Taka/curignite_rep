@@ -1,5 +1,5 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
-import { SelectFieldChange, SelectItem } from '../../../types/componentsTypes';
+import { SelectFieldChange, SelectItem } from '../../../types/util/componentsTypes';
 
 // ジェネリック型に制約を追加
 interface SelectFieldProps<T extends string | number> {

@@ -1,7 +1,7 @@
 import { DocumentData, DocumentReference, Firestore, Timestamp } from "firebase/firestore";
 import BaseDB from "../../base";
 import { TeamData, TeamParticipants } from "../../../../types/firebase/db/teamsTypes";
-import { hashString } from "../../../../functions/hash";
+import { hashDataSHA256 } from "../../../../functions/hash";
 
 class TeamsDB extends BaseDB<TeamData> {
     constructor(firestore: Firestore) {
@@ -17,7 +17,7 @@ class TeamsDB extends BaseDB<TeamData> {
             rejected: participants.rejected || []
         };
 
-        const hashedPassword = await hashString(password);
+        const hashedPassword = password ?  hashDataSHA256(password) : null;
         const data: TeamData = { documentId: "", teamName, iconPath, hashedPassword, requiredApproval, introduction, authorUid, participants: fullParticipants, createdAt };
         return this.create(data);
         

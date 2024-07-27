@@ -1,6 +1,6 @@
 import { Timestamp } from "firebase/firestore";
 import { DbData } from "./baseTypes";
-import { SelectItem } from "../../componentsTypes";
+import { SelectItem } from "../../util/componentsTypes";
 
 // 配列の定義
 export const publicationTarget = ["team", "friend", "private"] as const;

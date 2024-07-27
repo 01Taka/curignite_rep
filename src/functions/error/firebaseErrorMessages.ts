@@ -1,7 +1,6 @@
 // errorMessages.ts
 import { FirebaseError } from 'firebase/app';
-import { Languages } from '../../types/app/languages';
-
+type Languages = "ja" | "en";
 const errorMessages: Record<string, Record<string, string>> = {
   en: {
     'auth/email-already-in-use': 'The email address is already in use by another account.',

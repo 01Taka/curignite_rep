@@ -1,6 +1,6 @@
 import clsx, { ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { FormStateChangeEvent } from "../types/componentsTypes";
+import { FormStateChangeEvent } from "../types/util/componentsTypes";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));

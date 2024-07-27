@@ -46,7 +46,7 @@ export interface UserRoleAssignment {
 interface TeamDataBase extends DbData {
     teamName: string;
     iconPath: string;
-    hashedPassword: string;
+    hashedPassword: string | null;
     requiredApproval: boolean;
     introduction: string;
     authorUid: string;

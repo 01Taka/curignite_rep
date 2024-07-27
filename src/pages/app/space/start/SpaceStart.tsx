@@ -1,13 +1,14 @@
 import React, { FC, useEffect, useState } from 'react';
-import SpaceStartView, { initialSpaceStartFormState, SpaceStartFormState } from './SpaceStartView';
 import { spacesDB } from '../../../../firebase/db/dbs';
 import { handleFormStateChange } from '../../../../functions/utils';
 import { getCurrentUser } from '../../../../firebase/auth/auth';
 import { appendSpaceIdToUserData, getCurrentUserData } from '../../../../firebase/db/app/user/userDBUtil';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { spacePaths, toRelativePaths } from '../../../../types/path/appPaths';
-import SpaceSetting from './setting/SpaceSetting';
 import { getParticipationPossibleSpaces } from '../../../../firebase/db/app/space/spacesDBUtil';
+import SpaceSettingView from '../../../../features/app/space/start/SpaceSettingView';
+import { initialSpaceStartFormState, SpaceStartFormState } from '../../../../types/app/spaceTypes';
+import SpaceStartView from '../../../../features/app/space/start/SpaceStartView';
 
 const SpaceStart: FC = () => {
   const navigate = useNavigate();
@@ -56,7 +57,7 @@ const SpaceStart: FC = () => {
     <Routes>
       <Route path='/'
       element={
-        <SpaceStartView 
+        <SpaceStartView
           toSetting={() => navigate(spacePaths.startChildren.setting)}
           onCreateSpace={handleCreateSpace}
           spaces={[]}
@@ -64,7 +65,7 @@ const SpaceStart: FC = () => {
       />
       <Route path={toRelativePaths(spacePaths.startChildren.setting)}
         element={
-        <SpaceSetting
+        <SpaceSettingView
           formState={formState}
           onChangeFormState={e => handleFormStateChange(e, setFormState)}
           onCompletion={handleSettingCompletion}
