@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { SpaceSettingViewProps } from '../../../../types/app/spaceTypes';
 import { SelectFieldChange } from '../../../../types/util/componentsTypes';
 import EditNoteIcon from '@mui/icons-material/EditNote';
@@ -9,9 +9,20 @@ import CircularButton from '../../../../components/input/button/CircularButton';
 import SelectField from '../../../../components/input/field/SelectFiled';
 import { publicationTargetForSelect } from '../../../../types/firebase/db/spacesTypes';
 import FormContainer from '../../../../components/container/FormContainer';
-import { Typography } from '@mui/material';
+import { Alert, Typography } from '@mui/material';
 
-const SpaceSettingView: FC<SpaceSettingViewProps> = ({ formState, onChangeFormState, onCompletion }) => {
+const SpaceSettingView: FC<SpaceSettingViewProps> = ({ formState, onChangeFormState, onCompletion, onUpdateDefaultSetting }) => {
+  const [updatedDefaultSetting, setUpdatedDefaultSetting] = useState(false);
+
+  useEffect(() => {
+    setUpdatedDefaultSetting(false);
+  }, [formState])
+
+  const handleUpdateDefaultSetting = () => {
+    onUpdateDefaultSetting();
+    setUpdatedDefaultSetting(true);
+  }
+
   return (
     <FormContainer flexCenter>
       <div className='flex justify-center w-full h-full'>
@@ -47,9 +58,17 @@ const SpaceSettingView: FC<SpaceSettingViewProps> = ({ formState, onChangeFormSt
             checked={formState.requiredApproval}
             onChange={onChangeFormState}
           />
-          <CircularButton onClick={onCompletion} size="lg" bgColor="main" className='self-end'>
-            設定完了
-          </CircularButton>
+          <div className='flex self-end space-x-4'>
+            <CircularButton onClick={handleUpdateDefaultSetting} size="lg" looks="frame">
+              デフォルト<br/>に設定
+            </CircularButton>
+            <CircularButton onClick={onCompletion} size="lg" bgColor="main">
+              完了して<br/>開始
+            </CircularButton>
+          </div>
+          {updatedDefaultSetting && 
+            <Alert severity="success">現在の設定をデフォルトに設定しました。</Alert>
+          }
         </div>
       </div>
     </FormContainer>

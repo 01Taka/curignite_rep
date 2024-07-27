@@ -68,6 +68,7 @@ export const spacePaths = {
   startChildren: {
     setting: `${mainPaths.space}/start/setting`,
   },
+  home: `${mainPaths.space}/home`,
 }
 
 export const chatPaths = {

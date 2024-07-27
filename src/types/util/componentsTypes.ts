@@ -15,3 +15,5 @@ export interface ActionButton {
     text: string;
     action: () => void;
 }
+
+export type StringBoolean = "true" | "false";

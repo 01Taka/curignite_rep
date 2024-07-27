@@ -1,7 +1,5 @@
-import React, { FC, useEffect } from 'react'
+import React, { FC } from 'react'
 import { Route, Routes } from 'react-router-dom'
-import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
-import { updateTeamData } from '../../../redux/actions/team/updateTeamData'
 import { toRelativePaths, teamPaths } from '../../../types/path/appPaths'
 import JoinCreateTeam from './actions/JoinCreateTeam'
 import TeamIndex from './index/TeamIndex'
@@ -11,15 +9,6 @@ import CreateTeam from './actions/CreateTeam'
 import TeamIndexNavigation from '../../../features/app/team/navigation/indexNavigation/TeamIndexNavigation'
 
 const TeamRoutes: FC = () => {
-  const { uid } = useAppSelector(state => state.userDataSlice);
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    if (uid) {
-      dispatch(updateTeamData(uid));
-    }
-  }, [dispatch, uid]);
-
   return (
     <>
       <Routes>

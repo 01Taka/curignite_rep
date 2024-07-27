@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { getCurrentUser } from '../../../../firebase/auth/auth';
 import { getUniqueUserName } from '../../../../firebase/util/getUniqueName';
 import { checkIfUidExists } from '../../../../firebase/db/app/user/userDBUtil';
-import { authStorage } from '../../../../functions/localStorage/handleData';
+import { authStorage } from '../../../../functions/localStorage/storages';
 import { processingCreateUser } from './handleUserInitialSetup';
 import { handleFormStateChange } from '../../../../functions/utils';
 import { rootPaths } from '../../../../types/path/appPaths';

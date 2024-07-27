@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import TeamList from '../../teamList/TeamList'
+import Teams from '../../teams/Teams'
 import CircularButton from '../../../../../components/input/button/CircularButton'
 import { Home } from '@mui/icons-material'
 
@@ -13,7 +13,7 @@ const TeamIndexNavigationView: FC<TeamIndexNavigationViewProps> = ({ toHome }) =
             <Home />
         </CircularButton>
         <div className='pt-8'/>
-        <TeamList />
+        <Teams />
     </div>
   )
 }

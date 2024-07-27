@@ -1,11 +1,11 @@
+import { removeNullAndUndefined, uniqueByProperty } from "../../../../functions/utils";
+import { SpaceData } from "../../../../types/firebase/db/spacesTypes";
 import { spacesDB, usersDB } from "../../dbs";
 import { fetchAllUsersInTeamsByUser, isActiveRole } from "../team/teamDBUtil";
 
-export const getParticipationPossibleSpaces = async (uid: string) => {
+export const getParticipationPossibleSpaces = async (uid: string): Promise<SpaceData[]> => {
     const members = await fetchAllUsersInTeamsByUser(uid);
 
-    console.log(members);
-    
     // 有効な役割を持つメンバーのユーザー情報を取得
     const users = await Promise.all(
         members
@@ -16,11 +16,15 @@ export const getParticipationPossibleSpaces = async (uid: string) => {
             })
     );
 
+    const cleanUsers = removeNullAndUndefined(users);
+    const uniqueUsers = uniqueByProperty(cleanUsers, 'documentId');
+
     // 有効なユーザーのみを対象にスペース情報を取得
-    const spacePromises = users
+    const spacePromises = uniqueUsers
         .flatMap(user => user && user.spaceIds.map(async (spaceId) => await spacesDB.read(spaceId)));
 
     const spaces = await Promise.all(spacePromises);
-    
-    return spaces;
+
+    const cleanSpaces = removeNullAndUndefined(spaces);
+    return cleanSpaces;
 }

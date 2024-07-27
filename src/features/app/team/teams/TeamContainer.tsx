@@ -8,10 +8,10 @@ interface TeamContainerProps {
   participantsName: string[];
   myTeam: boolean;
   currentDisplay: boolean;
-  participantsNumber?: number;
+  participantsNumber: number;
 }
 
-const TeamContainer: FC<TeamContainerProps> = ({ teamName, iconPath, participantsName, myTeam, currentDisplay, participantsNumber = 0 }) => {
+const TeamContainer: FC<TeamContainerProps> = ({ teamName, iconPath, participantsName, myTeam, currentDisplay, participantsNumber }) => {
   return (
     <div className={cn(
         currentDisplay && "border-2 scale-105",

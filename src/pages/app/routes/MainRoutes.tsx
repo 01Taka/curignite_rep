@@ -3,35 +3,53 @@ import { Route, Routes, useNavigate } from 'react-router-dom';
 import { mainRootPaths } from '../../../types/path/appPaths';
 import Home from '../home/Home';
 import TeamRoutes from '../team/TeamRoutes';
-import mainPreprocessing from './mainPreprocessing';
-import { useAppDispatch } from '../../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import NotFound from '../../error/NotFound';
 import SpaceRoutes from '../space/SpaceRoutes';
+import { updateTeamData } from '../../../redux/actions/team/updateTeamData';
+import { updateUserData } from '../../../redux/actions/main/updateUserData';
 
 const MainRoutes: FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const { uid } = useAppSelector(state => state.userDataSlice);
 
   useEffect(() => {
-    mainPreprocessing(navigate, dispatch);
+    dispatch(updateUserData())
+      .unwrap()
+      .then((path) => {
+        if (path) {
+          navigate(path);
+        }
+      })
+      .catch((error) => {
+        if (error instanceof Error) {
+          console.error(error.message);
+        }
+      });
   }, [navigate, dispatch]);
 
+  useEffect(() => {
+    if (uid) {
+      dispatch(updateTeamData(uid));
+    }
+  }, [dispatch, uid]);
 
   return (
     <div className='w-full h-full bg-primaryBase overflow-auto'>
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path='*' element={<NotFound />} />
-      <Route path={mainRootPaths.space} element={<SpaceRoutes />} />
-      <Route path={mainRootPaths.chat} element={<div>Chat</div>} />
-      <Route path={mainRootPaths.whiteboard} element={<div>Whiteboard</div>} />
-      <Route path={mainRootPaths.calendar} element={<div>Calendar</div>} />
-      <Route path={mainRootPaths.todo} element={<div>Todo</div>} />
-      <Route path={mainRootPaths.team} element={<TeamRoutes />} />
-      <Route path={mainRootPaths.goal} element={<div>Goal</div>} />
-      <Route path={mainRootPaths.qAndA} element={<div>Q&A</div>} />
-    </Routes>
-  </div>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path='*' element={<NotFound />} />
+        <Route path={mainRootPaths.space} element={<SpaceRoutes />} />
+        <Route path={mainRootPaths.chat} element={<div>Chat</div>} />
+        <Route path={mainRootPaths.whiteboard} element={<div>Whiteboard</div>} />
+        <Route path={mainRootPaths.calendar} element={<div>Calendar</div>} />
+        <Route path={mainRootPaths.todo} element={<div>Todo</div>} />
+        <Route path={mainRootPaths.team} element={<TeamRoutes />} />
+        <Route path={mainRootPaths.goal} element={<div>Goal</div>} />
+        <Route path={mainRootPaths.qAndA} element={<div>Q&A</div>} />
+      </Routes>
+    </div>
   );
 };
 

@@ -21,11 +21,12 @@ export interface SpacesProps {
 
 export interface SpaceStartActionsViewProps {
   toSetting: () => void;
-  onCreateSpace: () => void;
+  onStart: () => void;
 }
 
 export interface SpaceSettingViewProps {
   formState: SpaceStartFormState;
   onChangeFormState: (event: FormStateChangeEvent) => void;
   onCompletion: () => void;
+  onUpdateDefaultSetting: () => void;
 }

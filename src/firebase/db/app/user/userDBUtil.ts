@@ -1,5 +1,5 @@
 import { usersDB } from "../../dbs";
-import { UserData, UserOrganizationData } from "../../../../types/firebase/db/usersTypes";
+import { UserData, UserDictionary, UserOrganizationData } from "../../../../types/firebase/db/usersTypes";
 import { getCurrentUser } from "../../../auth/auth";
 
 // 現在のユーザーのデータを取得
@@ -15,6 +15,24 @@ export const getCurrentUserData = async (): Promise<UserData | null> => {
     return null;
   }
 }
+
+// uidをキーとするデータの辞書を取得
+export const getUsersDataByUids = async (uids: string[]): Promise<UserDictionary> => {
+  // ユーザーデータの取得を非同期に行い、結果を配列に格納
+  const userEntries = await Promise.all(
+    uids.map(async (uid) => {
+      // ユーザーデータを取得
+      const userData = await usersDB.read(uid);
+      return [uid, userData] as [string, UserData];
+    })
+  );
+
+  // 配列をオブジェクトに変換
+  const usersDataByUids = Object.fromEntries(userEntries);
+
+  return usersDataByUids;
+};
+
 
 // Uid(ドキュメントID)がDBに存在するかどうかをチェックする関数
 export const checkIfUidExists = async (uid: string): Promise<boolean> => {

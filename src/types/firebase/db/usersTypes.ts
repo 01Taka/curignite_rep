@@ -70,3 +70,5 @@ export const initialUserTeamDataState: UserTeamData = {
     role: "pending",
     myTeam: false,
 }
+
+export type UserDictionary = { [key: string]: UserData };

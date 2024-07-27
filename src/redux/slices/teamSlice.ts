@@ -1,13 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { SerializableTeamData } from '../../types/firebase/db/teamsTypes';
-import { RequestStatus } from '../../types/util/stateTypes';
 import { TeamPages } from '../../pages/app/team/index/TeamIndex';
+import { TeamRequestStatus } from '../../types/app/teamTypes';
 
 interface TeamSliceState {
     currentDisplayTeam: SerializableTeamData | null;
     displayTeamPage: TeamPages;
     teams: SerializableTeamData[];
-    requestState: RequestStatus;
+    requestState: TeamRequestStatus;
 }
 
 const initialState: TeamSliceState = {
@@ -31,7 +31,7 @@ const TeamSlice = createSlice({
       state.requestState = "success";
       state.teams = action.payload;
     },
-    setRequestStatus: (state, action: PayloadAction<RequestStatus>) => {
+    setTeamRequestStatus: (state, action: PayloadAction<TeamRequestStatus>) => {
       state.requestState = action.payload;
     },
     updateTeams: (state, action: PayloadAction<SerializableTeamData[]>) => {
@@ -45,5 +45,5 @@ const TeamSlice = createSlice({
   },
 });
 
-export const { setCurrentDisplayTeam, setDisplayTeamPage, updateTeamsSuccess, updateTeams, setRequestStatus, setTeamsNotFound } = TeamSlice.actions;
+export const { setCurrentDisplayTeam, setDisplayTeamPage, updateTeamsSuccess, updateTeams, setTeamRequestStatus, setTeamsNotFound } = TeamSlice.actions;
 export default TeamSlice.reducer;

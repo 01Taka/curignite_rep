@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import TeamListView from './TeamListView';
+import TeamsView from './TeamsView';
 import { useAppDispatch, useAppSelector } from '../../../../redux/hooks';
 import { TeamData } from '../../../../types/firebase/db/teamsTypes';
 import { setCurrentDisplayTeam } from '../../../../redux/slices/teamSlice';
@@ -8,7 +8,8 @@ import { useNavigate } from 'react-router-dom';
 import { paths } from '../../../../types/path/appPaths';
 import { isMobileMode } from '../../../../functions/utils';
 
-const TeamList: FC = () => {
+// サイドバーなどのチーム一覧 スケルトンなどの機能付き
+const Teams: FC = () => {
   const userData = useAppSelector(state => state.userDataSlice);
   const teamSlice = useAppSelector(state => state.teamSlice);
   const dispatch = useAppDispatch();
@@ -23,7 +24,7 @@ const TeamList: FC = () => {
     }
   }
 
-  return <TeamListView
+  return <TeamsView
     teamDataList={deserializeTeamDataArray(teamSlice.teams)}
     uid={userData.uid || ""}
     currentDisplayTeamId={teamSlice.currentDisplayTeam?.documentId}
@@ -32,4 +33,4 @@ const TeamList: FC = () => {
   />
 }
 
-export default TeamList
+export default Teams

@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { fetchApprovedTeamsFromUserData } from "../../../firebase/db/app/team/teamDBUtil";
 import { initialTeamDataState, TeamData } from "../../../types/firebase/db/teamsTypes";
 import { usersDB } from "../../../firebase/db/dbs";
-import { setCurrentDisplayTeam, setTeamsNotFound, updateTeams, updateTeamsSuccess } from "../../slices/teamSlice";
+import { setCurrentDisplayTeam, setTeamRequestStatus, setTeamsNotFound, updateTeams, updateTeamsSuccess } from "../../slices/teamSlice";
 import { serializeTeamData, serializeTeamDataArray } from '../../../functions/serialization/team/teamSerialization';
 import { RootState } from '../../../types/module/reduxTypes';
 
@@ -11,6 +11,8 @@ export const updateTeamData = createAsyncThunk<void, string>(
   async (uid, { dispatch, getState }) => {
     try {
       if (uid) {
+        dispatch(setTeamRequestStatus("loading"));
+
         const userTeamsData = await usersDB.getAllUserTeamsData(uid);
 
         if (userTeamsData.length === 0) {
@@ -25,6 +27,7 @@ export const updateTeamData = createAsyncThunk<void, string>(
         }));
 
         dispatch(updateTeams(serializeTeamDataArray(temporaryTeamDataList)));
+        dispatch(setTeamRequestStatus("temporary"));
 
         const teamsData = await fetchApprovedTeamsFromUserData(uid, userTeamsData);
 

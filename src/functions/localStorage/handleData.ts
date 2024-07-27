@@ -3,7 +3,7 @@ import CryptoJS from 'crypto-js';
 // 暗号化に使用するキー
 const ENCRYPTION_KEY = process.env.REACT_APP_ENCRYPTION_KEY || 'default-secret-key'; // 環境変数を使用
 
-class LocalStorageHandler<T extends Record<keyof T, string>> {
+export class LocalStorageHandler<T extends Record<keyof T, string>> {
     private id: string;
     private keys: (keyof T)[];
 
@@ -48,7 +48,7 @@ class LocalStorageHandler<T extends Record<keyof T, string>> {
 
     public setDataAllAtOnce(data: Partial<T>): void {
         Object.entries(data).forEach(([key, value]) => {
-            if (!!value) {
+            if (value !== null && value !== undefined) {
                 this.setData(key as keyof T, value.toString());
             }
         });
@@ -83,14 +83,3 @@ class LocalStorageHandler<T extends Record<keyof T, string>> {
         });
     }
 }
-
-
-export interface AuthStorageProps {
-    username: string;
-    email: string;
-    password: string;
-}
-
-const authStorage = new LocalStorageHandler<AuthStorageProps>('authData', ['username', 'email', 'password']);
-
-export { authStorage }

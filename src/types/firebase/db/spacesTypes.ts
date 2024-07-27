@@ -20,6 +20,7 @@ interface SpaceBaseData extends DbData{
     spaceName: string;
     introduction: string;
     authorUid: string;
+    authorName: string;
     publicationTarget: PublicationTarget;
     requiredApproval: boolean;
     memberUids: string[];
@@ -31,4 +32,16 @@ export interface SpaceData extends SpaceBaseData {
 
 export interface SerializableSpaceData extends SpaceBaseData {
     createdAtMillis: number;
+}
+
+export const initialSpaceDataState: SpaceData = {
+    documentId: "",
+    spaceName: "",
+    introduction: "",
+    authorUid: "",
+    authorName: "",
+    publicationTarget: "team",
+    requiredApproval: true,
+    memberUids: [],
+    createdAt: Timestamp.fromDate(new Date(0)),
 }
