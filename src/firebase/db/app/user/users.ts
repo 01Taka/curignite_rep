@@ -69,6 +69,6 @@ export class UsersDB extends BaseDB<UserData> {
    * @param uid ユーザーID
    */
   async deleteUser(uid: string): Promise<void> {
-    return this.delete(uid); // ドキュメントIDで削除する
+    return this.softDelete(uid); // ドキュメントIDで削除する
   }
 }

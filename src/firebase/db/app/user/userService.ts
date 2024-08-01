@@ -1,5 +1,4 @@
-import { usersDB } from "../../dbs";
-import { UserData, UserDictionary } from "../../../../types/firebase/db/user/usersTypes";
+import { UserData, UserIdMap } from "../../../../types/firebase/db/user/usersTypes";
 import { getCurrentUser } from "../../../auth/auth";
 import { UsersDB } from "./users";
 import { Member } from "../../../../types/firebase/db/baseTypes";
@@ -76,7 +75,7 @@ export class UserService {
      * @param uids ユーザーのUIDの配列
      * @returns ユーザーのデータを含む辞書オブジェクト
      */
-    async getUsersDataByUids(uids: string[]): Promise<UserDictionary> {
+    async getUsersDataByUids(uids: string[]): Promise<UserIdMap> {
         try {
             const userEntries = await Promise.all(
                 uids.map(async (uid) => {

@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 import QuestionContainerView from './QuestionContainerView'
 import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
-import { UserOrganizationData } from '../../../../../../types/firebase/db/user/usersTypes';
 import { Question } from '../../../../../../types/firebase/db/qAndA/questionTypes';
+import { UserOrganizationData } from '../../../../../../types/firebase/db/user/userOrganizationType';
 
 interface QuestionContainerProps {
     question: Question;

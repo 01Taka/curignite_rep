@@ -1,17 +1,17 @@
 import React, { FC } from 'react'
-import { UserWithTeamRole } from '../../../../../types/firebase/db/team/teamsTypes'
+import { MemberData } from '../../../../../types/firebase/db/baseTypes';
 
 interface ParticipantsViewProps {
-    participants: UserWithTeamRole[];
+    members: MemberData[];
     myTeam: boolean;
 }
 
-const ParticipantsView: FC<ParticipantsViewProps> = ({ participants, myTeam }) => {
+const ParticipantsView: FC<ParticipantsViewProps> = ({ members, myTeam }) => {
   return (
     <div>
-        {participants.map((user, index) => (
+        {members.map((user, index) => (
             <div key={index}>
-                {user.info.userData.username}
+                {user.userData.username}
                 {user.role}
             </div>
         ))}

@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAppSelector } from '../../../../redux/hooks';
 import CreateTeamView, { CreateTeamFormState } from '../../../../features/app/team/action/CreateTeamView';
-import { createTeam } from '../../../../firebase/db/app/team/teamsDBUtil';
+import serviceFactory from '../../../../firebase/db/factory';
 
 const CreateTeam: FC = () => {
   const { name } = useParams<{ name: string }>();
@@ -11,9 +11,9 @@ const CreateTeam: FC = () => {
   const [formState, setFormState] = useState<CreateTeamFormState>({
     teamName: '',
     iconPath: '',
+    description: '',
     password: '',
     requiredApproval: true,
-    introduction: '',
   });
 
   useEffect(() => {
@@ -32,13 +32,13 @@ const CreateTeam: FC = () => {
       // チームの作成と追加
       const uid = userData.uid;
       if (uid) {
-        await createTeam(
-          uid,
-          formState.teamName,
+        const teamService = serviceFactory.createTeamService(uid);
+        await teamService.createTeam(
+          uid, formState.teamName,
           formState.iconPath, 
+          formState.description,
           formState.password, 
-          formState.requiredApproval, 
-          formState.introduction
+          formState.requiredApproval
         )
       } else {
         throw new Error("uidが取得できませんでした。");

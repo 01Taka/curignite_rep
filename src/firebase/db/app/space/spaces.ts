@@ -1,7 +1,7 @@
-import { DocumentData, DocumentReference, Firestore, Timestamp } from "firebase/firestore";
+import { DocumentData, DocumentReference, Firestore } from "firebase/firestore";
 import BaseDB from "../../base";
 import { getInitialBaseDocumentData } from "../../../../functions/db/dbUtils";
-import { PublicationTarget, SpaceData } from "../../../../types/firebase/db/space/spacesTypes";
+import { SpacePublicationTarget, SpaceData } from "../../../../types/firebase/db/space/spacesTypes";
 
 class SpacesDB extends BaseDB<SpaceData> {
     constructor(firestore: Firestore) {
@@ -12,7 +12,7 @@ class SpacesDB extends BaseDB<SpaceData> {
         createdById: string,
         spaceName: string,
         description: string,
-        publicationTarget: PublicationTarget,
+        publicationTarget: SpacePublicationTarget,
         requiresApproval: boolean,
         chatRoomId: string = "",
     ): Promise<DocumentReference<DocumentData>> {

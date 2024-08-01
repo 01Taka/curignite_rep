@@ -2,9 +2,9 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { getCurrentUser, getUserAuthState } from "../../../firebase/auth/auth";
 import { usersDB } from "../../../firebase/db/dbs";
 import { setUserData } from "../../slices/userDataSilce";
-import { serializeUserData } from "../../../functions/serialization/user/userSerialization";
 import { authPaths, rootPaths } from "../../../types/path/appPaths";
 import { RootState } from '../../../types/module/redux/reduxTypes';
+import { convertTimestampsToNumbers } from '../../../functions/db/dbUtils';
 
 export const updateUserData = createAsyncThunk<
   string | void,
@@ -30,7 +30,7 @@ export const updateUserData = createAsyncThunk<
           if (uid) {
             const userData = await usersDB.getUser(uid);
             if (userData) {
-              dispatch(setUserData(serializeUserData(userData)));
+              dispatch(setUserData(convertTimestampsToNumbers(userData)));
             }
           }
           break;

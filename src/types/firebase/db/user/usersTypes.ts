@@ -11,4 +11,4 @@ export interface UserData extends BaseDocumentData {
 }
 export type SerializableUserData = ConvertTimestampToNumber<UserData>;
 
-export type UserDictionary = { [key: string]: UserData }
+export type UserIdMap = { [key: string]: UserData }

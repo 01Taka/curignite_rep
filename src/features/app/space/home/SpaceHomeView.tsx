@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
-import { SpaceData } from '../../../../types/firebase/db/spacesTypes';
 import SpaceTimer from './SpaceTimer';
+import { SpaceData } from '../../../../types/firebase/db/space/spacesTypes';
 
 interface SpaceHomeViewProps {
   space: SpaceData | null;

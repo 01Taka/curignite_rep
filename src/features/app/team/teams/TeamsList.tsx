@@ -1,10 +1,10 @@
 import { FC } from "react";
 import TeamContainer from "./TeamContainer";
 import { TeamsListProps } from "../../../../types/app/teamTypes";
-import { countActiveMember } from "../../../../functions/db/participantUtils";
 import { cn } from "../../../../functions/utils";
 
 const TeamsList: FC<TeamsListProps> = ({ teamDataList, uid, currentDisplayTeamId, hideTeamsWithoutIds, onTeamClick }) => {
+  
     return (
       <div className='flex flex-col items-center w-full mt-8'>
         {teamDataList.map((team) => (
@@ -15,7 +15,7 @@ const TeamsList: FC<TeamsListProps> = ({ teamDataList, uid, currentDisplayTeamId
               participantsName={team.participantsName}
               myTeam={team.authorUid === uid}
               currentDisplay={team.documentId === currentDisplayTeamId}
-              participantsNumber={countActiveMember(team.participants)}
+              participantsNumber={team.members.length}
             />
           </div>
         ))}

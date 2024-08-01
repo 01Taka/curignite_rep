@@ -2,7 +2,7 @@ import { DocumentData, DocumentReference, Firestore } from "firebase/firestore";
 import BaseDB from "../../base";
 import { defaultTeamPermissions, TeamData } from "../../../../types/firebase/db/team/teamsTypes";
 import { hashDataSHA256 } from "../../../../functions/hash";
-import { createAdminMember, getInitialBaseDocumentData } from "../../../../functions/db/dbUtils";
+import { createInitialAdminMember, getInitialBaseDocumentData } from "../../../../functions/db/dbUtils";
 
 class TeamsDB extends BaseDB<TeamData> {
     constructor(firestore: Firestore) {
@@ -37,7 +37,7 @@ class TeamsDB extends BaseDB<TeamData> {
                 description,
                 hashedPassword,
                 requiresApproval,
-                members: [createAdminMember(createdById)],
+                members: await createInitialAdminMember(createdById),
                 permissions: defaultTeamPermissions,
                 pendingRequests: [],
                 invitedUsers: [],

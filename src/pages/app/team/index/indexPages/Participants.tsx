@@ -1,13 +1,13 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useAppSelector } from '../../../../../redux/hooks';
-import { UserWithTeamRole } from '../../../../../types/firebase/db/team/teamsTypes';
 import { getCurrentUser } from '../../../../../firebase/auth/auth';
-import { getTeamParticipantsUserData } from '../../../../../firebase/db/app/team/teamsDBUtil';
 import ParticipantsView from '../../../../../features/app/team/index/participants/ParticipantsView';
+import { MemberData } from '../../../../../types/firebase/db/baseTypes';
+import { getMembersData } from '../../../../../functions/db/dbUtils';
 
 const Participants: FC = () => {
   const teamSlice = useAppSelector(state => state.teamSlice);
-  const [participants, setParticipants] = useState<UserWithTeamRole[]>([]);
+  const [members, setMembers] = useState<MemberData[]>([]);
   const [myTeam, setMyTeam] = useState(false);
 
   useEffect(() => {
@@ -22,8 +22,8 @@ const Participants: FC = () => {
     
     const updateParticipants = async () => {
       if (team) {
-        const participants = await getTeamParticipantsUserData(team.roles, team.documentId);
-        setParticipants(participants);
+        const members = await getMembersData(team.members);
+        setMembers(members);
       }
     }
 
@@ -36,7 +36,7 @@ const Participants: FC = () => {
   }
     
   return <ParticipantsView
-    participants={participants}
+    members={members}
     myTeam={myTeam}
   />
 }

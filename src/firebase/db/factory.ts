@@ -128,8 +128,9 @@ class ServiceFactory {
 
         return new TeamService(
             this.getTeamsDB(),
-            teamCodeService,
+            this.getUsersDB(),
             userTeamsDB,
+            teamCodeService,
             userTeamService
         );
     }

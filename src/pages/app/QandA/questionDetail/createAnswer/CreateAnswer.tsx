@@ -24,7 +24,7 @@ const CreateAnswer: React.FC = () => {
     const uid = userData.uid;
     if (id && uid) {
       try {
-        await answersDB.createAnswers(id, content, uid);
+        //await answersDB.createAnswers(id, content, uid);
         setMessage('回答を送信しました。');
         resetForm();
       } catch (error) {

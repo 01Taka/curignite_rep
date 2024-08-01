@@ -1,7 +1,7 @@
 import { Timestamp } from "firebase/firestore";
 import { getCurrentUser } from "../../../../firebase/auth/auth";
 import { usersDB } from "../../../../firebase/db/dbs";
-import { checkIfUserNameExists } from "../../../../firebase/db/app/user/userDBUtil";
+import serviceFactory from "../../../../firebase/db/factory";
 
 export const errorHandling = async (
   username: string, birthday: Date,
@@ -10,7 +10,8 @@ export const errorHandling = async (
     return new Error('ユーザ名を入力してください');
   }
 
-  if (await checkIfUserNameExists(username)) {
+  const userService = serviceFactory.createUserService();
+  if (await userService.checkIfUserNameExists(username)) {
     return new Error('このユーザ名は既に使用されています');
   }
 

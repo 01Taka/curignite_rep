@@ -3,11 +3,11 @@ import UserInitialSetupView, { InitialSetupFormState } from './InitialSetupView'
 import { useNavigate } from 'react-router-dom';
 import { getCurrentUser } from '../../../../firebase/auth/auth';
 import { getUniqueUserName } from '../../../../firebase/util/getUniqueName';
-import { checkIfUidExists } from '../../../../firebase/db/app/user/userDBUtil';
 import { authStorage } from '../../../../functions/localStorage/storages';
 import { processingCreateUser } from './handleUserInitialSetup';
 import { handleFormStateChange } from '../../../../functions/utils';
 import { rootPaths } from '../../../../types/path/appPaths';
+import serviceFactory from '../../../../firebase/db/factory';
 
 const InitialSetup: React.FC = () => {
   const navigate = useNavigate();
@@ -27,8 +27,11 @@ const InitialSetup: React.FC = () => {
       const uid = user?.uid;
       if (!uid) {
         navigate(rootPaths.top);
-      } else if (await checkIfUidExists(uid)) {
-        navigate(rootPaths.main);
+      } else {
+        const userService = serviceFactory.createUserService();
+        if (await userService.checkIfUidExists(uid)) {
+          navigate(rootPaths.main);
+        }
       }
     }
     // ユーザー名を一意なものに置き換える

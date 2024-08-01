@@ -1,17 +1,17 @@
-import { PublicationTarget, SpaceData } from "../firebase/db/spacesTypes";
+import { SpaceData, SpacePublicationTarget } from "../firebase/db/space/spacesTypes";
 import { FormStateChangeEvent } from "../util/componentsTypes";
 
 export interface SpaceStartFormState {
   spaceName: string;
-  introduction: string;
-  publicationTarget: PublicationTarget;
+  description: string;
+  publicationTarget: SpacePublicationTarget;
   requiredApproval: boolean;
 }
 
 export const initialSpaceStartFormState: SpaceStartFormState = {
   spaceName: "",
-  introduction: "",
-  publicationTarget: "team",
+  description: "",
+  publicationTarget: SpacePublicationTarget.Team,
   requiredApproval: true,
 }
 

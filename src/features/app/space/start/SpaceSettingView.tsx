@@ -7,9 +7,9 @@ import MultilineField from '../../../../components/input/field/MultilineField';
 import CheckBoxFiled from '../../../../components/input/field/CheckBoxFiled';
 import CircularButton from '../../../../components/input/button/CircularButton';
 import SelectField from '../../../../components/input/field/SelectFiled';
-import { publicationTargetForSelect } from '../../../../types/firebase/db/spacesTypes';
 import FormContainer from '../../../../components/container/FormContainer';
 import { Alert, Typography } from '@mui/material';
+import { publicationTargetForSelect } from '../../../../types/firebase/db/space/spacesTypes';
 
 const SpaceSettingView: FC<SpaceSettingViewProps> = ({ formState, onChangeFormState, onCompletion, onUpdateDefaultSetting }) => {
   const [updatedDefaultSetting, setUpdatedDefaultSetting] = useState(false);
@@ -42,7 +42,7 @@ const SpaceSettingView: FC<SpaceSettingViewProps> = ({ formState, onChangeFormSt
             label='紹介文'
             rows={4}
             name="introduction"
-            value={formState.introduction}
+            value={formState.description}
             onChange={onChangeFormState}
           />
           <SelectField

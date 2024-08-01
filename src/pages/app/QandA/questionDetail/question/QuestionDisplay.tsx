@@ -3,7 +3,7 @@ import QuestionDisplayView from './QuestionDisplayView'
 import { getIconUrl } from '../../../../../firebase/storage/get';
 import { format } from 'date-fns';
 import { Question } from '../../../../../types/firebase/db/qAndA/questionTypes';
-import { UserOrganizationData } from '../../../../../types/firebase/db/user/usersTypes';
+import { UserOrganizationData } from '../../../../../types/firebase/db/user/userOrganizationType';
 
 interface QuestionProps {
   question: Question;

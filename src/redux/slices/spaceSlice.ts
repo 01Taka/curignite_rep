@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { SerializableSpaceData } from '../../types/firebase/db/spacesTypes';
+import { SerializableSpaceData } from '../../types/firebase/db/space/spacesTypes';
 
 interface SpaceSliceState {
   currentSpace: SerializableSpaceData | null;

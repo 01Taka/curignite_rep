@@ -1,7 +1,7 @@
-import { DocumentData, DocumentReference, Firestore, Timestamp } from "firebase/firestore";
+import { DocumentData, DocumentReference, Firestore } from "firebase/firestore";
 import BaseDB from "../../base";
 import { ChatRoomData, ChatRoomParentType, defaultChatRoomPermissions } from "../../../../types/firebase/db/chat/chatRoomsTypes";
-import { createAdminMember, getInitialBaseDocumentData } from "../../../../functions/db/dbUtils";
+import { createInitialAdminMember, getInitialBaseDocumentData } from "../../../../functions/db/dbUtils";
 
 class ChatRoomsDB extends BaseDB<ChatRoomData> {
     constructor(firestore: Firestore) {
@@ -33,7 +33,7 @@ class ChatRoomsDB extends BaseDB<ChatRoomData> {
             roomIconUrl,
             parentId,
             parentType,
-            members: [createAdminMember(createdById)],
+            members: await createInitialAdminMember(createdById),
             permissions: defaultChatRoomPermissions,
             messageCount: 0,
         };

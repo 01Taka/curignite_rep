@@ -60,7 +60,7 @@ class TeamCodesDB extends BaseDB<TeamCodeData> {
      */
     async deleteTeamCode(teamCodeId: string): Promise<void> {
         try {
-            await this.delete(teamCodeId);
+            await this.softDelete(teamCodeId);
         } catch (error) {
             console.error("Failed to delete team code data: ", error);
             throw new Error("Failed to delete team code data");

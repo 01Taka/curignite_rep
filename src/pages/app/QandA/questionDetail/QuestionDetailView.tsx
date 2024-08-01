@@ -3,8 +3,8 @@ import CreateAnswer from './createAnswer/CreateAnswer';
 import AnswerList from './answerList/AnswerList';
 import TopTab from '../../../../components/app/tab/TopTab';
 import QuestionDisplay from './question/QuestionDisplay';
-import { initialUserOrganizationDataState, UserOrganizationData } from '../../../../types/firebase/db/user/usersTypes';
 import { Question } from '../../../../types/firebase/db/qAndA/questionTypes';
+import { initialUserOrganizationData, UserOrganizationData } from '../../../../types/firebase/db/user/userOrganizationType';
 
 interface QuestionDetailViewProps {
   loading: boolean;
@@ -48,7 +48,7 @@ const QuestionDetailView: React.FC<QuestionDetailViewProps> = ({
       <div className='w-1/2'>
         <QuestionDisplay
           question={question}
-          userOrganizationData={userOrganizationData ? userOrganizationData : initialUserOrganizationDataState}
+          userOrganizationData={userOrganizationData ? userOrganizationData : initialUserOrganizationData}
         />
       </div>
     </div>

@@ -1,9 +1,6 @@
-import { Timestamp } from "firebase/firestore";
-import { DbData } from "../baseTypes";
+import { BaseDocumentData } from "../baseTypes";
 
-export interface Answer extends DbData {
+export interface Answer extends BaseDocumentData {
     questionId: string;
     content: string;
-    authorUid: string;
-    createdAt: Timestamp;
 }

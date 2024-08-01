@@ -6,12 +6,14 @@ import { UserTeamsDB } from "../user/subCollection/userTeams";
 import { UserTeamService } from "../user/subCollection/userTeamService";
 import { Member, RoleType } from "../../../../types/firebase/db/baseTypes";
 import { TeamCodeService } from "./teamCodeService";
+import { UsersDB } from "../user/users";
 
 export class TeamService {
     constructor (
         private teamsDB: TeamsDB,
-        private teamCodeService: TeamCodeService,
+        private usersDB: UsersDB,
         private userTeamsDB: UserTeamsDB,
+        private teamCodeService: TeamCodeService,
         private userTeamService: UserTeamService,
     ) { }
 
@@ -86,12 +88,17 @@ export class TeamService {
      */
     private async joinTeam(uid: string, team: TeamData) {
         const members = team.members || [];
-        const memberData: Member = {
-            userId: uid,
-            role: RoleType.Member,
-        };
-        members.push(memberData);
-        await this.teamsDB.updateTeam(team.docId, { members });
+        const usersData = await this.usersDB.read(uid);
+        if (usersData) {
+            const memberData: Member = {
+                userId: uid,
+                username: usersData.username,
+                iconUrl: usersData.iconUrl,
+                role: RoleType.Member,
+            };
+            members.push(memberData);
+            await this.teamsDB.updateTeam(team.docId, { members });
+        }
 
         await this.userTeamsDB.createUserTeam(
             uid,

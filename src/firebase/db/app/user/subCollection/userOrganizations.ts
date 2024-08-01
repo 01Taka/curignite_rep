@@ -1,6 +1,6 @@
 import { DocumentReference, Firestore } from "firebase/firestore";
-import { UserOrganizationData } from "../../../../../types/firebase/db/user/usersTypes";
 import BaseDB from "../../../base";
+import { UserOrganizationData } from "../../../../../types/firebase/db/user/userOrganizationType";
 
 class UserOrganizationsDB extends BaseDB<UserOrganizationData> {
   constructor(firestore: Firestore, userId: string) {

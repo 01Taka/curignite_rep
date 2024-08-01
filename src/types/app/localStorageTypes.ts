@@ -1,4 +1,4 @@
-import { PublicationTarget } from "../firebase/db/spacesTypes";
+import { SpacePublicationTarget } from "../firebase/db/space/spacesTypes";
 import { StringBoolean } from "../util/componentsTypes";
 
 export interface AuthStorageProps {
@@ -14,7 +14,7 @@ export interface SpaceStorageProps {
 
 export interface SpaceDefaultSettingStorageProps {
     spaceName: string,
-    introduction: string,
-    publicationTarget: PublicationTarget,
+    description: string,
+    publicationTarget: SpacePublicationTarget,
     requiredApproval: StringBoolean,
 }

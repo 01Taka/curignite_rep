@@ -1,6 +1,6 @@
 import { spacesDB } from "../../../firebase/db/dbs";
 import { spaceStorage } from "../../../functions/localStorage/storages";
-import { SpaceData } from "../../../types/firebase/db/spacesTypes";
+import { SpaceData } from "../../../types/firebase/db/space/spacesTypes";
 
 // ローカルストレージに保存されたIdのスペースを取得する。
 export const getSpaceFromStorage = async (): Promise<SpaceData | null> => {

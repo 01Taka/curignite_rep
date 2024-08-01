@@ -4,7 +4,7 @@ import { where } from 'firebase/firestore';
 import { useParams } from 'react-router-dom';
 import { answersDB } from '../../../../../firebase/db/dbs';
 import { Answer } from '../../../../../types/firebase/db/qAndA/answerTypes';
-import { readUserOrganizationByUid } from '../../../../../firebase/db/app/user/subCollection/userOrganizationsDBUtil';
+import { initialUserOrganizationData } from '../../../../../types/firebase/db/user/userOrganizationType';
 
 const AnswerList: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -28,7 +28,7 @@ const AnswerList: React.FC = () => {
 
     const getUserOrganizationDataWithAnswer = async (answers: Answer[]): Promise<AnswerPost[]> => {
         const answerPosts = await Promise.all(answers.map(async (answer) => {
-            const userOrganizationData = await readUserOrganizationByUid(answer.authorUid);
+            const userOrganizationData = initialUserOrganizationData; // await readUserOrganizationByUid(answer.authorUid);
             const res: AnswerPost = {
                 userOrganizationData,
                 answer,

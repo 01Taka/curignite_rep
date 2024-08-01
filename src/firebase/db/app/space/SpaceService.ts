@@ -1,4 +1,4 @@
-import { PublicationTarget, UserSpaceIds } from "../../../../types/firebase/db/space/spacesTypes";
+import { SpacePublicationTarget, SpaceData, UserSpaceIds } from "../../../../types/firebase/db/space/spacesTypes";
 import ChatRoomsDB from "../chat/chatRooms";
 import { TeamService } from "../team/teamService";
 import { UsersDB } from "../user/users";
@@ -27,7 +27,7 @@ export class SpaceService {
         createdById: string,
         spaceName: string,
         description: string,
-        publicationTarget: PublicationTarget,
+        publicationTarget: SpacePublicationTarget,
         requiresApproval: boolean
     ) {
         try {
@@ -79,6 +79,25 @@ export class SpaceService {
         } catch (error) {
             console.error("Error getting same team members' space IDs:", error);
             return [];
+        }
+    }
+    async getSpaceDataByUserSpaceIds(userSpaceIds: UserSpaceIds[]): Promise<SpaceData[]> {
+        try {
+            // 各ユーザーのスペースIDリストをフラットにし、それぞれのIDで非同期読み込みを行う
+            const spaceIds = userSpaceIds.flatMap(data => data.spaceIds);
+            
+            // 各スペースIDについて非同期読み込みを行う
+            const spacePromises = spaceIds.map(id => this.spacesDB.read(id));
+            
+            // すべてのスペースデータを取得
+            const spaces = await Promise.all(spacePromises);
+
+            const filteringSpaces = spaces.filter(space => space !== null);
+            
+            return filteringSpaces as SpaceData[];
+        } catch (error) {
+            console.error("Failed to get space data:", error);
+            return []; // エラー発生時には空の配列を返す
         }
     }
 }

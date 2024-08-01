@@ -1,17 +1,6 @@
-import { Timestamp } from "firebase/firestore";
-import { DbData } from "../baseTypes";
+import { BaseDocumentData } from "../baseTypes";
 
-export interface Question extends DbData{
+export interface Question extends BaseDocumentData{
     title: string;
     content: string;
-    authorUid: string;
-    createdAt: Timestamp;
-}
-
-export const questionInitialState: Question = {
-    documentId: "",
-    title: "",
-    content: "",
-    authorUid: "",
-    createdAt: Timestamp.fromDate(new Date(0)),
 }

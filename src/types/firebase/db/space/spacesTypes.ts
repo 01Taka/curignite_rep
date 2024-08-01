@@ -1,4 +1,5 @@
 import { ConvertTimestampToNumber } from "../../../../functions/db/dbUtils";
+import { SelectItem } from "../../../util/componentsTypes";
 import { ActionInfo, BaseDocumentData, BasePermissions, Member, RoleType } from "../baseTypes";
 
 export enum SpacePermissionType {
@@ -14,7 +15,7 @@ export enum SpacePermissionType {
 
 export type SpacePermissions = BasePermissions<SpacePermissionType>;
 
-export enum PublicationTarget {
+export enum SpacePublicationTarget {
   Team = "team",
   Friend = "friend",
   Private = "private"
@@ -25,7 +26,7 @@ export interface SpaceData extends BaseDocumentData {
   iconUrl?: string;
   description?: string;
   requiresApproval: boolean;
-  publicationTarget: PublicationTarget;
+  publicationTarget: SpacePublicationTarget;
   members: Member[];
   permissions: SpacePermissions;
   pendingRequests: ActionInfo[];
@@ -59,9 +60,9 @@ export interface UserSpaceIds {
   spaceIds: string[];
 }
 
-// // PublicationTarget 用の SelectItem 定義
-// export const publicationTargetForSelect: SelectItem<PublicationTarget>[] = [
-//   { label: "チーム", value: "team" },
-//   { label: "フレンド", value: "friend" },
-//   { label: "非公開", value: "private" },
-// ];
+// PublicationTarget 用の SelectItem 定義
+export const publicationTargetForSelect: SelectItem<SpacePublicationTarget>[] = [
+  { label: "チーム", value: SpacePublicationTarget.Team },
+  { label: "フレンド", value: SpacePublicationTarget.Friend },
+  { label: "非公開", value: SpacePublicationTarget.Private },
+];

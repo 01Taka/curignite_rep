@@ -9,9 +9,9 @@ import CircularButton from '../../../../components/input/button/CircularButton';
 export type CreateTeamFormState = {
   teamName: string;
   iconPath: string;
+  description: string;
   password: string;
   requiredApproval: boolean;
-  introduction: string;
 };
 
 interface CreateTeamViewProps {
@@ -53,7 +53,7 @@ const CreateTeamView: FC<CreateTeamViewProps> = ({
           onChange={onCheckboxChange}
         />
         <MultilineField
-          value={formState.introduction}
+          value={formState.description}
           label='チームの紹介'
           name='introduction'
           rows={5}

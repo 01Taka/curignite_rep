@@ -23,7 +23,7 @@ const CreateQuestion: React.FC = () => {
     try {
       const uid = userData.uid;
       if (uid) {
-        questionsDB.createQuestions(title, content, uid);
+        // questionsDB.createQuestions(title, content, uid);
         setMessage('質問を追加しました。');
         resetForm();
       }
