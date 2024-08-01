@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { UserWithTeamRole } from '../../../../../types/firebase/db/teamsTypes'
+import { UserWithTeamRole } from '../../../../../types/firebase/db/team/teamsTypes'
 
 interface ParticipantsViewProps {
     participants: UserWithTeamRole[];
@@ -11,7 +11,7 @@ const ParticipantsView: FC<ParticipantsViewProps> = ({ participants, myTeam }) =
     <div>
         {participants.map((user, index) => (
             <div key={index}>
-                {user.userData.username}
+                {user.info.userData.username}
                 {user.role}
             </div>
         ))}

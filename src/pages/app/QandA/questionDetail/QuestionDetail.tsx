@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import QuestionDetailView from '../../QandA/questionDetail/QuestionDetailView';
 import { useParams } from 'react-router-dom';
 import { questionsDB, usersDB } from '../../../../firebase/db/dbs';
-import { UserOrganizationData } from '../../../../types/firebase/db/usersTypes';
+import { UserOrganizationData } from '../../../../types/firebase/db/user/usersTypes';
 import { Question } from '../../../../types/firebase/db/qAndA/questionTypes';
+import { readUserOrganizationByUid } from '../../../../firebase/db/app/user/subCollection/userOrganizationsDBUtil';
 
 const QuestionDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -26,7 +27,7 @@ const QuestionDetail: React.FC = () => {
       const question = await questionsDB.read(questionId);
       if (question) {
         const uid = question.authorUid;
-        const UserOrganizationData = await usersDB.readOrganizationByUid(uid);
+        const UserOrganizationData = await readUserOrganizationByUid(uid);
         setUserOrganizationData(UserOrganizationData);
         setQuestion(question);
       } else {

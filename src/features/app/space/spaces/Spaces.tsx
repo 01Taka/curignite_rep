@@ -6,7 +6,7 @@ import SpacesEmptyMessage from './SpacesEmptyMessage';
 import { relativeDateString } from '../../../../functions/dateTimeUtils';
 import { isMobileMode } from '../../../../functions/utils';
 import { getUsersDataByUids } from '../../../../firebase/db/app/user/userDBUtil';
-import { UserDictionary } from '../../../../types/firebase/db/usersTypes';
+import { UserDictionary } from '../../../../types/firebase/db/user/usersTypes';
 
 export interface SpacesProps {
   spaces: SpaceData[];
@@ -43,8 +43,8 @@ const Spaces: FC<SpacesProps> = ({ spaces }) => {
               authorName={space.authorName}
               startTime={relativeDateString(space.createdAt)}
               introduction={space.introduction}
-              someMemberName={space.memberUids.map(uid => usersDict[uid].username)}
-              memberNumber={space.memberUids.length}
+              someMemberName={space.participants.members.map(uid => usersDict[uid].username)}
+              memberNumber={space.participants.members.length}
               requiredApproval={space.requiredApproval}
               mobileMode={isMobileMode()}
             />

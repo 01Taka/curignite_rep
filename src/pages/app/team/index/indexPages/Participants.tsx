@@ -1,8 +1,8 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useAppSelector } from '../../../../../redux/hooks';
-import { UserWithTeamRole } from '../../../../../types/firebase/db/teamsTypes';
+import { UserWithTeamRole } from '../../../../../types/firebase/db/team/teamsTypes';
 import { getCurrentUser } from '../../../../../firebase/auth/auth';
-import { getTeamParticipantsUserData } from '../../../../../firebase/db/app/team/teamDBUtil';
+import { getTeamParticipantsUserData } from '../../../../../firebase/db/app/team/teamsDBUtil';
 import ParticipantsView from '../../../../../features/app/team/index/participants/ParticipantsView';
 
 const Participants: FC = () => {

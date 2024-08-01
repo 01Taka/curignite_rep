@@ -2,12 +2,16 @@ import { configureStore } from '@reduxjs/toolkit';
 import userDataSlice from './slices/userDataSilce';
 import appSlice from './slices/appSlice';
 import teamSlice from './slices/teamSlice';
+import spaceSlice from './slices/spaceSlice';
+import chatRoomSlice from './slices/chat/chatRoomSlice';
 
 const store = configureStore({
   reducer: {
-    appSlice: appSlice,
-    userDataSlice: userDataSlice,
-    teamSlice: teamSlice,
+    appSlice,
+    userDataSlice,
+    teamSlice,
+    spaceSlice,
+    chatRoomSlice,
   },
 });
 

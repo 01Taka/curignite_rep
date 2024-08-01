@@ -17,3 +17,24 @@ export interface ActionButton {
 }
 
 export type StringBoolean = "true" | "false";
+
+export type DecimalDigits = 0 | 1 | 2 | 3 | 4;
+
+export type TimerSize = "sm" | "md" | "lg" | "xl";
+
+export interface TimeUseState {
+    time: number;
+    setTime: React.Dispatch<React.SetStateAction<number>>;
+}
+
+export interface ActiveUseState {
+    active: boolean;
+    setActive: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export interface Pomodoro {
+    cycle: number;
+    break: number;
+}
+  
+  

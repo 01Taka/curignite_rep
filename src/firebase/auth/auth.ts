@@ -17,7 +17,7 @@ export const  getUserAuthState = async (): Promise<AuthStates> => {
 
     if (user) {
         const uid = user.uid;
-        const userData = await usersDB.read(uid);
+        const userData = await usersDB.getUser(uid);
         if (!userData) {
             return "noUserData";
         } else {

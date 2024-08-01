@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { SerializableUserData } from "../../types/firebase/db/usersTypes";
+import { SerializableUserData } from "../../types/firebase/db/user/usersTypes";
 
 export interface UserDataState {
     uid: string | null;

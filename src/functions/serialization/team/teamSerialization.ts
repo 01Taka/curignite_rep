@@ -1,5 +1,5 @@
 import { Timestamp } from "firebase/firestore";
-import { SerializableTeamData, TeamData } from "../../../types/firebase/db/teamsTypes";
+import { SerializableTeamData, TeamData } from "../../../types/firebase/db/team/teamsTypes";
 
 // シリアライズ関数
 export const serializeTeamData = (teamData: TeamData): SerializableTeamData => {

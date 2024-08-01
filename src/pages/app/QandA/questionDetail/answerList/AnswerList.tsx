@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react'
 import AnswerListView, { AnswerPost } from '../../../QandA/questionDetail/answerList/AnswerListView'
 import { where } from 'firebase/firestore';
 import { useParams } from 'react-router-dom';
-import { answersDB, usersDB } from '../../../../../firebase/db/dbs';
+import { answersDB } from '../../../../../firebase/db/dbs';
 import { Answer } from '../../../../../types/firebase/db/qAndA/answerTypes';
+import { readUserOrganizationByUid } from '../../../../../firebase/db/app/user/subCollection/userOrganizationsDBUtil';
 
 const AnswerList: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -27,7 +28,7 @@ const AnswerList: React.FC = () => {
 
     const getUserOrganizationDataWithAnswer = async (answers: Answer[]): Promise<AnswerPost[]> => {
         const answerPosts = await Promise.all(answers.map(async (answer) => {
-            const userOrganizationData = await usersDB.readOrganizationByUid(answer.authorUid);
+            const userOrganizationData = await readUserOrganizationByUid(answer.authorUid);
             const res: AnswerPost = {
                 userOrganizationData,
                 answer,

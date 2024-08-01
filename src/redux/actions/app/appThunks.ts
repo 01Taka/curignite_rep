@@ -1,5 +1,5 @@
 import { isMobileMode } from "../../../functions/utils";
-import { AppThunk } from "../../../types/module/reduxTypes";
+import { AppThunk } from "../../../types/module/redux/reduxTypes";
 import { setIsMobile } from "../../slices/appSlice";
 
 // redux/thunks/appThunks.ts

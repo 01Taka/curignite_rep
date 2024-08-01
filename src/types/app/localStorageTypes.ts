@@ -8,6 +8,11 @@ export interface AuthStorageProps {
 }
 
 export interface SpaceStorageProps {
+    currentSpaceId: string;
+    totalTime: string;
+}
+
+export interface SpaceDefaultSettingStorageProps {
     spaceName: string,
     introduction: string,
     publicationTarget: PublicationTarget,

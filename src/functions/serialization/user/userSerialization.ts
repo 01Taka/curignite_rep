@@ -1,5 +1,5 @@
 import { Timestamp } from "firebase/firestore";
-import { SerializableUserData, UserData } from "../../../types/firebase/db/usersTypes";
+import { SerializableUserData, UserData } from "../../../types/firebase/db/user/usersTypes";
 
 // シリアライズ関数
 export const serializeUserData = (user: UserData): SerializableUserData => {

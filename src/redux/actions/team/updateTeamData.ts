@@ -1,10 +1,10 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchApprovedTeamsFromUserData } from "../../../firebase/db/app/team/teamDBUtil";
-import { initialTeamDataState, TeamData } from "../../../types/firebase/db/teamsTypes";
-import { usersDB } from "../../../firebase/db/dbs";
+import { getParticipatingTeamsByUid } from "../../../firebase/db/app/team/teamsDBUtil";
+import { initialTeamDataState, TeamData } from "../../../types/firebase/db/team/teamsTypes";
 import { setCurrentDisplayTeam, setTeamRequestStatus, setTeamsNotFound, updateTeams, updateTeamsSuccess } from "../../slices/teamSlice";
 import { serializeTeamData, serializeTeamDataArray } from '../../../functions/serialization/team/teamSerialization';
-import { RootState } from '../../../types/module/reduxTypes';
+import { RootState } from '../../../types/module/redux/reduxTypes';
+import { getAllUserTeams } from '../../../firebase/db/app/user/subCollection/userTeamService';
 
 export const updateTeamData = createAsyncThunk<void, string>(
   'teams/updateTeamData',
@@ -13,7 +13,7 @@ export const updateTeamData = createAsyncThunk<void, string>(
       if (uid) {
         dispatch(setTeamRequestStatus("loading"));
 
-        const userTeamsData = await usersDB.getAllUserTeamsData(uid);
+        const userTeamsData = await getAllUserTeams(uid);
 
         if (userTeamsData.length === 0) {
           dispatch(setTeamsNotFound());
@@ -29,7 +29,7 @@ export const updateTeamData = createAsyncThunk<void, string>(
         dispatch(updateTeams(serializeTeamDataArray(temporaryTeamDataList)));
         dispatch(setTeamRequestStatus("temporary"));
 
-        const teamsData = await fetchApprovedTeamsFromUserData(uid, userTeamsData);
+        const teamsData = await getParticipatingTeamsByUid(uid, userTeamsData);
 
         if (teamsData.length === 0) {
           dispatch(setTeamsNotFound());

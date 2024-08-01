@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import TeamsView from './TeamsView';
 import { useAppDispatch, useAppSelector } from '../../../../redux/hooks';
-import { TeamData } from '../../../../types/firebase/db/teamsTypes';
+import { TeamData } from '../../../../types/firebase/db/team/teamsTypes';
 import { setCurrentDisplayTeam } from '../../../../redux/slices/teamSlice';
 import { deserializeTeamDataArray, serializeTeamData } from '../../../../functions/serialization/team/teamSerialization';
 import { useNavigate } from 'react-router-dom';

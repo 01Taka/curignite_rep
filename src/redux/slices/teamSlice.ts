@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { SerializableTeamData } from '../../types/firebase/db/teamsTypes';
+import { SerializableTeamData } from '../../types/firebase/db/team/teamsTypes';
 import { TeamPages } from '../../pages/app/team/index/TeamIndex';
 import { TeamRequestStatus } from '../../types/app/teamTypes';
 

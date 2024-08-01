@@ -3,7 +3,7 @@ import CreateAnswer from './createAnswer/CreateAnswer';
 import AnswerList from './answerList/AnswerList';
 import TopTab from '../../../../components/app/tab/TopTab';
 import QuestionDisplay from './question/QuestionDisplay';
-import { initialUserOrganizationDataState, UserOrganizationData } from '../../../../types/firebase/db/usersTypes';
+import { initialUserOrganizationDataState, UserOrganizationData } from '../../../../types/firebase/db/user/usersTypes';
 import { Question } from '../../../../types/firebase/db/qAndA/questionTypes';
 
 interface QuestionDetailViewProps {

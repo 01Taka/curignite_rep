@@ -1,4 +1,4 @@
-import { TeamData } from "../firebase/db/teamsTypes";
+import { TeamData } from "../firebase/db/team/teamsTypes";
 import { RequestStatus } from "../util/stateTypes";
 
 export type TeamRequestStatus = RequestStatus | "temporary";

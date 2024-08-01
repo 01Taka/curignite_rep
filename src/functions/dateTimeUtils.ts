@@ -1,5 +1,6 @@
 import { format, differenceInSeconds, differenceInMinutes, differenceInHours, differenceInDays, startOfDay } from 'date-fns';
 import { Timestamp } from 'firebase/firestore';
+import { DecimalDigits } from '../types/util/componentsTypes';
 
 type TimeTypes = number | Timestamp | Date;
 
@@ -17,6 +18,25 @@ export const toDate = (input: TimeTypes): Date => {
         return input;
     } else if (typeof input === 'number') {
         return new Date(input);
+    } else {
+        throw new Error('Invalid input type. Must be number, Timestamp, or Date.');
+    }
+};
+
+/**
+ * 入力を Firestore の Timestamp に変換します。
+ * 
+ * @param input - number（UNIXエポックタイムスタンプ）、Timestamp、または Date オブジェクト
+ * @returns Firestore の Timestamp オブジェクト
+ * @throws Error - 無効な入力タイプの場合
+ */
+export const toTimestamp = (input: TimeTypes): Timestamp => {
+    if (input instanceof Timestamp) {
+        return input;
+    } else if (input instanceof Date) {
+        return Timestamp.fromDate(input);
+    } else if (typeof input === 'number') {
+        return Timestamp.fromMillis(input);
     } else {
         throw new Error('Invalid input type. Must be number, Timestamp, or Date.');
     }
@@ -95,4 +115,21 @@ export const relativeDateString = (
     } else {
         return `${diffDays}${defaultFormats.days}${unit}`;
     }
+};
+
+export const millisToTime = (millis: number, decimalDigits: DecimalDigits = 0, flexMin: boolean = false): string => {
+  const totalSec = millis / 1000;
+  const sec = Math.floor(totalSec % 60);
+  const min = Math.floor((totalSec / 60) % 60);
+  const hours = Math.floor(totalSec / 3600);
+  
+  const formattedSec = sec.toString().padStart(2, '0');
+  const formattedMin = (!flexMin || min > 0) ? `${min.toString().padStart(2, '0')} : ` : "";
+  const formattedHours = hours > 0 ? `${hours.toString()} : ` : "";
+  
+  const fractionalPart = decimalDigits > 0 
+    ? `.${((millis % 1000) / 1000).toFixed(decimalDigits).slice(2)}`
+    : '';
+
+  return `${formattedHours}${formattedMin}${formattedSec}${fractionalPart}`;
 };

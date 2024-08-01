@@ -4,7 +4,7 @@ import { usersDB } from "../../../firebase/db/dbs";
 import { setUserData } from "../../slices/userDataSilce";
 import { serializeUserData } from "../../../functions/serialization/user/userSerialization";
 import { authPaths, rootPaths } from "../../../types/path/appPaths";
-import { RootState } from '../../../types/module/reduxTypes';
+import { RootState } from '../../../types/module/redux/reduxTypes';
 
 export const updateUserData = createAsyncThunk<
   string | void,
@@ -28,7 +28,7 @@ export const updateUserData = createAsyncThunk<
           const user = await getCurrentUser();
           const uid = user?.uid;
           if (uid) {
-            const userData = await usersDB.read(uid);
+            const userData = await usersDB.getUser(uid);
             if (userData) {
               dispatch(setUserData(serializeUserData(userData)));
             }

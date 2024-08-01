@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAppSelector } from '../../../../redux/hooks';
 import CreateTeamView, { CreateTeamFormState } from '../../../../features/app/team/action/CreateTeamView';
-import { createTeam } from '../../../../firebase/db/app/team/teamDBUtil';
+import { createTeam } from '../../../../firebase/db/app/team/teamsDBUtil';
 
 const CreateTeam: FC = () => {
   const { name } = useParams<{ name: string }>();

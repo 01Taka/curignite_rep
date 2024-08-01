@@ -1,16 +1,15 @@
 import React, { FC, useEffect, useState, useCallback } from 'react';
-import { spacesDB } from '../../../../firebase/db/dbs';
 import { handleFormStateChange } from '../../../../functions/utils';
-import { appendSpaceIdToUserData, getCurrentUserData } from '../../../../firebase/db/app/user/userDBUtil';
+import { getCurrentUserData } from '../../../../firebase/db/app/user/userDBUtil';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { spacePaths, toRelativePaths } from '../../../../types/path/appPaths';
-import { getParticipationPossibleSpaces } from '../../../../firebase/db/app/space/spacesDBUtil';
+import { createSpace, getParticipationPossibleSpaces } from '../../../../firebase/db/app/space/SpaceService';
 import SpaceSettingView from '../../../../features/app/space/start/SpaceSettingView';
 import { initialSpaceStartFormState, SpaceStartFormState } from '../../../../types/app/spaceTypes';
 import SpaceStartView from '../../../../features/app/space/start/SpaceStartView';
 import { SpaceData } from '../../../../types/firebase/db/spacesTypes';
-import { spaceStorage } from '../../../../functions/localStorage/storages';
-import { SpaceStorageProps } from '../../../../types/app/localStorageTypes';
+import { spaceDefaultSettingStorage } from '../../../../functions/localStorage/storages';
+import { SpaceDefaultSettingStorageProps } from '../../../../types/app/localStorageTypes';
 import { StringBoolean } from '../../../../types/util/componentsTypes';
 
 const SpaceStart: FC = () => {
@@ -27,7 +26,7 @@ const SpaceStart: FC = () => {
   }, []);
 
   const initializeSpaceSetting = useCallback(async () => {
-    const data = spaceStorage.getDataAllAtOnce();
+    const data = spaceDefaultSettingStorage.getDataAllAtOnce();
     const formState: SpaceStartFormState = {
       spaceName: data.spaceName ?? await getDefaultSpaceName(),
       introduction: data.introduction ?? "",
@@ -56,15 +55,14 @@ const SpaceStart: FC = () => {
   }, [initializeSpaceSetting, updateSpaces]);
 
   const handleSetDefaultFormState = (formState: SpaceStartFormState) => {
-    const data: SpaceStorageProps = {
+    const data: SpaceDefaultSettingStorageProps = {
       spaceName: formState.spaceName,
       introduction: formState.introduction,
       publicationTarget: formState.publicationTarget,
       requiredApproval: String(formState.requiredApproval) as StringBoolean,
     };
-    console.log(data);
-    
-    spaceStorage.setDataAllAtOnce(data);
+
+    spaceDefaultSettingStorage.setDataAllAtOnce(data);
   };
 
   const handleCreateSpace = async (formState: SpaceStartFormState) => {
@@ -73,15 +71,13 @@ const SpaceStart: FC = () => {
 
     if (uid) {
       try {
-        const space = await spacesDB.createSpace(
+        await createSpace(
           formState.spaceName,
           formState.introduction,
           uid,
           formState.publicationTarget,
           formState.requiredApproval,
-          []
         );
-        await appendSpaceIdToUserData(uid, space.id);
       } catch (error) {
         console.error('Failed to create space: ', error);
       }

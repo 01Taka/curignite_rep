@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import QuestionListView, { QuestionPost } from '../../../QandA/questionDetail/questionList/QuestionListView';
 import { questionsDB, usersDB } from '../../../../../firebase/db/dbs';
 import { Question } from '../../../../../types/firebase/db/qAndA/questionTypes';
+import { readUserOrganizationByUid } from '../../../../../firebase/db/app/user/subCollection/userOrganizationsDBUtil';
 
 const QuestionList: React.FC = () => {
     const [questionPosts, setQuestionPosts] = useState<QuestionPost[]>([]);
@@ -22,7 +23,7 @@ const QuestionList: React.FC = () => {
 
     const getUserOrganizationDataWithQuestion = async (questions: Question[]): Promise<QuestionPost[]> => {
         const questionPosts = await Promise.all(questions.map(async (question) => {
-            const userOrganizationData = await usersDB.readOrganizationByUid(question.authorUid);
+            const userOrganizationData = await readUserOrganizationByUid(question.authorUid);
             const res: QuestionPost = {
                 userOrganizationData,
                 question,
