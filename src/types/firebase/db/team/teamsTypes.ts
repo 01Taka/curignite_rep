@@ -18,7 +18,7 @@ export interface TeamData extends BaseDocumentData {
     teamName: string;
     iconUrl?: string;
     description?: string;
-    hashedPassword?: string;
+    hashedPassword: string;
     requiresApproval: boolean;
     members: Member[];
     permissions: TeamPermissions;

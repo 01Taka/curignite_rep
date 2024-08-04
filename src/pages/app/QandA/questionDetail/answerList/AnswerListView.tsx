@@ -17,7 +17,7 @@ const AnswerListView: React.FC<AnswerListViewProps> = ({
 }) => {
   return (
     <div>
-      {answers.map((post, index) => (
+      {answers && answers.map((post, index) => (
         <div key={index}>
           <AnswerContainer answer={post.answer} userOrganizationData={post.userOrganizationData}/>
         </div>

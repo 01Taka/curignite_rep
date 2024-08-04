@@ -3,13 +3,13 @@ import SpaceTimer from './SpaceTimer';
 import { SpaceData } from '../../../../types/firebase/db/space/spacesTypes';
 
 interface SpaceHomeViewProps {
-  space: SpaceData | null;
+  space: SpaceData;
 }
 
 const SpaceHomeView: FC<SpaceHomeViewProps> = ({ space }) => {
   return (
     <div>
-      <SpaceTimer pomodoro={{cycle: 10000, break: 5000}}/>
+      <SpaceTimer spaceId={space?.docId} pomodoro={{cycle: 10000, break: 5000}}/>
     </div>
   )
 };

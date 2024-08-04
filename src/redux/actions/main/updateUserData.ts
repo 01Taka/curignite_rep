@@ -1,10 +1,11 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { getCurrentUser, getUserAuthState } from "../../../firebase/auth/auth";
-import { usersDB } from "../../../firebase/db/dbs";
-import { setUserData } from "../../slices/userDataSilce";
+import { getUserAuthState } from "../../../firebase/auth/auth";
+import { setUserData, setRequestState } from "../../slices/userDataSlice";
 import { authPaths, rootPaths } from "../../../types/path/appPaths";
 import { RootState } from '../../../types/module/redux/reduxTypes';
 import { convertTimestampsToNumbers } from '../../../functions/db/dbUtils';
+import { AuthStates } from '../../../types/util/stateTypes';
+import serviceFactory from '../../../firebase/db/factory';
 
 export const updateUserData = createAsyncThunk<
   string | void,
@@ -16,30 +17,41 @@ export const updateUserData = createAsyncThunk<
   'user/updateUserData',
   async (_, { dispatch, rejectWithValue }) => {
     try {
+      dispatch(setRequestState('loading'));  // リクエスト開始時の状態を設定
+
       const state = await getUserAuthState();
-      switch (state) {
-        case "new":
-          console.error('アカウントがありません');
-          return rootPaths.top;
-        case "noUserData":
-          console.error('サインアップが完了していません');
-          return authPaths.initialSetup;
-        case "verified":
-          const user = await getCurrentUser();
-          const uid = user?.uid;
-          if (uid) {
-            const userData = await usersDB.getUser(uid);
-            if (userData) {
-              dispatch(setUserData(convertTimestampsToNumbers(userData)));
+      const handleState = async (state: AuthStates) => {
+        switch (state) {
+          case "new":
+            console.error('アカウントがありません');
+            dispatch(setRequestState('notFound'));
+            return rootPaths.top;
+          case "noUserData":
+            console.error('サインアップが完了していません');
+            dispatch(setRequestState('notFound'));
+            return authPaths.initialSetup;
+          case "verified":
+            const userService = serviceFactory.createUserService();
+            const user = await userService.getCurrentUserData();
+            if (user) {
+              dispatch(setUserData(convertTimestampsToNumbers(user)));
+              dispatch(setRequestState('success'));
+            } else {
+              dispatch(setRequestState('error'));
+              throw new Error("User data not found.");
             }
-          }
-          break;
-        default:
-          console.error('Unknown user state');
-          return rootPaths.top;
-      }
+            break;
+          default:
+            console.error('Unknown user state');
+            dispatch(setRequestState('error'));
+            return rootPaths.top;
+        }
+      };
+
+      return await handleState(state);
     } catch (error) {
       console.error("Error in updateUserData:", error);
+      dispatch(setRequestState('error'));  // エラー状態を設定
       return rejectWithValue("An error occurred while verifying your account. Please try again.");
     }
   }

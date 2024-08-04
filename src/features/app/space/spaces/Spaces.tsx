@@ -2,9 +2,9 @@ import React, { FC } from 'react';
 import { Typography } from '@mui/material';
 import SpaceContainer from './SpaceContainer';
 import SpacesEmptyMessage from './SpacesEmptyMessage';
-import { relativeDateString } from '../../../../functions/dateTimeUtils';
 import { isMobileMode } from '../../../../functions/utils';
 import { SpaceData } from '../../../../types/firebase/db/space/spacesTypes';
+import { dateTimeToString } from '../../../../functions/dateTimeUtils';
 
 export interface SpacesProps {
   spaces: SpaceData[];
@@ -23,15 +23,15 @@ const Spaces: FC<SpacesProps> = ({ spaces }) => {
           <Typography>
             {spaces.length}つのスペースが見つかりました。
           </Typography>
-          {spaces.map((space, index) => (
+          {spaces && spaces.map((space, index) => (
             <SpaceContainer
               key={index}
               spaceName={space.spaceName}
               authorName={space.authorName}
-              startTime={relativeDateString(space.createdAt)}
+              startTime={dateTimeToString(space.createdAt, {}, false)}
               introduction={space.introduction}
-              someMemberName={space.members.slice(0, 3).map(member => member.username)}
-              memberNumber={space.participants.members.length}
+              someMemberName={space.members.length > 0 ? space.members.slice(0, 3).map(member => member.username) : []}
+              memberNumber={space.members.length}
               requiredApproval={space.requiredApproval}
               mobileMode={isMobileMode()}
             />

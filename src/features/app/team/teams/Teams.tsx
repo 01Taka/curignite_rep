@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC } from 'react';
 import TeamsView from './TeamsView';
 import { useAppDispatch, useAppSelector } from '../../../../redux/hooks';
 import { TeamData } from '../../../../types/firebase/db/team/teamsTypes';
@@ -8,12 +8,10 @@ import { paths } from '../../../../types/path/appPaths';
 import { isMobileMode } from '../../../../functions/utils';
 import { convertTimestampsToNumbers, revertTimestampConversion } from '../../../../functions/db/dbUtils';
 
-// サイドバーなどのチーム一覧 スケルトンなどの機能付き
 const Teams: FC = () => {
   const userData = useAppSelector(state => state.userDataSlice);
   const teamSlice = useAppSelector(state => state.teamSlice);
   const dispatch = useAppDispatch();
-
   const navigate = useNavigate();
 
   const setDisplayTeam = (team: TeamData) => {
@@ -22,15 +20,17 @@ const Teams: FC = () => {
     if (isMobileMode()) {
       navigate(paths.main.team.index);
     }
-  }
+  };
 
-  return <TeamsView
-    teamDataList={revertTimestampConversion(teamSlice.teams)}
-    uid={userData.uid || ""}
-    currentDisplayTeamId={teamSlice.currentDisplayTeam?.documentId}
-    requestState={teamSlice.requestState}
-    onTeamClick={setDisplayTeam}
-  />
-}
+  return (
+    <TeamsView
+      teamDataList={revertTimestampConversion(teamSlice.teams)}
+      uid={userData.uid || ""}
+      currentDisplayTeamId={teamSlice.currentDisplayTeam?.docId}
+      requestState={teamSlice.requestState}
+      onTeamClick={setDisplayTeam}
+    />
+  );
+};
 
-export default Teams
+export default Teams;

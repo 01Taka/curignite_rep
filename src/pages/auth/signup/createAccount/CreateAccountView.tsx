@@ -1,7 +1,8 @@
-import React, { ChangeEvent, FormEvent } from 'react'
+import React, { FormEvent } from 'react'
 import { Alert, Button } from '@mui/material';
 import { FormContainer, Heading } from '../../../../components/container/containerIndex';
 import { EmailField, PasswordField, UserNameField } from '../../../../components/input/inputIndex';
+import { FormStateChangeFunc } from '../../../../types/util/componentsTypes';
 
 export interface CreateAccountFormState {
     username: string;
@@ -13,9 +14,9 @@ interface CreateAccountViewProps {
     formState: CreateAccountFormState;
     error: string;
     submitDisabled: boolean;
-    onFormStateChange: (e: ChangeEvent<HTMLInputElement>) => void;
+    onFormStateChange: FormStateChangeFunc
     onEmailSignUp: (e: FormEvent) => void;
-  }
+}
   
   const CreateAccountView: React.FC<CreateAccountViewProps> = ({
     formState,

@@ -17,7 +17,7 @@ const QuestionListView: React.FC<QuestionListViewProps> = ({
 }) => {
   return (
     <div>
-      {questionPosts.map((post, index) => (
+      {questionPosts && questionPosts.map((post, index) => (
         <div key={index}>
           <QuestionContainer question={post.question} userOrganizationData={post.userOrganizationData}/>
         </div>

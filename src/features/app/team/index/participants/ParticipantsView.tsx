@@ -9,7 +9,7 @@ interface ParticipantsViewProps {
 const ParticipantsView: FC<ParticipantsViewProps> = ({ members, myTeam }) => {
   return (
     <div>
-        {members.map((user, index) => (
+        {members && members.map((user, index) => (
             <div key={index}>
                 {user.userData.username}
                 {user.role}

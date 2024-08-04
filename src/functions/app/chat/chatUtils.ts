@@ -10,5 +10,5 @@ export const sortChatIdMap = (chatIdMap: ChatIdMap): ChatData[] => {
     const chatArray = Object.values(chatIdMap);
 
     // 作成日の降順にソート
-    return chatArray.sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis());
+    return chatArray.sort((a, b) => a.createdAt.toMillis() - b.createdAt.toMillis());
 };

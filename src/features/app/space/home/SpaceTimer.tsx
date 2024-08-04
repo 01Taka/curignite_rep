@@ -3,14 +3,15 @@ import { millisToTime } from '../../../../functions/dateTimeUtils';
 import { Pomodoro, TimerSize } from '../../../../types/util/componentsTypes';
 import CountdownTimer from '../../../../components/app/timer/CountdownTimer';
 import Stopwatch from '../../../../components/app/timer/Stopwatch';
-import { addTotalTime, getTotalTime } from '../spaceUtils';
+import { addTotalTime, getTotalTime } from '../../../../functions/app/space/spaceTimerUtils';
 
 interface SpaceTimerProps {
+  spaceId: string;
   pomodoro?: Pomodoro;
   size?: TimerSize;
 }
 
-const SpaceTimer: FC<SpaceTimerProps> = ({ pomodoro, size = 'xl'}) => {
+const SpaceTimer: FC<SpaceTimerProps> = ({ spaceId, pomodoro, size = 'xl'}) => {
   const [time, setTime] = useState(0);
   const [active, setActive] = useState(false);
   const [totalTime, setTotalTime] = useState(0);
@@ -19,17 +20,17 @@ const SpaceTimer: FC<SpaceTimerProps> = ({ pomodoro, size = 'xl'}) => {
   const [isBreak, setIsBreak] = useState(false); // 休憩中かどうかの状態を追加
 
   useEffect(() => {
-    setTotalTime(getTotalTime());
+    setTotalTime(getTotalTime(spaceId));
     if (pomodoro) {
         setTime(pomodoro.cycle);
     }
-  }, [pomodoro]);
+  }, [spaceId, pomodoro]);
 
   const handleUpdateTime = (timeDifference: number) => {
     if (pomodoro) {
         timeDifference = isBreak ? 0 : -timeDifference;
     }
-    const total = addTotalTime(timeDifference);
+    const total = addTotalTime(spaceId, timeDifference);
     setTotalTime(total);
   };
 

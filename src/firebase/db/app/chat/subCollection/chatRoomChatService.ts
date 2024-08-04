@@ -84,10 +84,10 @@ class ChatRoomChatService {
         if (!user) {
             throw new Error("ユーザーが見つかりませんでした。");
         }
-        const { username, iconUrl } = user;
+        const { username } = user;
 
-        if (!username || !iconUrl) {
-            throw new Error("ユーザーの表示名またはアイコンが見つかりません");
+        if (!username) {
+            throw new Error("ユーザーの表示名が見つかりません");
         }
 
         return user;

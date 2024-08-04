@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ChatData } from '../../../types/firebase/db/chat/chatsTypes';
 import { fetchChats } from '../../actions/chat/chatRoomActions';
 import { ChatRoomSliceState } from '../../../types/module/redux/reduxChatTypes';
+import { ConvertTimestampToNumber } from '../../../functions/db/dbUtils';
 
 const initialState: ChatRoomSliceState = {
   currentRoomId: null,
@@ -32,7 +33,7 @@ const chatRoomSlice = createSlice({
       .addCase(fetchChats.pending, (state) => {
         state.messageStatus = 'loading';
       })
-      .addCase(fetchChats.fulfilled, (state, action: PayloadAction<ChatData[]>) => {
+      .addCase(fetchChats.fulfilled, (state, action: PayloadAction<ConvertTimestampToNumber<ChatData[]>>) => {
         action.payload.forEach(message => {
           state.messages[message.docId] = message;
         });

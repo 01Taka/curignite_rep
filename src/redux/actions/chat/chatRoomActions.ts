@@ -1,9 +1,10 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ChatData } from '../../../types/firebase/db/chat/chatsTypes';
 import { FetchChatsParams } from '../../../types/module/redux/reduxChatTypes';
+import { convertTimestampsToNumbers, ConvertTimestampToNumber } from '../../../functions/db/dbUtils';
 
 export const fetchChats = createAsyncThunk<
-  ChatData[], 
+  ConvertTimestampToNumber<ChatData[]>, 
   FetchChatsParams, 
   { rejectValue: string }
 >(
@@ -11,7 +12,7 @@ export const fetchChats = createAsyncThunk<
   async ({ messageLimit, startAfterMessageId, chatRoomChatsDB }, { rejectWithValue }) => {
     try {
       const messages = await chatRoomChatsDB.getChatsInRoom(messageLimit, startAfterMessageId);
-      return messages;
+      return convertTimestampsToNumbers(messages);
     } catch (error) {
       return rejectWithValue('Failed to fetch chat messages.');
     }

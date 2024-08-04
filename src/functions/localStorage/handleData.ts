@@ -12,8 +12,8 @@ export class LocalStorageHandler<T extends Record<keyof T, string>> {
         this.keys = keys;
     }
 
-    private getFullKey(key: keyof T): string {
-        return `${this.id}-${String(key)}`;
+    private getFullKey(key: keyof T, param?: string): string {
+        return param ? `${this.id}-${String(key)}-${param}` : `${this.id}-${String(key)}`;
     }
 
     private encrypt(data: string): string {
@@ -38,9 +38,9 @@ export class LocalStorageHandler<T extends Record<keyof T, string>> {
         return true;
     }
 
-    public setData(key: keyof T, data: string): void {
+    public setData(key: keyof T, data: string, param?: string): void {
         if (this.isValidKey(key)) {
-            const fullKey = this.getFullKey(key);
+            const fullKey = this.getFullKey(key, param);
             const encryptedData = this.encrypt(data);
             localStorage.setItem(fullKey, encryptedData);
         }
@@ -54,14 +54,14 @@ export class LocalStorageHandler<T extends Record<keyof T, string>> {
         });
     }
 
-    public getData(key: keyof T): string | null {
+    public getData(key: keyof T, param?: string): string | null {
         if (this.isValidKey(key)) {
-            const fullKey = this.getFullKey(key);
+            const fullKey = this.getFullKey(key, param);
             const encryptedData = localStorage.getItem(fullKey);
             if (encryptedData) {
                 return this.decrypt(encryptedData);
             }
-            console.error(`No data found for key: ${String(key)}.`);
+            console.warn(`No data found for key: ${String(key)} with param: ${param}.`);
         }
         return null;
     }
@@ -76,9 +76,9 @@ export class LocalStorageHandler<T extends Record<keyof T, string>> {
         }, {} as Partial<T>);
     }
 
-    public clear(): void {
+    public clear(param?: string): void {
         this.keys.forEach(key => {
-            const fullKey = this.getFullKey(key);
+            const fullKey = this.getFullKey(key, param);
             localStorage.removeItem(fullKey);
         });
     }

@@ -124,6 +124,7 @@ class ServiceFactory {
     createTeamService(userId: string): TeamService {
         const userTeamsDB = this.createUserTeamsDB(userId);
         const userTeamService = this.createUserTeamService(userId);
+        const userService = this.createUserService();
         const teamCodeService = this.createTeamCodeService();
 
         return new TeamService(
@@ -131,6 +132,7 @@ class ServiceFactory {
             this.getUsersDB(),
             userTeamsDB,
             teamCodeService,
+            userService,
             userTeamService
         );
     }

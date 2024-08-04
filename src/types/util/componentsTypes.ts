@@ -3,6 +3,8 @@ import { ReactNode } from "react";
 
 export type FormStateChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>;
 
+export type FormStateChangeFunc = (e: FormStateChangeEvent) => void;
+
 export type SelectFieldChange = (event: SelectChangeEvent<string | number>, child: ReactNode) => void;
 
 export interface SelectItem<T> {

@@ -11,7 +11,10 @@ export type ConvertTimestampToNumber<T> = {
 
 // `ConvertTimestampToNumber` から元の型に戻す型
 export type RevertTimestampToOriginal<T> = {
-    [K in keyof T]: T[K] extends number ? Timestamp : T[K];
+    [K in keyof T]: T[K] extends number ? Timestamp :
+                    T[K] extends Array<infer U> ? Array<RevertTimestampToOriginal<U>> :
+                    T[K] extends object ? RevertTimestampToOriginal<T[K]> :
+                    T[K];
 };
 
 // データを変換する関数
@@ -44,16 +47,26 @@ export const convertTimestampsToNumbers = <T>(data: T): ConvertTimestampToNumber
 };
 
 // Timestampに戻すための関数
-export const revertTimestampConversion = <T>(data: ConvertTimestampToNumber<T>): RevertTimestampToOriginal<T> => {
-    const result: any = { ...data };
-
-    for (const key in result) {
-        if (typeof result[key] === 'number') {
-            result[key] = new Timestamp(result[key], 0); // 秒とナノ秒の部分を適切に設定
-        }
+export const revertTimestampConversion = <T>(data: ConvertTimestampToNumber<T>): T => {
+    if (typeof data === 'number') {
+        return new Timestamp(data, 0) as any;
     }
 
-    return result;
+    if (Array.isArray(data)) {
+        return data.map(item => revertTimestampConversion(item)) as any;
+    }
+
+    if (typeof data === 'object' && data !== null) {
+        const result: any = {};
+        for (const key in data) {
+            if (Object.prototype.hasOwnProperty.call(data, key)) {
+                result[key] = revertTimestampConversion((data as any)[key]);
+            }
+        }
+        return result;
+    }
+
+    return data as any;
 };
 
 // 動的ドキュメント作成時の初期値を取得する

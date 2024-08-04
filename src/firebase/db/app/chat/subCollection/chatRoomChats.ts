@@ -1,4 +1,4 @@
-import { DocumentReference, DocumentSnapshot, Firestore, orderBy } from "firebase/firestore";
+import { DocumentReference, DocumentSnapshot, Firestore } from "firebase/firestore";
 import BaseDB from "../../../base";
 import { ChatAttachment, ChatData } from "../../../../../types/firebase/db/chat/chatsTypes";
 import { getInitialBaseDocumentData } from "../../../../../functions/db/dbUtils";
@@ -24,9 +24,9 @@ class ChatRoomChatsDB extends BaseDB<ChatData> {
     senderName: string,
     senderIconUrl: string,
     content: string,
-    attachments?: ChatAttachment[],
-    replyTo?: string,
-    threadId?: string
+    attachments: ChatAttachment[] = [],
+    replyTo: string = "",
+    threadId: string = ""
   ): Promise<DocumentReference<ChatData>> {
     const data: ChatData = {
       ...getInitialBaseDocumentData(createdById),
@@ -66,8 +66,9 @@ class ChatRoomChatsDB extends BaseDB<ChatData> {
         throw new Error("Failed to get document snapshot");
       }
     }
-    
-    return this.getAllWithPagination(startSnap, messageLimit, orderBy('createdAt', 'desc'));
+
+    const chats = await this.getAllWithPagination(startSnap, messageLimit);
+    return chats;
   }
 
   /**

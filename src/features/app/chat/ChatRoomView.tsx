@@ -1,40 +1,72 @@
-import React, { FC, useEffect, useRef } from 'react';
-import { ChatData } from '../../../types/firebase/db/chat/chatsTypes';
+import React, { FC, useEffect, useRef, useState } from 'react';
+import { ChatData, ChatFormData } from '../../../types/firebase/db/chat/chatsTypes';
 import Chat from './Chat';
+import ChatInput from '../../../components/input/message/ChatInput';
 
 interface ChatRoomViewProps {
+    chat: ChatFormData;
     chats: ChatData[];
-    chatEndRef: React.RefObject<HTMLDivElement>;
+    onChangeChatContent: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    onAttachFile: (files: FileList) => void;
+    onSendChat: () => void;
     onScrollToEnd: () => void;
 }
 
-const ChatRoomView: FC<ChatRoomViewProps> = ({ chats, chatEndRef, onScrollToEnd }) => {
+const ChatRoomView: FC<ChatRoomViewProps> = ({ chat, chats, onChangeChatContent, onAttachFile, onSendChat, onScrollToEnd }) => {
     const containerRef = useRef<HTMLDivElement>(null);
+    const scrollEndRef = useRef<HTMLDivElement>(null);
+    const [scrolledToEnd, setScrolledToEnd] = useState(false);
+    const [calledOnScrollToEnd, setCalledOnScrollToEnd] = useState(false);
 
-    const handleScroll = () => {
+    const handleScroll = React.useCallback(() => {
         if (containerRef.current) {
-            const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
-            if (scrollHeight - scrollTop === clientHeight) {
+            const { scrollTop } = containerRef.current;
+            if (!calledOnScrollToEnd && scrolledToEnd && scrollTop < 50) {
                 onScrollToEnd();
+                setCalledOnScrollToEnd(true);
             }
         }
+    }, [scrolledToEnd, calledOnScrollToEnd, onScrollToEnd]);
+    
+
+    useEffect(() => {
+        setCalledOnScrollToEnd(false);
+    }, [chats]);
+
+    useEffect(() => {
+        const container = containerRef.current;
+        container?.addEventListener('scroll', handleScroll);
+        return () => {
+            container?.removeEventListener('scroll', handleScroll);
+        };
+    }, [containerRef, scrolledToEnd, handleScroll]);
+
+    const scrollToRef = (ref: React.RefObject<HTMLDivElement>) => {
+        ref.current?.scrollIntoView({ behavior: "auto", block: "start" });
     };
 
     useEffect(() => {
-        containerRef.current?.addEventListener('scroll', handleScroll);
-        return () => {
-            containerRef.current?.removeEventListener('scroll', handleScroll);
-        };
-    }, []);
+        if (chats.length > 0 && !scrolledToEnd) {
+            scrollToRef(scrollEndRef);
+            setScrolledToEnd(true);
+        }
+    }, [chats, scrolledToEnd]);
 
     return (
         <div ref={containerRef} style={{ overflowY: 'auto', maxHeight: '100vh' }}>
-            <div>
+            <div className='flex flex-col'>
                 {chats.map((chat) => (
                     <Chat key={chat.docId} chat={chat} />
                 ))}
-                <div ref={chatEndRef} />
+                <div ref={scrollEndRef} />
             </div>
+            <ChatInput
+                chat={chat}
+                onChangeChatContent={onChangeChatContent}
+                onAttachFile={onAttachFile}
+                onSendChat={onSendChat}
+                placeholder='メッセージを入力'
+            />
         </div>
     );
 };

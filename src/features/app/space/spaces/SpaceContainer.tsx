@@ -46,7 +46,7 @@ const SpaceContainer: FC<SpaceContainerProps> = ({
       }
       {memberNumber > 0 && (
         <div className='flex items-center space-x-2 text-xs'>
-          {someMemberName.map((name, index) => (
+          {someMemberName && someMemberName.map((name, index) => (
             <div key={index} className='border-2 border-primaryBase rounded-full px-2 py-0'>
               {name}
             </div>

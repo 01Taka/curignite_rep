@@ -8,11 +8,12 @@ import NotFound from '../../error/NotFound';
 import SpaceRoutes from '../space/SpaceRoutes';
 import { updateTeamData } from '../../../redux/actions/team/updateTeamData';
 import { updateUserData } from '../../../redux/actions/main/updateUserData';
+import ChatRoom from '../../../features/app/chat/ChatRoom';
 
 const MainRoutes: FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { uid } = useAppSelector(state => state.userDataSlice);
+  const userData = useAppSelector(state => state.userDataSlice);
 
   useEffect(() => {
     dispatch(updateUserData())
@@ -30,10 +31,10 @@ const MainRoutes: FC = () => {
   }, [navigate, dispatch]);
 
   useEffect(() => {
-    if (uid) {
-      dispatch(updateTeamData(uid));
+    if (userData.uid) {
+      dispatch(updateTeamData(userData.uid));
     }
-  }, [dispatch, uid]);
+  }, [dispatch, userData.uid]);
 
   return (
     <div className='w-full h-full bg-primaryBase overflow-auto'>
@@ -41,7 +42,7 @@ const MainRoutes: FC = () => {
         <Route path="/" element={<Home />} />
         <Route path='*' element={<NotFound />} />
         <Route path={mainRootPaths.space} element={<SpaceRoutes />} />
-        <Route path={mainRootPaths.chat} element={<div>Chat</div>} />
+        <Route path={mainRootPaths.chat} element={<ChatRoom chatRoomId='tmYbshDZiPUQ4Xmv2Z2V'/>} />
         <Route path={mainRootPaths.whiteboard} element={<div>Whiteboard</div>} />
         <Route path={mainRootPaths.calendar} element={<div>Calendar</div>} />
         <Route path={mainRootPaths.todo} element={<div>Todo</div>} />

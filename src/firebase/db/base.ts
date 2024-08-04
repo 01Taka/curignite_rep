@@ -1,4 +1,4 @@
-import { Firestore, DocumentReference, DocumentSnapshot, QuerySnapshot, addDoc, collection, deleteDoc, doc, getDoc, getDocs, updateDoc, CollectionReference, QueryConstraint, query, where, limit, setDoc, startAfter } from "firebase/firestore";
+import { Firestore, DocumentReference, DocumentSnapshot, QuerySnapshot, addDoc, collection, deleteDoc, doc, getDoc, getDocs, updateDoc, CollectionReference, QueryConstraint, query, where, limit, setDoc, startAfter, orderBy } from "firebase/firestore";
 import { BaseDocumentData } from "../../types/firebase/db/baseTypes";
 
 class BaseDB<T extends BaseDocumentData> {
@@ -96,7 +96,7 @@ class BaseDB<T extends BaseDocumentData> {
       return null;
     }
   }
-
+  
   /**
    * 指定されたドキュメントの後からクエリを開始する関数
    * @param startAfterDoc クエリの開始位置となるドキュメントスナップショット
@@ -106,20 +106,33 @@ class BaseDB<T extends BaseDocumentData> {
    */
   async getAllWithPagination(startAfterDoc?: DocumentSnapshot<T>, limitCount?: number, ...queryConstraints: QueryConstraint[]): Promise<T[]> {
     let q: QueryConstraint[] = [where("isActive", "==", true)];
+
+    q.push(orderBy("createdAt", "desc"));
+
     if (startAfterDoc) {
       q.push(startAfter(startAfterDoc));
     }
+
     if (limitCount !== undefined) {
       q.push(limit(limitCount));
     }
+
     q = q.concat(queryConstraints);
-    const fullQuery = query(this.collectionRef, ...q);
-    const querySnapshot = await this.handleFirestoreOperation(getDocs(fullQuery), "Failed to get paginated data");
-    return querySnapshot.docs.map(doc => {
-      const data = doc.data();
-      data.docId = doc.id;
-      return data;
-    });
+
+    try {
+      const fullQuery = query(this.collectionRef, ...q);
+
+      const querySnapshot = await this.handleFirestoreOperation(getDocs(fullQuery), "Failed to get paginated data");
+
+      return querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        data.docId = doc.id;
+        return data;
+      });
+    } catch (error) {
+      console.error("Error creating query or fetching documents:", error);
+      throw error;
+    }
   }
 }
 

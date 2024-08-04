@@ -29,7 +29,7 @@ const SelectField = <T extends string | number>({ label, name, selectItems, valu
         value={isValidValue ? value : ''} // 無効な値の場合、空文字を設定
         onChange={onChange}
       >
-        {selectItems.map((item, index) => (
+        {selectItems && selectItems.map((item, index) => (
           <MenuItem key={index} value={item.value}>
             {item.label}
           </MenuItem>

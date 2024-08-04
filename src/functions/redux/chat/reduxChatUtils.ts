@@ -4,24 +4,28 @@ import { clearChatRoom, setCurrentRoomId, setStartAfterMessageId } from "../../.
 import store from "../../../redux/store";
 import { ChatData, ChatIdMap } from "../../../types/firebase/db/chat/chatsTypes";
 import { AppDispatch } from "../../../types/module/redux/reduxTypes";
+import { sortChatIdMap } from "../../app/chat/chatUtils";
+import { revertTimestampConversion } from "../../db/dbUtils";
 
 /**
  * チャットルームのクリア、新しいチャットルームへの移動、初期メッセージのセットを行う非同期関数
  * @param dispatch Redux dispatch function
  * @param newRoomId 移動する新しいチャットルームのID
  * @param getFirstGetMessageNumber はじめに取得するチャットの数（デフォルトは30）
+ * @returns ソートされたチャットデータの配列
  */
-export const moveToChatRoom = async (dispatch: AppDispatch, newRoomId: string, getFirstGetMessageNumber: number = 30): Promise<ChatIdMap | null> => {
+export const moveToChatRoom = async (dispatch: AppDispatch, newRoomId: string, getFirstGetMessageNumber: number = 20): Promise<ChatData[]> => {
     dispatch(clearChatRoom());
     dispatch(setCurrentRoomId(newRoomId));
     if (getFirstGetMessageNumber > 0) {
         try {
-            return await getNextPageChatsByRedux(dispatch, getFirstGetMessageNumber);
+            const chatIdMap = await getNextPageChatsByRedux(dispatch, getFirstGetMessageNumber);
+            return chatIdMap ? sortChatIdMap(chatIdMap) : [];
         } catch (error) {
             console.error("Failed to fetch initial messages for the new chat room:", error);
         }
     }
-    return null;
+    return [];
 };
 
 /**
@@ -30,13 +34,15 @@ export const moveToChatRoom = async (dispatch: AppDispatch, newRoomId: string, g
  * @param messageLimit 取得するメッセージの最大数（デフォルトは50）
  * @returns 取得したチャットメッセージのマップ、またはnull
  */
-const getNextPageChatsByRedux = async (dispatch: AppDispatch, messageLimit: number = 50): Promise<ChatIdMap | null> => {
+const getNextPageChatsByRedux = async (dispatch: AppDispatch, messageLimit: number = 30): Promise<ChatIdMap | null> => {
     const { currentRoomId, startAfterMessageId } = store.getState().chatRoomSlice;
+
     if (!currentRoomId) return null;
 
     try {
         const messages = await fetchChatsInRoom(dispatch, currentRoomId, messageLimit, startAfterMessageId || undefined);
         const lastMessageId = getLastMessageId(messages);
+
         if (lastMessageId) dispatch(setStartAfterMessageId(lastMessageId));
         return messages;
     } catch (error) {
@@ -53,7 +59,7 @@ const getNextPageChatsByRedux = async (dispatch: AppDispatch, messageLimit: numb
 const getLastMessageId = (messages: ChatIdMap): string | undefined => {
     let lastMessage: ChatData | undefined = undefined;
     for (const message of Object.values(messages)) {
-        if (!lastMessage || message.createdAt > lastMessage.createdAt) {
+        if (!lastMessage || message.createdAt < lastMessage.createdAt) {
             lastMessage = message;
         }
     }
@@ -73,7 +79,7 @@ const fetchChatsInRoom = async (dispatch: AppDispatch, roomId: string, messageLi
         const chatRoomChatsDB = serviceFactory.createChatRoomsChatsDB(roomId);
         await dispatch(fetchChats({ messageLimit, startAfterMessageId, chatRoomChatsDB }));
         const { messages } = store.getState().chatRoomSlice;
-        return messages;
+        return revertTimestampConversion(messages);
     } catch (error) {
         console.error("Failed to fetch chats:", error);
         throw new Error("Failed to fetch chats");

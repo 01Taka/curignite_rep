@@ -1,7 +1,7 @@
 import { DocumentData, DocumentReference, Firestore } from "firebase/firestore";
 import BaseDB from "../../base";
 import { getInitialBaseDocumentData } from "../../../../functions/db/dbUtils";
-import { SpacePublicationTarget, SpaceData } from "../../../../types/firebase/db/space/spacesTypes";
+import { SpacePublicationTarget, SpaceData, defaultSpacePermissions } from "../../../../types/firebase/db/space/spacesTypes";
 
 class SpacesDB extends BaseDB<SpaceData> {
     constructor(firestore: Firestore) {
@@ -23,7 +23,7 @@ class SpacesDB extends BaseDB<SpaceData> {
             publicationTarget,
             requiresApproval,
             members: [],
-            permissions: {},
+            permissions: defaultSpacePermissions,
             pendingRequests: [],
             invitedUsers: [],
             rejectedUsers: [],

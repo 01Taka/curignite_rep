@@ -38,7 +38,7 @@ const TopTab: React.FC<TopTabProps> = ({ titles, childrenList }) => {
                     <Tab label={title} key={index} id={`tab-${index}`} aria-controls={`tabpanel-${index}`} wrapped />
                 ))}
             </Tabs>
-            {childrenList.map((children, index) => (
+            {childrenList && childrenList.map((children, index) => (
                 <div key={index} className='bg-blue-50'>
                     <TabPanel value={value} index={index}>
                         {children}

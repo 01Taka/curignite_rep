@@ -17,16 +17,19 @@ export const updateTeamData = createAsyncThunk<void, string>(
         if (teamsData.length === 0) {
           dispatch(setTeamsNotFound());
         } else {
-          dispatch(updateTeamsSuccess(convertTimestampsToNumbers(teamsData)));
+          const convertedTeamsData = convertTimestampsToNumbers(teamsData);
+          dispatch(updateTeamsSuccess(convertedTeamsData));
+
           const state = getState() as RootState;
           const { currentDisplayTeam } = state.teamSlice;
           if (!currentDisplayTeam) {
-            dispatch(setCurrentDisplayTeam(convertTimestampsToNumbers(teamsData[0])));
+            dispatch(setCurrentDisplayTeam(convertedTeamsData[0]));
           }
         }
       }
     } catch (error) {
       console.error("Error updating team data: ", error);
+      dispatch(setTeamRequestStatus("error")); // エラーハンドリングの強化
     }
   }
 );

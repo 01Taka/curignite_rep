@@ -14,7 +14,7 @@ class TeamsDB extends BaseDB<TeamData> {
      * @param teamName チーム名
      * @param iconPath チームのアイコンパス
      * @param description チームの紹介
-     * @param password チームのパスワード
+     * @param password チームのパスワード (空文字の場合、ハッシュされずそのまま空文字で保存される)
      * @param requiresApproval 参加に承認が必要かどうか
      * @param createdById チームの作成者のUID
      * @returns 新しく作成されたチームのドキュメントリファレンス
@@ -24,11 +24,11 @@ class TeamsDB extends BaseDB<TeamData> {
         teamName: string,
         iconPath: string,
         description: string,
-        password: string,
+        password: string | "",
         requiresApproval: boolean,
     ): Promise<DocumentReference<DocumentData>> {
         try {
-            const hashedPassword = password ? hashDataSHA256(password) : undefined;
+            const hashedPassword = password ? hashDataSHA256(password) : "";
             const wholeGroupId = "グループを作成してIDを取得"
             const data: TeamData = {
                 ...getInitialBaseDocumentData(createdById),

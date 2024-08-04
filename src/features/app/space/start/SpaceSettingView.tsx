@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import { SpaceSettingViewProps } from '../../../../types/app/spaceTypes';
 import { SelectFieldChange } from '../../../../types/util/componentsTypes';
 import EditNoteIcon from '@mui/icons-material/EditNote';
@@ -10,9 +10,11 @@ import SelectField from '../../../../components/input/field/SelectFiled';
 import FormContainer from '../../../../components/container/FormContainer';
 import { Alert, Typography } from '@mui/material';
 import { publicationTargetForSelect } from '../../../../types/firebase/db/space/spacesTypes';
+import { keyMirror } from '../../../../functions/utils';
 
 const SpaceSettingView: FC<SpaceSettingViewProps> = ({ formState, onChangeFormState, onCompletion, onUpdateDefaultSetting }) => {
   const [updatedDefaultSetting, setUpdatedDefaultSetting] = useState(false);
+  const names = useMemo(() => keyMirror(formState), [formState]);
 
   useEffect(() => {
     setUpdatedDefaultSetting(false);
@@ -34,27 +36,27 @@ const SpaceSettingView: FC<SpaceSettingViewProps> = ({ formState, onChangeFormSt
           <StringField
             label='スペース名'
             type="text"
-            name="spaceName"
+            name={names.spaceName}
             value={formState.spaceName}
             onChange={onChangeFormState}
           />
           <MultilineField
             label='紹介文'
             rows={4}
-            name="introduction"
+            name={names.description}
             value={formState.description}
             onChange={onChangeFormState}
           />
           <SelectField
             label='公開対象'
             value={formState.publicationTarget}
-            name="publicationTarget"
+            name={names.publicationTarget}
             onChange={onChangeFormState as SelectFieldChange}
             selectItems={publicationTargetForSelect}
           />
           <CheckBoxFiled
             label="参加には承認が必要"
-            name="requiredApproval"
+            name={names.requiredApproval}
             checked={formState.requiredApproval}
             onChange={onChangeFormState}
           />

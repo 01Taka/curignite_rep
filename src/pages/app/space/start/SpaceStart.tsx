@@ -5,48 +5,24 @@ import { spacePaths, toRelativePaths } from '../../../../types/path/appPaths';
 import SpaceSettingView from '../../../../features/app/space/start/SpaceSettingView';
 import { initialSpaceStartFormState, SpaceStartFormState } from '../../../../types/app/spaceTypes';
 import SpaceStartView from '../../../../features/app/space/start/SpaceStartView';
-import { spaceDefaultSettingStorage } from '../../../../functions/localStorage/storages';
-import { SpaceDefaultSettingStorageProps } from '../../../../types/app/localStorageTypes';
-import { StringBoolean } from '../../../../types/util/componentsTypes';
-import { SpaceData, SpacePublicationTarget } from '../../../../types/firebase/db/space/spacesTypes';
-import serviceFactory from '../../../../firebase/db/factory';
+import { SpaceData } from '../../../../types/firebase/db/space/spacesTypes';
 import { getCurrentUser } from '../../../../firebase/auth/auth';
+import { handleCreateSpace, updateSpaces } from '../../../../functions/app/space/spaceDBUtils';
+import { getDefaultSpaceName, handleSetDefaultFormState, initializeSpaceSetting } from '../../../../functions/app/space/spaceUtils';
 
 const SpaceStart: FC = () => {
   const navigate = useNavigate();
   const [formState, setFormState] = useState<SpaceStartFormState>(initialSpaceStartFormState);
   const [spaces, setSpaces] = useState<SpaceData[]>([]);
 
-  const getDefaultSpaceName = useCallback(async (username: string | null = null): Promise<string> => {
-    if (!username) {
-      const userService = serviceFactory.createUserService();
-      const userData = await userService.getCurrentUserData();
-      username = userData ? userData.username : "無名";
-    }
-    return `${username}のスペース`;
-  }, []);
+  const fetchAndSetSpaceData = useCallback(async () => {
+    const user = await getCurrentUser();
+    const uid = user?.uid;
 
-  const initializeSpaceSetting = useCallback(async () => {
-    const data = spaceDefaultSettingStorage.getDataAllAtOnce();
-    const formState: SpaceStartFormState = {
-      spaceName: data.spaceName ?? await getDefaultSpaceName(),
-      description: data.description ?? "",
-      publicationTarget: data.publicationTarget ?? SpacePublicationTarget.Team,
-      requiredApproval: data.requiredApproval === "true",
-    };
-    setFormState(formState);
-  }, [getDefaultSpaceName]);
-
-  const updateSpaces = useCallback(async () => {
-    const userService = serviceFactory.createUserService();
-    const userData = await userService.getCurrentUserData();
-    const uid = userData?.documentId;
     if (uid) {
       try {
-        const spaceService = serviceFactory.createSpaceService(uid);
-        const spaceIds = await spaceService.getSameTeamMembersSpaceIds();
-        const spaces = await spaceService.getSpaceDataByUserSpaceIds(spaceIds);
-        setSpaces(spaces);
+        const spacesData = await updateSpaces(uid);
+        setSpaces(spacesData);
       } catch (error) {
         console.error('Failed to fetch spaces: ', error);
       }
@@ -54,49 +30,23 @@ const SpaceStart: FC = () => {
   }, []);
 
   useEffect(() => {
-    initializeSpaceSetting();
-    updateSpaces();
-  }, [initializeSpaceSetting, updateSpaces]);
-
-  const handleSetDefaultFormState = (formState: SpaceStartFormState) => {
-    const data: SpaceDefaultSettingStorageProps = {
-      spaceName: formState.spaceName,
-      description: formState.description,
-      publicationTarget: formState.publicationTarget,
-      requiredApproval: String(formState.requiredApproval) as StringBoolean,
+    const initializeAndFetchData = async () => {
+      const formState = await initializeSpaceSetting(getDefaultSpaceName);
+      setFormState(formState);
+      await fetchAndSetSpaceData();
     };
 
-    spaceDefaultSettingStorage.setDataAllAtOnce(data);
-  };
-
-  const handleCreateSpace = async (formState: SpaceStartFormState) => {
-    const user = await getCurrentUser();
-    const uid = user?.uid;
-
-    if (uid) {
-      const spaceService = serviceFactory.createSpaceService(uid);
-
-      try {
-        await spaceService.createSpace(uid,
-          formState.spaceName,
-          formState.description,
-          formState.publicationTarget,
-          formState.requiredApproval
-        )
-      } catch (error) {
-        console.error('Failed to create space: ', error);
-      }
-    }
-  };
+    initializeAndFetchData();
+  }, [fetchAndSetSpaceData]);
 
   const handleDefaultStart = async () => {
-    await initializeSpaceSetting();
-    await handleCreateSpace(formState);
+    await handleCreateSpace(formState, (await getCurrentUser())?.uid || "");
     navigate(spacePaths.home);
   };
 
-  const handleSettingCompletion = () => {
-    handleCreateSpace(formState);
+  const handleSettingCompletion = async () => {
+    handleSetDefaultFormState(formState);
+    handleCreateSpace(formState, (await getCurrentUser())?.uid || "");
     navigate(spacePaths.home);
   };
 

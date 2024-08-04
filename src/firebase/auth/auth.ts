@@ -12,18 +12,14 @@ export const getCurrentUser = (): Promise<User | null> => {
     });
 };
 
-export const  getUserAuthState = async (): Promise<AuthStates> => {
+export const getUserAuthState = async (): Promise<AuthStates> => {
     const user = await getCurrentUser();
-
+  
     if (user) {
-        const uid = user.uid;
-        const userData = await usersDB.getUser(uid);
-        if (!userData) {
-            return "noUserData";
-        } else {
-            return "verified";
-        }
+      const uid = user.uid;
+      const userData = await usersDB.getUser(uid);
+      return userData ? "verified" : "noUserData";
     } else {
-        return "new";
+      return "new";
     }
-}
+  };

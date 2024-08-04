@@ -19,6 +19,18 @@ export const handleFormStateChange = <T>(
   }));
 };
 
+export type KeyMirrorObject<T> = { [K in keyof T]: K };
+
+export const keyMirror = <T extends object>(obj: T): KeyMirrorObject<T> => {
+  const mirrored = {} as KeyMirrorObject<T>;
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      mirrored[key] = key;
+    }
+  }
+  return mirrored;
+};
+
 export const isMobileMode = () => {
   return window.innerWidth <= 768;
 }

@@ -118,6 +118,20 @@ export class UserService {
     }
 
     /**
+     * ユーザーが学習中かを確認する関数
+     * @param uid ユーザーID
+     * @returns ユーザーが学習中であるかのフラグ
+     */
+    async isLearning(uid: string): Promise<boolean> {
+        try {
+            const user = await this.usersDB.read(uid);
+            return user ? user.spaceIds.length > 0 : false;
+        } catch (error) {
+            throw new Error("Failed to check if Learning.");
+        }
+    }
+
+    /**
      * メンバーのユーザーデータを取得する
      * @param members - チームの参加者データ
      * @returns チームの参加者とその役割のユーザーデータ

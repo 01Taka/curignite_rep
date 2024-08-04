@@ -7,6 +7,7 @@ import { UserTeamService } from "../user/subCollection/userTeamService";
 import { Member, RoleType } from "../../../../types/firebase/db/baseTypes";
 import { TeamCodeService } from "./teamCodeService";
 import { UsersDB } from "../user/users";
+import { UserService } from "../user/userService";
 
 export class TeamService {
     constructor (
@@ -14,6 +15,7 @@ export class TeamService {
         private usersDB: UsersDB,
         private userTeamsDB: UserTeamsDB,
         private teamCodeService: TeamCodeService,
+        private userService: UserService,
         private userTeamService: UserTeamService,
     ) { }
 
@@ -151,4 +153,29 @@ export class TeamService {
             return [];
         }
     }
+
+    async getLearningMember(teamId: string): Promise<Member[]> {
+        try {
+            const teamData = await this.teamsDB.getTeam(teamId);
+            if (!teamData) {
+                return []; // チームデータが存在しない場合は空
+            }
+    
+            // 各メンバーの学習状態をチェックするPromiseを作成し、並列実行する
+            const learningMembers = teamData.members.map(async member => {
+                const isLearning = await this.userService.isLearning(member.userId);
+                return isLearning ? member : null;
+            });
+    
+            // すべてのチェックが完了するまで待機し、学習中のメンバーをフィルタリングする
+            const learningResults = await Promise.all(learningMembers);
+            const filterMember = learningResults.filter(member => member !== null);
+    
+            // 学習中のメンバーの数を返す
+            return filterMember as Member[];
+        } catch (error) {
+            console.error("Error counting learning members:", error);
+            throw new Error("Error counting learning members.");
+        }
+    }    
 }

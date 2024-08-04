@@ -11,7 +11,7 @@ const SideBar: React.FC<SideBarProps> = ({ elements, width = "w-16" }) => {
     <div className={cn(width)}>
       <div className='pt-16'>
         <List>
-          {elements.map((element, index) => (
+          {elements && elements.map((element, index) => (
             <ListItem key={index} button onClick={element.action}>
               <Tooltip title={element.text} arrow placement='right'>
                 <div className="flex items-center">

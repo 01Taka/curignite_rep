@@ -8,7 +8,7 @@ interface EvenlyListProps {
 const EvenlyList: FC<EvenlyListProps> = ({ betweenElement, elements }) => {
   return (
     <div className="flex flex-col">
-      {elements.map((element, index) => (
+      {elements && elements.map((element, index) => (
         <div key={index} className="flex flex-col">
           {element}
           {index !== elements.length - 1 && (
