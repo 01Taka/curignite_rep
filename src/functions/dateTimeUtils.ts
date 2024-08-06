@@ -1,4 +1,4 @@
-import { format, differenceInSeconds, differenceInMinutes, differenceInHours, differenceInDays, differenceInYears } from 'date-fns';
+import { format, differenceInSeconds, differenceInMinutes, differenceInHours, differenceInDays, differenceInYears, subSeconds, subMinutes, subHours, subDays, subYears, startOfMinute, startOfHour, startOfDay, startOfYear } from 'date-fns';
 import { Timestamp } from 'firebase/firestore';
 import { DecimalDigits } from '../types/util/componentsTypes';
 
@@ -10,7 +10,7 @@ const HOURS_IN_MILLISECOND = MINUTES_IN_MILLISECOND * 60;
 const DAYS_IN_MILLISECOND = HOURS_IN_MILLISECOND * 24;
 const YEARS_IN_MILLISECOND = DAYS_IN_MILLISECOND * 365;
 
-interface RelativeFormat {
+export interface RelativeFormat {
     seconds: string;
     minutes: string;
     hours: string;
@@ -22,11 +22,12 @@ interface RelativeFormat {
 
 const absoluteFormatItems = ["y", "M", "d", "H", "m", "s"]
 
-interface FormatRange<T extends boolean> {
+export interface FormatRange<T extends boolean> {
     unit: UnitType;
     value: number;
     format: T extends true ? string : Partial<RelativeFormat>;
     absolute: T;
+    ending?: string;
     truncate?: boolean;
 }
 
@@ -197,7 +198,6 @@ export const millisToTime = (millis: number, decimalDigits: DecimalDigits = 0, f
  * @param truncate - 日時を切り捨てるかどうか（デフォルトは false）。
  * @returns 過去の日時の Date オブジェクト。
  */
-/*
 const getPastTime = (unit: UnitType, value: number, truncate?: boolean): Date => {
     const currentTime = new Date();
     let pastTime: Date;
@@ -243,7 +243,7 @@ const getPastTime = (unit: UnitType, value: number, truncate?: boolean): Date =>
     }
 
     return pastTime;
-};*/
+};
 
 /**
  * 日付/時間を一連のフォーマットと条件に基づいて文字列に変換する。
@@ -257,6 +257,7 @@ export const dateTimeToString = <T>(
     dateTime: TimeTypes,
     defaultFormat: T extends true ? string : Partial<RelativeFormat>,
     defaultAbsolute: T,
+    defaultEnding: string = "",
     formatRange?: FormatRange<boolean>[]
 ): string => {
     const date = toDate(dateTime);
@@ -267,15 +268,21 @@ export const dateTimeToString = <T>(
         formatRange?.sort((a, b) => toMillis(a.unit, a.value) - toMillis(b.unit, b.value));
 
         for (const range of formatRange) {
-            if (diffMillis <= toMillis(range.unit, range.value)) {
+            console.log(date.getTime(), "##", getPastTime(range.unit, range.value, range.truncate).getTime());
+            
+            if (date.getTime() < getPastTime(range.unit, range.value, range.truncate).getTime()) {
                 if (range.absolute) {
-                    return absoluteDateString(date, range.format as string);
+                    return `${absoluteDateString(date, range.format as string)}${range.ending ?? ""}`;
                 } else {
-                    return relativeDateString(date, range.format as Partial<RelativeFormat>);
+                    return `${relativeDateString(date, range.format as Partial<RelativeFormat>)}${range.ending ?? ""}`;
                 }
             }
         }
     }
 
-    return defaultAbsolute ? absoluteDateString(date, defaultFormat as string) : relativeDateString(date, defaultFormat as Partial<RelativeFormat>);
+    return (
+        `${defaultAbsolute ? absoluteDateString(date, String(defaultFormat))
+        : relativeDateString(date, defaultFormat as Partial<RelativeFormat>)}
+        ${defaultEnding ?? ""}`
+    );
 };

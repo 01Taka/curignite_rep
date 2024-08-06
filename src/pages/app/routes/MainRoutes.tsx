@@ -7,16 +7,17 @@ import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import NotFound from '../../error/NotFound';
 import SpaceRoutes from '../space/SpaceRoutes';
 import { updateTeamData } from '../../../redux/actions/team/updateTeamData';
-import { updateUserData } from '../../../redux/actions/main/updateUserData';
-import ChatRoom from '../../../features/app/chat/ChatRoom';
+import ChatRoom from '../../../components/app/chat/ChatRoom';
+import { updateUserState } from '../../../redux/actions/user/updateUserState';
+import { CircularProgress } from '@mui/material';
 
 const MainRoutes: FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const userData = useAppSelector(state => state.userDataSlice);
+  const userData = useAppSelector(state => state.userSlice);
 
   useEffect(() => {
-    dispatch(updateUserData())
+    dispatch(updateUserState())
       .unwrap()
       .then((path) => {
         if (path) {
@@ -39,6 +40,7 @@ const MainRoutes: FC = () => {
   return (
     <div className='w-full h-full bg-primaryBase overflow-auto'>
       <Routes>
+        {userData.requestState !== "success" && <Route path="/*" element={<CircularProgress />} />}
         <Route path="/" element={<Home />} />
         <Route path='*' element={<NotFound />} />
         <Route path={mainRootPaths.space} element={<SpaceRoutes />} />

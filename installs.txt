@@ -38,3 +38,17 @@ npm install react-responsive
 npm install @types/react-responsive
 
 npm install argon2
+
+npm install @fullcalendar/react @fullcalendar/daygrid @fullcalendar/timegrid @fullcalendar/interaction
+
+npm install firebase-admin
+
+npm install buffer os-browserify path-browserify
+
+npm install @craco/craco
+
+npm install stream-browserify https-browserify url crypto-browserify util browserify-zlib
+npm install stream-http events
+npm install process
+npm install assert
+npm install vm-browserify

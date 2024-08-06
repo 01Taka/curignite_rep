@@ -15,7 +15,7 @@ const ChatRoom: React.FC<ChatProps> = ({ chatRoomId }) => {
     const [chats, setChats] = useState<ChatData[]>([]);
     const chatEndRef = useRef<HTMLDivElement>(null);
     const dispatch = useAppDispatch();
-    const { uid } = useAppSelector(state => state.userDataSlice);
+    const { uid } = useAppSelector(state => state.userSlice);
 
     useEffect(() => {
         const moveRoom = async () => {

@@ -1,5 +1,5 @@
 import { Timestamp } from "firebase/firestore";
-import { BaseDocumentData, Member, MemberData, RoleType } from "../../types/firebase/db/baseTypes";
+import { ActionInfo, BaseDocumentData, Member, MemberData, RoleType } from "../../types/firebase/db/baseTypes";
 import serviceFactory from "../../firebase/db/factory";
 
 export type ConvertTimestampToNumber<T> = {
@@ -133,4 +133,24 @@ export const getMembersData = async (members: Member[]): Promise<MemberData[]> =
         console.error("Failed to get members data:", error);
         return []; // エラー発生時には空の配列を返す
     }
+}
+
+/**
+ * 指定したユーザーIDがアクション情報リストに含まれているかどうかをチェックします。
+ * @param userId ユーザーID
+ * @param actionInfo アクション情報リスト
+ * @returns ユーザーがアクション情報リストに含まれているかどうか
+ */
+export const isUserInActionInfo = (userId: string, actionInfo: ActionInfo[]): boolean => {
+    return actionInfo && actionInfo.some(info => info.userId === userId);
+}
+
+/**
+ * 指定したユーザーIDがメンバーリストに含まれているかどうかをチェックします。
+ * @param userId ユーザーID
+ * @param members メンバーリスト
+ * @returns ユーザーがメンバーリストに含まれているかどうか
+ */
+export const isUserInMembers = (userId: string, members: Member[]): boolean => {
+    return members && members.some(member => member.userId === userId);
 }

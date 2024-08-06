@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react'
 import CreateAnswerView from './CreateAnswerView'
 import { useAppSelector } from '../../../../../redux/hooks';
 import { useParams } from 'react-router-dom';
-import { answersDB } from '../../../../../firebase/db/dbs';
 
 const CreateAnswer: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const userData = useAppSelector((state) => state.userDataSlice);
+  const userData = useAppSelector((state) => state.userSlice);
 
   const [content, setContent] = useState('');
   const [submitDisabled, setSubmitDisabled] = useState(true);

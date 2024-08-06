@@ -1,6 +1,6 @@
 import { DocumentData, DocumentReference, Firestore } from "firebase/firestore";
 import BaseDB from "../../base";
-import { getInitialBaseDocumentData } from "../../../../functions/db/dbUtils";
+import { createInitialAdminMember, getInitialBaseDocumentData } from "../../../../functions/db/dbUtils";
 import { SpacePublicationTarget, SpaceData, defaultSpacePermissions } from "../../../../types/firebase/db/space/spacesTypes";
 
 class SpacesDB extends BaseDB<SpaceData> {
@@ -22,14 +22,33 @@ class SpacesDB extends BaseDB<SpaceData> {
             description,
             publicationTarget,
             requiresApproval,
-            members: [],
+            members: await createInitialAdminMember(createdById),
             permissions: defaultSpacePermissions,
             pendingRequests: [],
+            approvedUsers: [],
             invitedUsers: [],
             rejectedUsers: [],
             chatRoomId,
         };
         return await this.create(data); 
+    }
+
+    async getSpace(spaceId: string): Promise<SpaceData | null> {
+        try {
+            return await this.read(spaceId);
+        } catch (error) {
+            console.error("Failed to get space data: ", error);
+            return null;
+        }
+    }
+
+    async updateSpace(spaceId: string, data: Partial<SpaceData>): Promise<void> {
+        try {
+            await this.update(spaceId, data);
+        } catch (error) {
+            console.error("Failed to update space data: ", error);
+            throw new Error("Failed to update space data");
+        }
     }
 }
 

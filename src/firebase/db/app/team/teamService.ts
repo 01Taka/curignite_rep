@@ -1,6 +1,6 @@
 import { Timestamp } from "firebase/firestore";
 import TeamsDB from "./teams";
-import { TeamData } from "../../../../types/firebase/db/team/teamsTypes";
+import { TeamData, TeamMember } from "../../../../types/firebase/db/team/teamsTypes";
 import { UserTeamData, UserTeamStatus } from "../../../../types/firebase/db/user/userTeamsTypes";
 import { UserTeamsDB } from "../user/subCollection/userTeams";
 import { UserTeamService } from "../user/subCollection/userTeamService";
@@ -136,14 +136,24 @@ export class TeamService {
      * ユーザーが参加しているすべてのチームのすべてのユーザーを取得する
      * @returns 同じチームに参加している他のユーザーとその役割
      */
-    async fetchAllUsersInTeamsByUser(): Promise<Member[]> {
+    async fetchAllUsersInTeamsByUser(): Promise<TeamMember[]> {
         try {
             const userTeams: UserTeamData[] = await this.userTeamService.getApprovedTeams();
 
-            const users: Member[] = await Promise.all(
+            const users: TeamMember[] = await Promise.all(
                 userTeams.map(async (userTeam) => {
                     const team = await this.teamsDB.read(userTeam.teamId);
-                    return team?.members || [];
+                    if (team) {
+                        return team.members.map(member => {
+                            const teamMember: TeamMember = {
+                                ...member,
+                                teamId: team.docId,
+                            }
+                            return teamMember
+                        })
+                    } else {
+                        return [];
+                    }
                 })
             ).then(results => results.flat());
 

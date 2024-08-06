@@ -17,6 +17,7 @@ export const initialSpaceStartFormState: SpaceStartFormState = {
 
 export interface SpacesProps {
   spaces: SpaceData[];
+  onSpaceClick: (spaceId: string) => void;
 }
 
 export interface SpaceStartActionsViewProps {

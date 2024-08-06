@@ -17,7 +17,7 @@ interface TeamContainerProps {
 }
 
 const TeamContainer: FC<TeamContainerProps> = ({ teamId, teamName, iconPath, members, myTeam, currentDisplay, memberNumber, maxDisplayLearningNumber = 3 }) => {
-  const { uid } = useAppSelector(state => state.userDataSlice);
+  const { uid } = useAppSelector(state => state.userSlice);
 
   const [learningMembers, setLearningMembers] = useState<Member[]>([]);
 

@@ -6,19 +6,18 @@ import SpaceSettingView from '../../../../features/app/space/start/SpaceSettingV
 import { initialSpaceStartFormState, SpaceStartFormState } from '../../../../types/app/spaceTypes';
 import SpaceStartView from '../../../../features/app/space/start/SpaceStartView';
 import { SpaceData } from '../../../../types/firebase/db/space/spacesTypes';
-import { getCurrentUser } from '../../../../firebase/auth/auth';
 import { handleCreateSpace, updateSpaces } from '../../../../functions/app/space/spaceDBUtils';
 import { getDefaultSpaceName, handleSetDefaultFormState, initializeSpaceSetting } from '../../../../functions/app/space/spaceUtils';
+import serviceFactory from '../../../../firebase/db/factory';
+import { useAppSelector } from '../../../../redux/hooks';
 
 const SpaceStart: FC = () => {
   const navigate = useNavigate();
   const [formState, setFormState] = useState<SpaceStartFormState>(initialSpaceStartFormState);
   const [spaces, setSpaces] = useState<SpaceData[]>([]);
+  const { uid, userData } = useAppSelector(state => state.userSlice);
 
   const fetchAndSetSpaceData = useCallback(async () => {
-    const user = await getCurrentUser();
-    const uid = user?.uid;
-
     if (uid) {
       try {
         const spacesData = await updateSpaces(uid);
@@ -31,7 +30,7 @@ const SpaceStart: FC = () => {
 
   useEffect(() => {
     const initializeAndFetchData = async () => {
-      const formState = await initializeSpaceSetting(getDefaultSpaceName);
+      const formState = await initializeSpaceSetting(userData?.username);
       setFormState(formState);
       await fetchAndSetSpaceData();
     };
@@ -40,15 +39,26 @@ const SpaceStart: FC = () => {
   }, [fetchAndSetSpaceData]);
 
   const handleDefaultStart = async () => {
-    await handleCreateSpace(formState, (await getCurrentUser())?.uid || "");
-    navigate(spacePaths.home);
+    if (uid) {
+      await handleCreateSpace(formState, uid);
+      navigate(spacePaths.home);
+    }
   };
 
   const handleSettingCompletion = async () => {
-    handleSetDefaultFormState(formState);
-    handleCreateSpace(formState, (await getCurrentUser())?.uid || "");
-    navigate(spacePaths.home);
+    if (uid) {
+      handleSetDefaultFormState(formState);
+      handleCreateSpace(formState, uid);
+      navigate(spacePaths.home);
+    }
   };
+
+  const handleJoinSpace = async (spaceId: string) => {
+    if (uid) {
+      const spaceService = serviceFactory.createSpaceService(uid);
+      console.log(await spaceService.getSpaceJoinStateWithJoinRequest(uid, spaceId));
+    }
+  }
 
   return (
     <Routes>
@@ -59,6 +69,7 @@ const SpaceStart: FC = () => {
             toSetting={() => navigate(spacePaths.startChildren.setting)}
             onStart={handleDefaultStart}
             spaces={spaces}
+            onSpaceClick={handleJoinSpace}
           />
         }
       />

@@ -9,7 +9,7 @@ import { isMobileMode } from '../../../../functions/utils';
 import { convertTimestampsToNumbers, revertTimestampConversion } from '../../../../functions/db/dbUtils';
 
 const Teams: FC = () => {
-  const userData = useAppSelector(state => state.userDataSlice);
+  const userData = useAppSelector(state => state.userSlice);
   const teamSlice = useAppSelector(state => state.teamSlice);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();

@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import UserInitialSetupView, { InitialSetupFormState } from './InitialSetupView';
 import { useNavigate } from 'react-router-dom';
-import { getCurrentUser } from '../../../../firebase/auth/auth';
-import { getUniqueUserName } from '../../../../firebase/util/getUniqueName';
-import { authStorage } from '../../../../functions/localStorage/storages';
-import { processingCreateUser } from './handleUserInitialSetup';
+import { getUniqueName, handleCreateUser, navigateByAuthState } from './handleUserInitialSetup';
 import { handleFormStateChange } from '../../../../functions/utils';
 import { rootPaths } from '../../../../types/path/appPaths';
-import serviceFactory from '../../../../firebase/db/factory';
+import { useAppSelector } from '../../../../redux/hooks';
 
 const InitialSetup: React.FC = () => {
   const navigate = useNavigate();
+
+  const { uid, userData } = useAppSelector(state => state.userSlice);
 
   const [isLoadingName, setIsLoadingName] = useState(true);
   const [formState, setFormState] = useState<InitialSetupFormState>({
@@ -21,46 +20,31 @@ const InitialSetup: React.FC = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    // 認証状態に応じてリダイレクト
-    const handleCheckAuthStatus = async () => {
-      const user = await getCurrentUser();
-      const uid = user?.uid;
-      if (!uid) {
-        navigate(rootPaths.top);
-      } else {
-        const userService = serviceFactory.createUserService();
-        if (await userService.checkIfUidExists(uid)) {
-          navigate(rootPaths.main);
-        }
-      }
-    }
     // ユーザー名を一意なものに置き換える
     const updateUserName = async () => {
       setIsLoadingName(true);
-      const user = await getCurrentUser();
-      let name = user?.displayName || authStorage.getData('username') || "";
-      name = await getUniqueUserName(name);
-      setFormState(prev => ({ ...prev, username: name }));
+      const uniqueName = await getUniqueName(userData);
+      setFormState(prev => ({...prev, username: uniqueName}));
       setIsLoadingName(false);
     };
+
     const preprocessing = async () => {
-      handleCheckAuthStatus();
-      updateUserName();
+      await navigateByAuthState(uid, navigate);
+      await updateUserName();
     }
+
     preprocessing();
   }, [navigate]);
 
-  const handleCreateUser = async () => {
+  const createUserProcessing = async () => {
+    if (!uid) {
+      return;
+    }
+    
     setSubmitDisabled(true);
     setError("");
     try {
-      const user = await getCurrentUser();
-      if (!user) {
-        throw new Error('ログインをしてください');
-      }
-
-      await processingCreateUser(formState.username, formState.birthday);
-      
+      await handleCreateUser(uid, formState);
       navigate(rootPaths.main);
     } catch (error) {
       if (error instanceof Error) {
@@ -87,7 +71,7 @@ const InitialSetup: React.FC = () => {
       error={error}
       onFormStateChange={e => handleFormStateChange(e, setFormState)}
       onBirthdayChange={handleBirthdayChange}
-      onSetUserData={handleCreateUser}
+      onSetUserData={createUserProcessing}
     />
   );
 };

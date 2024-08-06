@@ -42,15 +42,17 @@ const HomeView: FC<HomeViewProps> = ({ radius, routeElements, centerItem, angleA
           const y = (radius + radius * Math.sin(theta)) + (buttonSize / 2);
 
           return (
-            <div key={index} style={{ position: 'absolute', left: `${x}px`, top: `${y}px`, transform: `translate(-${buttonSize / 2}px, -${buttonSize / 2}px)` }}>
-              <CircularButton
-                children={route.text}
-                size='x4l'
-                bgColor='secondaryBase'
-                invalidation={route.invalidation}
-                onClick={() => onNavigate(route.path)}
-              />
-            </div>
+            <>
+              <div key={index} style={{ position: 'absolute', left: `${x}px`, top: `${y}px`, transform: `translate(-${buttonSize / 2}px, -${buttonSize / 2}px)` }}>
+                <CircularButton
+                  children={route.text}
+                  size='x4l'
+                  bgColor='secondaryBase'
+                  invalidation={route.invalidation}
+                  onClick={() => onNavigate(route.path)}
+                />
+              </div>
+            </>
           );
         })}
       </div>

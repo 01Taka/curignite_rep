@@ -15,8 +15,8 @@ const App: React.FC = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    initializeApp();
-  }, [dispatch])
+    dispatch(initializeApp());
+  }, [dispatch]);
 
   return (
     <Navigation>

@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { ChatData, ChatFormData } from '../../../types/firebase/db/chat/chatsTypes';
 import Chat from './Chat';
-import ChatInput from '../../../components/input/message/ChatInput';
+import ChatInput from '../../input/message/ChatInput';
 
 interface ChatRoomViewProps {
     chat: ChatFormData;
@@ -53,20 +53,22 @@ const ChatRoomView: FC<ChatRoomViewProps> = ({ chat, chats, onChangeChatContent,
     }, [chats, scrolledToEnd]);
 
     return (
-        <div ref={containerRef} style={{ overflowY: 'auto', maxHeight: '100vh' }}>
-            <div className='flex flex-col'>
+        <div ref={containerRef} className='overflow-auto h-full'>
+            <div className='flex max-w-4xl flex-col space-y-8 mb-16'>
                 {chats.map((chat) => (
                     <Chat key={chat.docId} chat={chat} />
                 ))}
                 <div ref={scrollEndRef} />
             </div>
-            <ChatInput
-                chat={chat}
-                onChangeChatContent={onChangeChatContent}
-                onAttachFile={onAttachFile}
-                onSendChat={onSendChat}
-                placeholder='メッセージを入力'
-            />
+            <div className='fixed bottom-0 flex justify-center w-full bg-primaryBase p-1 pb-4'>
+                <ChatInput
+                    chat={chat}
+                    onChangeChatContent={onChangeChatContent}
+                    onAttachFile={onAttachFile}
+                    onSendChat={onSendChat}
+                    placeholder='メッセージを入力'
+                />
+            </div>
         </div>
     );
 };

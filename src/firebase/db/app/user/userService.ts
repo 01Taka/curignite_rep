@@ -1,10 +1,20 @@
 import { UserData, UserIdMap } from "../../../../types/firebase/db/user/usersTypes";
-import { getCurrentUser } from "../../../auth/auth";
 import { UsersDB } from "./users";
 import { Member } from "../../../../types/firebase/db/baseTypes";
+import { AuthStates } from "../../../../types/util/stateTypes";
+import { checkUidExistence } from "../../../server/authentication";
+import { Timestamp } from "firebase/firestore";
 
 export class UserService {
     constructor(private usersDB: UsersDB) {}
+
+    async createUser(uid: string, username: string, iconUrl: string, birthDate: Timestamp) {
+        try {
+            return await this.usersDB.createUser(uid, username, iconUrl, [], birthDate);
+        } catch (error) {
+            throw new Error("Failed to create user.");
+        }
+    }
 
     /**
      * UID または UserData を受け取り、常に UserData を返す関数
@@ -22,6 +32,30 @@ export class UserService {
         }
         return uidOrUserData;
     }
+
+    /**
+     * ユーザーの認証段階を確認する
+     * @param userId ユーザーID
+     * @returns ユーザーの認証段階
+     */
+    async getUserAuthState(userId: string | null): Promise<AuthStates> {
+        try {
+            if (!userId) {
+                return "new";
+            }
+
+            const userData = await this.usersDB.getUser(userId);
+            if (userData) {
+                return "verified";
+            }
+    
+            const uidExists = await checkUidExistence(userId);
+            return uidExists ? "noUserData" : "new";
+        } catch (error: any) {
+            console.error(`Error in getUserAuthState for userId ${userId}:`, error);
+            throw new Error(`Failed to get auth state for userId ${userId}`);
+        }
+    }    
 
     /**
      * UID(ドキュメントID)がDBに存在するかどうかをチェックする関数
@@ -50,23 +84,6 @@ export class UserService {
         } catch (error) {
             console.error("Error checking username existence: ", error);
             throw new Error("Failed to check username existence");
-        }
-    }
-
-    /**
-     * 現在のユーザーのデータを取得
-     * @returns 現在のユーザーデータ、またはnull
-     */
-    async getCurrentUserData(): Promise<UserData | null> {
-        try {
-            const user = await getCurrentUser();
-            if (user) {
-                return await this.usersDB.getUser(user.uid);
-            }
-            return null;
-        } catch (error) {
-            console.error('Failed to get current user data: ', error);
-            return null;
         }
     }
 

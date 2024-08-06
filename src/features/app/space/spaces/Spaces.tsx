@@ -3,14 +3,10 @@ import { Typography } from '@mui/material';
 import SpaceContainer from './SpaceContainer';
 import SpacesEmptyMessage from './SpacesEmptyMessage';
 import { isMobileMode } from '../../../../functions/utils';
-import { SpaceData } from '../../../../types/firebase/db/space/spacesTypes';
 import { dateTimeToString } from '../../../../functions/dateTimeUtils';
+import { SpacesProps } from '../../../../types/app/spaceTypes';
 
-export interface SpacesProps {
-  spaces: SpaceData[];
-}
-
-const Spaces: FC<SpacesProps> = ({ spaces }) => {
+const Spaces: FC<SpacesProps> = ({ spaces, onSpaceClick }) => {
   return (
     <div className='flex flex-col items-center w-full h-full space-y-4 overflow-y-auto'>
       <Typography variant="h5" className='pt-4'>
@@ -34,6 +30,7 @@ const Spaces: FC<SpacesProps> = ({ spaces }) => {
               memberNumber={space.members.length}
               requiredApproval={space.requiredApproval}
               mobileMode={isMobileMode()}
+              onClick={() => onSpaceClick(space.docId)}
             />
           ))}
         </>

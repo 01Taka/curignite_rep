@@ -1,22 +1,12 @@
-import { isMobileMode } from "../../../functions/utils";
-import { AppThunk } from "../../../types/module/redux/reduxTypes";
-import { setIsMobile } from "../../slices/appSlice";
-
 // redux/thunks/appThunks.ts
-export const initializeApp = (): AppThunk => (dispatch) => {
-  const updateDeviceMode = () => {
-    const isMobile = isMobileMode();
-    dispatch(setIsMobile(isMobile));
-  };
+import { AppThunk } from "../../../types/module/redux/reduxTypes";
+import { updateUserState } from "../user/updateUserState";
 
-  // 初回のデバイスモード更新
-  updateDeviceMode();
-
-  // リサイズイベントリスナーの設定
-  window.addEventListener('resize', updateDeviceMode);
-
-  // クリーンアップ関数の返却
-  return () => {
-    window.removeEventListener('resize', updateDeviceMode);
-  };
+export const initializeApp = (): AppThunk => async (dispatch) => {
+  try {
+    await dispatch(updateUserState());
+  } catch (error) {
+    console.error("Failed to initialize app:", error);
+    // 必要に応じてエラー処理を追加
+  }
 };

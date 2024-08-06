@@ -1,6 +1,5 @@
 import React from 'react'
 import { Button } from '@mui/material';
-import { getCurrentUser } from '../../firebase/auth/auth';
 
 interface TopPageViewProps {
     onSignUp: () => void;
@@ -9,15 +8,6 @@ interface TopPageViewProps {
 const TopPageView: React.FC<TopPageViewProps> = ({
     onSignUp
 }) => {
-
-    const test = async () => {
-        console.log('Clicked');
-        // 関数呼び出しテスト用
-        console.log(getCurrentUser());
-        
-
-    }
-
     return (
         <div className='w-full h-full'>
             <div className=' bg-blue-50'>
@@ -31,7 +21,6 @@ const TopPageView: React.FC<TopPageViewProps> = ({
                 <div className='flex flex-col items-center py-32 '>
                     <Button variant="contained" children={"CURIGNITEに登録する"} onClick={onSignUp} />
                 </div>
-                <Button children='テスト' onClick={test} />
             </div>
             <div>
                 その他補足情報

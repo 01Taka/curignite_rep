@@ -11,6 +11,7 @@ interface SpaceContainerProps {
   memberNumber: number;
   requiredApproval: boolean;
   mobileMode: boolean;
+  onClick: () => void;
 }
 
 const SpaceContainer: FC<SpaceContainerProps> = ({
@@ -22,9 +23,10 @@ const SpaceContainer: FC<SpaceContainerProps> = ({
   memberNumber,
   requiredApproval,
   mobileMode,
+  onClick,
 }) => {
   return (
-    <div className='w-full max-w-md h-auto bg-secondaryBase rounded-lg p-4 flex flex-col space-y-2'>
+    <div className='w-full max-w-md h-auto bg-secondaryBase rounded-lg p-4 flex flex-col space-y-2' onClick={onClick}>
       <div className='flex justify-between w-full'>
         <div  className={cn("flex", mobileMode ? "flex-col" : "items-center")}>
           <div className='font-semibold text-lg'>{spaceName}</div>

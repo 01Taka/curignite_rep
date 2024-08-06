@@ -30,6 +30,7 @@ export interface SpaceData extends BaseDocumentData {
   members: Member[];
   permissions: SpacePermissions;
   pendingRequests: ActionInfo[];
+  approvedUsers: ActionInfo[];
   invitedUsers: ActionInfo[];
   rejectedUsers: ActionInfo[];
   chatRoomId: string;
@@ -59,6 +60,8 @@ export interface UserSpaceIds {
   userId: string;
   spaceIds: string[];
 }
+
+export type SpaceJoinState = "participated" | "requesting" | "approved" | "rejected" | "noInfo" | "error";
 
 // PublicationTarget 用の SelectItem 定義
 export const publicationTargetForSelect: SelectItem<SpacePublicationTarget>[] = [

@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import CreateQuestionView from './CreateQuestionView'
 import { useAppSelector } from '../../../../redux/hooks';
-import { questionsDB } from '../../../../firebase/db/dbs';
 
 const CreateQuestion: React.FC = () => {
-  const userData = useAppSelector((state) => state.userDataSlice);
+  const userData = useAppSelector((state) => state.userSlice);
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');

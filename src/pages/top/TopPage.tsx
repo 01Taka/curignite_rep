@@ -1,21 +1,36 @@
 import React from 'react'
 import TopPageView from './TopView';
 import { useNavigate } from 'react-router-dom';
-import { getUserAuthState } from '../../firebase/auth/auth';
 import { authPaths, rootPaths } from '../../types/path/appPaths';
+import serviceFactory from '../../firebase/db/factory';
+import { useAppSelector } from '../../redux/hooks';
 
 const TopPage: React.FC = () => {
     const navigate = useNavigate();
+    const { uid } = useAppSelector(state => state.userSlice);
 
     const onSignUp = async () => {
-        const state = await getUserAuthState();
-        
-        if (state === 'new') {
+        if (!uid) {
             navigate(rootPaths.auth);
-        } else if (state ==='noUserData') {
-            navigate(authPaths.initialSetup);
-        } else {
-            navigate(rootPaths.main);
+            return;
+        }
+
+        const userService = serviceFactory.createUserService();
+        const state = await userService.getUserAuthState(uid);
+
+        switch (state) {
+            case "new":
+                navigate(rootPaths.auth);
+                break;
+            case "noUserData":
+                navigate(authPaths.initialSetup);
+                break;
+            case "verified":
+                navigate(rootPaths.main);
+                break;
+            default:
+                console.error("一致する認証状態がありません。");
+                break;
         }
     }
 

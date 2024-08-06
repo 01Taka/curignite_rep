@@ -1,4 +1,3 @@
-import serviceFactory from "../../../firebase/db/factory";
 import { spaceDefaultSettingStorage } from "../../localStorage/storages";
 import { SpaceDefaultSettingStorageProps } from "../../../types/app/localStorageTypes";
 import { SpaceStartFormState } from "../../../types/app/spaceTypes";
@@ -7,18 +6,13 @@ import { StringBoolean } from "../../../types/util/componentsTypes";
 
 /**
  * ユーザー名に基づいてデフォルトのスペース名を生成します。
- * ユーザー名が提供されていない場合は、現在のユーザーのユーザー名を取得して使用します。
  *
- * @param username - デフォルトのスペース名を生成するためのユーザー名。省略可能。
+ * @param username - デフォルトのスペース名を生成するためのユーザー名。\
  * @returns デフォルトのスペース名。
  */
-export const getDefaultSpaceName = async (username: string | null = null): Promise<string> => {
-  if (!username) {
-    const userService = serviceFactory.createUserService();
-    const userData = await userService.getCurrentUserData();
-    username = userData ? userData.username : "無名";
-  }
-  return `${username}のスペース`;
+export const getDefaultSpaceName = (username?: string | null): string => {
+  
+  return `${username ?? "無名"}のスペース`;
 };
 
 /**
@@ -27,10 +21,10 @@ export const getDefaultSpaceName = async (username: string | null = null): Promi
  * @param getDefaultSpaceName - デフォルトのスペース名を取得するための関数。
  * @returns 初期化されたスペース設定の状態。
  */
-export const initializeSpaceSetting = async (getDefaultSpaceName: () => Promise<string>): Promise<SpaceStartFormState> => {
+export const initializeSpaceSetting = async (username?: string | null): Promise<SpaceStartFormState> => {
   const data = spaceDefaultSettingStorage.getDataAllAtOnce();
   return {
-    spaceName: data.spaceName ?? await getDefaultSpaceName(),
+    spaceName: data.spaceName ?? getDefaultSpaceName(username),
     description: data.description ?? "",
     publicationTarget: data.publicationTarget ?? SpacePublicationTarget.Team,
     requiredApproval: data.requiredApproval ? data.requiredApproval === "true" : true,

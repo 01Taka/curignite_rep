@@ -49,3 +49,7 @@ export const defaultTeamPermissions: TeamPermissions = {
         TeamPermissionType.ViewTeam
     ]
 };
+
+export interface TeamMember extends Member {
+    teamId: string;
+}

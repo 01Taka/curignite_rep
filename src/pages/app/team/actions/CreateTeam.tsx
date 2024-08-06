@@ -3,10 +3,11 @@ import { useParams } from 'react-router-dom';
 import CreateTeamView, { CreateTeamFormState } from '../../../../features/app/team/action/CreateTeamView';
 import serviceFactory from '../../../../firebase/db/factory';
 import { handleFormStateChange } from '../../../../functions/utils';
-import { getCurrentUser } from '../../../../firebase/auth/auth';
+import { useAppSelector } from '../../../../redux/hooks';
 
 const CreateTeam: FC = () => {
   const { name } = useParams<{ name: string }>();
+  const { uid } = useAppSelector(state => state.userSlice);
 
   const [formState, setFormState] = useState<CreateTeamFormState>({
     teamName: '',
@@ -29,9 +30,7 @@ const CreateTeam: FC = () => {
   const handleCreateTeam = async () => {
     try {
       // チームの作成と追加
-      const user = await getCurrentUser();
-      if (user) {
-        const uid = user.uid;
+      if (uid) {
         const teamService = serviceFactory.createTeamService(uid);
         await teamService.createTeam(
           uid, formState.teamName,

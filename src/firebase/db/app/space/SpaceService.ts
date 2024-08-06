@@ -1,4 +1,8 @@
-import { SpacePublicationTarget, SpaceData, UserSpaceIds } from "../../../../types/firebase/db/space/spacesTypes";
+import { Timestamp } from "firebase/firestore";
+import { isUserInActionInfo, isUserInMembers } from "../../../../functions/db/dbUtils";
+import { uniqueByProperty } from "../../../../functions/utils";
+import { ActionInfo, Member, RoleType } from "../../../../types/firebase/db/baseTypes";
+import { SpacePublicationTarget, SpaceData, UserSpaceIds, SpaceJoinState } from "../../../../types/firebase/db/space/spacesTypes";
 import ChatRoomsDB from "../chat/chatRooms";
 import { TeamService } from "../team/teamService";
 import { UsersDB } from "../user/users";
@@ -13,14 +17,14 @@ export class SpaceService {
         private userService: UserService,
         private teamService: TeamService,
     ) { }
-        
+
     /**
-     * 新しいスペースの作成、チャットルームの設定、作成者のユーザーデータにスペースIDの追加などの処理を担当。
-     * @param createdById - スペースを作成したユーザーのID
-     * @param spaceName - 作成するスペースの名前
-     * @param description - スペースの説明
-     * @param publicationTarget - スペースの公開対象
-     * @param requiresApproval - スペースへの参加が承認を必要とするかどうか
+     * 新しいスペースを作成し、必要な情報を設定します。
+     * @param createdById スペースを作成したユーザーのID
+     * @param spaceName スペースの名前
+     * @param description スペースの説明
+     * @param publicationTarget スペースの公開対象
+     * @param requiresApproval スペースへの参加に承認が必要かどうか
      * @throws エラーが発生した場合、エラーメッセージをスローします
      */
     async createSpace(
@@ -31,28 +35,15 @@ export class SpaceService {
         requiresApproval: boolean
     ) {
         try {
-            // 新しいスペースを作成
             const spaceRef = await this.spacesDB.createSpace(createdById, spaceName, description, publicationTarget, requiresApproval);
-            
-            // 作成したスペースのIDを取得
             const newSpaceId = spaceRef.id;
-
-            // 作成者のユーザー情報を取得
             const user = await this.usersDB.read(createdById);
             if (!user) {
                 throw new Error(`User with ID ${createdById} not found.`);
             }
-
-            // チャットルームを作成し、そのIDをスペースに設定
             const chatRoomRef = await this.chatRoomsDB.createChatRoom(createdById, spaceName, user.iconUrl, newSpaceId, "space");
             await this.spacesDB.update(newSpaceId, { chatRoomId: chatRoomRef.id });
-
-
-            // 作成ユーザーのスペースIDリストを更新
-            this.userService.appendSpaceIdToUserData(user, newSpaceId);
-
-            // reduxへの追加処理も今後追加予定
-
+            await this.userService.appendSpaceIdToUserData(user, newSpaceId);
         } catch (error) {
             console.error("Error creating space:", error);
             throw new Error("Failed to create space.");
@@ -60,45 +51,138 @@ export class SpaceService {
     }
 
     /**
-     * 同じチームに参加しているメンバーのユーザーIDとそのスペースIDを取得します。
-     * @returns 同じチームに参加している各メンバーのユーザーIDと、そのスペースIDのリスト
+     * 同じチームに参加しているメンバーのユーザーIDとスペースIDを取得します。
+     * @returns メンバーのユーザーIDとスペースIDのリスト
      */
     async getSameTeamMembersSpaceIds(): Promise<UserSpaceIds[]> {
         try {
-            // チームのメンバーを取得
             const members = await this.teamService.fetchAllUsersInTeamsByUser();
-    
-            // メンバーのユーザーデータから spaceIds を取得
-            const membersSpaceIds: (UserSpaceIds | null)[] = await Promise.all(members.map(async (member) => {
+            const uniqueMembers = uniqueByProperty(members, "userId");
+            const membersSpaceIds: (UserSpaceIds | null)[] = await Promise.all(uniqueMembers.map(async (member) => {
                 const memberData = await this.usersDB.read(member.userId);
-                return memberData ? { userId: memberData.docId, spaceIds: memberData.spaceIds } as UserSpaceIds : null;
+                return memberData ? { userId: memberData.docId, spaceIds: memberData.spaceIds } : null;
             }));
-    
-            // null を除外して返す
             return membersSpaceIds.filter(item => item !== null) as UserSpaceIds[];
         } catch (error) {
             console.error("Error getting same team members' space IDs:", error);
             return [];
         }
     }
+
+    /**
+     * ユーザーのスペースIDリストに基づいてスペースデータを取得します。
+     * @param userSpaceIds ユーザーのスペースIDリスト
+     * @returns スペースデータのリスト
+     */
     async getSpaceDataByUserSpaceIds(userSpaceIds: UserSpaceIds[]): Promise<SpaceData[]> {
         try {
-            // 各ユーザーのスペースIDリストをフラットにし、それぞれのIDで非同期読み込みを行う
             const spaceIds = userSpaceIds.flatMap(data => data.spaceIds);
-            
-            // 各スペースIDについて非同期読み込みを行う
             const spacePromises = spaceIds.map(id => this.spacesDB.read(id));
-            
-            // すべてのスペースデータを取得
             const spaces = await Promise.all(spacePromises);
-
-            const filteringSpaces = spaces.filter(space => space !== null);
-            
-            return filteringSpaces as SpaceData[];
+            return spaces.filter(space => space !== null) as SpaceData[];
         } catch (error) {
             console.error("Failed to get space data:", error);
-            return []; // エラー発生時には空の配列を返す
+            return [];
         }
+    }
+
+    /**
+     * 必要に応じてスペースデータを取得します。
+     * @param spaceId スペースID
+     * @param spaceData スペースデータ（オプション）
+     * @returns スペースデータ
+     */
+    private async fetchSpaceIfNeeded(spaceId: string, spaceData?: SpaceData | null): Promise<SpaceData | null> {
+        return spaceData ?? await this.spacesDB.getSpace(spaceId);
+    }
+
+    /**
+     * ユーザーをスペースのメンバーに追加します。
+     * @param userId ユーザーID
+     * @param space スペースデータ
+     */
+    private async addUserToMembers(userId: string, space: SpaceData): Promise<void> {
+        const user = await this.usersDB.getUser(userId);
+        if (user) {
+            const member: Member = {
+                userId,
+                username: user.username,
+                iconUrl: user.iconUrl,
+                role: RoleType.Member,
+            };
+            await this.spacesDB.updateSpace(space.docId, { members: [...space.members, member] });
+        }
+    }
+
+    /**
+     * ユーザーをスペースに追加します。
+     * @param userId ユーザーID
+     * @param spaceId スペースID
+     * @param spaceData スペースデータ（オプション）
+     */
+    async joinSpace(userId: string, spaceId: string, spaceData?: SpaceData | null): Promise<void> {
+        const space = await this.fetchSpaceIfNeeded(spaceId, spaceData);
+        if (!space) return;
+        if (!isUserInMembers(userId, space.members)) {
+            await this.addUserToMembers(userId, space);
+        }
+    }
+
+    /**
+     * スペース参加リクエストを処理します。
+     * @param requesterId リクエストしたユーザーID
+     * @param spaceId スペースID
+     * @param spaceData スペースデータ（オプション）
+     */
+    async joinSpaceRequest(requesterId: string, spaceId: string, spaceData?: SpaceData | null): Promise<void> {
+        const space = await this.fetchSpaceIfNeeded(spaceId, spaceData);
+        if (!space || !space.approvedUsers || !space.invitedUsers || !space.pendingRequests) return;
+        const actionInfoList = [...space.invitedUsers, ...space.approvedUsers];
+        if (!isUserInActionInfo(requesterId, actionInfoList) && space.requiresApproval) {
+            if (!isUserInActionInfo(requesterId, space.rejectedUsers)) {
+                const request: ActionInfo = {
+                    userId: requesterId,
+                    actionAt: Timestamp.now(),
+                };
+                await this.spacesDB.updateSpace(space.docId, { pendingRequests: [...space.pendingRequests, request] });
+            }
+        } else {
+            await this.joinSpace(requesterId, spaceId, space);
+        }
+    }
+
+    /**
+     * ユーザーのスペース参加状態を取得します。
+     * @param userId ユーザーID
+     * @param spaceId スペースID
+     * @param spaceData スペースデータ（オプション）
+     * @returns スペース参加状態
+     */
+    async getSpaceJoinState(userId: string, spaceId: string, spaceData?: SpaceData | null): Promise<SpaceJoinState> {
+        const space = await this.fetchSpaceIfNeeded(spaceId, spaceData);
+        if (!space) return "error";
+        if (isUserInActionInfo(userId, space.rejectedUsers)) return "rejected";
+        if (isUserInMembers(userId, space.members)) return "participated";
+        if (isUserInActionInfo(userId, space.pendingRequests)) return "requesting";
+        if (isUserInActionInfo(userId, space.approvedUsers) || isUserInActionInfo(userId, space.invitedUsers)) return "approved";
+        return "noInfo";
+    }
+
+    /**
+     * ユーザーのスペース参加状態を取得し、参加リクエストを送信します。
+     * @param userId ユーザーID
+     * @param spaceId スペースID
+     * @returns スペース参加状態
+     */
+    async getSpaceJoinStateWithJoinRequest(userId: string, spaceId: string): Promise<SpaceJoinState> {
+        const space = await this.spacesDB.getSpace(spaceId);
+        const state = await this.getSpaceJoinState(userId, spaceId, space);
+        if (state === "noInfo") {
+            await this.joinSpaceRequest(userId, spaceId, space);
+            return "requesting";
+        }
+        return state;
     }
 }
 
+export default SpaceService;
