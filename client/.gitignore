@@ -23,6 +23,3 @@ firebaseConfig.ts
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# 機密情報
-serviceAccountKey.json

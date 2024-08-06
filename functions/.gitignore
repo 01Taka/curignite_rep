@@ -1,3 +1,6 @@
+# 機密情報
+serviceAccountKey.json
+
 # Logs
 logs
 *.log
