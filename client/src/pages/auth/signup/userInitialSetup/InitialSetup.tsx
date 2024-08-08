@@ -3,8 +3,8 @@ import UserInitialSetupView, { InitialSetupFormState } from './InitialSetupView'
 import { useNavigate } from 'react-router-dom';
 import { getUniqueName, handleCreateUser, navigateByAuthState } from './handleUserInitialSetup';
 import { handleFormStateChange } from '../../../../functions/utils';
-import { rootPaths } from '../../../../types/path/appPaths';
 import { useAppSelector } from '../../../../redux/hooks';
+import { rootPaths } from '../../../../types/path/paths';
 
 const InitialSetup: React.FC = () => {
   const navigate = useNavigate();

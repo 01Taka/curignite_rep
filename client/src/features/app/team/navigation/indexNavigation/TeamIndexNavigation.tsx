@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { useAppDispatch } from '../../../../../redux/hooks';
-import { setDisplayTeamPage } from '../../../../../redux/slices/teamSlice';
+import { setDisplayTeamPage } from '../../../../../redux/slices/team/teamSlice';
 import TeamIndexNavigationView from './TeamIndexNavigationView';
 
 const TeamIndexNavigation: FC = () => {

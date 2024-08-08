@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react';
 import JoinCreateTeamView from '../../../../features/app/team/action/joinCreate/JoinCreateTeamView';
 import { useNavigate } from 'react-router-dom';
-import { teamPaths } from '../../../../types/path/appPaths';
+import { teamPaths } from '../../../../types/path/mainPaths';
 
 const JoinCreateTeam: FC = () => {
     const navigate = useNavigate();

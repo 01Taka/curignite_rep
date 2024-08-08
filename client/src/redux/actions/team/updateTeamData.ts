@@ -1,35 +1,43 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { setCurrentDisplayTeam, setTeamRequestStatus, setTeamsNotFound, updateTeamsSuccess } from "../../slices/teamSlice";
+import { setCurrentDisplayTeam } from '../../slices/team/teamSlice';
 import { RootState } from '../../../types/module/redux/reduxTypes';
 import serviceFactory from '../../../firebase/db/factory';
 import { convertTimestampsToNumbers } from '../../../functions/db/dbUtils';
+import { AsyncThunkState } from '../../../types/module/redux/asyncThunkTypes';
+import { SerializableTeamData } from '../../../types/firebase/db/team/teamsTypes';
+import { fulfillWithState } from '../../../functions/redux/reduxUtils';
 
-export const updateTeamData = createAsyncThunk<void, string>(
+export const updateTeamData = createAsyncThunk<
+  AsyncThunkState<SerializableTeamData[]>,
+  string,
+  { rejectValue: string }
+>(
   'teams/updateTeamData',
-  async (uid, { dispatch, getState }) => {
+  async (uid, { dispatch, getState, rejectWithValue }) => {
     try {
-      if (uid) {
-        dispatch(setTeamRequestStatus("loading"));
+      const userTeamsDB = serviceFactory.createUserTeamsDB(uid);
+      const userTeams = await userTeamsDB.getAllUserTeams();
 
-        const teamService = serviceFactory.createTeamService(uid);
-        const teamsData = await teamService.getApprovedTeams();
-
-        if (teamsData.length === 0) {
-          dispatch(setTeamsNotFound());
-        } else {
-          const convertedTeamsData = convertTimestampsToNumbers(teamsData);
-          dispatch(updateTeamsSuccess(convertedTeamsData));
-
-          const state = getState() as RootState;
-          const { currentDisplayTeam } = state.teamSlice;
-          if (!currentDisplayTeam) {
-            dispatch(setCurrentDisplayTeam(convertedTeamsData[0]));
-          }
-        }
+      if (!userTeams) {
+        return rejectWithValue('ユーザーに対応するチームデータが見つかりませんでした。');
       }
+
+      const teamService = serviceFactory.createTeamService();
+      const teamsData = await teamService.fetchApprovedTeamsForUser(userTeams);
+      const convertedTeamsData = convertTimestampsToNumbers(teamsData);
+
+      // 表示中のチームがなければ、自動で設定
+      const state = getState() as RootState;
+      const { currentDisplayTeam } = state.teamSlice;
+      if (!currentDisplayTeam && convertedTeamsData.length > 0) {
+        dispatch(setCurrentDisplayTeam(convertedTeamsData[0]));
+      }
+
+      return fulfillWithState(convertedTeamsData);
     } catch (error) {
-      console.error("Error updating team data: ", error);
-      dispatch(setTeamRequestStatus("error")); // エラーハンドリングの強化
+      const errorMessage = error instanceof Error ? error.message : '不明なエラーが発生しました';
+      console.error('チームデータの更新中にエラーが発生しました:', error);
+      return rejectWithValue(errorMessage);
     }
   }
 );

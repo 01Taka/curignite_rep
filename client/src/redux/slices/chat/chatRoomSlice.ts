@@ -1,14 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ChatData } from '../../../types/firebase/db/chat/chatsTypes';
 import { fetchChats } from '../../actions/chat/chatRoomActions';
-import { ChatRoomSliceState } from '../../../types/module/redux/reduxChatTypes';
-import { ConvertTimestampToNumber } from '../../../functions/db/dbUtils';
+import { ChatRoomSliceState } from '../../../types/module/redux/chat/reduxChatTypes';
+import { addAsyncCases, isSuccessfulPayload } from '../../../functions/redux/reduxUtils';
 
 const initialState: ChatRoomSliceState = {
   currentRoomId: null,
   startAfterMessageId: null,
   messages: {},
-  messageStatus: 'idle',
+  messageFetchStatus: { state: "idle" },
 };
 
 const chatRoomSlice = createSlice({
@@ -25,24 +24,15 @@ const chatRoomSlice = createSlice({
       state.currentRoomId = null;
       state.startAfterMessageId = null;
       state.messages = {};
-      state.messageStatus = 'idle';
     },
   },
   extraReducers: (builder) => {
-    builder
-      .addCase(fetchChats.pending, (state) => {
-        state.messageStatus = 'loading';
-      })
-      .addCase(fetchChats.fulfilled, (state, action: PayloadAction<ConvertTimestampToNumber<ChatData[]>>) => {
-        action.payload.forEach(message => {
-          state.messages[message.docId] = message;
-        });
-        state.messageStatus = 'idle';
-      })
-      .addCase(fetchChats.rejected, (state, action) => {
-        state.messageStatus = 'failed';
-        console.error(action.payload);
-      });
+    addAsyncCases(builder, fetchChats, (state, payload) => {
+      state.messageFetchStatus = payload;
+      if (isSuccessfulPayload(payload)) {
+        state.messages = payload.value;
+      }
+    })
   },
 });
 

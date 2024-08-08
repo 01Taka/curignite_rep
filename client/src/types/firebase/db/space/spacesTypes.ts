@@ -1,6 +1,6 @@
 import { ConvertTimestampToNumber } from "../../../../functions/db/dbUtils";
-import { SelectItem } from "../../../util/componentsTypes";
 import { ActionInfo, BaseDocumentData, BasePermissions, Member, RoleType } from "../baseTypes";
+import { SelectItem } from "../../../util/componentsTypes";
 
 export enum SpacePermissionType {
   ManageSpace = 'manageSpace',

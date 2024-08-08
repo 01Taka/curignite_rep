@@ -1,8 +1,22 @@
-import { Firestore, DocumentReference, DocumentSnapshot, QuerySnapshot, addDoc, collection, deleteDoc, doc, getDoc, getDocs, updateDoc, CollectionReference, QueryConstraint, query, where, limit, setDoc, startAfter, orderBy } from "firebase/firestore";
+import { Firestore, DocumentReference, DocumentSnapshot, QuerySnapshot, addDoc, collection, deleteDoc, doc, getDoc, getDocs, updateDoc, CollectionReference, QueryConstraint, query, where, limit, setDoc, startAfter, orderBy, onSnapshot, Unsubscribe } from "firebase/firestore";
 import { BaseDocumentData } from "../../types/firebase/db/baseTypes";
+
+export interface Callback<T extends BaseDocumentData> {
+  unsubscribe?: Unsubscribe;
+  active: boolean;
+  func: Array<(data: T) => void>;
+}
+
+export interface CollectionCallback<T extends BaseDocumentData> {
+  unsubscribe?: Unsubscribe;
+  active: boolean;
+  func: Array<(data: T[]) => void>;
+}
 
 class BaseDB<T extends BaseDocumentData> {
   protected collectionRef: CollectionReference<T>;
+  private callbacks: { [documentId: string]: Callback<T> } = {};
+  private collectionCallbacks: CollectionCallback<T> = { active: false, func: [] };
   
   constructor(protected firestore: Firestore, collectionPath: string) {
     this.collectionRef = collection(this.firestore, collectionPath) as CollectionReference<T>;
@@ -36,6 +50,11 @@ class BaseDB<T extends BaseDocumentData> {
   async read(documentId: string): Promise<T | null> {
     const docSnapshot = await this.readAsDocumentSnapshot(documentId);
     if (docSnapshot.exists()) {
+      if (docSnapshot.metadata.fromCache) {
+        console.log('このデータはローカルキャッシュからのものです。');
+      } else {
+        console.log('このデータはサーバーからのものです。');
+      }
       const data = docSnapshot.data() as T;
       if (!data.isActive) return null; // Return null if the document is logically deleted
       data.docId = docSnapshot.id;
@@ -67,7 +86,7 @@ class BaseDB<T extends BaseDocumentData> {
       console.warn(`Document with ID ${documentId} does not exist or is already deleted.`);
       return Promise.resolve();
     }
-  }
+  }  
 
   async getAllAsQuerySnapshot(...queryConstraints: QueryConstraint[]): Promise<QuerySnapshot<T>> {
     const q = query(this.collectionRef, where("isActive", "==", true), ...queryConstraints);
@@ -134,6 +153,188 @@ class BaseDB<T extends BaseDocumentData> {
       throw error;
     }
   }
+
+  // ドキュメントのコールバック関数管理
+
+  /**
+   * コールバック関数を追加します。
+   * @param documentId - ドキュメントのID
+   * @param callback - コールバック関数
+   */
+  addCallback(documentId: string, callback: (data: T) => void): void {
+    if (!this.callbacks[documentId]) {
+      this.callbacks[documentId] = { active: true, func: [] };
+      this.registerSnapshotListener(documentId);
+    }
+    if (!this.callbacks[documentId].func.includes(callback)) {
+      this.callbacks[documentId].func.push(callback);
+    }
+  }
+
+  /**
+   * 指定したコールバック関数を削除します。
+   * @param documentId - ドキュメントのID
+   * @param callback - 削除するコールバック関数
+   */
+  removeCallback(documentId: string, callback: (data: T) => void): void {
+    const callbackEntry = this.callbacks[documentId];
+    if (callbackEntry) {
+      callbackEntry.func = callbackEntry.func.filter(cb => cb !== callback);
+      if (callbackEntry.func.length === 0) {
+        this.removeSnapshotListener(documentId);
+        delete this.callbacks[documentId];
+      }
+    }
+  }  
+
+  /**
+   * ドキュメントIDに関連付けられたコールバックのアクティブ状態を設定します。
+   * @param documentId - ドキュメントのID
+   * @param isActive - コールバックを有効にするかどうか
+   */
+  setActiveState(documentId: string, isActive: boolean): void {
+    if (this.callbacks[documentId]) {
+      this.callbacks[documentId].active = isActive;
+    }
+  }
+
+  /**
+   * スナップショットからデータを取得し、コールバックを実行します。
+   * @param documentId - ドキュメントのID
+   * @param snapshot - ドキュメントのスナップショット
+   */
+  private handleSnapshot(documentId: string, snapshot: DocumentSnapshot<T>): void {
+    if (snapshot.exists()) {
+      const data = snapshot.data() as T;
+      if (this.callbacks[documentId]?.active) {
+        this.callbacks[documentId].func.forEach(func => {
+          try {
+            func(data);
+          } catch (error) {
+            console.error(`Callback function error for document ${documentId}:`, error);
+          }
+        });
+      }
+    } else {
+      console.warn(`Document ${documentId} does not exist.`);
+    }
+  }
+
+  /**
+   * 指定したドキュメントIDに対して登録されているコールバック関数を実行します。
+   * @param documentId - ドキュメントのID
+   * @returns {Promise<void>} - 非同期処理の完了を示すPromise
+   */
+  async executeCallbacks(documentId: string): Promise<void> {
+    try {
+      const snapshot = await this.readAsDocumentSnapshot(documentId);
+      this.handleSnapshot(documentId, snapshot);
+    } catch (error) {
+      console.error(`Error fetching document ${documentId}:`, error);
+    }
+  }
+
+  /**
+   * ドキュメントIDに対してスナップショットリスナーを登録します。
+   * @param documentId - ドキュメントのID
+   */
+  registerSnapshotListener(documentId: string): void {
+    this.removeSnapshotListener(documentId);
+    const docRef = doc(this.firestore, documentId);
+    const unsubscribe = onSnapshot(docRef, snapshot => {
+      this.handleSnapshot(documentId, snapshot as DocumentSnapshot<T>);
+    }, error => {
+      console.error(`Error listening to document ${documentId}:`, error);
+    });
+    
+    this.callbacks[documentId].unsubscribe = unsubscribe;
+  }
+  
+  /**
+   * ドキュメントIDに対して登録されているスナップショットリスナーを削除します。
+   * @param documentId - ドキュメントのID
+   */
+  removeSnapshotListener(documentId: string): void {
+    if (!!this.callbacks[documentId]?.unsubscribe) {
+      this.callbacks[documentId].unsubscribe!();
+      this.callbacks[documentId].unsubscribe = undefined;
+    }
+  }
+  
+  // コレクションのコールバック関数管理
+
+  /**
+   * コレクション用ののコールバック関数を追加します。
+   * @param callback - コールバック関数
+   */
+    addCollectionCallback(callback: (data: T[]) => void): void {
+      if (!this.collectionCallbacks.active) {
+        this.collectionCallbacks.active = true;
+        this.registerCollectionSnapshotListener();
+      }
+      if (!this.collectionCallbacks.func.includes(callback)) {
+        this.collectionCallbacks.func.push(callback);
+      }
+    }
+  
+  /**
+   * 指定したコレクション用のコールバック関数を削除します。
+   * @param callback - 削除するコールバック関数
+   */
+    removeCollectionCallback(callback: (data: T[]) => void): void {
+      this.collectionCallbacks.func = this.collectionCallbacks.func.filter(cb => cb !== callback);
+      if (this.collectionCallbacks.func.length === 0) {
+        this.removeCollectionSnapshotListener();
+        this.collectionCallbacks.active = false;
+      }
+    }
+  
+  /**
+   * スナップショットからデータを取得し、コールバックを実行します。
+   * @param documentId - ドキュメントのID
+   * @param snapshot - ドキュメントのスナップショット
+   */
+    private handleCollectionSnapshot(snapshot: QuerySnapshot<T>): void {
+      const data = snapshot.docs.map(doc => {
+        const docData = doc.data();
+        docData.docId = doc.id;
+        return docData;
+      });
+  
+      if (this.collectionCallbacks.active) {
+        this.collectionCallbacks.func.forEach(func => {
+          try {
+            func(data);
+          } catch (error) {
+            console.error('Collection callback function error:', error);
+          }
+        });
+      }
+    }
+  
+  /**
+   * コレクションのスナップショットリスナーを登録します。
+   */
+    registerCollectionSnapshotListener(): void {
+      this.removeCollectionSnapshotListener();
+      const unsubscribe = onSnapshot(this.collectionRef, snapshot => {
+        this.handleCollectionSnapshot(snapshot);
+      }, error => {
+        console.error('Error listening to collection:', error);
+      });
+  
+      this.collectionCallbacks.unsubscribe = unsubscribe;
+    }
+  
+  /**
+   * コレクションのスナップショットリスナーを削除します。
+   */
+    removeCollectionSnapshotListener(): void {
+      if (this.collectionCallbacks.unsubscribe) {
+        this.collectionCallbacks.unsubscribe();
+        this.collectionCallbacks.unsubscribe = undefined;
+      }
+    }
 }
 
 export default BaseDB;

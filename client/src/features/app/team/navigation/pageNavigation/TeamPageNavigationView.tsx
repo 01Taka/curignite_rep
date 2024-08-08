@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { NavigationItem } from '../../../../../types/path/path'
+import { NavigationItem } from '../../../../../types/path/paths'
 import CircularButton from '../../../../../components/input/button/CircularButton';
 import { TeamPages } from '../../../../../pages/app/team/index/TeamIndex';
 

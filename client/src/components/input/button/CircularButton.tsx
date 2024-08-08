@@ -1,6 +1,7 @@
 import { VariantProps, cva } from 'class-variance-authority';
 import { ButtonHTMLAttributes, FC, ReactNode } from 'react';
-import { cn, isMobileMode } from '../../../functions/utils';
+import { cn } from '../../../functions/utils';
+import { useAppSelector } from '../../../redux/hooks';
 
 // CircularButtonProps インターフェースを定義
 const size = {
@@ -53,7 +54,9 @@ const circularButtonVariants = cva("rounded-full flex items-center justify-cente
 
 // CircularButton コンポーネントを定義
 const CircularButton: FC<CircularButtonProps> = ({ children, className, bgColor, size, mobileSize, textColor, looks, invalidation, ...props }) => {
-    const applySize = mobileSize ? (isMobileMode() ? mobileSize : size) : size;
+    const { device } = useAppSelector(state => state.userSlice);
+    
+    const applySize = mobileSize ? (device === "mobile" ? mobileSize : size) : size;
     const buttonClass = cn(circularButtonVariants({ bgColor, size: applySize, looks, textColor }), className, {
         'bg-gray-400 hover:bg-gray-400 hover:scale-100': invalidation,
     });

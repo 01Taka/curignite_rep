@@ -8,9 +8,9 @@ interface OnMobilePagesProps {
 }
 
 const OnMobilePages: FC<OnMobilePagesProps> = ({ children }) => {
-  const isMobile = useAppSelector(state => state.appSlice.isMobile);
+  const { device } = useAppSelector(state => state.userSlice);
 
-  return isMobile ? <Routes>{children}</Routes> : null;
+  return device === "mobile" ? <Routes>{children}</Routes> : null;
 };
 
 export default OnMobilePages;

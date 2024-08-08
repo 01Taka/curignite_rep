@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { signUpWithEmail } from '../../../../firebase/auth/signUp';
 import { handleFormStateChange } from '../../../../functions/utils';
 import { authStorage } from '../../../../functions/localStorage/storages';
-import { authPaths } from '../../../../types/path/appPaths';
+import { authPaths } from '../../../../types/path/authPaths';
 
 const CreateAccount: React.FC = () => {
   const navigate = useNavigate();

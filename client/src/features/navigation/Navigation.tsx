@@ -15,10 +15,9 @@ interface NavigationProps {
 }
 
 const Navigation: React.FC<NavigationProps> = ({ children }) => {
-  const appSlice = useAppSelector(state => state.appSlice);
+  const { device } = useAppSelector(state => state.userSlice);
   const location = useLocation();
-  const mobileMode = appSlice.isMobile;
-  const navigationItems = mobileMode ? onMobileNavigationItems : onDesktopNavigationItems;
+  const navigationItems = device === "mobile" ? onMobileNavigationItems : onDesktopNavigationItems;
 
   const checkPathMatch = (currentPath: string, targetPath: string | string[], pathParameters = false, exclusionPaths: string[] = []): boolean => {
     if (Array.isArray(targetPath)) {

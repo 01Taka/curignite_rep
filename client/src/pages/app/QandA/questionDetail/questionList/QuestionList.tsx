@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import QuestionListView, { QuestionPost } from '../../../QandA/questionDetail/questionList/QuestionListView';
 import { questionsDB } from '../../../../../firebase/db/dbs';
 import { Question } from '../../../../../types/firebase/db/qAndA/questionTypes';
-import { initialUserOrganizationData, UserOrganizationData } from '../../../../../types/firebase/db/user/userOrganizationType';
+import { initialUserOrganizationData, UserOrganizationData } from '../../../../../types/firebase/db/user/userOrganizationTypes';
 
 const QuestionList: React.FC = () => {
     const [questionPosts, setQuestionPosts] = useState<QuestionPost[]>([]);

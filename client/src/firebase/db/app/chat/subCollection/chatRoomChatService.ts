@@ -6,12 +6,13 @@ import { UserData } from "../../../../../types/firebase/db/user/usersTypes";
 
 class ChatRoomChatService {
     constructor(
-        private chatsDB: ChatRoomChatsDB,
-        private usersDB: UsersDB
+        private usersDB: UsersDB,
+        private getChatsDBInstance: (roomId: string) => ChatRoomChatsDB,
       ) {}
     
     /**
      * チャットメッセージを送信する
+     * @param roomId 送信先のチャットルームのId
      * @param senderId 送信者のID
      * @param content メッセージの内容
      * @param attachments 添付ファイルの配列
@@ -20,6 +21,7 @@ class ChatRoomChatService {
      * @returns 作成されたメッセージのDocumentReference
      */
     async sendChat(
+        roomId: string,
         senderId: string,
         content: string,
         attachments?: ChatAttachment[],
@@ -27,12 +29,13 @@ class ChatRoomChatService {
         threadId?: string
     ): Promise<DocumentReference<ChatData>> {
         const user = await this.verifyUser(senderId);
-
-        return this.chatsDB.createChat(user.docId, user.username, user.iconUrl, content, attachments, replyTo, threadId);
+        const chatsDB = this.getChatsDBInstance(roomId);
+        return chatsDB.createChat(user.docId, user.username, user.iconUrl, content, attachments, replyTo, threadId);
     }
 
     /**
      * ファイルを送信する
+     * @param roomId 送信先のチャットルームのId
      * @param senderId 送信者のID
      * @param file ファイルオブジェクト
      * @param content メッセージの内容
@@ -41,6 +44,7 @@ class ChatRoomChatService {
      * @returns 作成されたメッセージのDocumentReference
      */
     async sendFile(
+        roomId: string,
         senderId: string,
         file: File,
         content: string = '',
@@ -55,8 +59,8 @@ class ChatRoomChatService {
             fileName: file.name,
             fileSize: file.size,
         };
-
-        return this.chatsDB.createChat(user.docId, user.username, user.iconUrl, content, [attachment], replyTo, threadId);
+        const chatsDB = this.getChatsDBInstance(roomId);
+        return chatsDB.createChat(user.docId, user.username, user.iconUrl, content, [attachment], replyTo, threadId);
     }
 
     /**

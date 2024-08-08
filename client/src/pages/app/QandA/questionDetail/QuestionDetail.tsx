@@ -3,7 +3,7 @@ import QuestionDetailView from '../../QandA/questionDetail/QuestionDetailView';
 import { useParams } from 'react-router-dom';
 import { questionsDB } from '../../../../firebase/db/dbs';
 import { Question } from '../../../../types/firebase/db/qAndA/questionTypes';
-import { initialUserOrganizationData, UserOrganizationData } from '../../../../types/firebase/db/user/userOrganizationType';
+import { initialUserOrganizationData, UserOrganizationData } from '../../../../types/firebase/db/user/userOrganizationTypes';
 
 const QuestionDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();

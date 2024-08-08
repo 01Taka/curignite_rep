@@ -1,7 +1,15 @@
 import { FC } from "react";
 import TeamContainer from "./TeamContainer";
-import { TeamsListProps } from "../../../../types/app/teamTypes";
 import { cn } from "../../../../functions/utils";
+import { TeamData } from "../../../../types/firebase/db/team/teamsTypes";
+
+export interface TeamsListProps {
+  teamDataList: TeamData[];
+  uid: string;
+  currentDisplayTeamId: string | undefined;
+  hideTeamsWithoutIds?: boolean;
+  onTeamClick: (team: TeamData) => void;
+}
 
 const TeamsList: FC<TeamsListProps> = ({ teamDataList, uid, currentDisplayTeamId, onTeamClick }) => {
     return (

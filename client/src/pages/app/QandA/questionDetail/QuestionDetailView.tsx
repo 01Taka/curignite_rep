@@ -4,7 +4,7 @@ import AnswerList from './answerList/AnswerList';
 import TopTab from '../../../../components/app/tab/TopTab';
 import QuestionDisplay from './question/QuestionDisplay';
 import { Question } from '../../../../types/firebase/db/qAndA/questionTypes';
-import { initialUserOrganizationData, UserOrganizationData } from '../../../../types/firebase/db/user/userOrganizationType';
+import { initialUserOrganizationData, UserOrganizationData } from '../../../../types/firebase/db/user/userOrganizationTypes';
 
 interface QuestionDetailViewProps {
   loading: boolean;

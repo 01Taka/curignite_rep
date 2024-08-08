@@ -1,9 +1,10 @@
 import React from 'react'
 import TopPageView from './TopView';
 import { useNavigate } from 'react-router-dom';
-import { authPaths, rootPaths } from '../../types/path/appPaths';
 import serviceFactory from '../../firebase/db/factory';
 import { useAppSelector } from '../../redux/hooks';
+import { rootPaths } from '../../types/path/paths';
+import { authPaths } from '../../types/path/authPaths';
 
 const TopPage: React.FC = () => {
     const navigate = useNavigate();

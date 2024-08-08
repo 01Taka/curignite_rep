@@ -53,8 +53,8 @@ const ChatRoom: React.FC<ChatProps> = ({ chatRoomId }) => {
     const handleSendChat = async () => {
         if (uid) {
             setChat({ content: "", attachments: [] });
-            const chatService = serviceFactory.createChatRoomChatService(chatRoomId);
-            await chatService.sendChat(uid, chat.content, chat.attachments);
+            const chatService = serviceFactory.createChatRoomChatService();
+            await chatService.sendChat(chatRoomId, uid, chat.content, chat.attachments);
         }
     };
 

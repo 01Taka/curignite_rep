@@ -4,7 +4,7 @@ import { where } from 'firebase/firestore';
 import { useParams } from 'react-router-dom';
 import { answersDB } from '../../../../../firebase/db/dbs';
 import { Answer } from '../../../../../types/firebase/db/qAndA/answerTypes';
-import { initialUserOrganizationData } from '../../../../../types/firebase/db/user/userOrganizationType';
+import { initialUserOrganizationData } from '../../../../../types/firebase/db/user/userOrganizationTypes';
 
 const AnswerList: React.FC = () => {
     const { id } = useParams<{ id: string }>();

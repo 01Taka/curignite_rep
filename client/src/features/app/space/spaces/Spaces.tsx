@@ -2,11 +2,13 @@ import React, { FC } from 'react';
 import { Typography } from '@mui/material';
 import SpaceContainer from './SpaceContainer';
 import SpacesEmptyMessage from './SpacesEmptyMessage';
-import { isMobileMode } from '../../../../functions/utils';
 import { dateTimeToString } from '../../../../functions/dateTimeUtils';
-import { SpacesProps } from '../../../../types/app/spaceTypes';
+import { SpacesProps } from '../../../../types/app/space/spaceTypes';
+import { useAppSelector } from '../../../../redux/hooks';
 
 const Spaces: FC<SpacesProps> = ({ spaces, onSpaceClick }) => {
+  const { device } = useAppSelector(state => state.userSlice);
+
   return (
     <div className='flex flex-col items-center w-full h-full space-y-4 overflow-y-auto'>
       <Typography variant="h5" className='pt-4'>
@@ -29,7 +31,7 @@ const Spaces: FC<SpacesProps> = ({ spaces, onSpaceClick }) => {
               someMemberName={space.members.length > 0 ? space.members.slice(0, 3).map(member => member.username) : []}
               memberNumber={space.members.length}
               requiredApproval={space.requiredApproval}
-              mobileMode={isMobileMode()}
+              mobileMode={device === "mobile"}
               onClick={() => onSpaceClick(space.docId)}
             />
           ))}

@@ -2,7 +2,7 @@ import React from 'react'
 import AnswerContainerView from './AnswerContainerView'
 import { format } from 'date-fns';
 import { Answer } from '../../../../../../types/firebase/db/qAndA/answerTypes';
-import { UserOrganizationData } from '../../../../../../types/firebase/db/user/userOrganizationType';
+import { UserOrganizationData } from '../../../../../../types/firebase/db/user/userOrganizationTypes';
 
 interface AnswerContainerProps {
     answer: Answer;

@@ -6,7 +6,7 @@ import InitialSetup from './signup/userInitialSetup/InitialSetup';
 import SignInIndex from './signin/index/SignInIndex';
 import SignInWithEmail from './signin/withEmail/SignInWithEmail';
 import AuthIndex from './index/AuthIndex';
-import { relativeAuthPaths } from '../../types/path/appPaths';
+import { relativeAuthPaths } from '../../types/path/authPaths';
 
 const AuthRoutes: FC = () => {
   return (

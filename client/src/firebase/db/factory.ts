@@ -16,155 +16,57 @@ import { db } from "../firebase";
 
 class ServiceFactory {
     private firestore: Firestore;
-    private teamsDB?: TeamsDB;
-    private teamCodesDB?: TeamCodesDB;
-    private spacesDB?: SpacesDB;
-    private usersDB?: UsersDB;
-    private chatRoomsDB?: ChatRoomsDB;
+    private instances: Record<string, any> = {};
 
     constructor(firestore: Firestore) {
         this.firestore = firestore;
     }
 
-    /**
-     * TeamsDB のインスタンスを取得する
-     * @returns TeamsDB のインスタンス
-     */
-    getTeamsDB(): TeamsDB {
-        if (!this.teamsDB) {
-            this.teamsDB = new TeamsDB(this.firestore);
+    private getInstance<T>(key: string, InstanceClass: new (firestore: Firestore) => T): T {
+        if (!this.instances[key]) {
+            this.instances[key] = new InstanceClass(this.firestore);
         }
-        return this.teamsDB;
+        return this.instances[key];
     }
 
-    /**
-     * TeamCodesDB のインスタンスを取得する
-     * @returns TeamCodesDB のインスタンス
-     */
-    getTeamCodesDB(): TeamCodesDB {
-        if (!this.teamCodesDB) {
-            this.teamCodesDB = new TeamCodesDB(this.firestore);
-        }
-        return this.teamCodesDB;
-    }
+    getTeamsDB = (): TeamsDB => this.getInstance("teamsDB", TeamsDB);
+    getTeamCodesDB = (): TeamCodesDB => this.getInstance("teamCodesDB", TeamCodesDB);
+    getSpacesDB = (): SpacesDB => this.getInstance("spacesDB", SpacesDB);
+    getUsersDB = (): UsersDB => this.getInstance("usersDB", UsersDB);
+    getChatRoomsDB = (): ChatRoomsDB => this.getInstance("chatRoomsDB", ChatRoomsDB);
 
-    /**
-     * SpacesDB のインスタンスを取得する
-     * @returns SpacesDB のインスタンス
-     */
-    getSpacesDB(): SpacesDB {
-        if (!this.spacesDB) {
-            this.spacesDB = new SpacesDB(this.firestore);
-        }
-        return this.spacesDB;
-    }
+    createUserTeamsDB = (userId: string): UserTeamsDB => new UserTeamsDB(this.firestore, userId);
+    createChatRoomsChatsDB = (roomId: string): ChatRoomChatsDB => new ChatRoomChatsDB(this.firestore, roomId);
 
-    /**
-     * UsersDB のインスタンスを取得する
-     * @returns UsersDB のインスタンス
-     */
-    getUsersDB(): UsersDB {
-        if (!this.usersDB) {
-            this.usersDB = new UsersDB(this.firestore);
-        }
-        return this.usersDB;
-    }
+    createUserService = (): UserService => new UserService(this.getUsersDB());
 
-    /**
-     * ChatRoomsDB のインスタンスを取得する
-     * @returns ChatRoomsDB のインスタンス
-     */
-    getChatRoomsDB(): ChatRoomsDB {
-        if (!this.chatRoomsDB) {
-            this.chatRoomsDB = new ChatRoomsDB(this.firestore);
-        }
-        return this.chatRoomsDB;
-    }
-
-    /**
-     * UserTeamsDB のインスタンスを作成する
-     * @param userId - ユーザーID
-     * @returns UserTeamsDB のインスタンス
-     */
-    createUserTeamsDB(userId: string): UserTeamsDB {
-        return new UserTeamsDB(this.firestore, userId);
-    }
-
-    /**
-     * ChatRoomsChatsDB のインスタンスを作成する
-     * @param roomId - チャットルームID
-     * @returns ChatRoomsChatsDB のインスタンス
-     */
-    createChatRoomsChatsDB(roomId: string): ChatRoomChatsDB {
-        return new ChatRoomChatsDB(this.firestore, roomId);
-    }
-
-    /**
-     * UserService のインスタンスを作成する
-     * @returns UserService のインスタンス
-     */
-    createUserService(): UserService {
-        return new UserService(this.getUsersDB());
-    }
-
-    /**
-     * UserTeamService のインスタンスを作成する
-     * @param userId - ユーザーID
-     * @returns UserTeamService のインスタンス
-     */
-    createUserTeamService(userId: string): UserTeamService {
-        return new UserTeamService(this.firestore, userId);
-    }
-
-    /**
-     * TeamService のインスタンスを作成する
-     * @param userId - ユーザーID
-     * @returns TeamService のインスタンス
-     */
-    createTeamService(userId: string): TeamService {
-        const userTeamsDB = this.createUserTeamsDB(userId);
-        const userTeamService = this.createUserTeamService(userId);
-        const userService = this.createUserService();
-        const teamCodeService = this.createTeamCodeService();
-
-        return new TeamService(
+    createUserTeamService = (): UserTeamService => 
+        new UserTeamService(
             this.getTeamsDB(),
             this.getUsersDB(),
-            userTeamsDB,
-            teamCodeService,
-            userService,
-            userTeamService
+            this.createTeamCodeService(),
+            this.createUserTeamsDB
+        );
+
+    createTeamService = (): TeamService => 
+        new TeamService(this.getTeamsDB(), this.createUserService());
+
+    createSpaceService = (): SpaceService => {
+        return new SpaceService(
+            this.getSpacesDB(),
+            this.getUsersDB(),
+            this.getChatRoomsDB(),
+            this.createUserService(),
+            this.createTeamService(),
+            this.createUserTeamsDB
         );
     }
 
-    /**
-     * SpaceService のインスタンスを作成する
-     * @param userId - ユーザーID
-     * @returns SpaceService のインスタンス
-     */
-    createSpaceService(userId: string): SpaceService {
-        const teamService = this.createTeamService(userId);
-        const userService = this.createUserService();
+    createTeamCodeService = (): TeamCodeService => 
+        new TeamCodeService(this.getTeamCodesDB(), this.getTeamsDB());
 
-        return new SpaceService(this.getSpacesDB(), this.getUsersDB(), this.getChatRoomsDB(), userService, teamService);
-    }
-
-    /**
-     * TeamCodeService のインスタンスを取得する
-     * @returns TeamCodeService のインスタンス
-     */
-    private createTeamCodeService(): TeamCodeService {
-        return new TeamCodeService(this.getTeamCodesDB(), this.getTeamsDB());
-    }
-
-    /**
-     * ChatRoomChatService のインスタンスを作成する
-     * @param roomId - ユーザーID
-     * @returns ChatRoomChatService のインスタンス
-     */
-    createChatRoomChatService(roomId: string): ChatRoomChatService {
-        return new ChatRoomChatService(this.createChatRoomsChatsDB(roomId), this.getUsersDB());
-    }
+    createChatRoomChatService = (): ChatRoomChatService => 
+        new ChatRoomChatService(this.getUsersDB(), this.createChatRoomsChatsDB);
 }
 
 const serviceFactory = new ServiceFactory(db);

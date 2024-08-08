@@ -2,20 +2,23 @@ import React, { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import './styles/styles.css';
 import './styles/tailwind.css';
-import { rootPaths } from './types/path/appPaths';
 import TopPage from './pages/top/TopPage';
 import NotFound from './pages/error/NotFound';
 import AuthRoutes from './pages/auth/AuthRoutes';
 import MainRoutes from './pages/app/routes/MainRoutes';
 import Navigation from './features/navigation/Navigation';
 import { useAppDispatch } from './redux/hooks';
-import { initializeApp } from './redux/actions/app/appThunks';
+import { initializeApp, handleUpdateDevice } from './redux/actions/app/appThunks';
+import { rootPaths } from './types/path/paths';
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     dispatch(initializeApp());
+
+    const cleanup = handleUpdateDevice(dispatch);
+    return cleanup;
   }, [dispatch]);
 
   return (

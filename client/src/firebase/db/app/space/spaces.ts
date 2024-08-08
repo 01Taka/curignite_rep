@@ -1,7 +1,7 @@
 import { DocumentData, DocumentReference, Firestore } from "firebase/firestore";
 import BaseDB from "../../base";
 import { createInitialAdminMember, getInitialBaseDocumentData } from "../../../../functions/db/dbUtils";
-import { SpacePublicationTarget, SpaceData, defaultSpacePermissions } from "../../../../types/firebase/db/space/spacesTypes";
+import { defaultSpacePermissions, SpaceData, SpacePublicationTarget } from "../../../../types/firebase/db/space/spacesTypes";
 
 class SpacesDB extends BaseDB<SpaceData> {
     constructor(firestore: Firestore) {
@@ -49,6 +49,10 @@ class SpacesDB extends BaseDB<SpaceData> {
             console.error("Failed to update space data: ", error);
             throw new Error("Failed to update space data");
         }
+    }
+
+    addSpaceCollectionCallback(callback: (data: SpaceData[]) => void): void {
+        this.addCollectionCallback(callback);
     }
 }
 

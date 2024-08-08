@@ -31,10 +31,6 @@ export const keyMirror = <T extends object>(obj: T): KeyMirrorObject<T> => {
   return mirrored;
 };
 
-export const isMobileMode = () => {
-  return window.innerWidth <= 768;
-}
-
 // nullとundefinedを取り除く
 export const removeNullAndUndefined = <T>(array: (T | null | undefined)[]): T[] => {
   return array.filter((item): item is T => item !== null && item !== undefined);

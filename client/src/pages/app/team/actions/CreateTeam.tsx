@@ -31,9 +31,10 @@ const CreateTeam: FC = () => {
     try {
       // チームの作成と追加
       if (uid) {
-        const teamService = serviceFactory.createTeamService(uid);
-        await teamService.createTeam(
-          uid, formState.teamName,
+        const userTeamService = serviceFactory.createUserTeamService();
+        await userTeamService.createTeam(
+          uid,
+          formState.teamName,
           formState.iconPath, 
           formState.description,
           formState.password, 

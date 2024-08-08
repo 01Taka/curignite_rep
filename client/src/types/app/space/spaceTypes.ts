@@ -1,5 +1,5 @@
-import { SpaceData, SpacePublicationTarget } from "../firebase/db/space/spacesTypes";
-import { FormStateChangeFunc } from "../util/componentsTypes";
+import { SpaceData, SpacePublicationTarget } from "../../firebase/db/space/spacesTypes";
+import { FormStateChangeFunc } from "../../util/componentsTypes";
 
 export interface SpaceStartFormState {
   spaceName: string;

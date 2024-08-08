@@ -1,5 +1,5 @@
 import { NavigationItems } from "../../../../types/app/navigationTypes";
-import { spacePaths } from "../../../../types/path/appPaths";
+import { spacePaths } from "../../../../types/path/mainPaths";
 
 export const teamDesktopNavigation: NavigationItems[] = [
   {

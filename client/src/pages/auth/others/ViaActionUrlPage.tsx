@@ -4,8 +4,8 @@ import ViaActionUrlView from './ViaActionUrlView';
 import { actionNavigation, checkActionCode } from './handleViaActionUrl';
 import { resendEmail } from '../../../firebase/auth/signUp';
 import { authStorage } from '../../../functions/localStorage/storages';
-import { authPaths } from '../../../types/path/appPaths';
 import { AuthStorageProps } from '../../../types/app/localStorageTypes';
+import { authPaths } from '../../../types/path/authPaths';
 
 const ViaActionUrlPage: React.FC = () => {
   const [authData, setAuthData] = useState<Partial<AuthStorageProps>>();

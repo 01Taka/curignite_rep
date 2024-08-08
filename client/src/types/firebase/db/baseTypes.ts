@@ -1,6 +1,7 @@
 import { DocumentData, Timestamp } from "firebase/firestore";
 import { UserData } from "./user/usersTypes";
 
+
 // 複数のユーザーが参加する機能を持つデータを扱う場合のベースとなる役割
 export enum RoleType {
     Admin = 'admin', // システム全体を管理する権限を持つ。

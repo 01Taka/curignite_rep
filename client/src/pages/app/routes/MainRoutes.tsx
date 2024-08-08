@@ -1,6 +1,5 @@
 import React, { FC, useEffect } from 'react';
-import { Route, Routes, useNavigate } from 'react-router-dom';
-import { mainRootPaths } from '../../../types/path/appPaths';
+import { Route, Routes } from 'react-router-dom';
 import Home from '../home/Home';
 import TeamRoutes from '../team/TeamRoutes';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
@@ -8,34 +7,25 @@ import NotFound from '../../error/NotFound';
 import SpaceRoutes from '../space/SpaceRoutes';
 import { updateTeamData } from '../../../redux/actions/team/updateTeamData';
 import ChatRoom from '../../../components/app/chat/ChatRoom';
-import { updateUserState } from '../../../redux/actions/user/updateUserState';
 import { CircularProgress } from '@mui/material';
+import { fetchAndSetCurrentSpace } from '../../../redux/actions/space/updateSpace';
+import { mainRootPaths } from '../../../types/path/mainPaths';
 
 const MainRoutes: FC = () => {
-  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const userData = useAppSelector(state => state.userSlice);
 
   useEffect(() => {
-    dispatch(updateUserState())
-      .unwrap()
-      .catch((error) => {
-        if (error instanceof Error) {
-          console.error(error.message);
-        }
-      });
-  }, [navigate, dispatch]);
-
-  useEffect(() => {
     if (userData.uid) {
       dispatch(updateTeamData(userData.uid));
+      dispatch(fetchAndSetCurrentSpace());
     }
   }, [dispatch, userData.uid]);
 
   return (
     <div className='w-full h-full bg-primaryBase overflow-auto'>
       <Routes>
-        {userData.requestState !== "success" && <Route path="/*" element={<CircularProgress />} />}
+        {userData.userFetchState.state !== "success" && <Route path="/*" element={<CircularProgress />} />}
         <Route path="/" element={<Home />} />
         <Route path='*' element={<NotFound />} />
         <Route path={mainRootPaths.space} element={<SpaceRoutes />} />

@@ -1,5 +1,5 @@
 import { TeamPages } from "../../../../../pages/app/team/index/TeamIndex";
-import { NavigationItem } from "../../../../../types/path/path";
+import { NavigationItem } from "../../../../../types/path/paths";
 import GroupsIcon from '@mui/icons-material/Groups';
 import ChatIcon from '@mui/icons-material/Chat';
 import PictureInPictureIcon from '@mui/icons-material/PictureInPicture';

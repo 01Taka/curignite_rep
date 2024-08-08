@@ -1,12 +1,12 @@
 import { Timestamp } from "firebase/firestore";
 import serviceFactory from "../../../../firebase/db/factory";
 import { NavigateFunction } from "react-router-dom";
-import { rootPaths } from "../../../../types/path/appPaths";
 import { InitialSetupFormState } from "./InitialSetupView";
 import { authStorage } from "../../../../functions/localStorage/storages";
 import { UserData } from "../../../../types/firebase/db/user/usersTypes";
 import { getUniqueUserName } from "../../../../firebase/util/getUniqueName";
 import { ConvertTimestampToNumber } from "../../../../functions/db/dbUtils";
+import { rootPaths } from "../../../../types/path/paths";
 
 export const navigateByAuthState = async (uid: string | null, navigate: NavigateFunction) => {
   const userService = serviceFactory.createUserService();

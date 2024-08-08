@@ -24,7 +24,7 @@ const TeamContainer: FC<TeamContainerProps> = ({ teamId, teamName, iconPath, mem
   useEffect(() => {
     const updateLearningMembers = async () => {
       if (uid && members.length > 0) {
-        const teamService = serviceFactory.createTeamService(uid);
+        const teamService = serviceFactory.createTeamService();
         const members = await teamService.getLearningMember(teamId);
         setLearningMembers(members);
       }

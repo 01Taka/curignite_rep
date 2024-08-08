@@ -1,13 +1,14 @@
 import { Timestamp } from "firebase/firestore";
 import { isUserInActionInfo, isUserInMembers } from "../../../../functions/db/dbUtils";
 import { uniqueByProperty } from "../../../../functions/utils";
-import { ActionInfo, Member, RoleType } from "../../../../types/firebase/db/baseTypes";
-import { SpacePublicationTarget, SpaceData, UserSpaceIds, SpaceJoinState } from "../../../../types/firebase/db/space/spacesTypes";
 import ChatRoomsDB from "../chat/chatRooms";
 import { TeamService } from "../team/teamService";
 import { UsersDB } from "../user/users";
 import { UserService } from "../user/userService";
 import SpacesDB from "./spaces";
+import { SpaceData, SpaceJoinState, SpacePublicationTarget, UserSpaceIds } from "../../../../types/firebase/db/space/spacesTypes";
+import { ActionInfo, Member, RoleType } from "../../../../types/firebase/db/baseTypes";
+import { UserTeamsDB } from "../user/subCollection/userTeams";
 
 export class SpaceService {
     constructor(
@@ -16,6 +17,7 @@ export class SpaceService {
         private chatRoomsDB: ChatRoomsDB,
         private userService: UserService,
         private teamService: TeamService,
+        private getUserTeamsInstance: (userId: string) => UserTeamsDB,
     ) { }
 
     /**
@@ -52,11 +54,18 @@ export class SpaceService {
 
     /**
      * 同じチームに参加しているメンバーのユーザーIDとスペースIDを取得します。
+     * @param userId - 参照するユーザーのId
      * @returns メンバーのユーザーIDとスペースIDのリスト
      */
-    async getSameTeamMembersSpaceIds(): Promise<UserSpaceIds[]> {
+    async getSameTeamMembersSpaceIds(userId: string): Promise<UserSpaceIds[]> {
         try {
-            const members = await this.teamService.fetchAllUsersInTeamsByUser();
+            const userTeamsDB = this.getUserTeamsInstance(userId);
+            const userTeams = await userTeamsDB.getAllUserTeams();
+            if (!userTeams) {
+                console.error("ユーザーチームが取得できませんでした。");
+                return [];
+            }
+            const members = await this.teamService.fetchAllUsersInTeamsByUser(userTeams);
             const uniqueMembers = uniqueByProperty(members, "userId");
             const membersSpaceIds: (UserSpaceIds | null)[] = await Promise.all(uniqueMembers.map(async (member) => {
                 const memberData = await this.usersDB.read(member.userId);
@@ -82,6 +91,25 @@ export class SpaceService {
             return spaces.filter(space => space !== null) as SpaceData[];
         } catch (error) {
             console.error("Failed to get space data:", error);
+            return [];
+        }
+    }
+
+    /**
+     * 同じチームに参加しているメンバーのスペースデータを取得します。
+     * @param userId - 参照するユーザーのId
+     * @returns メンバーのスペースデータのリスト
+     */
+    async getSameTeamMembersSpaceData(userId: string): Promise<SpaceData[]> {
+        try {
+            const userSpaceIds = await this.getSameTeamMembersSpaceIds(userId);
+            if (userSpaceIds.length === 0) {
+                console.error("同じチームに参加しているメンバーのスペースIDが取得できませんでした。");
+                return [];
+            }
+            return await this.getSpaceDataByUserSpaceIds(userSpaceIds);
+        } catch (error) {
+            console.error("Error getting same team members' space data:", error);
             return [];
         }
     }

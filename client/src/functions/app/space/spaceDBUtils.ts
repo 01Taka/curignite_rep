@@ -1,6 +1,6 @@
 import { spacesDB } from "../../../firebase/db/dbs";
 import serviceFactory from "../../../firebase/db/factory";
-import { SpaceStartFormState } from "../../../types/app/spaceTypes";
+import { SpaceStartFormState } from "../../../types/app/space/spaceTypes";
 import { SpaceData } from "../../../types/firebase/db/space/spacesTypes";
 import { spaceStorage } from "../../localStorage/storages";
 
@@ -25,7 +25,7 @@ export const getSpaceFromStorage = async (): Promise<SpaceData | null> => {
  * @param uid - スペースを作成するユーザーのID。
  */
 export const handleCreateSpace = async (formState: SpaceStartFormState, uid: string) => {
-    const spaceService = serviceFactory.createSpaceService(uid);
+    const spaceService = serviceFactory.createSpaceService();
     await spaceService.createSpace(
       uid,
       formState.spaceName,
@@ -42,7 +42,7 @@ export const handleCreateSpace = async (formState: SpaceStartFormState, uid: str
  * @returns ユーザーのスペースデータの配列。
  */
 export const updateSpaces = async (userId: string): Promise<SpaceData[]> => {
-    const spaceService = serviceFactory.createSpaceService(userId);
-    const spaceIds = await spaceService.getSameTeamMembersSpaceIds();
+    const spaceService = serviceFactory.createSpaceService();
+    const spaceIds = await spaceService.getSameTeamMembersSpaceIds(userId);
     return await spaceService.getSpaceDataByUserSpaceIds(spaceIds);
 };

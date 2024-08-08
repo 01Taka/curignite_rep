@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
-import { mainPaths } from "../../../types/path/appPaths";
-
+import { mainPaths } from "../../../types/path/mainPaths";
 
 export interface routeElement {
     path: string;

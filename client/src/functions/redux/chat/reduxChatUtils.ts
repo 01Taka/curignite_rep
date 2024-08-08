@@ -1,4 +1,3 @@
-import serviceFactory from "../../../firebase/db/factory";
 import { fetchChats } from "../../../redux/actions/chat/chatRoomActions";
 import { clearChatRoom, setCurrentRoomId, setStartAfterMessageId } from "../../../redux/slices/chat/chatRoomSlice";
 import store from "../../../redux/store";
@@ -76,8 +75,7 @@ const getLastMessageId = (messages: ChatIdMap): string | undefined => {
  */
 const fetchChatsInRoom = async (dispatch: AppDispatch, roomId: string, messageLimit: number, startAfterMessageId?: string): Promise<ChatIdMap> => {
     try {
-        const chatRoomChatsDB = serviceFactory.createChatRoomsChatsDB(roomId);
-        await dispatch(fetchChats({ messageLimit, startAfterMessageId, chatRoomChatsDB }));
+        await dispatch(fetchChats({ roomId, messageLimit, startAfterMessageId }));
         const { messages } = store.getState().chatRoomSlice;
         return revertTimestampConversion(messages);
     } catch (error) {

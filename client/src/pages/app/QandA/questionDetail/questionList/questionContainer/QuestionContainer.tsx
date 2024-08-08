@@ -3,7 +3,7 @@ import QuestionContainerView from './QuestionContainerView'
 import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { Question } from '../../../../../../types/firebase/db/qAndA/questionTypes';
-import { UserOrganizationData } from '../../../../../../types/firebase/db/user/userOrganizationType';
+import { UserOrganizationData } from '../../../../../../types/firebase/db/user/userOrganizationTypes';
 
 interface QuestionContainerProps {
     question: Question;

@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useMemo, useState } from 'react';
-import { SpaceSettingViewProps } from '../../../../types/app/spaceTypes';
+import { SpaceSettingViewProps } from '../../../../types/app/space/spaceTypes';
 import { SelectFieldChange } from '../../../../types/util/componentsTypes';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import StringField from '../../../../components/input/field/StringField';

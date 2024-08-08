@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { SpaceStartActionsViewProps } from '../../../../types/app/spaceTypes';
+import { SpaceStartActionsViewProps } from '../../../../types/app/space/spaceTypes';
 import CircularButton from '../../../../components/input/button/CircularButton';
 import { Divider } from '@mui/material';
 

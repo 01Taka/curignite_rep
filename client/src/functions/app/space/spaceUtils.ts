@@ -1,8 +1,8 @@
 import { spaceDefaultSettingStorage } from "../../localStorage/storages";
 import { SpaceDefaultSettingStorageProps } from "../../../types/app/localStorageTypes";
-import { SpaceStartFormState } from "../../../types/app/spaceTypes";
-import { SpacePublicationTarget } from "../../../types/firebase/db/space/spacesTypes";
 import { StringBoolean } from "../../../types/util/componentsTypes";
+import { SpaceStartFormState } from "../../../types/app/space/spaceTypes";
+import { SpacePublicationTarget } from "../../../types/firebase/db/space/spacesTypes";
 
 /**
  * ユーザー名に基づいてデフォルトのスペース名を生成します。

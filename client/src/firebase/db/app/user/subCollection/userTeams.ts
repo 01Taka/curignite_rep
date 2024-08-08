@@ -29,7 +29,15 @@ class UserTeamsDB extends BaseDB<UserTeamData> {
     }
     return this.create(data);
   }
-  
+
+  async getAllUserTeams(): Promise<UserTeamData[]> {
+    try {
+      return this.getAll();
+    } catch (error) {
+      throw new Error("Failed to get all user teams");
+    }
+  }
+
   async getByTeamId(teamId: string): Promise<UserTeamData | null> {
     return this.getFirstMatch("teamId", teamId);
   }
