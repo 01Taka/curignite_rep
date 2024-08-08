@@ -1,4 +1,3 @@
-import { ConvertTimestampToNumber } from "../../../../functions/db/dbUtils";
 import { ActionInfo, BaseDocumentData, Member, BasePermissions, RoleType } from "../baseTypes";
 
 export enum TeamPermissionType {
@@ -27,8 +26,6 @@ export interface TeamData extends BaseDocumentData {
     rejectedUsers: ActionInfo[];
     wholeGroupId: string;
 }
-
-export type SerializableTeamData = ConvertTimestampToNumber<TeamData>;
 
 // デフォルトのチーム権限を設定
 export const defaultTeamPermissions: TeamPermissions = {

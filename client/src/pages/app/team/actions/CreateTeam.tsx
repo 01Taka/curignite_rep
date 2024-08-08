@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import CreateTeamView, { CreateTeamFormState } from '../../../../features/app/team/action/CreateTeamView';
+import CreateTeamView, { CreateTeamFormState } from '../../../../features/app/team/action/menu/CreateTeamView';
 import serviceFactory from '../../../../firebase/db/factory';
 import { handleFormStateChange } from '../../../../functions/utils';
 import { useAppSelector } from '../../../../redux/hooks';

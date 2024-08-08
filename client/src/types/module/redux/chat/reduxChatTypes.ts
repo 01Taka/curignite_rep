@@ -1,5 +1,5 @@
-import { ConvertTimestampToNumber } from "../../../../functions/db/dbUtils";
-import { ChatIdMap } from "../../../firebase/db/chat/chatsTypes";
+import { ChatData } from "../../../firebase/db/chat/chatsTypes";
+import { TimestampConvertedDocumentMap } from "../../../firebase/db/formatTypes";
 import { AsyncThunkState } from "../asyncThunkTypes";
 
 export interface FetchChatsParams {
@@ -11,6 +11,6 @@ export interface FetchChatsParams {
 export interface ChatRoomSliceState {
     currentRoomId: string | null;
     startAfterMessageId: string | null;
-    messages: ConvertTimestampToNumber<ChatIdMap>;
-    messageFetchStatus: AsyncThunkState<ConvertTimestampToNumber<ChatIdMap>>;
+    messages: TimestampConvertedDocumentMap<ChatData>;
+    messageFetchStatus: AsyncThunkState<TimestampConvertedDocumentMap<ChatData>>;
 }

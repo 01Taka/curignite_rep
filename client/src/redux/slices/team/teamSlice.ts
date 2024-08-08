@@ -1,44 +1,29 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { SerializableTeamData } from '../../../types/firebase/db/team/teamsTypes';
-import { TeamPages } from '../../../pages/app/team/index/TeamIndex';
-import { AsyncThunkState } from '../../../types/module/redux/asyncThunkTypes';
-import { updateTeamData } from '../../actions/team/updateTeamData';
-import { addAsyncCases, isSuccessfulPayload } from '../../../functions/redux/reduxUtils';
+import { TeamData } from '../../../types/firebase/db/team/teamsTypes';
+import { TimestampConvertedDocumentMap } from '../../../types/firebase/db/formatTypes';
 
 interface TeamSliceState {
-    currentDisplayTeam: SerializableTeamData | null;
-    displayTeamPage: TeamPages;
-    teams: SerializableTeamData[];
-    teamsFetchState: AsyncThunkState<SerializableTeamData[]>;
+    currentTeamId: string;
+    teams: TimestampConvertedDocumentMap<TeamData>;
 }
 
 const initialState: TeamSliceState = {
-    currentDisplayTeam: null,
-    displayTeamPage: "participants",
-    teams: [],
-    teamsFetchState: { state: "idle" },
+    currentTeamId: "",
+    teams: {},
 };
 
 const TeamSlice = createSlice({
   name: 'teamSlice',
   initialState,
   reducers: {
-    setCurrentDisplayTeam: (state, action: PayloadAction<SerializableTeamData | null>) => {
-        state.currentDisplayTeam = action.payload;
+    setCurrentTeamId: (state, action: PayloadAction<string>) => {
+        state.currentTeamId = action.payload;
     },
-    setDisplayTeamPage: (state, action: PayloadAction<TeamPages>) => {
-      state.displayTeamPage = action.payload;
+    setTeams: (state, action: PayloadAction<TimestampConvertedDocumentMap<TeamData>>) => {
+      state.teams = action.payload;
     },
-  },
-  extraReducers: (builder) => {
-    addAsyncCases(builder, updateTeamData, (state, payload) => {
-      state.teamsFetchState = payload;
-      if (isSuccessfulPayload(payload)) {
-        state.teams = payload.value;
-      }
-    });
   },
 });
 
-export const { setCurrentDisplayTeam, setDisplayTeamPage } = TeamSlice.actions;
+export const { setCurrentTeamId, setTeams } = TeamSlice.actions;
 export default TeamSlice.reducer;

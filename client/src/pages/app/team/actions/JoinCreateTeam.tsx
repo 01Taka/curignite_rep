@@ -2,6 +2,8 @@ import React, { FC, useState } from 'react';
 import JoinCreateTeamView from '../../../../features/app/team/action/joinCreate/JoinCreateTeamView';
 import { useNavigate } from 'react-router-dom';
 import { teamPaths } from '../../../../types/path/mainPaths';
+import { replaceParams } from '../../../../functions/path/pathUtils';
+import { PathParam } from '../../../../types/path/paths';
 
 const JoinCreateTeam: FC = () => {
     const navigate = useNavigate();
@@ -23,7 +25,7 @@ const JoinCreateTeam: FC = () => {
 
     const handleCreateEnter = () => {
         // チームを作成する処理をここに追加
-        navigate(`${teamPaths.create}/${createTeamValue}`);
+        navigate(replaceParams(teamPaths.create, { [PathParam.Name]: createTeamValue }));
         console.log('Creating team with name:', createTeamValue);
     }
 

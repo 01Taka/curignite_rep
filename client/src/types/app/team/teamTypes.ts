@@ -1,1 +1,1 @@
-export {}
+export type TeamHomePages = "participants" | "chat" | "whiteboard";

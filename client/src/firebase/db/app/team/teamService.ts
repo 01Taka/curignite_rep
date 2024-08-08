@@ -2,7 +2,8 @@ import TeamsDB from "./teams";
 import { TeamData, TeamMember } from "../../../../types/firebase/db/team/teamsTypes";
 import { UserTeamData, UserTeamStatus } from "../../../../types/firebase/db/user/userTeamsTypes";
 import { UserService } from "../user/userService";
-import { Member } from "../../../../types/firebase/db/baseTypes";
+import { JoinState, Member } from "../../../../types/firebase/db/baseTypes";
+import { isUserInActionInfo, isUserInMembers } from "../../../../functions/db/dbUtils";
 
 export class TeamService {
     constructor (
@@ -21,6 +22,23 @@ export class TeamService {
             console.error("Error filtering approved user teams:", error);
             return [];
         }
+    }
+
+        /**
+     * ユーザーのスペース参加状態を取得します。
+     * @param userId ユーザーID
+     * @param spaceId スペースID
+     * @param spaceData スペースデータ（オプション）
+     * @returns スペース参加状態
+     */
+    async getSpaceJoinState(userId: string, teamId: string, teamData?: TeamData | null): Promise<JoinState> {
+        const team = teamData || await this.teamsDB.getTeam(teamId);
+        if (!team) return "error";
+        if (isUserInActionInfo(userId, team.rejectedUsers)) return "rejected";
+        if (isUserInMembers(userId, team.members)) return "participated";
+        if (isUserInActionInfo(userId, team.pendingRequests)) return "requesting";
+        if (isUserInActionInfo(userId, team.approvedUsers) || isUserInActionInfo(userId, team.invitedUsers)) return "approved";
+        return "noInfo";
     }
 
     /**
@@ -45,6 +63,16 @@ export class TeamService {
             console.error("Error fetching approved teams for user:", error);
             return [];
         }
+    }
+
+    /**
+     * 指定したユーザーIDに属するチームをフィルタリングします。
+     * @param userId - ユーザーID
+     * @param teams - チームデータの配列
+     * @returns 指定したユーザーIDに属するチームの配列
+     */
+    filterTeamsByUserId(userId: string, teams: TeamData[]): TeamData[] {
+        return teams.filter(team => Array.isArray(team.members) && team.members.some(member => member.userId === userId));
     }
 
     /**

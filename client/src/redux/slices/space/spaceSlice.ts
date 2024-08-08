@@ -1,13 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { SerializableSpaceData } from '../../../types/firebase/db/space/spacesTypes';
 import { SpaceSliceState } from '../../../types/module/redux/space/spaceSliceTypes';
-import { fetchAndSetCurrentSpace, fetchSpaces } from '../../actions/space/updateSpace';
+import { fetchSpaces } from '../../actions/space/updateSpace';
 import { addAsyncCases, isSuccessfulPayload } from '../../../functions/redux/reduxUtils';
+import { TimestampConvertedDocumentMap } from '../../../types/firebase/db/formatTypes';
+import { SpaceData } from '../../../types/firebase/db/space/spacesTypes';
 
 const initialState: SpaceSliceState = {
-  currentSpace: null,
-  spaces: [],
-  currentSpaceFetchState: { state: "idle" },
+  currentSpaceId: "",
+  spaces: {},
   spacesFetchState: { state: "idle" },
 };
 
@@ -15,20 +15,14 @@ const spaceSlice = createSlice({
   name: 'spaceSlice',
   initialState,
   reducers: {
-    setCurrentSpace: (state, action: PayloadAction<SerializableSpaceData | null>) => {
-      state.currentSpace = action.payload;
+    setCurrentSpaceId: (state, action: PayloadAction<string>) => {
+      state.currentSpaceId = action.payload;
     },
-    setSpaces: (state, action: PayloadAction<SerializableSpaceData[]>) => {
+    setSpaces: (state, action: PayloadAction<TimestampConvertedDocumentMap<SpaceData>>) => {
       state.spaces = action.payload;
     },
   },
   extraReducers: (builder) => {
-    addAsyncCases(builder, fetchAndSetCurrentSpace, (state, payload) => {
-      state.currentSpaceFetchState = payload;
-      if (isSuccessfulPayload(payload)) {
-        state.currentSpace = payload.value;
-      }
-    });
     addAsyncCases(builder, fetchSpaces, (state, payload) => {
       state.spacesFetchState = payload;
       if (isSuccessfulPayload(payload)) {
@@ -38,5 +32,5 @@ const spaceSlice = createSlice({
   }
 });
 
-export const { setCurrentSpace, setSpaces } = spaceSlice.actions;
+export const { setCurrentSpaceId, setSpaces } = spaceSlice.actions;
 export default spaceSlice.reducer;

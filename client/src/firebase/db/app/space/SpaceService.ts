@@ -6,8 +6,8 @@ import { TeamService } from "../team/teamService";
 import { UsersDB } from "../user/users";
 import { UserService } from "../user/userService";
 import SpacesDB from "./spaces";
-import { SpaceData, SpaceJoinState, SpacePublicationTarget, UserSpaceIds } from "../../../../types/firebase/db/space/spacesTypes";
-import { ActionInfo, Member, RoleType } from "../../../../types/firebase/db/baseTypes";
+import { SpaceData, SpacePublicationTarget, UserSpaceIds } from "../../../../types/firebase/db/space/spacesTypes";
+import { ActionInfo, JoinState, Member, RoleType } from "../../../../types/firebase/db/baseTypes";
 import { UserTeamsDB } from "../user/subCollection/userTeams";
 
 export class SpaceService {
@@ -186,7 +186,7 @@ export class SpaceService {
      * @param spaceData スペースデータ（オプション）
      * @returns スペース参加状態
      */
-    async getSpaceJoinState(userId: string, spaceId: string, spaceData?: SpaceData | null): Promise<SpaceJoinState> {
+    async getSpaceJoinState(userId: string, spaceId: string, spaceData?: SpaceData | null): Promise<JoinState> {
         const space = await this.fetchSpaceIfNeeded(spaceId, spaceData);
         if (!space) return "error";
         if (isUserInActionInfo(userId, space.rejectedUsers)) return "rejected";
@@ -202,7 +202,7 @@ export class SpaceService {
      * @param spaceId スペースID
      * @returns スペース参加状態
      */
-    async getSpaceJoinStateWithJoinRequest(userId: string, spaceId: string): Promise<SpaceJoinState> {
+    async getSpaceJoinStateWithJoinRequest(userId: string, spaceId: string): Promise<JoinState> {
         const space = await this.spacesDB.getSpace(spaceId);
         const state = await this.getSpaceJoinState(userId, spaceId, space);
         if (state === "noInfo") {

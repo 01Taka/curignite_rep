@@ -1,10 +1,10 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
-import { convertTimestampsToNumbers } from '../../../functions/db/dbUtils';
 import { SerializableUserData } from '../../../types/firebase/db/user/usersTypes';
 import serviceFactory from '../../../firebase/db/factory';
 import { AsyncThunkState } from '../../../types/module/redux/asyncThunkTypes';
 import { fulfillWithState } from '../../../functions/redux/reduxUtils';
+import { convertTimestampsToNumbers } from '../../../functions/db/dataFormatUtils';
 
 export const updateUserData = createAsyncThunk<
   AsyncThunkState<SerializableUserData | null>,

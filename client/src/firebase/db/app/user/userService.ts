@@ -1,9 +1,10 @@
-import { UserData, UserIdMap } from "../../../../types/firebase/db/user/usersTypes";
+import { UserData } from "../../../../types/firebase/db/user/usersTypes";
 import { UsersDB } from "./users";
 import { Member } from "../../../../types/firebase/db/baseTypes";
 import { AuthStates } from "../../../../types/util/stateTypes";
 import { Timestamp } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import { DocumentIdMap } from "../../../../types/firebase/db/formatTypes";
 
 export class UserService {
     constructor(private usersDB: UsersDB) {}
@@ -92,7 +93,7 @@ export class UserService {
      * @param uids ユーザーのUIDの配列
      * @returns ユーザーのデータを含む辞書オブジェクト
      */
-    async getUsersDataByUids(uids: string[]): Promise<UserIdMap> {
+    async getUsersDataByUids(uids: string[]): Promise<DocumentIdMap<UserData>> {
         try {
             const userEntries = await Promise.all(
                 uids.map(async (uid) => {

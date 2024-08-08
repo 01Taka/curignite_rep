@@ -1,6 +1,6 @@
 import { Timestamp } from "firebase/firestore";
-import { ConvertTimestampToNumber } from "../../../../functions/db/dbUtils";
 import { BaseDocumentData } from "../baseTypes";
+import { ConvertTimestampToNumber } from "../formatTypes";
 
 // UserDB関連のインターフェース
 export interface UserData extends BaseDocumentData {
@@ -10,5 +10,3 @@ export interface UserData extends BaseDocumentData {
     birthDate: Timestamp;
 }
 export type SerializableUserData = ConvertTimestampToNumber<UserData>;
-
-export type UserIdMap = { [key: string]: UserData }

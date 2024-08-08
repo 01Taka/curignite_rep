@@ -1,16 +1,17 @@
 import React, { FC, useEffect, useCallback } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
-import { SpaceData, SpaceJoinState } from '../../../../types/firebase/db/space/spacesTypes';
+import { SpaceData } from '../../../../types/firebase/db/space/spacesTypes';
 import { useNavigate } from 'react-router-dom';
 import { spacePaths } from '../../../../types/path/mainPaths';
 import CircularButton from '../../../../components/input/button/CircularButton';
 import serviceFactory from '../../../../firebase/db/factory';
 import { useAppSelector } from '../../../../redux/hooks';
 import { replaceParams } from '../../../../functions/path/pathUtils';
+import { JoinState } from '../../../../types/firebase/db/baseTypes';
 
 interface SpaceJoinPopupProps {
   space: SpaceData | null;
-  joinState: SpaceJoinState;
+  joinState: JoinState;
   onClose: () => void;
 }
 
@@ -19,11 +20,15 @@ const SpaceJoinPopup: FC<SpaceJoinPopupProps> = ({ space, joinState, onClose }) 
   const { uid } = useAppSelector(state => state.userSlice);
   const needAction = joinState === 'approved' || joinState === 'noInfo';
 
+  const handelNavigateHome = useCallback((spaceId: string) => {
+    navigate(replaceParams(spacePaths.home, { "spaceId": spaceId }));
+  }, [navigate]);
+
   useEffect(() => {
     if (joinState === 'participated' && space) {
       handelNavigateHome(space.docId);
     }
-  }, [joinState, navigate]);
+  }, [joinState, space, handelNavigateHome]);
 
   const handleSendJoinRequest = useCallback(async () => {
     if (uid && space) {
@@ -52,10 +57,6 @@ const SpaceJoinPopup: FC<SpaceJoinPopupProps> = ({ space, joinState, onClose }) 
         return 'エラーが発生しました。もう一度試してください。';
     }
   };
-
-  const handelNavigateHome = (spaceId: string) => {
-    navigate(replaceParams(spacePaths.home, { "spaceId": spaceId }));
-  }
 
   const onClickAction = () => {
     if (joinState === 'approved' && !!space) {

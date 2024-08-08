@@ -6,12 +6,14 @@ import TeamsDB from "../../team/teams";
 import { UsersDB } from "../users";
 import { Member, RoleType } from "../../../../../types/firebase/db/baseTypes";
 import { TeamCodeService } from "../../team/teamCodeService";
+import { TeamGroupService } from "../../team/subCollection/teamGroupService";
 
 export class UserTeamService {
     constructor(
         private teamsDB: TeamsDB,
         private usersDB: UsersDB,
         private teamCodeService: TeamCodeService,
+        private teamGroupService: TeamGroupService,
         private getUserTeamsDBInstance: (userId: string) => UserTeamsDB,
     ) {}
 
@@ -19,17 +21,22 @@ export class UserTeamService {
      * チームを作成し、ユーザーのチームデータに追加する
      * @param uid - ユーザーID
      * @param teamName - チーム名
-     * @param iconPath - チームアイコンのURL
+     * @param iconUrl - チームアイコンのURL
      * @param password - チームのパスワード
      * @param requiredApproval - 参加承認が必要かどうか
      * @param description - チームの紹介
      * @param createdAt - チーム作成日時（デフォルトは現在時刻）
      */
-    async createTeam(uid: string, teamName: string, iconPath: string, description: string, password: string, requiredApproval: boolean): Promise<void> {
+    async createTeam(uid: string, teamName: string, iconUrl: string, description: string, password: string, requiredApproval: boolean): Promise<void> {
         try {
-            const teamData = await this.teamsDB.createTeam(uid, teamName, iconPath, description, password, requiredApproval);
+            const teamRef = await this.teamsDB.createTeam(uid, teamName, iconUrl, description, password, requiredApproval);
+            const newTeamId = teamRef.id;
             const userTeamsDB = this.getUserTeamsDBInstance(uid);
-            await userTeamsDB.createUserTeam(uid, teamData.id, teamName, iconPath, true);
+            await userTeamsDB.createUserTeam(uid, newTeamId, teamName, iconUrl, true);
+
+            const groupRef = await this.teamGroupService.createGroup(newTeamId, uid, teamName, iconUrl);
+
+            this.teamsDB.updateTeam(newTeamId, { wholeGroupId: groupRef.id });
         } catch (error) {
             console.error("Error creating team:", error);
         }

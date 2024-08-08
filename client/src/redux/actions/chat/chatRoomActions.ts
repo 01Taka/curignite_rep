@@ -1,14 +1,15 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { FetchChatsParams } from '../../../types/module/redux/chat/reduxChatTypes';
-import { convertTimestampsToNumbers, ConvertTimestampToNumber } from '../../../functions/db/dbUtils';
 import { AsyncThunkState } from '../../../types/module/redux/asyncThunkTypes';
 import { fulfillWithState } from '../../../functions/redux/reduxUtils';
-import { ChatIdMap } from '../../../types/firebase/db/chat/chatsTypes';
+import { ChatData } from '../../../types/firebase/db/chat/chatsTypes';
 import serviceFactory from '../../../firebase/db/factory';
 import { RootState } from '../../../types/module/redux/reduxTypes';
+import { TimestampConvertedDocumentMap } from '../../../types/firebase/db/formatTypes';
+import { convertTimestampsToNumbers } from '../../../functions/db/dataFormatUtils';
 
 export const fetchChats = createAsyncThunk<
-  AsyncThunkState<ConvertTimestampToNumber<ChatIdMap>>, 
+  AsyncThunkState<TimestampConvertedDocumentMap<ChatData>>, 
   FetchChatsParams,
   { rejectValue: string }
 >(
@@ -18,8 +19,8 @@ export const fetchChats = createAsyncThunk<
       const chatsDB = serviceFactory.createChatRoomsChatsDB(roomId);
       const messages = await  chatsDB.getChatsInRoom(messageLimit, startAfterMessageId);
 
-      const prevChats: ConvertTimestampToNumber<ChatIdMap> = (getState() as RootState).chatRoomSlice.messages;
-      const messageIdMap: ConvertTimestampToNumber<ChatIdMap> = {
+      const prevChats: TimestampConvertedDocumentMap<ChatData> = (getState() as RootState).chatRoomSlice.messages;
+      const messageIdMap: TimestampConvertedDocumentMap<ChatData> = {
         ...prevChats,
       }
       messages.forEach(message => {

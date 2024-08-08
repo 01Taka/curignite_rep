@@ -267,15 +267,15 @@ class BaseDB<T extends BaseDocumentData> {
    * コレクション用ののコールバック関数を追加します。
    * @param callback - コールバック関数
    */
-    addCollectionCallback(callback: (data: T[]) => void): void {
-      if (!this.collectionCallbacks.active) {
-        this.collectionCallbacks.active = true;
-        this.registerCollectionSnapshotListener();
-      }
-      if (!this.collectionCallbacks.func.includes(callback)) {
-        this.collectionCallbacks.func.push(callback);
-      }
+  addCollectionCallback(callback: (data: T[]) => void): void {
+    if (!this.collectionCallbacks.active) {
+      this.collectionCallbacks.active = true;
+      this.registerCollectionSnapshotListener();
     }
+    if (!this.collectionCallbacks.func.includes(callback)) {
+      this.collectionCallbacks.func.push(callback);
+    }
+  }
   
   /**
    * 指定したコレクション用のコールバック関数を削除します。
@@ -294,47 +294,47 @@ class BaseDB<T extends BaseDocumentData> {
    * @param documentId - ドキュメントのID
    * @param snapshot - ドキュメントのスナップショット
    */
-    private handleCollectionSnapshot(snapshot: QuerySnapshot<T>): void {
-      const data = snapshot.docs.map(doc => {
-        const docData = doc.data();
-        docData.docId = doc.id;
-        return docData;
+  private handleCollectionSnapshot(snapshot: QuerySnapshot<T>): void {
+    const data = snapshot.docs.map(doc => {
+      const docData = doc.data();
+      docData.docId = doc.id;
+      return docData;
+    });
+
+    if (this.collectionCallbacks.active) {
+      this.collectionCallbacks.func.forEach(func => {
+        try {
+          func(data);
+        } catch (error) {
+          console.error('Collection callback function error:', error);
+        }
       });
-  
-      if (this.collectionCallbacks.active) {
-        this.collectionCallbacks.func.forEach(func => {
-          try {
-            func(data);
-          } catch (error) {
-            console.error('Collection callback function error:', error);
-          }
-        });
-      }
     }
+  }
   
   /**
    * コレクションのスナップショットリスナーを登録します。
    */
-    registerCollectionSnapshotListener(): void {
-      this.removeCollectionSnapshotListener();
-      const unsubscribe = onSnapshot(this.collectionRef, snapshot => {
-        this.handleCollectionSnapshot(snapshot);
-      }, error => {
-        console.error('Error listening to collection:', error);
-      });
-  
-      this.collectionCallbacks.unsubscribe = unsubscribe;
-    }
+  registerCollectionSnapshotListener(): void {
+    this.removeCollectionSnapshotListener();
+    const unsubscribe = onSnapshot(this.collectionRef, snapshot => {
+      this.handleCollectionSnapshot(snapshot);
+    }, error => {
+      console.error('Error listening to collection:', error);
+    });
+
+    this.collectionCallbacks.unsubscribe = unsubscribe;
+  }
   
   /**
    * コレクションのスナップショットリスナーを削除します。
    */
-    removeCollectionSnapshotListener(): void {
-      if (this.collectionCallbacks.unsubscribe) {
-        this.collectionCallbacks.unsubscribe();
-        this.collectionCallbacks.unsubscribe = undefined;
-      }
+  removeCollectionSnapshotListener(): void {
+    if (this.collectionCallbacks.unsubscribe) {
+      this.collectionCallbacks.unsubscribe();
+      this.collectionCallbacks.unsubscribe = undefined;
     }
+  }
 }
 
 export default BaseDB;

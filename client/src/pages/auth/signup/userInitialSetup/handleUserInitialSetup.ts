@@ -5,8 +5,8 @@ import { InitialSetupFormState } from "./InitialSetupView";
 import { authStorage } from "../../../../functions/localStorage/storages";
 import { UserData } from "../../../../types/firebase/db/user/usersTypes";
 import { getUniqueUserName } from "../../../../firebase/util/getUniqueName";
-import { ConvertTimestampToNumber } from "../../../../functions/db/dbUtils";
 import { rootPaths } from "../../../../types/path/paths";
+import { ConvertTimestampToNumber } from "../../../../types/firebase/db/formatTypes";
 
 export const navigateByAuthState = async (uid: string | null, navigate: NavigateFunction) => {
   const userService = serviceFactory.createUserService();

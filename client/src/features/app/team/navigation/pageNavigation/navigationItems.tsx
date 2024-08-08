@@ -1,10 +1,10 @@
-import { TeamPages } from "../../../../../pages/app/team/index/TeamIndex";
 import { NavigationItem } from "../../../../../types/path/paths";
 import GroupsIcon from '@mui/icons-material/Groups';
 import ChatIcon from '@mui/icons-material/Chat';
 import PictureInPictureIcon from '@mui/icons-material/PictureInPicture';
+import { TeamHomePages } from "../../../../../types/app/team/teamTypes";
 
-export const navigationItems: NavigationItem<TeamPages>[] = [
+export const navigationItems: NavigationItem<TeamHomePages>[] = [
 	{
 		path: "participants",
 		icon: <GroupsIcon />,

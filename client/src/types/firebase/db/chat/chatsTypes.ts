@@ -1,4 +1,3 @@
-import { ConvertTimestampToNumber } from "../../../../functions/db/dbUtils";
 import { BaseDocumentData } from "../baseTypes";
 
 export type AttachmentsType = 'image' | 'video' | 'file' | 'link';
@@ -28,7 +27,3 @@ export interface ChatData extends BaseDocumentData {
     replyTo: string; // 返信対象のメッセージID、返信がない場合は省略される
     threadId: string; // スレッドID、スレッドがない場合は省略される
 }
-
-export type SerializableChatData = ConvertTimestampToNumber<ChatData>;
-
-export type ChatIdMap = { [id: string]: ChatData };

@@ -13,6 +13,8 @@ import { UserService } from "./app/user/userService";
 import ChatRoomChatService from "./app/chat/subCollection/chatRoomChatService";
 import ChatRoomChatsDB from "./app/chat/subCollection/chatRoomChats";
 import { db } from "../firebase";
+import { TeamGroupService } from "./app/team/subCollection/teamGroupService";
+import { TeamGroupsDB } from "./app/team/subCollection/teamGroup";
 
 class ServiceFactory {
     private firestore: Firestore;
@@ -36,6 +38,7 @@ class ServiceFactory {
     getChatRoomsDB = (): ChatRoomsDB => this.getInstance("chatRoomsDB", ChatRoomsDB);
 
     createUserTeamsDB = (userId: string): UserTeamsDB => new UserTeamsDB(this.firestore, userId);
+    createTeamGroupsDB = (teamId: string): TeamGroupsDB => new TeamGroupsDB(this.firestore, teamId);
     createChatRoomsChatsDB = (roomId: string): ChatRoomChatsDB => new ChatRoomChatsDB(this.firestore, roomId);
 
     createUserService = (): UserService => new UserService(this.getUsersDB());
@@ -45,6 +48,7 @@ class ServiceFactory {
             this.getTeamsDB(),
             this.getUsersDB(),
             this.createTeamCodeService(),
+            this.createTeamGroupService(),
             this.createUserTeamsDB
         );
 
@@ -64,6 +68,9 @@ class ServiceFactory {
 
     createTeamCodeService = (): TeamCodeService => 
         new TeamCodeService(this.getTeamCodesDB(), this.getTeamsDB());
+
+    createTeamGroupService = (): TeamGroupService => 
+        new TeamGroupService(this.getChatRoomsDB(), this.createTeamGroupsDB)
 
     createChatRoomChatService = (): ChatRoomChatService => 
         new ChatRoomChatService(this.getUsersDB(), this.createChatRoomsChatsDB);

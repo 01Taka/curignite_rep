@@ -1,11 +1,11 @@
 import { NavigationItems } from "../../../../types/app/navigationTypes";
 import { teamPaths } from "../../../../types/path/mainPaths";
-import TeamIndexNavigation from "./indexNavigation/TeamIndexNavigation";
+import TeamIndexNavigation from "./TeamIndexNavigation";
 import TeamNavigation from "./pageNavigation/TeamPageNavigation";
 
 export const teamDesktopNavigation: NavigationItems[] = [
   {
-    path: teamPaths.base,
+    path: [`${teamPaths.base}/home`, teamPaths.menu],
     pathParameters: true,
     contentsTopBar: {
       children: <TeamNavigation />

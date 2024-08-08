@@ -1,5 +1,4 @@
 import { BaseDocumentData, BasePermissions, Member, RoleType } from "../baseTypes";
-import { ConvertTimestampToNumber } from "../../../../functions/db/dbUtils";
 
 export type ChatRoomParentType = "group" | "space" | "friend";
 
@@ -25,8 +24,6 @@ export interface ChatRoomData extends BaseDocumentData {
     permissions: ChatRoomPermissions;
     messageCount: number;
 }
-
-export type SerializableChatRoomData = ConvertTimestampToNumber<ChatRoomData>;
 
 export const defaultChatRoomPermissions: ChatRoomPermissions = {
     [RoleType.Admin]: [

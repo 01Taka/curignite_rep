@@ -39,3 +39,5 @@ export interface ActionInfo {
     userId: string;
     actionAt: Timestamp;
 }
+
+export type JoinState = "participated" | "requesting" | "approved" | "rejected" | "noInfo" | "error" | "loading";

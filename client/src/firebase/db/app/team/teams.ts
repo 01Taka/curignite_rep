@@ -91,6 +91,10 @@ class TeamsDB extends BaseDB<TeamData> {
             throw new Error("Failed to delete team data");
         }
     }
+
+    addTeamCollectionCallback(callback: (data: TeamData[]) => void): void {
+        this.addCollectionCallback(callback);
+    }
 }
 
 export default TeamsDB;

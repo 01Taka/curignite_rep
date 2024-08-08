@@ -4,7 +4,7 @@ import { Route, Routes, useNavigate } from 'react-router-dom';
 import SpaceSettingView from '../../../../features/app/space/start/SpaceSettingView';
 import { initialSpaceStartFormState, SpaceStartFormState } from '../../../../types/app/space/spaceTypes';
 import SpaceStartView from '../../../../features/app/space/start/SpaceStartView';
-import { SpaceData, SpaceJoinState } from '../../../../types/firebase/db/space/spacesTypes';
+import { SpaceData } from '../../../../types/firebase/db/space/spacesTypes';
 import { handleCreateSpace, updateSpaces } from '../../../../functions/app/space/spaceDBUtils';
 import { handleSetDefaultFormState, initializeSpaceSetting } from '../../../../functions/app/space/spaceUtils';
 import { useAppSelector } from '../../../../redux/hooks';
@@ -12,11 +12,12 @@ import { spacePaths } from '../../../../types/path/mainPaths';
 import { getLastSegment } from '../../../../functions/path/pathUtils';
 import SpaceJoinPopup from '../../../../features/app/space/start/SpaceJoinPopup';
 import serviceFactory from '../../../../firebase/db/factory';
+import { JoinState } from '../../../../types/firebase/db/baseTypes';
 
 interface JoinSpacePopup {
   open: boolean;
   space: SpaceData | null;
-  state: SpaceJoinState;
+  state: JoinState;
 }
 
 const SpaceStart: FC = () => {

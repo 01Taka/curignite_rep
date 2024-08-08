@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import CircularButton from '../../../../../components/input/button/CircularButton';
+import CircularButton from '../../../../components/input/button/CircularButton';
 
 interface TeamHomeViewProps {
     toJoinCreatePage: () => void;

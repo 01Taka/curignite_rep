@@ -1,4 +1,3 @@
-import { ConvertTimestampToNumber } from "../../../../functions/db/dbUtils";
 import { ActionInfo, BaseDocumentData, BasePermissions, Member, RoleType } from "../baseTypes";
 import { SelectItem } from "../../../util/componentsTypes";
 
@@ -35,7 +34,6 @@ export interface SpaceData extends BaseDocumentData {
   rejectedUsers: ActionInfo[];
   chatRoomId: string;
 }
-export type SerializableSpaceData = ConvertTimestampToNumber<SpaceData>;
 
 export const defaultSpacePermissions: SpacePermissions = {
   [RoleType.Admin]: [
@@ -60,8 +58,6 @@ export interface UserSpaceIds {
   userId: string;
   spaceIds: string[];
 }
-
-export type SpaceJoinState = "participated" | "requesting" | "approved" | "rejected" | "noInfo" | "error";
 
 // PublicationTarget 用の SelectItem 定義
 export const publicationTargetForSelect: SelectItem<SpacePublicationTarget>[] = [
