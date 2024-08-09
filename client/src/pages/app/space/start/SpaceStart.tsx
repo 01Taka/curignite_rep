@@ -5,7 +5,7 @@ import SpaceSettingView from '../../../../features/app/space/start/SpaceSettingV
 import { initialSpaceStartFormState, SpaceStartFormState } from '../../../../types/app/space/spaceTypes';
 import SpaceStartView from '../../../../features/app/space/start/SpaceStartView';
 import { SpaceData } from '../../../../types/firebase/db/space/spacesTypes';
-import { handleCreateSpace, updateSpaces } from '../../../../functions/app/space/spaceDBUtils';
+import { handleCreateSpace } from '../../../../functions/app/space/spaceDBUtils';
 import { handleSetDefaultFormState, initializeSpaceSetting } from '../../../../functions/app/space/spaceUtils';
 import { useAppSelector } from '../../../../redux/hooks';
 import { spacePaths } from '../../../../types/path/mainPaths';
@@ -35,7 +35,8 @@ const SpaceStart: FC = () => {
   const fetchAndSetSpaceData = useCallback(async () => {
     if (!uid) return;
     try {
-      const spacesData = await updateSpaces(uid);
+      const spaceService = serviceFactory.createSpaceService();
+      const spacesData = await spaceService.getSameTeamMembersSpaceData(uid);
       setSpaces(spacesData);
     } catch (error) {
       console.error('Failed to fetch spaces: ', error);

@@ -1,14 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { SpaceSliceState } from '../../../types/module/redux/space/spaceSliceTypes';
-import { fetchSpaces } from '../../actions/space/updateSpace';
-import { addAsyncCases, isSuccessfulPayload } from '../../../functions/redux/reduxUtils';
 import { TimestampConvertedDocumentMap } from '../../../types/firebase/db/formatTypes';
 import { SpaceData } from '../../../types/firebase/db/space/spacesTypes';
+import { AsyncThunkStatus } from '../../../types/module/redux/asyncThunkTypes';
 
 const initialState: SpaceSliceState = {
   currentSpaceId: "",
   spaces: {},
-  spacesFetchState: { state: "idle" },
+  spacesUpdateState: "idle",
 };
 
 const spaceSlice = createSlice({
@@ -21,16 +20,11 @@ const spaceSlice = createSlice({
     setSpaces: (state, action: PayloadAction<TimestampConvertedDocumentMap<SpaceData>>) => {
       state.spaces = action.payload;
     },
+    setSpacesUpdateState: (state, action: PayloadAction<AsyncThunkStatus>) => {
+      state.spacesUpdateState = action.payload;
+    }
   },
-  extraReducers: (builder) => {
-    addAsyncCases(builder, fetchSpaces, (state, payload) => {
-      state.spacesFetchState = payload;
-      if (isSuccessfulPayload(payload)) {
-        state.spaces = payload.value;
-      }
-    });
-  }
 });
 
-export const { setCurrentSpaceId, setSpaces } = spaceSlice.actions;
+export const { setCurrentSpaceId, setSpaces, setSpacesUpdateState } = spaceSlice.actions;
 export default spaceSlice.reducer;

@@ -34,15 +34,3 @@ export const handleCreateSpace = async (formState: SpaceStartFormState, uid: str
       formState.requiredApproval
     );
 };
-  
-/**
- * ユーザーのスペースデータを更新します。ユーザーが属しているチームのスペースを取得し、状態を更新します。
- *
- * @param userId - スペースデータを取得するユーザーのID。
- * @returns ユーザーのスペースデータの配列。
- */
-export const updateSpaces = async (userId: string): Promise<SpaceData[]> => {
-    const spaceService = serviceFactory.createSpaceService();
-    const spaceIds = await spaceService.getSameTeamMembersSpaceIds(userId);
-    return await spaceService.getSpaceDataByUserSpaceIds(spaceIds);
-};

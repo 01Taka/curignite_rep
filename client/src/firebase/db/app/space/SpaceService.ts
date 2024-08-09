@@ -211,6 +211,16 @@ export class SpaceService {
         }
         return state;
     }
+
+    /**
+     * 指定したユーザーIDに属するスペースをフィルタリングします。
+     * @param userId - ユーザーID
+     * @param spaces - スペースデータの配列
+     * @returns 指定したユーザーIDに属するスペースの配列
+     */
+    filterSpacesByUserId(userId: string, spaces: SpaceData[]): SpaceData[] {
+        return spaces.filter(space => Array.isArray(space.members) && space.members.some(member => member.userId === userId));
+    }
 }
 
 export default SpaceService;
