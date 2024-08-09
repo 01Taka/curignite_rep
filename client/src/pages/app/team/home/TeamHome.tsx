@@ -6,34 +6,36 @@ import TeamChat from '../../../../features/app/team/home/chat/TeamChat';
 import { PathParam } from '../../../../types/path/paths';
 import { useAppSelector } from '../../../../redux/hooks';
 import serviceFactory from '../../../../firebase/db/factory';
-import { revertTimestampConversion } from '../../../../functions/db/dataFormatUtils';
 import { JoinState } from '../../../../types/firebase/db/baseTypes';
+import { isApprovedJoinState } from '../../../../functions/db/dbUtils';
+import TeamAccessError from '../../../../features/app/team/home/TeamAccessError';
 
 const TeamHome: FC = () => {
   const params = useParams();
-  const teamId = params[PathParam.TeamId];
-  const { teams, currentTeamId } = useAppSelector(state => state.teamSlice);
-  const currentTeam = teams[currentTeamId];
   const { uid } = useAppSelector(state => state.userSlice);
+  const teamId = params[PathParam.TeamId];
   const [joinState, setJoinState] = useState<JoinState>("loading");
 
   useEffect(() => {
     const updateJoinState = async () => {
       if (uid && teamId) {
         const teamService = serviceFactory.createTeamService();
-        const state = await teamService.getSpaceJoinState(uid, teamId, revertTimestampConversion(currentTeam));
+        const state = await teamService.getSpaceJoinState(uid, teamId);
         setJoinState(state);
       }
     }
-  }, [uid, teamId, currentTeam]);
+    updateJoinState();
+  }, [uid, teamId]);
   
-  return (
+  return isApprovedJoinState(joinState) ? (
     <Routes>
       <Route path={getLastSegment(teamPaths.homeChildren.chat)} element={<TeamChat />} />
       <Route path={getLastSegment(teamPaths.homeChildren.participants)} element={<div>参加者</div>} />
       <Route path={getLastSegment(teamPaths.homeChildren.whiteboard)} element={<div>ホワイトボード</div>} />
     </Routes>
-  )
+  ) : (
+    <TeamAccessError joinState={joinState} />
+  );
 }
 
 export default TeamHome

@@ -4,8 +4,6 @@ import { useAppSelector } from '../../../../../redux/hooks';
 import serviceFactory from '../../../../../firebase/db/factory';
 
 const TeamChat: FC = () => {
-  console.log("SUC");
-  
   const { teams, currentTeamId } = useAppSelector(state => state.teamSlice);
   const currentTeam = teams[currentTeamId];
   const [chatRoomId, setChatRoomId] = useState("");

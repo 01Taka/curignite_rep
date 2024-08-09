@@ -10,8 +10,8 @@ const SpaceRoutes: FC = () => {
   return (
     <Routes>
         <Route path='' element={<SpaceBasePage />} />
-        <Route path={getLastSegment(spacePaths.start, undefined, true)} element={<SpaceStart />} />
-        <Route path={getLastSegment(spacePaths.home, undefined, true)} element={<SpaceHome />} />
+        <Route path={getLastSegment(spacePaths.start, true)} element={<SpaceStart />} />
+        <Route path={getLastSegment(spacePaths.home, true)} element={<SpaceHome />} />
     </Routes>
   )
 }

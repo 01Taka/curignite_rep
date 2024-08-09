@@ -20,7 +20,7 @@ export const replaceParams = (path: string, params: ParamReplace): string => {
  * @param paramReplace - パスのパラメータを置換するオブジェクト
  * @returns - パスの最後のセグメント
  */
-export function getLastSegment(path: string, paramReplace?: ParamReplace, wildcard: boolean = false): string {
+export function getLastSegment(path: string, wildcard: boolean = false, paramReplace?: ParamReplace): string {
   if (typeof path !== 'string' || path.trim() === '') {
     throw new Error('パスは有効な文字列である必要があります');
   }

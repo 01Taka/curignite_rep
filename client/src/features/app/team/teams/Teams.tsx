@@ -2,11 +2,12 @@ import React, { FC } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../../redux/hooks';
 import { TeamData } from '../../../../types/firebase/db/team/teamsTypes';
 import TeamsList from './TeamsList';
-import TeamSkeleton from './TeamSkeleton';
-import { mainPaths } from '../../../../types/path/mainPaths';
+import { teamPaths } from '../../../../types/path/mainPaths';
 import { useNavigate } from 'react-router-dom';
 import { setCurrentTeamId } from '../../../../redux/slices/team/teamSlice';
-import { dictToArrayWithRevertTimestampConversion, revertTimestampConversion } from '../../../../functions/db/dataFormatUtils';
+import { dictToArrayWithRevertTimestampConversion } from '../../../../functions/db/dataFormatUtils';
+import { replaceParams } from '../../../../functions/path/pathUtils';
+import { PathParam } from '../../../../types/path/paths';
 
 const Teams: FC = () => {
   const userData = useAppSelector(state => state.userSlice);
@@ -16,10 +17,7 @@ const Teams: FC = () => {
 
   const setDisplayTeam = (teamId: string) => {
     dispatch(setCurrentTeamId(teamId));
-
-    if (userData.device === "mobile") {
-      navigate(mainPaths.team);
-    }
+    navigate(replaceParams(teamPaths.homeChildren.participants, { [PathParam.TeamId]: teamId}))
   };
 
   return (

@@ -1,5 +1,5 @@
 import { Timestamp } from "firebase/firestore";
-import { ActionInfo, BaseDocumentData, Member, MemberData, RoleType } from "../../types/firebase/db/baseTypes";
+import { ActionInfo, BaseDocumentData, JoinState, Member, MemberData, RoleType } from "../../types/firebase/db/baseTypes";
 import serviceFactory from "../../firebase/db/factory";
 
 // 動的ドキュメント作成時の初期値を取得する
@@ -86,4 +86,9 @@ export const isUserInActionInfo = (userId: string, actionInfo: ActionInfo[]): bo
  */
 export const isUserInMembers = (userId: string, members: Member[]): boolean => {
     return members && members.some(member => member.userId === userId);
+}
+
+export const isApprovedJoinState = (state: JoinState): boolean => {
+    const approvedStatus: JoinState[] = ["approved", "participated"];
+    return approvedStatus.includes(state);
 }
