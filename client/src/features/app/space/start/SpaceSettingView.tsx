@@ -8,11 +8,11 @@ import CheckBoxFiled from '../../../../components/input/field/CheckBoxFiled';
 import CircularButton from '../../../../components/input/button/CircularButton';
 import SelectField from '../../../../components/input/field/SelectFiled';
 import FormContainer from '../../../../components/container/FormContainer';
-import { Alert, Typography } from '@mui/material';
+import { Alert, CircularProgress, Typography } from '@mui/material';
 import { publicationTargetForSelect } from '../../../../types/firebase/db/space/spacesTypes';
 import { keyMirror } from '../../../../functions/utils';
 
-const SpaceSettingView: FC<SpaceSettingViewProps> = ({ formState, onChangeFormState, onCompletion, onUpdateDefaultSetting }) => {
+const SpaceSettingView: FC<SpaceSettingViewProps> = ({ formState, isStarting, onChangeFormState, onCompletion, onUpdateDefaultSetting }) => {
   const [updatedDefaultSetting, setUpdatedDefaultSetting] = useState(false);
   const names = useMemo(() => keyMirror(formState), [formState]);
 
@@ -56,16 +56,20 @@ const SpaceSettingView: FC<SpaceSettingViewProps> = ({ formState, onChangeFormSt
           />
           <CheckBoxFiled
             label="参加には承認が必要"
-            name={names.requiredApproval}
-            checked={formState.requiredApproval}
+            name={names.requiresApproval}
+            checked={formState.requiresApproval}
             onChange={onChangeFormState}
           />
           <div className='flex self-end space-x-4'>
             <CircularButton onClick={handleUpdateDefaultSetting} size="lg" looks="frame">
               デフォルト<br/>に設定
             </CircularButton>
-            <CircularButton onClick={onCompletion} size="lg" bgColor="main">
-              完了して<br/>開始
+            <CircularButton onClick={onCompletion} size="lg" bgColor="main" invalidation={isStarting}>
+              {isStarting ? (
+                <CircularProgress />
+              ) : (
+                <>完了して<br/>開始</>
+              )}
             </CircularButton>
           </div>
           {updatedDefaultSetting && 

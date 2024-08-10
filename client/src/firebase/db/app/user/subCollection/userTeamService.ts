@@ -23,13 +23,13 @@ export class UserTeamService {
      * @param teamName - チーム名
      * @param iconUrl - チームアイコンのURL
      * @param password - チームのパスワード
-     * @param requiredApproval - 参加承認が必要かどうか
+     * @param requiresApproval - 参加承認が必要かどうか
      * @param description - チームの紹介
      * @param createdAt - チーム作成日時（デフォルトは現在時刻）
      */
-    async createTeam(uid: string, teamName: string, iconUrl: string, description: string, password: string, requiredApproval: boolean): Promise<void> {
+    async createTeam(uid: string, teamName: string, iconUrl: string, description: string, password: string, requiresApproval: boolean): Promise<void> {
         try {
-            const teamRef = await this.teamsDB.createTeam(uid, teamName, iconUrl, description, password, requiredApproval);
+            const teamRef = await this.teamsDB.createTeam(uid, teamName, iconUrl, description, password, requiresApproval);
             const newTeamId = teamRef.id;
             const userTeamsDB = this.getUserTeamsDBInstance(uid);
             await userTeamsDB.createUserTeam(uid, newTeamId, teamName, iconUrl, true);

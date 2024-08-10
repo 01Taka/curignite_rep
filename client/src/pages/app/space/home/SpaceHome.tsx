@@ -1,47 +1,42 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect } from 'react';
 import SpaceHomeView from '../../../../features/app/space/home/SpaceHomeView';
-import { useAppSelector } from '../../../../redux/hooks';
-import { getSpaceFromStorage } from '../../../../functions/app/space/spaceDBUtils';
-import { SpaceData } from '../../../../types/firebase/db/space/spacesTypes';
+import { useAppDispatch, useAppSelector } from '../../../../redux/hooks';
 import { useParams } from 'react-router-dom';
 import { PathParam } from '../../../../types/path/paths';
+import { setCurrentSpaceId } from '../../../../redux/slices/space/spaceSlice';
+import AccessStateErrorMessage from '../../../../features/utils/messages/AccessStateErrorMessage';
+import { isApprovedJoinState } from '../../../../functions/db/dbUtils';
+import { useSpaceJoinState } from './useSpaceJoinState';
 import { revertTimestampConversion } from '../../../../functions/db/dataFormatUtils';
 
 const SpaceHome: FC = () => {
   const params = useParams();
   const spaceId = params[PathParam.SpaceId];
-  
-  const [space, setSpace] = useState<SpaceData | null>(null);
-
+  const dispatch = useAppDispatch();
   const { spaces, currentSpaceId } = useAppSelector(state => state.spaceSlice);
-  const currentSpace = spaces[currentSpaceId];
+  const { uid } = useAppSelector(state => state.userSlice);
+  
+  const currentSpace = revertTimestampConversion(spaces[currentSpaceId]);
+  const joinState = useSpaceJoinState(uid, currentSpaceId, currentSpace);
 
   useEffect(() => {
-    const updateSpace = async () => {
-      try {
-        if (currentSpace) {
-          const data: SpaceData = revertTimestampConversion(currentSpace);
-          setSpace(data);
-        } else {
-          const spaceData = await getSpaceFromStorage();
-          setSpace(spaceData);
-        }
-      } catch (error) {
-        console.error("Failed to update space:", error);
+    if (spaceId && currentSpaceId !== spaceId) {
+      dispatch(setCurrentSpaceId(spaceId));
+    }
+  }, [spaceId, currentSpaceId, dispatch]);
+
+  return isApprovedJoinState(joinState) ? (
+    <SpaceHomeView space={currentSpace} />
+  ) : (
+    <AccessStateErrorMessage
+      joinState={joinState}
+      message={
+        <>
+          このスペースは存在しないかアクセスが許可されていません。<br />
+          URLが正しいかを確認してください。
+        </>
       }
-    };
-
-    updateSpace();
-  }, [currentSpace]);
-
-  return (
-    <>
-      {space ? (
-        <SpaceHomeView space={space} />
-      ) : (
-        <div>Loading...</div> // または別のローディング状態表示
-      )}
-    </>
+    />
   );
 };
 

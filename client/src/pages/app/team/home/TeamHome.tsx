@@ -8,7 +8,7 @@ import { useAppSelector } from '../../../../redux/hooks';
 import serviceFactory from '../../../../firebase/db/factory';
 import { JoinState } from '../../../../types/firebase/db/baseTypes';
 import { isApprovedJoinState } from '../../../../functions/db/dbUtils';
-import TeamAccessError from '../../../../features/app/team/home/TeamAccessError';
+import AccessStateErrorMessage from '../../../../features/utils/messages/AccessStateErrorMessage';
 
 const TeamHome: FC = () => {
   const params = useParams();
@@ -34,7 +34,7 @@ const TeamHome: FC = () => {
       <Route path={getLastSegment(teamPaths.homeChildren.whiteboard)} element={<div>ホワイトボード</div>} />
     </Routes>
   ) : (
-    <TeamAccessError joinState={joinState} />
+    <AccessStateErrorMessage joinState={joinState} message='このチームへのアクセスは許可されていません。'/>
   );
 }
 

@@ -7,6 +7,7 @@ import { AsyncThunkStatus } from '../../../types/module/redux/asyncThunkTypes';
 const initialState: SpaceSliceState = {
   currentSpaceId: "",
   spaces: {},
+  todayTotalLearningMinutes: 0, 
   spacesUpdateState: "idle",
 };
 
@@ -20,11 +21,14 @@ const spaceSlice = createSlice({
     setSpaces: (state, action: PayloadAction<TimestampConvertedDocumentMap<SpaceData>>) => {
       state.spaces = action.payload;
     },
+    setTodayTotalLearningMinutes: (state, action: PayloadAction<number>) => {
+      state.todayTotalLearningMinutes = action.payload;
+    },
     setSpacesUpdateState: (state, action: PayloadAction<AsyncThunkStatus>) => {
       state.spacesUpdateState = action.payload;
     }
   },
 });
 
-export const { setCurrentSpaceId, setSpaces, setSpacesUpdateState } = spaceSlice.actions;
+export const { setCurrentSpaceId, setSpaces, setTodayTotalLearningMinutes, setSpacesUpdateState } = spaceSlice.actions;
 export default spaceSlice.reducer;

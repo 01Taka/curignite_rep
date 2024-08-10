@@ -1,4 +1,4 @@
-import { Timestamp } from "firebase/firestore";
+import { DocumentData, DocumentReference, Timestamp } from "firebase/firestore";
 import { isUserInActionInfo, isUserInMembers } from "../../../../functions/db/dbUtils";
 import { uniqueByProperty } from "../../../../functions/utils";
 import ChatRoomsDB from "../chat/chatRooms";
@@ -35,7 +35,7 @@ export class SpaceService {
         description: string,
         publicationTarget: SpacePublicationTarget,
         requiresApproval: boolean
-    ) {
+    ): Promise<DocumentReference<DocumentData, DocumentData>> {
         try {
             const spaceRef = await this.spacesDB.createSpace(createdById, spaceName, description, publicationTarget, requiresApproval);
             const newSpaceId = spaceRef.id;
@@ -46,6 +46,7 @@ export class SpaceService {
             const chatRoomRef = await this.chatRoomsDB.createChatRoom(createdById, spaceName, user.iconUrl, newSpaceId, "space");
             await this.spacesDB.update(newSpaceId, { chatRoomId: chatRoomRef.id });
             await this.userService.appendSpaceIdToUserData(user, newSpaceId);
+            return spaceRef;
         } catch (error) {
             console.error("Error creating space:", error);
             throw new Error("Failed to create space.");
@@ -202,8 +203,8 @@ export class SpaceService {
      * @param spaceId スペースID
      * @returns スペース参加状態
      */
-    async getSpaceJoinStateWithJoinRequest(userId: string, spaceId: string): Promise<JoinState> {
-        const space = await this.spacesDB.getSpace(spaceId);
+    async getSpaceJoinStateWithJoinRequest(userId: string, spaceId: string, spaceData?: SpaceData): Promise<JoinState> {
+        const space = spaceData || await this.spacesDB.getSpace(spaceId);
         const state = await this.getSpaceJoinState(userId, spaceId, space);
         if (state === "noInfo") {
             await this.joinSpaceRequest(userId, spaceId, space);

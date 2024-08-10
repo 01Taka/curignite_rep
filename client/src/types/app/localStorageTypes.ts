@@ -16,5 +16,5 @@ export interface SpaceDefaultSettingStorageProps {
     spaceName: string,
     description: string,
     publicationTarget: SpacePublicationTarget,
-    requiredApproval: StringBoolean,
+    requiresApproval: StringBoolean,
 }

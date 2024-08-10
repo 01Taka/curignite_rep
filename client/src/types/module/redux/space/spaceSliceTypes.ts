@@ -5,5 +5,6 @@ import { AsyncThunkStatus } from "../asyncThunkTypes";
 export interface SpaceSliceState {
   currentSpaceId: string;
   spaces: TimestampConvertedDocumentMap<SpaceData>;
+  todayTotalLearningMinutes: number;
   spacesUpdateState: AsyncThunkStatus;
 }

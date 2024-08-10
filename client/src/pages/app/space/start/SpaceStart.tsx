@@ -1,18 +1,20 @@
-import React, { FC, useEffect, useState, useCallback } from 'react';
-import { handleFormStateChange } from '../../../../functions/utils';
+import React, { FC, useState, useCallback } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import SpaceSettingView from '../../../../features/app/space/start/SpaceSettingView';
-import { initialSpaceStartFormState, SpaceStartFormState } from '../../../../types/app/space/spaceTypes';
 import SpaceStartView from '../../../../features/app/space/start/SpaceStartView';
-import { SpaceData } from '../../../../types/firebase/db/space/spacesTypes';
-import { handleCreateSpace } from '../../../../functions/app/space/spaceDBUtils';
-import { handleSetDefaultFormState, initializeSpaceSetting } from '../../../../functions/app/space/spaceUtils';
-import { useAppSelector } from '../../../../redux/hooks';
-import { spacePaths } from '../../../../types/path/mainPaths';
-import { getLastSegment } from '../../../../functions/path/pathUtils';
 import SpaceJoinPopup from '../../../../features/app/space/start/SpaceJoinPopup';
+import { useAppSelector } from '../../../../redux/hooks';
 import serviceFactory from '../../../../firebase/db/factory';
+import { SpaceStartFormState } from '../../../../types/app/space/spaceTypes';
+import { SpaceData } from '../../../../types/firebase/db/space/spacesTypes';
 import { JoinState } from '../../../../types/firebase/db/baseTypes';
+import { startNewSpace } from '../../../../functions/app/space/spaceDBUtils';
+import { getInitialSpaceStartFormState, setDefaultSpaceFormState } from '../../../../functions/app/space/spaceUtils';
+import { dictToArrayWithRevertTimestampConversion, revertTimestampConversion } from '../../../../functions/db/dataFormatUtils';
+import { spacePaths } from '../../../../types/path/mainPaths';
+import { getLastSegment, replaceParams } from '../../../../functions/path/pathUtils';
+import { PathParam } from '../../../../types/path/paths';
+import { handleFormStateChange } from '../../../../functions/utils';
 
 interface JoinSpacePopup {
   open: boolean;
@@ -22,70 +24,77 @@ interface JoinSpacePopup {
 
 const SpaceStart: FC = () => {
   const navigate = useNavigate();
-  const [formState, setFormState] = useState<SpaceStartFormState>(initialSpaceStartFormState);
-  const [spaces, setSpaces] = useState<SpaceData[]>([]);
-  const [joinSpacePopup, setJoinSpacePopup] = useState<JoinSpacePopup>({
-    open: false,
-    space: null,
-    state: "error",
-  });
-
+  const { spaces } = useAppSelector(state => state.spaceSlice);
   const { uid, userData } = useAppSelector(state => state.userSlice);
+  const [formState, setFormState] = useState<SpaceStartFormState>(getInitialSpaceStartFormState(userData?.username));
+  const [joinSpacePopup, setJoinSpacePopup] = useState<JoinSpacePopup>({ open: false, space: null, state: "error" });
+  const [isStartingSpace, setIsStartingSpace] = useState(false);
 
-  const fetchAndSetSpaceData = useCallback(async () => {
+  /**
+   * デフォルト設定で新しいスペースを開始する
+   */
+  const handleDefaultStart = useCallback(async () => {
     if (!uid) return;
-    try {
-      const spaceService = serviceFactory.createSpaceService();
-      const spacesData = await spaceService.getSameTeamMembersSpaceData(uid);
-      setSpaces(spacesData);
-    } catch (error) {
-      console.error('Failed to fetch spaces: ', error);
-    }
-  }, [uid]);
+    await startNewSpace(formState, uid, setIsStartingSpace, navigate);
+  }, [uid, formState, navigate]);
 
-  const initializeAndFetchData = useCallback(async () => {
-    const initialState = await initializeSpaceSetting(userData?.username);
-    setFormState(initialState);
-    await fetchAndSetSpaceData();
-  }, [fetchAndSetSpaceData, userData?.username]);
+  /**
+   * 現在のフォーム状態をデフォルト設定として保存する
+   */
+  const handleSetDefaultFormState = useCallback(() => {
+    setDefaultSpaceFormState(formState);
+  }, [formState]);
 
-  useEffect(() => {
-    initializeAndFetchData();
-  }, [initializeAndFetchData]);
-
-  const handleDefaultStart = async () => {
+  /**
+   * 設定を完了し、新しいスペースを開始する
+   */
+  const handleSettingCompletion = useCallback(async () => {
     if (!uid) return;
-    await handleCreateSpace(formState, uid);
-    navigate(spacePaths.home);
-  };
+    handleSetDefaultFormState();
+    await startNewSpace(formState, uid, setIsStartingSpace, navigate);
+  }, [uid, formState, navigate, handleSetDefaultFormState]);
 
-  const handleSettingCompletion = async () => {
-    if (!uid) return;
-    await handleSetDefaultFormState(formState);
-    await handleCreateSpace(formState, uid);
-    navigate(spacePaths.home);
-  };
-
-  const handleJoinSpace = async (spaceId: string) => {
+  /**
+   * 指定したスペースIDのスペースに参加するポップアップを開く
+   */
+  const handleOpenJoinSpacePopup = useCallback(async (spaceId: string) => {
     if (!uid || !spaceId) return;
     try {
-      const spacesDB = serviceFactory.getSpacesDB();
+      const space = revertTimestampConversion(spaces[spaceId]);
       const spaceService = serviceFactory.createSpaceService();
-      const space = await spacesDB.getSpace(spaceId);
-      const state = await spaceService.getSpaceJoinStateWithJoinRequest(uid, spaceId);
-      setJoinSpacePopup({
-        open: true,
-        space,
-        state,
-      });
+      const state = await spaceService.getSpaceJoinStateWithJoinRequest(uid, spaceId, space);
+      setJoinSpacePopup({ open: true, space, state });
+      navigate(replaceParams(spacePaths.home, { [PathParam.SpaceId]: spaceId }));
     } catch (error) {
       console.error('Failed to join space: ', error);
     }
-  }
+  }, [uid, spaces, navigate]);
 
-  const onCloseJoinSpacePopup = () => {
-    setJoinSpacePopup({...joinSpacePopup, open: false});
-  }
+  /**
+   * スペース参加ポップアップを閉じる
+   */
+  const handleCloseJoinSpacePopup = useCallback(() => {
+    setJoinSpacePopup(prevState => ({ ...prevState, open: false }));
+  }, []);
+
+  /**
+   * スペース参加リクエストを送信する
+   */
+  const handleSendJoinRequest = useCallback((spaceId: string) => {
+    if (!uid || !spaces[spaceId]) return;
+    const spaceService = serviceFactory.createSpaceService();
+    spaceService.joinSpaceRequest(uid, spaceId, revertTimestampConversion(spaces[spaceId]));
+  }, [uid, spaces]);
+
+  /**
+   * 指定したスペースに参加する
+   */
+  const handleJoinSpace = useCallback((spaceId: string) => {
+    if (!uid || !spaces[spaceId]) return;
+    const spaceService = serviceFactory.createSpaceService();
+    spaceService.joinSpace(uid, spaceId, revertTimestampConversion(spaces[spaceId]));
+    navigate(replaceParams(spacePaths.home, { [PathParam.SpaceId]: spaceId }));
+  }, [uid, spaces, navigate]);
 
   return (
     <>
@@ -96,8 +105,9 @@ const SpaceStart: FC = () => {
             <SpaceStartView
               toSetting={() => navigate(spacePaths.startChildren.setting)}
               onStart={handleDefaultStart}
-              spaces={spaces}
-              onSpaceClick={handleJoinSpace}
+              isStarting={isStartingSpace}
+              spaces={dictToArrayWithRevertTimestampConversion(spaces)}
+              onSpaceClick={handleOpenJoinSpacePopup}
             />
           }
         />
@@ -106,9 +116,10 @@ const SpaceStart: FC = () => {
           element={
             <SpaceSettingView
               formState={formState}
+              isStarting={isStartingSpace}
               onChangeFormState={(e) => handleFormStateChange(e, setFormState)}
               onCompletion={handleSettingCompletion}
-              onUpdateDefaultSetting={() => handleSetDefaultFormState(formState)}
+              onUpdateDefaultSetting={handleSetDefaultFormState}
             />
           }
         />
@@ -117,7 +128,9 @@ const SpaceStart: FC = () => {
         <SpaceJoinPopup
           space={joinSpacePopup.space}
           joinState={joinSpacePopup.state}
-          onClose={onCloseJoinSpacePopup}
+          onClose={handleCloseJoinSpacePopup}
+          onSendRequest={handleSendJoinRequest}
+          onJoinSpace={handleJoinSpace}
         />
       }
     </>

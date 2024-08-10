@@ -1,37 +1,20 @@
 import { format, differenceInSeconds, differenceInMinutes, differenceInHours, differenceInDays, differenceInYears, subSeconds, subMinutes, subHours, subDays, subYears, startOfMinute, startOfHour, startOfDay, startOfYear } from 'date-fns';
 import { Timestamp } from 'firebase/firestore';
 import { DecimalDigits } from '../types/util/componentsTypes';
+import { AbsoluteFormat, absoluteFormatItems, DAYS_IN_MILLISECOND, DIGIT_SIZE, Format, FormatChange, HOURS_IN_MILLISECOND, MINUTES_IN_MILLISECOND, RelativeFormat, SECONDS_IN_MILLISECOND, TimeSizeUnit, TimeTypes, YEARS_IN_MILLISECOND } from '../types/util/dateTimeTypes';
 
-type TimeTypes = number | Timestamp | Date;
 
-const SECONDS_IN_MILLISECOND = 1000;
-const MINUTES_IN_MILLISECOND = SECONDS_IN_MILLISECOND * 60;
-const HOURS_IN_MILLISECOND = MINUTES_IN_MILLISECOND * 60;
-const DAYS_IN_MILLISECOND = HOURS_IN_MILLISECOND * 24;
-const YEARS_IN_MILLISECOND = DAYS_IN_MILLISECOND * 365;
-
-export interface RelativeFormat {
-    seconds: string;
-    minutes: string;
-    hours: string;
-    days: string;
-    years: string;
-    maxUnit: UnitType;
-    minUnit?: UnitType;
+const convertToMilliseconds = (time: TimeTypes): number => {
+    if (typeof time === 'number') {
+        return time;
+    } else if (time instanceof Date) {
+        return time.getTime();
+    } else if (time instanceof Timestamp) {
+        return time.toMillis();
+    } else {
+        throw new Error('Unsupported time type');
+    }
 }
-
-const absoluteFormatItems = ["y", "M", "d", "H", "m", "s"]
-
-export interface FormatRange<T extends boolean> {
-    unit: UnitType;
-    value: number;
-    format: T extends true ? string : Partial<RelativeFormat>;
-    absolute: T;
-    ending?: string;
-    truncate?: boolean;
-}
-
-type UnitType = "millis" | "seconds" | "minutes" | "hours" | "days" | "years";
 
 /**
  * 指定された時間単位の値をミリ秒に変換する。
@@ -39,24 +22,19 @@ type UnitType = "millis" | "seconds" | "minutes" | "hours" | "days" | "years";
  * @param value - 変換する値。
  * @returns ミリ秒に相当する値。
  */
-const toMillis = (unit: UnitType, value: number): number => {
-    switch (unit) {
-        case "millis":
-            return value;
-        case "seconds":
-            return value * SECONDS_IN_MILLISECOND;
-        case "minutes":
-            return value * MINUTES_IN_MILLISECOND;
-        case "hours":
-            return value * HOURS_IN_MILLISECOND;
-        case "days":
-            return value * DAYS_IN_MILLISECOND;
-        case "years":
-            return value * YEARS_IN_MILLISECOND;
-        default:
-            throw new Error(`Invalid unit type: ${unit}`);
-    }
+const toMillis = (unit: TimeSizeUnit, value: number): number => {
+    const unitToMillisMap: Record<TimeSizeUnit, number> = {
+        millis: value,
+        seconds: value * SECONDS_IN_MILLISECOND,
+        minutes: value * MINUTES_IN_MILLISECOND,
+        hours: value * HOURS_IN_MILLISECOND,
+        days: value * DAYS_IN_MILLISECOND,
+        years: value * YEARS_IN_MILLISECOND,
+    };
+
+    return unitToMillisMap[unit];
 };
+
 
 /**
  * TimeTypes の入力を Date オブジェクトに変換する。
@@ -75,40 +53,37 @@ const toDate = (input: TimeTypes): Date => {
     }
 };
 
-
-/**
- * TimeTypes の入力を Timestamp オブジェクトに変換する。
- * @param input - 変換する入力（数値、Timestamp、または Date）。
- * @returns 対応する Timestamp オブジェクト。
- */
-/*const toTimestamp = (input: TimeTypes): Timestamp => {
-    if (input instanceof Timestamp) {
-        return input;
-    } else if (input instanceof Date) {
-        return Timestamp.fromDate(input);
-    } else if (typeof input === 'number') {
-        return Timestamp.fromMillis(input);
-    } else {
-        throw new Error('Invalid input type. Must be number, Timestamp, or Date.');
-    }
-};*/
-
 /**
  * TimeTypes の入力を特定のフォーマットで文字列に変換する。
  * @param dateTime - フォーマットする日付/時間の入力。
- * @param formats - フォーマット文字列（デフォルトは 'yyyy-MM-dd HH:mm:ss'）。
+ * @param absoluteFormat - フォーマットオプション
  * @returns フォーマットされた日付文字列。
  */
-const absoluteDateString = (dateTime: TimeTypes, formats: string = 'yyyy-MM-dd HH:mm:ss'): string => {
-    // フォーマット文字列に有効なフォーマット項目が含まれているかを検証
-    const isValidFormat = absoluteFormatItems.some(item => formats.includes(item));
+const formatDateAsAbsolute = (dateTime: TimeTypes, absoluteFormat: AbsoluteFormat): string => {
+    const isValidFormat = absoluteFormatItems.some(item => absoluteFormat.format.includes(item));
     if (!isValidFormat) {
         return "";
     }
 
-    // 入力をDate型に変換してフォーマット
+    const date = toDate(dateTime);
+
     try {
-        return format(toDate(dateTime), formats);
+        let formattedDate = format(date, absoluteFormat.format);
+
+        if (absoluteFormat.truncateNotReachDigit) {
+            const nonZeroUnits = /[1-9]/;
+            formattedDate = formattedDate
+                .split(/(\d+)/)
+                .map(part => (nonZeroUnits.test(part) || isNaN(Number(part)) || Number(part) !== 0) ? part : '')
+                .join('')
+                .trim();
+        }
+
+        if (absoluteFormat.endingUnit) {
+            formattedDate += ` ${absoluteFormat.endingUnit}`;
+        }
+
+        return formattedDate;
     } catch (error) {
         console.error('Invalid date input:', error);
         return "";
@@ -118,17 +93,16 @@ const absoluteDateString = (dateTime: TimeTypes, formats: string = 'yyyy-MM-dd H
 /**
  * 2つの日付の差に基づいて相対的な日付文字列を生成する。
  * @param timestamp - 比較するタイムスタンプ。
- * @param formats - 相対的な文字列のフォーマット。
+ * @param relativeFormat - 相対的な文字列のフォーマット。
  * @param baseDate - 比較対象の日付（デフォルトは現在）。
  * @returns 相対的な日付文字列。
  */
-const relativeDateString = (
+const formatDateAsRelative = (
     timestamp: TimeTypes,
-    formats: Partial<RelativeFormat> = {},
-    baseDate: TimeTypes = new Date(),
+    relativeFormat: Partial<RelativeFormat> = {},
 ): string => {
-    const date = toDate(timestamp);
-    const base = toDate(baseDate);
+    const date = toDate(convertToMilliseconds(timestamp) * (relativeFormat.countUpTime ? -1 : 1));
+    const base = toDate(relativeFormat.baseDateTime ?? (relativeFormat.countUpTime ? 0 : new Date()));
 
     const diff = {
         seconds: differenceInSeconds(base, date),
@@ -139,29 +113,37 @@ const relativeDateString = (
     };
 
     const defaultFormats: RelativeFormat = {
-        seconds: '秒',
-        minutes: '分',
-        hours: '時間',
-        days: '日',
-        years: '年',
-        maxUnit: "days",
-        ...formats
+        units: {
+            seconds: '秒',
+            minutes: '分',
+            hours: '時間',
+            days: '日',
+            years: '年',
+        },
+        conversion: {
+            maxConvertTimeSizeUnit: "days",
+            minTruncateTimeSizeUnit: "seconds",
+        },
+        isAbsolute: false,
+        ...relativeFormat
     };
 
-    const units: UnitType[] = ["seconds", "minutes", "hours", "days", "years"];
-    const maxUnitIndex = units.indexOf(defaultFormats.maxUnit);
-    const minUnitIndex = units.indexOf(defaultFormats.minUnit || "seconds");
+    const units: TimeSizeUnit[] =  ["years", "days", "hours", "minutes", "seconds"];
+    const maxUnitIndex = units.indexOf(defaultFormats.conversion.maxConvertTimeSizeUnit || "days");
+    const minUnitIndex = units.indexOf(defaultFormats.conversion.minTruncateTimeSizeUnit || "seconds");
 
-    let result = '';
+    const formattedParts = units.slice(maxUnitIndex, minUnitIndex + 1)
+        .map((unit, index) => {
+            const value = diff[unit as keyof typeof diff] % (index === 0 ? Infinity : DIGIT_SIZE[unit]);
+            const format = defaultFormats.units[unit as keyof typeof defaultFormats.units];
+            return (defaultFormats.truncateNotReachDigit && value === 0) ? '' : `${value}${format}`;
+        })
+        .filter(Boolean);
 
-    for (let i = maxUnitIndex; i >= minUnitIndex; i--) {
-        const unit = units[i] as keyof typeof diff;
-        const value = diff[unit];
-        const format = defaultFormats[unit];
+    let result = formattedParts.join(' ').trim();
 
-        if (value > 0 && (i === maxUnitIndex || value % (i === minUnitIndex ? 1 : units[i - 1] === "years" ? 365 : 24) > 0)) {
-            result += `${value % (i === minUnitIndex ? 1 : units[i - 1] === "years" ? 365 : 24)}${format}`;
-        }
+    if (defaultFormats.endingUnit) {
+        result += ` ${defaultFormats.endingUnit}`;
     }
 
     return result;
@@ -198,48 +180,30 @@ export const millisToTime = (millis: number, decimalDigits: DecimalDigits = 0, f
  * @param truncate - 日時を切り捨てるかどうか（デフォルトは false）。
  * @returns 過去の日時の Date オブジェクト。
  */
-const getPastTime = (unit: UnitType, value: number, truncate?: boolean): Date => {
+const getPastTime = (unit: TimeSizeUnit, value: number, truncate: boolean = false): Date => {
     const currentTime = new Date();
-    let pastTime: Date;
+    const unitToSubMap: Record<TimeSizeUnit, (date: Date, amount: number) => Date> = {
+        millis: (date, amount) => new Date(date.getTime() - amount),
+        seconds: subSeconds,
+        minutes: subMinutes,
+        hours: subHours,
+        days: subDays,
+        years: subYears,
+    };
 
-    switch (unit) {
-        case "millis":
-            pastTime = new Date(currentTime.getTime() - value);
-            break;
-        case "seconds":
-            pastTime = subSeconds(currentTime, value);
-            break;
-        case "minutes":
-            pastTime = subMinutes(currentTime, value);
-            break;
-        case "hours":
-            pastTime = subHours(currentTime, value);
-            break;
-        case "days":
-            pastTime = subDays(currentTime, value);
-            break;
-        case "years":
-            pastTime = subYears(currentTime, value);
-            break;
-        default:
-            throw new Error(`Invalid unit type: ${unit}`);
-    }
+    const pastTime = unitToSubMap[unit](currentTime, value);
 
     if (truncate) {
-        switch (unit) {
-            case "millis":
-            case "seconds":
-                return startOfMinute(pastTime);
-            case "minutes":
-                return startOfHour(pastTime);
-            case "hours":
-                return startOfDay(pastTime);
-            case "days":
-            case "years":
-                return startOfYear(pastTime);
-            default:
-                return pastTime;
-        }
+        const unitToStartMap: Record<TimeSizeUnit, (date: Date) => Date> = {
+            millis: startOfMinute,
+            seconds: startOfMinute,
+            minutes: startOfHour,
+            hours: startOfDay,
+            days: startOfYear,
+            years: startOfYear,
+        };
+
+        return unitToStartMap[unit](pastTime);
     }
 
     return pastTime;
@@ -249,40 +213,33 @@ const getPastTime = (unit: UnitType, value: number, truncate?: boolean): Date =>
  * 日付/時間を一連のフォーマットと条件に基づいて文字列に変換する。
  * @param dateTime - 日付/時間の入力。
  * @param defaultFormat - デフォルトのフォーマット文字列。
- * @param defaultAbsolute - デフォルトで絶対フォーマットを使用するかどうか。
- * @param formatRange - フォーマットと条件の範囲。
+ * @param formatChanges - フォーマットと条件の範囲。
  * @returns フォーマットされた日付/時間文字列。
  */
-export const dateTimeToString = <T>(
+export const dateTimeToString = (
     dateTime: TimeTypes,
-    defaultFormat: T extends true ? string : Partial<RelativeFormat>,
-    defaultAbsolute: T,
-    defaultEnding: string = "",
-    formatRange?: FormatRange<boolean>[]
+    defaultFormat: Format,
+    formatChanges?: FormatChange[]
 ): string => {
     const date = toDate(dateTime);
-    const now = new Date();
-    const diffMillis = now.getTime() - date.getTime();
 
-    if (formatRange) {
-        formatRange?.sort((a, b) => toMillis(a.unit, a.value) - toMillis(b.unit, b.value));
+    if (formatChanges) {
+        formatChanges.sort((a, b) => toMillis(a.borderUnit, a.borderDateTime) - toMillis(b.borderUnit, b.borderDateTime));
 
-        for (const range of formatRange) {
-            console.log(date.getTime(), "##", getPastTime(range.unit, range.value, range.truncate).getTime());
-            
-            if (date.getTime() < getPastTime(range.unit, range.value, range.truncate).getTime()) {
-                if (range.absolute) {
-                    return `${absoluteDateString(date, range.format as string)}${range.ending ?? ""}`;
+        for (const formatChange of formatChanges) {
+            if (date.getTime() < getPastTime(formatChange.borderUnit, formatChange.borderDateTime, formatChange.format.truncateNotReachDigit).getTime()) {
+                if (formatChange.format.isAbsolute) {
+                    return `${formatDateAsAbsolute(date, formatChange.format)}${formatChange.format.endingUnit ?? ""}`;
                 } else {
-                    return `${relativeDateString(date, range.format as Partial<RelativeFormat>)}${range.ending ?? ""}`;
+                    return `${formatDateAsRelative(date, formatChange.format)}${formatChange.format.endingUnit ?? ""}`;
                 }
             }
         }
     }
 
     return (
-        `${defaultAbsolute ? absoluteDateString(date, String(defaultFormat))
-        : relativeDateString(date, defaultFormat as Partial<RelativeFormat>)}
-        ${defaultEnding ?? ""}`
+        `${defaultFormat.isAbsolute ? formatDateAsAbsolute(date, defaultFormat)
+        : formatDateAsRelative(date, defaultFormat)}
+        ${defaultFormat.endingUnit ?? ""}`
     );
 };

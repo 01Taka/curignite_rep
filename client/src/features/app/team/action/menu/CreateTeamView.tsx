@@ -13,7 +13,7 @@ export type CreateTeamFormState = {
   iconPath: string;
   description: string;
   password: string;
-  requiredApproval: boolean;
+  requiresApproval: boolean;
 };
 
 interface CreateTeamViewProps {
@@ -50,8 +50,8 @@ const CreateTeamView: FC<CreateTeamViewProps> = ({
         />
         <CheckBoxField
           label="参加には承認が必要"
-          name={names.requiredApproval}
-          checked={formState.requiredApproval}
+          name={names.requiresApproval}
+          checked={formState.requiresApproval}
           onChange={onFormStateChange}
         />
         <MultilineField

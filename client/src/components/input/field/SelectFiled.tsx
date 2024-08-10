@@ -7,11 +7,12 @@ interface SelectFieldProps<T extends string | number> {
   name: string;
   selectItems: SelectItem<T>[];
   value: T;
+  variant?: "standard" | "filled" | "outlined",
   onChange: SelectFieldChange;
 }
 
 // ジェネリック型 T を使用してコンポーネントを定義
-const SelectField = <T extends string | number>({ label, name, selectItems, value, onChange }: SelectFieldProps<T>) => {
+const SelectField = <T extends string | number>({ label, name, selectItems, value, variant = "filled", onChange }: SelectFieldProps<T>) => {
   // 選択肢に一致する value があるかチェック
   const isValidValue = selectItems.some(item => item.value === value);
 
@@ -21,7 +22,7 @@ const SelectField = <T extends string | number>({ label, name, selectItems, valu
         {label}
       </InputLabel>
       <Select
-        variant="filled"
+        variant={variant}
         labelId={`select-${label}-label`}
         id={`select-${label}`}
         type="select"

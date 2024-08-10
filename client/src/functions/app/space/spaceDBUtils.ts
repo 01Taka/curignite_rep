@@ -1,8 +1,12 @@
+import { NavigateFunction } from "react-router-dom";
 import { spacesDB } from "../../../firebase/db/dbs";
 import serviceFactory from "../../../firebase/db/factory";
 import { SpaceStartFormState } from "../../../types/app/space/spaceTypes";
 import { SpaceData } from "../../../types/firebase/db/space/spacesTypes";
 import { spaceStorage } from "../../localStorage/storages";
+import { spacePaths } from "../../../types/path/mainPaths";
+import { replaceParams } from "../../path/pathUtils";
+import { PathParam } from "../../../types/path/paths";
 
 /**
  * ストレージから現在のスペースを取得します。
@@ -24,13 +28,16 @@ export const getSpaceFromStorage = async (): Promise<SpaceData | null> => {
  * @param formState - 作成するスペースの詳細。
  * @param uid - スペースを作成するユーザーのID。
  */
-export const handleCreateSpace = async (formState: SpaceStartFormState, uid: string) => {
+export const startNewSpace = async (formState: SpaceStartFormState, uid: string, setIsStartingSpace: React.Dispatch<React.SetStateAction<boolean>>, navigate: NavigateFunction) => {
+    setIsStartingSpace(true);
     const spaceService = serviceFactory.createSpaceService();
-    await spaceService.createSpace(
+    const spaceRef = await spaceService.createSpace(
       uid,
       formState.spaceName,
       formState.description,
       formState.publicationTarget,
-      formState.requiredApproval
+      formState.requiresApproval
     );
+    navigate(replaceParams(spacePaths.home, { [PathParam.SpaceId]: spaceRef.id }));
+    setIsStartingSpace(false);
 };

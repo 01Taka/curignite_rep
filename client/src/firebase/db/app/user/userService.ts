@@ -1,6 +1,6 @@
 import { UserData } from "../../../../types/firebase/db/user/usersTypes";
 import { UsersDB } from "./users";
-import { Member } from "../../../../types/firebase/db/baseTypes";
+import { BaseDocumentData, Member } from "../../../../types/firebase/db/baseTypes";
 import { AuthStates } from "../../../../types/util/stateTypes";
 import { Timestamp } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
@@ -109,6 +109,21 @@ export class UserService {
             throw new Error("Failed to fetch users data by UIDs");
         }
     }
+
+    /**
+     * ドキュメントデータからuidをキーとするデータの辞書を取得
+     * @param data ドキュメントデータの配列
+     * @returns ユーザーのデータを含む辞書オブジェクト
+     */
+    async getCreatorDataByDocuments (data: BaseDocumentData[]): Promise<DocumentIdMap<UserData>> {
+        try {
+            const uids = data.map(value => value.createdById);
+            return await this.getUsersDataByUids(uids);
+        } catch (error) {
+            console.error("Error fetching users data by Documents: ", error);
+            throw new Error("Failed to fetch users data by Documents");
+        }
+    } 
 
     /**
      * 自分が作成したスペースIDのリストに新しくIDを追加

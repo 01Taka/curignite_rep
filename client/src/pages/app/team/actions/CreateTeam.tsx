@@ -14,7 +14,7 @@ const CreateTeam: FC = () => {
     iconPath: '',
     description: '',
     password: '',
-    requiredApproval: true,
+    requiresApproval: true,
   });
 
   useEffect(() => {
@@ -38,7 +38,7 @@ const CreateTeam: FC = () => {
           formState.iconPath, 
           formState.description,
           formState.password, 
-          formState.requiredApproval
+          formState.requiresApproval
         )
       } else {
         throw new Error("uidが取得できませんでした。");

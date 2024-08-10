@@ -1,10 +1,11 @@
 import React, { FC } from 'react';
 import { ChatData } from '../../../types/firebase/db/chat/chatsTypes';
-import { dateTimeToString, FormatRange } from '../../../functions/dateTimeUtils';
+import { dateTimeToString } from '../../../functions/dateTimeUtils';
 import { Avatar } from '@mui/material';
 import { cn } from '../../../functions/utils';
 import { useAppSelector } from '../../../redux/hooks';
 import ChatMessage from './ChatMessage';
+import { FormatChange } from '../../../types/util/dateTimeTypes';
 
 interface ChatProps {
     chat: ChatData;
@@ -14,15 +15,16 @@ interface ChatProps {
 const Chat: FC<ChatProps> = ({ chat, className }) => {
   const { uid } = useAppSelector(state => state.userSlice);
 
-  const formatRange: FormatRange<boolean>[] = [{
-    unit: "days",
-    value: 0,
-    format: "MM/dd HH:mm",
-    absolute: true,
-    truncate: true,
+  const formatChange: FormatChange[] = [{
+    borderDateTime: 1,
+    borderUnit: "days",
+    format: {
+      format: "mm:ss",
+      isAbsolute: true,
+    }
   }]
 
-  const time = dateTimeToString(chat.createdAt, {}, false, "前", formatRange);
+  const time = dateTimeToString(chat.createdAt, { endingUnit: "前", isAbsolute: false }, formatChange);
   const isMyChat = chat.createdById ===  uid;
 
   return (

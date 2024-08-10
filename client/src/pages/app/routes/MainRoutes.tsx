@@ -9,6 +9,7 @@ import ChatRoom from '../../../components/app/chat/ChatRoom';
 import { CircularProgress } from '@mui/material';
 import { mainRootPaths } from '../../../types/path/mainPaths';
 import { autoUpdateTeams } from '../../../redux/actions/team/teamActions';
+import { autoUpdateSpaces } from '../../../redux/actions/space/spaceActions';
 
 const MainRoutes: FC = () => {
   const dispatch = useAppDispatch();
@@ -17,6 +18,7 @@ const MainRoutes: FC = () => {
   useEffect(() => {
     if (uid) {
       autoUpdateTeams(dispatch, uid);
+      autoUpdateSpaces(dispatch, uid);
     }
   }, [dispatch, uid]);
 

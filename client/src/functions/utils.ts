@@ -12,7 +12,7 @@ export const handleFormStateChange = <T>(
 ) => {
   const { name, value, type } = event.target;
   const fieldValue = type === 'checkbox' ? (event.target as HTMLInputElement).checked : value;
-  
+
   setFormState((prevState) => ({
     ...prevState,
     [name]: fieldValue,

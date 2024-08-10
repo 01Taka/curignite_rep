@@ -1,41 +1,25 @@
-import React, { FC, useEffect, useCallback } from 'react';
+import React, { FC, useEffect } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import { SpaceData } from '../../../../types/firebase/db/space/spacesTypes';
-import { useNavigate } from 'react-router-dom';
-import { spacePaths } from '../../../../types/path/mainPaths';
 import CircularButton from '../../../../components/input/button/CircularButton';
-import serviceFactory from '../../../../firebase/db/factory';
-import { useAppSelector } from '../../../../redux/hooks';
-import { replaceParams } from '../../../../functions/path/pathUtils';
 import { JoinState } from '../../../../types/firebase/db/baseTypes';
 
 interface SpaceJoinPopupProps {
   space: SpaceData | null;
   joinState: JoinState;
+  onSendRequest: (spaceId: string) => void;
+  onJoinSpace: (spaceId: string) => void;
   onClose: () => void;
 }
 
-const SpaceJoinPopup: FC<SpaceJoinPopupProps> = ({ space, joinState, onClose }) => {
-  const navigate = useNavigate();
-  const { uid } = useAppSelector(state => state.userSlice);
+const SpaceJoinPopup: FC<SpaceJoinPopupProps> = ({ space, joinState, onSendRequest, onJoinSpace, onClose }) => {
   const needAction = joinState === 'approved' || joinState === 'noInfo';
-
-  const handelNavigateHome = useCallback((spaceId: string) => {
-    navigate(replaceParams(spacePaths.home, { "spaceId": spaceId }));
-  }, [navigate]);
 
   useEffect(() => {
     if (joinState === 'participated' && space) {
-      handelNavigateHome(space.docId);
+      onJoinSpace(space.docId);
     }
-  }, [joinState, space, handelNavigateHome]);
-
-  const handleSendJoinRequest = useCallback(async () => {
-    if (uid && space) {
-      const spaceService = serviceFactory.createSpaceService();
-      await spaceService.joinSpaceRequest(uid, space.docId);
-    }
-  }, [uid, space]);
+  }, [joinState, space, onJoinSpace]);
 
   const renderJoinStateMessage = () => {
     if (!space) {
@@ -59,10 +43,11 @@ const SpaceJoinPopup: FC<SpaceJoinPopupProps> = ({ space, joinState, onClose }) 
   };
 
   const onClickAction = () => {
-    if (joinState === 'approved' && !!space) {
-      handelNavigateHome(space.docId);
+    if (!space) return;
+    if (joinState === 'approved') {
+      onJoinSpace(space.docId);
     } else if (joinState === 'noInfo') {
-      handleSendJoinRequest();
+      onSendRequest(space.docId);
     }
   };
 
