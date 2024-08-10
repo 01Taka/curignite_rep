@@ -1,7 +1,7 @@
 import CryptoJS from 'crypto-js';
 
-// 暗号化に使用するキー
-const ENCRYPTION_KEY = process.env.REACT_APP_ENCRYPTION_KEY || 'default-secret-key'; // 環境変数を使用
+// Encryption key
+const ENCRYPTION_KEY = process.env.REACT_APP_ENCRYPTION_KEY || 'default-secret-key';
 
 export class LocalStorageHandler<T extends Record<keyof T, string>> {
     private id: string;
@@ -16,13 +16,13 @@ export class LocalStorageHandler<T extends Record<keyof T, string>> {
         return param ? `${this.id}-${String(key)}-${param}` : `${this.id}-${String(key)}`;
     }
 
-    private encrypt(data: string): string {
-        return CryptoJS.AES.encrypt(data, ENCRYPTION_KEY).toString();
+    private encrypt(data: string, password: string = ""): string {
+        return CryptoJS.AES.encrypt(data, `${ENCRYPTION_KEY}${password}`).toString();
     }
 
-    private decrypt(encryptedData: string): string | null {
+    private decrypt(encryptedData: string, password?: string): string | null {
         try {
-            const bytes = CryptoJS.AES.decrypt(encryptedData, ENCRYPTION_KEY);
+            const bytes = CryptoJS.AES.decrypt(encryptedData, `${ENCRYPTION_KEY}${password}`);
             return bytes.toString(CryptoJS.enc.Utf8);
         } catch (e) {
             console.error('Error decrypting data:', e);
@@ -38,37 +38,37 @@ export class LocalStorageHandler<T extends Record<keyof T, string>> {
         return true;
     }
 
-    public setData(key: keyof T, data: string, param?: string): void {
+    public setData(key: keyof T, data: string, param?: string, password?: string): void {
         if (this.isValidKey(key)) {
             const fullKey = this.getFullKey(key, param);
-            const encryptedData = this.encrypt(data);
+            const encryptedData = this.encrypt(data, password);
             localStorage.setItem(fullKey, encryptedData);
         }
     }
 
-    public setDataAllAtOnce(data: Partial<T>): void {
+    public setDataAllAtOnce(data: Partial<T>, password?: string): void {
         Object.entries(data).forEach(([key, value]) => {
             if (value !== null && value !== undefined) {
-                this.setData(key as keyof T, value.toString());
+                this.setData(key as keyof T, value.toString(), undefined, password);
             }
         });
     }
 
-    public getData(key: keyof T, param?: string): string | null {
+    public getData(key: keyof T, param?: string, password?: string): string | null {
         if (this.isValidKey(key)) {
             const fullKey = this.getFullKey(key, param);
             const encryptedData = localStorage.getItem(fullKey);
             if (encryptedData) {
-                return this.decrypt(encryptedData);
+                return this.decrypt(encryptedData, password);
             }
             console.warn(`No data found for key: ${String(key)} with param: ${param}.`);
         }
         return null;
     }
 
-    public getDataAllAtOnce(): Partial<T> {
+    public getDataAllAtOnce(password?: string): Partial<T> {
         return this.keys.reduce((data: Partial<T>, key: keyof T) => {
-            const value = this.getData(key);
+            const value = this.getData(key, undefined, password);
             if (value !== null) {
                 data[key] = value as T[keyof T];
             }

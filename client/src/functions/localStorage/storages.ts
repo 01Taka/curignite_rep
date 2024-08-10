@@ -1,5 +1,5 @@
 import { AuthStorageProps, SpaceDefaultSettingStorageProps, SpaceStorageProps } from "../../types/app/localStorageTypes";
-import { LocalStorageHandler } from "./handleData";
+import { LocalStorageHandler } from "./localStorageHandler";
 
 const authStorage = new LocalStorageHandler<AuthStorageProps>('authData', ['username', 'email', 'password']);
 const spaceStorage = new LocalStorageHandler<SpaceStorageProps>('space', ["currentSpaceId", "totalTime"]);

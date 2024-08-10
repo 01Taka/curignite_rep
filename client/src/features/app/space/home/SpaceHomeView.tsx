@@ -4,6 +4,7 @@ import { SpaceData } from '../../../../types/firebase/db/space/spacesTypes';
 import Calendar from '../../../../components/app/calendar/Calendar';
 import { Grid } from '@mui/material';
 import LearningSummary from './learningData/LearningSummary';
+import FinishLearning from './FinishLearning';
 
 interface SpaceHomeViewProps {
   space: SpaceData;
@@ -16,23 +17,24 @@ const SpaceHomeView: FC<SpaceHomeViewProps> = ({ space }) => {
       spacing={2} // MUIのGrid間のスペース
       className="h-screen p-4" // Tailwind CSSを適用
     >
-      <Grid item xs={4} className="flex items-center justify-center h-1/2 bg-gray-200">
+      <Grid item xs={4} className="flex items-center justify-center h-1/2 bggray-200">
         1
       </Grid>
-      <Grid item xs={4} className="flex items-center justify-center h-1/2 bg-gray-300">
+      <Grid item xs={4} className="flex items-center justify-center h-1/2 bggray-300">
         <SpaceTimer spaceId={space.docId}/>
       </Grid>
-      <Grid item xs={4} className="flex items-center justify-center h-1/2 bg-gray-400">
+      <Grid item xs={4} className="flex items-center justify-center h-1/2 bggray-400">
         <Calendar />
       </Grid>
-      <Grid item xs={4} className="flex items-center justify-center h-1/2 bg-gray-500">
+      <Grid item xs={4} className="flex items-center justify-center h-1/2 bggray-500">
         4
       </Grid>
-      <Grid item xs={4} className="flex items-center justify-center h-1/2 bg-gray-600">
+      <Grid item xs={4} className="flex items-center justify-center h-1/2 bggray-600">
         5
       </Grid>
-      <Grid item xs={4} className="flex items-center justify-center h-1/2 bg-gray-700">
+      <Grid item xs={4} className="flex items-start justify-around h-1/2 bggray-700">
         <LearningSummary />
+        <FinishLearning />
       </Grid>
     </Grid>
   );

@@ -5,9 +5,8 @@ import TimerDisplay from './TimerDisplay';
 import TimerControls from './TimerControls';
 import { spaceTimerModes, SpaceTimerMode } from '../../../../../types/app/space/spaceTypes';
 import { useAppDispatch, useAppSelector } from '../../../../../redux/hooks';
-import { MINUTES_IN_MILLISECOND } from '../../../../../types/util/dateTimeTypes';
-import { setTodayTotalLearningMinutes } from '../../../../../redux/slices/space/spaceSlice';
-import { spaceStorage } from '../../../../../functions/localStorage/storages';
+import { SECONDS_IN_MILLISECOND } from '../../../../../types/util/dateTimeTypes';
+import { setTodayTotalLearningTime } from '../../../../../redux/slices/space/spaceSlice';
 
 interface SpaceTimerProps {
   spaceId: string;
@@ -20,16 +19,21 @@ const DEFAULT_TIMER_INITIAL_TIME = 60 * 60 * 1000;
 
 const SpaceTimer: FC<SpaceTimerProps> = ({ spaceId }) => {
   const dispatch = useAppDispatch();
-  const { todayTotalLearningMinutes } = useAppSelector(state => state.spaceSlice);
+  const { todayTotalLearningTime } = useAppSelector(state => state.spaceSlice);
+  const { uid } = useAppSelector(state => state.userSlice);
+  const [prevSecond, setPrevSecond] = useState(0);
   const [time, setTime] = useState(0);
   const [active, setActive] = useState(false);
-  const [totalTime, setTotalTime] = useState(0);
   const [cycleNumber, setCycleNumber] = useState(1);
   const [isBreak, setIsBreak] = useState(false);
   const [timerMode, setTimerMode] = useState<SpaceTimerMode>("stopwatch");
   const [pomodoro, setPomodoro] = useState<Pomodoro>(DEFAULT_POMODORO);
   const [timerInitialTime, setTimerInitialTime] = useState(DEFAULT_TIMER_INITIAL_TIME);
 
+  const handleSetTime = (time: number) => {
+    setPrevSecond(time)
+    setTime(time);
+  }
   useEffect(() => {
     // ローカルストレージからデータを取得する処理は、後で追加する
     setPomodoro(DEFAULT_POMODORO);
@@ -48,29 +52,29 @@ const SpaceTimer: FC<SpaceTimerProps> = ({ spaceId }) => {
   }, [timerMode, pomodoro.cycle, timerInitialTime]);
 
   useEffect(() => {
-    setTotalTime(getTotalTime(spaceId));
-    setTime(getInitialTime());
+    if (uid) {
+      setTime(getInitialTime());
+      const time = getTotalTime(uid);
+      dispatch(setTodayTotalLearningTime(time));
+    }
+  }, [spaceId, uid, getInitialTime, dispatch]);
 
-    const minutes = Math.floor(Number(spaceStorage.getData("totalTime", spaceId)) / MINUTES_IN_MILLISECOND);
-    dispatch(setTodayTotalLearningMinutes(minutes));
-  }, [spaceId, pomodoro, timerMode, timerInitialTime, getInitialTime, dispatch]);
+  const handleUpdateTotalTime = useCallback((_: number) => {
+    if (!isBreak && uid) {
+      const diff = Math.abs(time - (prevSecond * SECONDS_IN_MILLISECOND));
 
-  const handleUpdateTotalTime = useCallback((timeDifference: number) => {
-    if (!isBreak) {
-      const total = addTotalTime(spaceId, Math.abs(timeDifference));
-      setTotalTime(total);
-
-      // reduxの今日の合計学習分数を更新
-      const minutes = Math.floor(total / MINUTES_IN_MILLISECOND);
-      if (todayTotalLearningMinutes !== minutes) {
-        dispatch(setTodayTotalLearningMinutes(minutes));
+      if (diff >= 1000) {
+        const second = Math.floor(time / SECONDS_IN_MILLISECOND)
+        setPrevSecond(second);
+        const totalTime = addTotalTime(uid, 1000);
+        dispatch(setTodayTotalLearningTime(totalTime));
       }
     }
-  }, [spaceId, isBreak, todayTotalLearningMinutes, dispatch]);
+  }, [spaceId, uid, isBreak, prevSecond, time, todayTotalLearningTime, dispatch]);
 
   const handleReset = useCallback(() => {
     setCycleNumber(1);
-    setTime(getInitialTime());
+    handleSetTime(getInitialTime());
     setIsBreak(false);
   }, [getInitialTime]);
 
@@ -78,11 +82,11 @@ const SpaceTimer: FC<SpaceTimerProps> = ({ spaceId }) => {
     if (timerMode === "pomodoro") {
       if (isBreak) {
         setIsBreak(false);
-        setTime(pomodoro.cycle);
+        handleSetTime(pomodoro.cycle);
         setCycleNumber(prev => prev + 1);
       } else {
         setIsBreak(true);
-        setTime(pomodoro.break);
+        handleSetTime(pomodoro.break);
       }
       setActive(true);
     }
@@ -105,7 +109,6 @@ const SpaceTimer: FC<SpaceTimerProps> = ({ spaceId }) => {
       />
       <TimerControls
         cycleNumber={cycleNumber}
-        totalTime={totalTime}
         timerMode={timerMode}
         timerModes={spaceTimerModes}
         active={active}
