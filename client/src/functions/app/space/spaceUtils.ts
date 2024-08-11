@@ -33,8 +33,6 @@ export const getInitialSpaceStartFormState = (username?: string): SpaceStartForm
  * @param formState - 保存するフォーム状態。
  */
 export const setDefaultSpaceFormState = (formState: SpaceStartFormState) => {
-  console.log(formState.publicationTarget);
-  
   const data: SpaceDefaultSettingStorageProps = {
     spaceName: formState.spaceName,
     description: formState.description,

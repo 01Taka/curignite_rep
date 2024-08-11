@@ -1,12 +1,11 @@
 import React, { FC, useState, useEffect, useCallback } from 'react';
 import { Pomodoro, TimerSize } from '../../../../../types/util/componentsTypes';
-import { addTotalTime, getTotalTime } from '../../../../../functions/app/space/spaceTimerUtils';
 import TimerDisplay from './TimerDisplay';
 import TimerControls from './TimerControls';
 import { spaceTimerModes, SpaceTimerMode } from '../../../../../types/app/space/spaceTypes';
 import { useAppDispatch, useAppSelector } from '../../../../../redux/hooks';
 import { SECONDS_IN_MILLISECOND } from '../../../../../types/util/dateTimeTypes';
-import { setTodayTotalLearningTime } from '../../../../../redux/slices/space/spaceSlice';
+import { addLearningTime } from '../../../../../functions/app/space/learningSessionUtils';
 
 interface SpaceTimerProps {
   spaceId: string;
@@ -19,7 +18,6 @@ const DEFAULT_TIMER_INITIAL_TIME = 60 * 60 * 1000;
 
 const SpaceTimer: FC<SpaceTimerProps> = ({ spaceId }) => {
   const dispatch = useAppDispatch();
-  const { todayTotalLearningTime } = useAppSelector(state => state.spaceSlice);
   const { uid } = useAppSelector(state => state.userSlice);
   const [prevSecond, setPrevSecond] = useState(0);
   const [time, setTime] = useState(0);
@@ -52,10 +50,8 @@ const SpaceTimer: FC<SpaceTimerProps> = ({ spaceId }) => {
   }, [timerMode, pomodoro.cycle, timerInitialTime]);
 
   useEffect(() => {
-    if (uid) {
+    if (uid && spaceId) {
       setTime(getInitialTime());
-      const time = getTotalTime(uid);
-      dispatch(setTodayTotalLearningTime(time));
     }
   }, [spaceId, uid, getInitialTime, dispatch]);
 
@@ -66,11 +62,10 @@ const SpaceTimer: FC<SpaceTimerProps> = ({ spaceId }) => {
       if (diff >= 1000) {
         const second = Math.floor(time / SECONDS_IN_MILLISECOND)
         setPrevSecond(second);
-        const totalTime = addTotalTime(uid, 1000);
-        dispatch(setTodayTotalLearningTime(totalTime));
+        addLearningTime(dispatch, uid, spaceId, 1000);
       }
     }
-  }, [spaceId, uid, isBreak, prevSecond, time, todayTotalLearningTime, dispatch]);
+  }, [spaceId, uid, isBreak, prevSecond, time, dispatch]);
 
   const handleReset = useCallback(() => {
     setCycleNumber(1);
@@ -98,7 +93,7 @@ const SpaceTimer: FC<SpaceTimerProps> = ({ spaceId }) => {
         timerMode={timerMode}
         size="xl"
         isBreak={isBreak}
-        active={active}
+        active={!!spaceId && active}
         initialTime={isBreak ? pomodoro.break : getInitialTime()}
         time={time}
         setTime={setTime}

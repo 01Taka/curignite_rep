@@ -15,6 +15,8 @@ import ChatRoomChatsDB from "./app/chat/subCollection/chatRoomChats";
 import { db } from "../firebase";
 import { TeamGroupService } from "./app/team/subCollection/teamGroupService";
 import { TeamGroupsDB } from "./app/team/subCollection/teamGroup";
+import UserDailyLogsDB from "./app/user/subCollection/userDailyLogs";
+import { UserDailyLogService } from "./app/user/subCollection/userDailyLogsService";
 
 class ServiceFactory {
     private firestore: Firestore;
@@ -38,6 +40,7 @@ class ServiceFactory {
     getChatRoomsDB = (): ChatRoomsDB => this.getInstance("chatRoomsDB", ChatRoomsDB);
 
     createUserTeamsDB = (userId: string): UserTeamsDB => new UserTeamsDB(this.firestore, userId);
+    createUserDailyLogsDB = (userId: string): UserDailyLogsDB => new UserDailyLogsDB(this.firestore, userId);
     createTeamGroupsDB = (teamId: string): TeamGroupsDB => new TeamGroupsDB(this.firestore, teamId);
     createChatRoomsChatsDB = (roomId: string): ChatRoomChatsDB => new ChatRoomChatsDB(this.firestore, roomId);
 
@@ -50,6 +53,11 @@ class ServiceFactory {
             this.createTeamCodeService(),
             this.createTeamGroupService(),
             this.createUserTeamsDB
+        );
+    
+    createUserDailyLogService = (): UserDailyLogService => 
+        new UserDailyLogService(
+            this.createUserDailyLogsDB
         );
 
     createTeamService = (): TeamService => 

@@ -8,8 +8,10 @@ interface LearningSummaryProps {}
 const LearningSummary: React.FC<LearningSummaryProps> = () => {
   const [monthlyAverage, setMonthlyAverage] = useState<number>(0);
   const [weeklyTotal, setWeeklyTotal] = useState<number>(0);
+  const [todayTotal, setTodayTotal] = useState<number>(0);
   const { uid } = useAppSelector(state => state.userSlice);
-  const { todayTotalLearningTime } = useAppSelector(state => state.spaceSlice);
+  const { learningTime } = useAppSelector(state => state.learningSessionSlice);
+  const { currentSpaceId, todayTotalLearningTime } = useAppSelector(state => state.spaceSlice)
 
   useEffect(() => {
     const fetchLearnData = async () => {
@@ -19,16 +21,24 @@ const LearningSummary: React.FC<LearningSummaryProps> = () => {
       setMonthlyAverage(monthlyAvg);
       setWeeklyTotal(weeklySum);
     };
-
     fetchLearnData();
   }, [uid]);
+
+  useEffect(() => {
+    if (uid && currentSpaceId) {
+      const total = learningTime + todayTotalLearningTime;
+      console.log(total, todayTotalLearningTime, learningTime);
+      
+      setTodayTotal(total);
+    }
+  }, [uid, currentSpaceId, todayTotalLearningTime, learningTime])
 
   return (
     <div>
       <Typography variant='h4'>学習の成績</Typography>
       <SummaryItem label="今月の平均" time={monthlyAverage} />
       <SummaryItem label="今週の合計" time={weeklyTotal} />
-      <SummaryItem label="今日の学習時間" time={todayTotalLearningTime} />
+      <SummaryItem label="今日の学習時間" time={todayTotal} />
     </div>
   );
 };

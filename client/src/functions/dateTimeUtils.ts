@@ -4,7 +4,7 @@ import { DecimalDigits } from '../types/util/componentsTypes';
 import { AbsoluteFormat, absoluteFormatItems, DAYS_IN_MILLISECOND, DIGIT_SIZE, Format, FormatChange, HOURS_IN_MILLISECOND, MINUTES_IN_MILLISECOND, RelativeFormat, SECONDS_IN_MILLISECOND, TimeSizeUnit, TimeTypes, YEARS_IN_MILLISECOND } from '../types/util/dateTimeTypes';
 
 
-const convertToMilliseconds = (time: TimeTypes): number => {
+export const convertToMilliseconds = (time: TimeTypes): number => {
     if (typeof time === 'number') {
         return time;
     } else if (time instanceof Date) {
@@ -51,6 +51,25 @@ const toDate = (input: TimeTypes): Date => {
     } else {
         throw new Error('Invalid input type. Must be number, Timestamp, or Date.');
     }
+};
+
+/**
+ * TimeTypes の入力を Timestamp オブジェクトに変換する。
+ * @param input - 変換する入力（数値、Timestamp、または Date）。
+ * @returns 対応する Timestamp オブジェクト。
+ */
+export const toTimestamp = (input: TimeTypes): Timestamp => {
+    return Timestamp.fromDate(toDate(input));
+}
+
+/**
+ * 特定の日付の0時0分のタイムスタンプを返します。
+ * @param date 対象の日付
+ * @returns 0時0分のタイムスタンプ
+ */
+export const getMidnightTimestamp = (date: TimeTypes = new Date()): Timestamp => {
+    const midnight = startOfDay(toDate(date));
+    return Timestamp.fromDate(midnight);
 };
 
 /**

@@ -8,6 +8,7 @@ import AccessStateErrorMessage from '../../../../features/utils/messages/AccessS
 import { isApprovedJoinState } from '../../../../functions/db/dbUtils';
 import { useSpaceJoinState } from './useSpaceJoinState';
 import { revertTimestampConversion } from '../../../../functions/db/dataFormatUtils';
+import { moveLearningSession } from '../../../../functions/app/space/learningSessionUtils';
 
 const SpaceHome: FC = () => {
   const params = useParams();
@@ -20,10 +21,11 @@ const SpaceHome: FC = () => {
   const joinState = useSpaceJoinState(uid, currentSpaceId, currentSpace);
 
   useEffect(() => {
-    if (spaceId && currentSpaceId !== spaceId) {
+    if (uid && spaceId && currentSpaceId !== spaceId) {
       dispatch(setCurrentSpaceId(spaceId));
+      moveLearningSession(dispatch, uid, spaceId); // 非同期関数です
     }
-  }, [spaceId, currentSpaceId, dispatch]);
+  }, [uid, spaceId, currentSpaceId, dispatch]);
 
   return isApprovedJoinState(joinState) ? (
     <SpaceHomeView space={currentSpace} />
