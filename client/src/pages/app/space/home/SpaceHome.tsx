@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import SpaceHomeView from '../../../../features/app/space/home/SpaceHomeView';
 import { useAppDispatch, useAppSelector } from '../../../../redux/hooks';
 import { useParams } from 'react-router-dom';
@@ -9,6 +9,7 @@ import { isApprovedJoinState } from '../../../../functions/db/dbUtils';
 import { useSpaceJoinState } from './useSpaceJoinState';
 import { revertTimestampConversion } from '../../../../functions/db/dataFormatUtils';
 import { moveLearningSession } from '../../../../functions/app/space/learningSessionUtils';
+import { JoinState } from '../../../../types/firebase/db/baseTypes';
 
 const SpaceHome: FC = () => {
   const params = useParams();
@@ -16,9 +17,16 @@ const SpaceHome: FC = () => {
   const dispatch = useAppDispatch();
   const { spaces, currentSpaceId } = useAppSelector(state => state.spaceSlice);
   const { uid } = useAppSelector(state => state.userSlice);
+  const [joinState, setJoinState] = useState<JoinState>("loading");
   
   const currentSpace = revertTimestampConversion(spaces[currentSpaceId]);
-  const joinState = useSpaceJoinState(uid, currentSpaceId, currentSpace);
+  const joinStateFromHook = useSpaceJoinState(uid, currentSpaceId, currentSpace);
+
+  useEffect(() => {
+    if (currentSpace) {
+      setJoinState(joinStateFromHook);
+    }
+  }, [currentSpace, joinStateFromHook]);
 
   useEffect(() => {
     if (uid && spaceId && currentSpaceId !== spaceId) {
@@ -28,7 +36,7 @@ const SpaceHome: FC = () => {
   }, [uid, spaceId, currentSpaceId, dispatch]);
 
   return isApprovedJoinState(joinState) ? (
-    <SpaceHomeView space={currentSpace} />
+    <SpaceHomeView />
   ) : (
     <AccessStateErrorMessage
       joinState={joinState}

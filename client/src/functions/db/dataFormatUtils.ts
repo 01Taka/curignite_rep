@@ -1,6 +1,6 @@
 import { Timestamp } from "firebase/firestore";
 import { BaseDocumentData } from "../../types/firebase/db/baseTypes";
-import { ConvertTimestampToNumber, DocumentIdMap, RevertTimestampToOriginal, TimestampConvertedDocumentMap } from "../../types/firebase/db/formatTypes";
+import { ConvertTimestampToNumber, DocumentIdMap, TimestampConvertedDocumentMap } from "../../types/firebase/db/formatTypes";
 
 /**
  * Timestampをnumberに変換する関数
@@ -42,7 +42,11 @@ export const convertTimestampsToNumbers = <T>(data: T): ConvertTimestampToNumber
  * @param data - 変換対象のデータ
  * @returns 変換後のデータ
  */
-export const revertTimestampConversion = <T>(data: ConvertTimestampToNumber<T>): T => {
+export const revertTimestampConversion = <T>(data: ConvertTimestampToNumber<T>): T | null=> {
+  if (!data) {
+    return null;
+  }
+
   if (typeof data === 'number') {
     return new Timestamp(data, 0) as unknown as T;
   }
@@ -62,27 +66,6 @@ export const revertTimestampConversion = <T>(data: ConvertTimestampToNumber<T>):
   }
 
   return data as T;
-};
-
-/**
- * 配列を辞書に変換する関数
- * @param array - 配列データ
- * @returns ドキュメントIDをキーとする辞書
- */
-export const arrayToDict = <T extends BaseDocumentData>(array: T[]): DocumentIdMap<T> => {
-  return array.reduce((acc, item) => {
-    acc[item.docId] = item;
-    return acc;
-  }, {} as DocumentIdMap<T>);
-};
-
-/**
- * 辞書を配列に変換する関数
- * @param dict - ドキュメントIDをキーとする辞書
- * @returns 配列データ
- */
-export const dictToArray = <T extends BaseDocumentData>(dict: DocumentIdMap<T>): T[] => {
-  return Object.values(dict);
 };
 
 /**

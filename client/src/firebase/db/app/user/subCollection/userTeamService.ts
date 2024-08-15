@@ -49,7 +49,7 @@ export class UserTeamService {
      */
     private async sendPendingRequest(uid: string, team: TeamData) {
         const pendingRequests = team.pendingRequests || [];
-        pendingRequests.push({ userId: uid, actionAt: Timestamp.now() });
+        pendingRequests.push({ userId: uid, actionAt: Timestamp.now(), actionType: "pending" });
         await this.teamsDB.updateTeam(team.docId, { pendingRequests });
 
         const userTeamsDB = this.getUserTeamsDBInstance(uid);

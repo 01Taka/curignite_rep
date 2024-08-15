@@ -69,11 +69,13 @@ const SpaceStart: FC = () => {
 
     try {
       const space = revertTimestampConversion(spaces[spaceId]);
-      const spaceService = serviceFactory.createSpaceService();
-      const state = await spaceService.getSpaceJoinStateWithJoinRequest(uid, spaceId, space);
-
-      setJoinSpacePopup({ open: true, space, state });
-      navigate(replaceParams(spacePaths.home, { [PathParam.SpaceId]: spaceId }));
+      if (space) {
+        const spaceService = serviceFactory.createSpaceService();
+        const state = await spaceService.getSpaceJoinStateWithJoinRequest(uid, space);
+  
+        setJoinSpacePopup({ open: true, space, state });
+        navigate(replaceParams(spacePaths.home, { [PathParam.SpaceId]: spaceId }));
+      }
     } catch (error) {
       console.error('Failed to join space: ', error);
     }
@@ -93,7 +95,7 @@ const SpaceStart: FC = () => {
     if (!uid || !spaces[spaceId]) return;
 
     const spaceService = serviceFactory.createSpaceService();
-    spaceService.joinSpaceRequest(uid, spaceId, revertTimestampConversion(spaces[spaceId]));
+    spaceService.joinSpaceRequest(uid, revertTimestampConversion(spaces[spaceId]) ?? spaceId);
   }, [uid, spaces]);
 
   /**
@@ -103,7 +105,7 @@ const SpaceStart: FC = () => {
     if (!uid || !spaces[spaceId]) return;
 
     const spaceService = serviceFactory.createSpaceService();
-    spaceService.joinSpace(uid, spaceId, revertTimestampConversion(spaces[spaceId]));
+    spaceService.joinSpace(uid, revertTimestampConversion(spaces[spaceId]) ?? spaceId);
     navigate(replaceParams(spacePaths.home, { [PathParam.SpaceId]: spaceId }));
   }, [uid, spaces, navigate]);
 

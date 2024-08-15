@@ -24,6 +24,7 @@ class SpacesDB extends BaseDB<SpaceData> {
             requiresApproval,
             members: await createInitialAdminMember(createdById),
             permissions: defaultSpacePermissions,
+            awayUsers: [],
             pendingRequests: [],
             approvedUsers: [],
             invitedUsers: [],

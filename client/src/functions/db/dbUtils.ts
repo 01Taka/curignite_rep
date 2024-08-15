@@ -89,6 +89,6 @@ export const isUserInMembers = (userId: string, members: Member[]): boolean => {
 }
 
 export const isApprovedJoinState = (state: JoinState): boolean => {
-    const approvedStatus: JoinState[] = ["approved", "participated"];
+    const approvedStatus: JoinState[] = ["approved", "participated", "away"];
     return approvedStatus.includes(state);
 }

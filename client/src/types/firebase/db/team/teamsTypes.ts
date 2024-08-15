@@ -21,9 +21,9 @@ export interface TeamData extends BaseDocumentData {
     requiresApproval: boolean;
     members: Member[];
     permissions: TeamPermissions;
-    pendingRequests: ActionInfo[];
-    invitedUsers: ActionInfo[];
-    rejectedUsers: ActionInfo[];
+    pendingRequests: ActionInfo<"pending">[];
+    invitedUsers: ActionInfo<"invited">[];
+    rejectedUsers: ActionInfo<"rejected">[];
     wholeGroupId: string;
 }
 

@@ -5,11 +5,14 @@ import { endLearningSession } from '../../../../../functions/app/space/learningS
 import CommonDialog from './CommonDialog';
 import { useNavigate } from 'react-router-dom';
 import { rootPaths } from '../../../../../types/path/paths';
+import serviceFactory from '../../../../../firebase/db/factory';
+import { spacePaths } from '../../../../../types/path/mainPaths';
 
 const FinishLearning: FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { uid } = useAppSelector(state => state.userSlice);
+  const { currentSpaceId, } = useAppSelector(state => state.spaceSlice);
   const [openFinish, setOpenFinish] = useState(false);
   const [openMove, setOpenMove] = useState(false); // State for MoveDialog
 
@@ -42,12 +45,16 @@ const FinishLearning: FC = () => {
   };
 
   const handleMoveSpace = async () => {
-    // Add logic for moving the user to another space
-    handleCloseMove();
+    if (uid && currentSpaceId) {
+      const spaceService = serviceFactory.createSpaceService();
+      await spaceService.leaveSpace(uid, currentSpaceId);
+      handleCloseMove();
+      navigate(spacePaths.start);
+    }
   };
 
   return (
-    <div className='self-end flex flex-col items-center justify-center space-y-4'>
+    <div className='self-center flex flex-col items-center justify-center space-y-4'>
       <CircularButton size="xl" bgColor="secondaryBase" onClick={handleClickOpenMove}>
         スペース<br />を移動
       </CircularButton>

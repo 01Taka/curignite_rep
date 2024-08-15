@@ -1,6 +1,6 @@
 import { DocumentData, DocumentReference, Timestamp } from "firebase/firestore";
 import { isUserInActionInfo, isUserInMembers } from "../../../../functions/db/dbUtils";
-import { uniqueByProperty } from "../../../../functions/utils";
+import { uniqueByProperty } from "../../../../functions/objectUtils";
 import ChatRoomsDB from "../chat/chatRooms";
 import { TeamService } from "../team/teamService";
 import { UsersDB } from "../user/users";
@@ -9,6 +9,8 @@ import SpacesDB from "./spaces";
 import { SpaceData, SpacePublicationTarget, UserSpaceIds } from "../../../../types/firebase/db/space/spacesTypes";
 import { ActionInfo, JoinState, Member, RoleType } from "../../../../types/firebase/db/baseTypes";
 import { UserTeamsDB } from "../user/subCollection/userTeams";
+
+type SpaceInfo = string | SpaceData;
 
 export class SpaceService {
     constructor(
@@ -117,12 +119,30 @@ export class SpaceService {
 
     /**
      * 必要に応じてスペースデータを取得します。
-     * @param spaceId スペースID
-     * @param spaceData スペースデータ（オプション）
+     * @param spaceInfo - スペースのDocIDかスペースインスタンス
      * @returns スペースデータ
+     * @throws Error - スペースデータが見つからなかった場合
      */
-    private async fetchSpaceIfNeeded(spaceId: string, spaceData?: SpaceData | null): Promise<SpaceData | null> {
-        return spaceData ?? await this.spacesDB.getSpace(spaceId);
+    private async fetchSpaceIfNeeded(spaceInfo: SpaceInfo): Promise<{
+        spaceId: string;
+        spaceData: SpaceData;
+    }> {
+        let spaceId: string;
+        let spaceData: SpaceData | null;
+
+        if (typeof spaceInfo === "string") {
+            spaceId = spaceInfo;
+            spaceData = await this.spacesDB.getSpace(spaceId);
+        } else {
+            spaceId = spaceInfo.docId;
+            spaceData = spaceInfo;
+        }
+
+        if (!spaceData) {
+            throw new Error(`Space data not found for space ID: ${spaceId}.`);
+        }
+
+        return { spaceId, spaceData };
     }
 
     /**
@@ -146,71 +166,103 @@ export class SpaceService {
     /**
      * ユーザーをスペースに追加します。
      * @param userId ユーザーID
-     * @param spaceId スペースID
-     * @param spaceData スペースデータ（オプション）
+     * @param spaceInfo スペースのDocIDかスペースインスタンス
      */
-    async joinSpace(userId: string, spaceId: string, spaceData?: SpaceData | null): Promise<void> {
-        const space = await this.fetchSpaceIfNeeded(spaceId, spaceData);
-        if (!space) return;
-        if (!isUserInMembers(userId, space.members)) {
-            await this.addUserToMembers(userId, space);
+    async joinSpace(userId: string, spaceInfo: SpaceInfo): Promise<void> {
+        const { spaceData } = await this.fetchSpaceIfNeeded(spaceInfo);
+        if (!isUserInMembers(userId, spaceData.members)) {
+            await this.addUserToMembers(userId, spaceData);
         }
     }
 
     /**
      * スペース参加リクエストを処理します。
      * @param requesterId リクエストしたユーザーID
-     * @param spaceId スペースID
-     * @param spaceData スペースデータ（オプション）
+     * @param spaceInfo スペースのDocIDかスペースインスタンス
      */
-    async joinSpaceRequest(requesterId: string, spaceId: string, spaceData?: SpaceData | null): Promise<void> {
-        const space = await this.fetchSpaceIfNeeded(spaceId, spaceData);
-        if (!space || !space.approvedUsers || !space.invitedUsers || !space.pendingRequests) return;
-        const actionInfoList = [...space.invitedUsers, ...space.approvedUsers];
-        if (!isUserInActionInfo(requesterId, actionInfoList) && space.requiresApproval) {
-            if (!isUserInActionInfo(requesterId, space.rejectedUsers)) {
-                const request: ActionInfo = {
+    async joinSpaceRequest(
+        requesterId: string,
+        spaceInfo: SpaceInfo
+    ): Promise<void> {
+        const { spaceId, spaceData } = await this.fetchSpaceIfNeeded(spaceInfo);
+        if (!spaceData || !spaceData.approvedUsers || !spaceData.invitedUsers || !spaceData.pendingRequests) return;
+
+        const actionInfoList = [...spaceData.invitedUsers, ...spaceData.approvedUsers];
+
+        if (!isUserInActionInfo(requesterId, actionInfoList) && spaceData.requiresApproval) {
+            if (!isUserInActionInfo(requesterId, spaceData.rejectedUsers)) {
+                const request: ActionInfo<"pending"> = {
                     userId: requesterId,
                     actionAt: Timestamp.now(),
+                    actionType: "pending", // 明示的に "pending" を設定
                 };
-                await this.spacesDB.updateSpace(space.docId, { pendingRequests: [...space.pendingRequests, request] });
+                await this.spacesDB.updateSpace(spaceId, {
+                    pendingRequests: [...spaceData.pendingRequests, request],
+                });
             }
         } else {
-            await this.joinSpace(requesterId, spaceId, space);
+            await this.joinSpace(requesterId, spaceId);
         }
-    }
+    } 
 
     /**
      * ユーザーのスペース参加状態を取得します。
      * @param userId ユーザーID
-     * @param spaceId スペースID
-     * @param spaceData スペースデータ（オプション）
+     * @param spaceInfo スペースのDocIDかスペースインスタンス
      * @returns スペース参加状態
      */
-    async getSpaceJoinState(userId: string, spaceId: string, spaceData?: SpaceData | null): Promise<JoinState> {
-        const space = await this.fetchSpaceIfNeeded(spaceId, spaceData);
-        if (!space) return "error";
-        if (isUserInActionInfo(userId, space.rejectedUsers)) return "rejected";
-        if (isUserInMembers(userId, space.members)) return "participated";
-        if (isUserInActionInfo(userId, space.pendingRequests)) return "requesting";
-        if (isUserInActionInfo(userId, space.approvedUsers) || isUserInActionInfo(userId, space.invitedUsers)) return "approved";
+    async getSpaceJoinState(userId: string, spaceInfo: SpaceInfo): Promise<JoinState> {
+        const { spaceData } = await this.fetchSpaceIfNeeded(spaceInfo);
+        if (isUserInActionInfo(userId, spaceData.rejectedUsers)) return "rejected";
+        if (isUserInMembers(userId, spaceData.members)) return "participated";
+        if (isUserInActionInfo(userId, spaceData.pendingRequests)) return "requesting";
+        if (isUserInActionInfo(userId, spaceData.approvedUsers) || isUserInActionInfo(userId, spaceData.invitedUsers)) return "approved";
         return "noInfo";
     }
 
     /**
      * ユーザーのスペース参加状態を取得し、参加リクエストを送信します。
      * @param userId ユーザーID
-     * @param spaceId スペースID
+     * @param spaceInfo スペースのDocIDかスペースインスタンス
      * @returns スペース参加状態
      */
-    async getSpaceJoinStateWithJoinRequest(userId: string, spaceId: string, spaceData?: SpaceData): Promise<JoinState> {
-        const space = spaceData || await this.spacesDB.getSpace(spaceId);
-        const state = await this.getSpaceJoinState(userId, spaceId, space);
+    async getSpaceJoinStateWithJoinRequest(userId: string, spaceInfo: SpaceInfo): Promise<JoinState> {
+        const { spaceData } = await this.fetchSpaceIfNeeded(spaceInfo);
+        const state = await this.getSpaceJoinState(userId, spaceData);
         if (state === "noInfo") {
-            await this.joinSpaceRequest(userId, spaceId, space);
+            await this.joinSpaceRequest(userId, spaceData);
             return "requesting";
         }
         return state;
+    }
+
+    async leaveSpace(userId: string, spaceInfo: SpaceInfo) {
+        const { spaceId } = await this.fetchSpaceIfNeeded(spaceInfo);
+        const space = await this.spacesDB.getSpace(spaceId);
+        if (!space) {
+            return
+        }
+        const members = space.members;
+        if (space && isUserInMembers(userId, members)) {
+            const leavedMembers = members.filter(member => member.userId !== userId);
+            const selfData = members.find(member => member.userId === userId);
+            const awayUsers = [...space.awayUsers, selfData!];
+            await this.spacesDB.updateSpace(spaceId, { members: leavedMembers, awayUsers });
+        }
+    }
+
+    async rejoinSpace(userId: string, spaceInfo: SpaceInfo) {
+        const { spaceId, spaceData } = await this.fetchSpaceIfNeeded(spaceInfo);
+        if (!spaceData) {
+            return
+        }
+        const awayUsers = spaceData.awayUsers;
+        if (spaceData && isUserInMembers(userId, awayUsers)) {
+            const awayMembers = awayUsers.filter(user => user.userId !== userId);
+            const selfData = awayUsers.find(user => user.userId === userId);
+            const members = [...spaceData.members, selfData!];
+            await this.spacesDB.updateSpace(spaceId, { members, awayUsers: awayMembers });
+        }
     }
 
     /**

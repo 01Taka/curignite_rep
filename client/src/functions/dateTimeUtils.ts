@@ -1,8 +1,27 @@
 import { format, differenceInSeconds, differenceInMinutes, differenceInHours, differenceInDays, differenceInYears, subSeconds, subMinutes, subHours, subDays, subYears, startOfMinute, startOfHour, startOfDay, startOfYear } from 'date-fns';
 import { Timestamp } from 'firebase/firestore';
 import { DecimalDigits } from '../types/util/componentsTypes';
-import { AbsoluteFormat, absoluteFormatItems, DAYS_IN_MILLISECOND, DIGIT_SIZE, Format, FormatChange, HOURS_IN_MILLISECOND, MINUTES_IN_MILLISECOND, RelativeFormat, SECONDS_IN_MILLISECOND, TimeSizeUnit, TimeTypes, YEARS_IN_MILLISECOND } from '../types/util/dateTimeTypes';
+import { AbsoluteFormat, absoluteFormatItems, Days, DAYS_IN_MILLISECOND, DIGIT_SIZE, Format, FormatChange, HOURS_IN_MILLISECOND, ISODate, ISODateTime, MINUTES_IN_MILLISECOND, RelativeFormat, SECONDS_IN_MILLISECOND, TimeSizeUnit, TimeTypes, YEARS_IN_MILLISECOND } from '../types/util/dateTimeTypes';
 
+export const isMatchDay = (date: TimeTypes, targetDay: Days = "01") => {
+    return `${format(toDate(date), "dd")}` === targetDay;
+}
+
+export const isEqualDate = (...days: TimeTypes[]): boolean => {
+    const check = convertToMilliseconds(startOfDay(toDate(days[0])))
+    const isDiff = days.some(day => check !== convertToMilliseconds(startOfDay(toDate(day))));
+    return !isDiff;
+}
+
+export const toISODate = (dateTime: TimeTypes): ISODate => {
+    const date = toDate(dateTime).toISOString();
+    return date.slice(0, 10) as ISODate;
+}
+
+export const toISODateTime = (dateTime: TimeTypes): ISODateTime => {
+    const date = toDate(dateTime).toISOString();
+    return date as ISODateTime;
+}
 
 export const convertToMilliseconds = (time: TimeTypes): number => {
     if (typeof time === 'number') {
@@ -41,7 +60,7 @@ const toMillis = (unit: TimeSizeUnit, value: number): number => {
  * @param input - 変換する入力（数値、Timestamp、または Date）。
  * @returns 対応する Date オブジェクト。
  */
-const toDate = (input: TimeTypes): Date => {
+export const toDate = (input: TimeTypes): Date => {
     if (input instanceof Timestamp) {
         return input.toDate();
     } else if (input instanceof Date) {

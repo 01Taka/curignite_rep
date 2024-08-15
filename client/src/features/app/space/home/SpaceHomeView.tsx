@@ -1,19 +1,15 @@
 import React, { FC } from 'react';
 import SpaceTimer from './timer/SpaceTimer';
-import { SpaceData } from '../../../../types/firebase/db/space/spacesTypes';
-import Calendar from '../../../../components/app/calendar/Calendar';
 import { Grid } from '@mui/material';
 import LearningSummary from './learningData/LearningSummary';
 import FinishLearning from './finishLearning/FinishLearning';
-import { useAppSelector } from '../../../../redux/hooks';
 import { getCurrentSessionSpaceId } from '../../../../functions/app/space/learningSessionUtils';
+import SpaceHeatmap from './heatmap/SpaceHeatmap';
+import ActionIndex from './actions/ActionIndex';
 
-interface SpaceHomeViewProps {
-  space: SpaceData;
-}
+interface SpaceHomeViewProps {};
 
-const SpaceHomeView: FC<SpaceHomeViewProps> = ({ space }) => {
-  const { spaceId } = useAppSelector(state => state.learningSessionSlice);
+const SpaceHomeView: FC<SpaceHomeViewProps> = () => {
   return (
     <Grid
       container
@@ -21,13 +17,13 @@ const SpaceHomeView: FC<SpaceHomeViewProps> = ({ space }) => {
       className="h-screen p-4" // Tailwind CSSを適用
     >
       <Grid item xs={4} className="flex items-center justify-center h-1/2 bggray-200">
-        1
+        <ActionIndex />
       </Grid>
       <Grid item xs={4} className="flex items-center justify-center h-1/2 bggray-300">
         <SpaceTimer spaceId={getCurrentSessionSpaceId() ?? ""}/>
       </Grid>
       <Grid item xs={4} className="flex items-center justify-center h-1/2 bggray-400">
-        <Calendar />
+        <SpaceHeatmap />
       </Grid>
       <Grid item xs={4} className="flex items-center justify-center h-1/2 bggray-500">
         4

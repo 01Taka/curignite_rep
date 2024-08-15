@@ -10,7 +10,7 @@ import SelectField from '../../../../components/input/field/SelectFiled';
 import FormContainer from '../../../../components/container/FormContainer';
 import { Alert, CircularProgress, Typography } from '@mui/material';
 import { publicationTargetForSelect } from '../../../../types/firebase/db/space/spacesTypes';
-import { keyMirror } from '../../../../functions/utils';
+import { keyMirror } from '../../../../functions/objectUtils';
 
 const SpaceSettingView: FC<SpaceSettingViewProps> = ({ formState, isStarting, onChangeFormState, onCompletion, onUpdateDefaultSetting }) => {
   const [updatedDefaultSetting, setUpdatedDefaultSetting] = useState(false);

@@ -12,5 +12,5 @@ export const sortChatIdMap = (chatIdMap: TimestampConvertedDocumentMap<ChatData>
     const chatArray = Object.values(chatIdMap);
 
     // 作成日の降順にソート
-    return revertTimestampConversion(chatArray.sort((a, b) => a.createdAt - b.createdAt));
+    return revertTimestampConversion(chatArray.sort((a, b) => a.createdAt - b.createdAt)) || [];
 };

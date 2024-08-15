@@ -20,3 +20,10 @@ export type TailwindSize =
  export type HeightClasses = 
  HeightValueClasses | 'h-auto' | 'h-screen' | 'h-min' | 'h-max' | 'h-fit';
  
+ type CustomColor = "";
+ type TailwindColor = 'red' | 'green' | 'blue' | 'yellow' | 'purple' | 'pink' | 'gray' | CustomColor;
+ type TailwindShade = 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
+ 
+ type TailwindColorClass = `bg-${TailwindColor}-${TailwindShade}` | `bg-${CustomColor}`;
+ export type BGColorClass = TailwindColorClass | 'bg-transparent' | 'bg-white' | 'bg-black' | null | undefined;
+ 

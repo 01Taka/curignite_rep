@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -15,6 +15,13 @@ interface CalendarProps {
 }
 
 const Calendar: React.FC<CalendarProps> = ({ events, specialDays, onEventClick, onDateClick }) => {
+  const calendarRef = useRef<FullCalendar>(null);
+  const [key, setKey] = useState(0);
+
+  useEffect(() => {
+    setKey(prevKey => prevKey + 1);
+  }, [specialDays]);
+
   const handleDayCellDidMount = (info: DayCellContentArg) => {
     if (!specialDays) {
       return;
@@ -60,6 +67,8 @@ const Calendar: React.FC<CalendarProps> = ({ events, specialDays, onEventClick, 
   return (
     <div>
       <FullCalendar
+        key={key}
+        ref={calendarRef}
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
         events={events}

@@ -35,9 +35,10 @@ export interface MemberData {
 export type BasePermissions<T> =  { [role in RoleType]?: T[] };
 
 // 参加禁止者や招待された人など特別なイベントを受けているユーザーの定義
-export interface ActionInfo {
+export interface ActionInfo<T extends any = string> {
     userId: string;
     actionAt: Timestamp;
+    actionType: T;
 }
 
-export type JoinState = "participated" | "requesting" | "approved" | "rejected" | "noInfo" | "error" | "loading";
+export type JoinState = "participated" | "away" | "requesting" | "approved" | "rejected" | "noInfo" | "error" | "loading";

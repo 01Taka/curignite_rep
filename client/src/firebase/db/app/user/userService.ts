@@ -190,4 +190,28 @@ export class UserService {
             return [];
         }
     }
+
+    // async getUserAsMember(userId: string, role: RoleType): Promise<Member> {
+    //     const user = await this.usersDB.read(userId);
+    //     if (!user) {
+    //         throw new Error("ユーザーデータが見つかりませんでした。");
+    //     }
+    //     const member: Member = {
+    //         userId,
+    //         username: user.username,
+    //         iconUrl: user.iconUrl,
+    //         role
+    //     }
+    //     return member;
+    // }
+
+    // readUserIdProperties<T extends { userId: string }>(array: T[]): string[] {
+    //     const userIds: string[] = [];
+    //     array.forEach(data => {
+    //         userIds.push(data.userId);
+    //     });
+    //     return userIds;
+    // }
+    // >>>    ...sortedMembers.map(member => member.userId),
+    // >>>    ...sortedJoinRequests.map(request => request.userId),
 }

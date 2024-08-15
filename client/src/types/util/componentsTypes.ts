@@ -1,5 +1,7 @@
 import { SelectChangeEvent } from "@mui/material";
 import { ReactNode } from "react";
+import { HexColorCode } from "./utilTypes";
+import { BGColorClass } from "../module/tailwindTypes";
 
 export type FormStateChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>;
 
@@ -38,5 +40,8 @@ export interface Pomodoro {
     cycle: number;
     break: number;
 }
-  
-  
+
+export interface HeatmapCellColor {
+    borderCount: number;
+    colorClass: BGColorClass;
+}

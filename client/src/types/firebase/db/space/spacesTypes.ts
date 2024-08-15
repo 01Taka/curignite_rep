@@ -28,12 +28,15 @@ export interface SpaceData extends BaseDocumentData {
   publicationTarget: SpacePublicationTarget;
   members: Member[];
   permissions: SpacePermissions;
-  pendingRequests: ActionInfo[];
-  approvedUsers: ActionInfo[];
-  invitedUsers: ActionInfo[];
-  rejectedUsers: ActionInfo[];
+  awayUsers: Member[];
+  pendingRequests: ActionInfo<"pending">[];
+  approvedUsers: ActionInfo<"approved">[];
+  invitedUsers: ActionInfo<"invited">[];
+  rejectedUsers: ActionInfo<"rejected">[];
   chatRoomId: string;
 }
+
+export type SpaceActionTypes = "pending" | "approved" | "invited" | "rejected";
 
 export const defaultSpacePermissions: SpacePermissions = {
   [RoleType.Admin]: [

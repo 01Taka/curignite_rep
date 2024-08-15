@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAppSelector } from '../../../../../redux/hooks';
 import { Typography } from '@mui/material';
 import CountUpRelativeTime from './CountUpRelativeTime';
+import serviceFactory from '../../../../../firebase/db/factory';
 
 interface LearningSummaryProps {}
 
@@ -15,11 +16,14 @@ const LearningSummary: React.FC<LearningSummaryProps> = () => {
 
   useEffect(() => {
     const fetchLearnData = async () => {
-      const monthlyAvg = 10000000000; //await getMonthlyAverageLearnTime(uid);
-      const weeklySum = 10000000000; //await getWeeklyTotalLearnTime(uid);
-
-      setMonthlyAverage(monthlyAvg);
-      setWeeklyTotal(weeklySum);
+      if (uid) {
+        const logService = serviceFactory.createUserDailyLogService();
+        const monthlyAvg = await logService.getRecentDaysAvg(uid);
+        const weeklySum = await logService.getWeeklyTotalLearningTime(uid);
+  
+        setMonthlyAverage(monthlyAvg);
+        setWeeklyTotal(weeklySum); 
+      }
     };
     fetchLearnData();
   }, [uid]);
@@ -27,8 +31,6 @@ const LearningSummary: React.FC<LearningSummaryProps> = () => {
   useEffect(() => {
     if (uid && currentSpaceId) {
       const total = learningTime + todayTotalLearningTime;
-      console.log(total, todayTotalLearningTime, learningTime);
-      
       setTodayTotal(total);
     }
   }, [uid, currentSpaceId, todayTotalLearningTime, learningTime])
@@ -36,7 +38,7 @@ const LearningSummary: React.FC<LearningSummaryProps> = () => {
   return (
     <div>
       <Typography variant='h4'>学習の成績</Typography>
-      <SummaryItem label="今月の平均" time={monthlyAverage} />
+      <SummaryItem label="30日の平均" time={monthlyAverage} />
       <SummaryItem label="今週の合計" time={weeklyTotal} />
       <SummaryItem label="今日の学習時間" time={todayTotal} />
     </div>

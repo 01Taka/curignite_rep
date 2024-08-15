@@ -3,6 +3,7 @@ import { Timestamp } from "firebase/firestore";
 export type Month = "01" | "02" | "03" | "04" | "05" | "06" | "07" | "08" | "09" | "10" | "11" | "12";
 export type Days = "01" | "02" | "03" | "04" | "05" | "06" | "07" | "08" | "09" | "10" | "11" | "12" | "13" | "14" | "15" | "16" | "17" | "18" | "19" | "20" | "21" | "22" | "23" | "24" | "25" | "26" | "27" | "28" | "29" | "30" | "31";
 export type ISODate = `${string}-${Month}-${Days}`;
+export type ISODateTime = `${ISODate}T${string}Z`
 
 export const SECONDS_IN_MILLISECOND = 1000;
 export const MINUTES_IN_MILLISECOND = SECONDS_IN_MILLISECOND * 60;
