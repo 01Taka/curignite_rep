@@ -29,8 +29,7 @@ export const getLearningTimeHeatmapFromDB = async (userId: string, daysAgo: numb
     for (let key of Object.keys(timeMap)) {
       heatmap[key as ISODate] = getHeatmapCellColor(timeMap[key as ISODate], HEATMAP_BY_LEARNING_TIME)
     }
-    console.log(heatmap);
-    
+
     return heatmap;
   } catch (error) {
     console.error('DBからの学習時間の色分け取得に失敗しました:', error);

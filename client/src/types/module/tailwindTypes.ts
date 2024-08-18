@@ -21,9 +21,37 @@ export type TailwindSize =
  HeightValueClasses | 'h-auto' | 'h-screen' | 'h-min' | 'h-max' | 'h-fit';
  
  type CustomColor = "";
- type TailwindColor = 'red' | 'green' | 'blue' | 'yellow' | 'purple' | 'pink' | 'gray' | CustomColor;
- type TailwindShade = 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
+ type TailwindColor = 'red' | 'green' | 'blue' | 'yellow' | 'purple' | 'pink' | 'sky' | 'orange' | 'gray' | CustomColor;
+ type TailwindShade = 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | 950;
+ type NoneShadeColor = 'black' | 'white';
  
- type TailwindColorClass = `bg-${TailwindColor}-${TailwindShade}` | `bg-${CustomColor}`;
- export type BGColorClass = TailwindColorClass | 'bg-transparent' | 'bg-white' | 'bg-black' | null | undefined;
+ type TailwindBGColorClass = `bg-${TailwindColor}-${TailwindShade}` | `bg-${CustomColor}`;
+ export type BGColorClass = TailwindBGColorClass | 'bg-transparent' | `bg-${NoneShadeColor}` | null | undefined;
  
+ type TailwindTextColorClass = `text-${TailwindColor}-${TailwindShade}` | `text-${CustomColor}`;
+ export type TextColorClass = TailwindTextColorClass | `text-${NoneShadeColor}` | null | undefined;
+ 
+ type TailwindBorderColorClass = `border-${TailwindColor}-${TailwindShade}` | `border-${NoneShadeColor}` | `border-${CustomColor}`;
+ export type BorderColorClass = TailwindBorderColorClass | null | undefined;
+ 
+ type TailwindDivideColorClass = `divide-${TailwindColor}-${TailwindShade}` | `divide-${CustomColor}`;
+ export type DivideColorClass = TailwindDivideColorClass | null | undefined;
+ 
+ type TailwindRingColorClass = `ring-${TailwindColor}-${TailwindShade}` | `ring-${CustomColor}`;
+ export type RingColorClass = TailwindRingColorClass | null | undefined;
+ 
+ type TailwindPlaceholderColorClass = `placeholder-${TailwindColor}-${TailwindShade}` | `placeholder-${CustomColor}`;
+ export type PlaceholderColorClass = TailwindPlaceholderColorClass | null | undefined;
+ 
+ type TailwindOutlineColorClass = `outline-${TailwindColor}-${TailwindShade}` | `outline-${CustomColor}`;
+ export type OutlineColorClass = TailwindOutlineColorClass | null | undefined;
+
+ export interface ComponentColor {
+  bgColor: BGColorClass;
+  textColor: TextColorClass;
+  borderColor?: BorderColorClass;
+  divideColor?: DivideColorClass;
+  ringColor?: RingColorClass;
+  placeholderColor?: PlaceholderColorClass;
+  outlineColor?: OutlineColorClass;
+}

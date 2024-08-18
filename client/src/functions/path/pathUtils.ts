@@ -8,7 +8,7 @@ import { ParamReplace, PathParam } from "../../types/path/paths";
  */
 export const replaceParams = (path: string, params: ParamReplace): string => {
   Object.keys(params).forEach((param) => {
-    path = path.replace(`:${param}`, params[param as PathParam] || `:${param}`);
+    path = path.replace(`:${param}`, params[param as PathParam] ?? `:${param}`);
   });
   return path;
 }

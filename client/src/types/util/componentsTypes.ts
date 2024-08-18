@@ -1,9 +1,14 @@
 import { SelectChangeEvent } from "@mui/material";
 import { ReactNode } from "react";
-import { HexColorCode } from "./utilTypes";
 import { BGColorClass } from "../module/tailwindTypes";
 
-export type FormStateChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>;
+export type HTMLDateElement = {
+    name: string;
+    value: Date | null;
+    type: "date";
+}
+
+export type FormStateChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | HTMLDateElement>;
 
 export type FormStateChangeFunc = (e: FormStateChangeEvent) => void;
 

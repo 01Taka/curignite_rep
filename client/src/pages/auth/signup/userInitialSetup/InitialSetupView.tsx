@@ -3,7 +3,8 @@ import FormContainer from '../../../../components/container/FormContainer';
 import { Alert, Box, Button, CircularProgress } from '@mui/material';
 import { UserNameField } from '../../../../components/input/inputIndex';
 import Heading from '../../../../components/container/Heading';
-import BirthdayFiled from '../../../../components/input/field/BirthdayFiled';
+import DateFiled from '../../../../components/input/field/DateFiled';
+import { FormStateChangeFunc } from '../../../../types/util/componentsTypes';
 
 export interface InitialSetupFormState {
   username: string;
@@ -15,8 +16,7 @@ interface InitialSetupViewProps {
   isLoading: boolean;
   submitDisabled: boolean;
   error: string;
-  onFormStateChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onBirthdayChange: (value: Date | null) => void;
+  onFormStateChange: FormStateChangeFunc;
   onSetUserData: () => void;
 }
 
@@ -47,7 +47,6 @@ const InitialSetupView: React.FC<InitialSetupViewProps> = ({
   submitDisabled,
   error,
   onFormStateChange,
-  onBirthdayChange,
   onSetUserData,
 }) => {
   const handleSubmit = (e: React.FormEvent<Element>) => {
@@ -67,9 +66,11 @@ const InitialSetupView: React.FC<InitialSetupViewProps> = ({
               username={formState.username}
               onUserNameChange={onFormStateChange}
             />
-            <BirthdayFiled 
+            <DateFiled 
+              label="生年月日"
               value={formState.birthday}
-              onChange={onBirthdayChange}
+              name='birthday'
+              onChange={onFormStateChange}
             />
             <SubmitButton submitDisabled={submitDisabled} />
           </form>

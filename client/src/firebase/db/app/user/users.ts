@@ -1,6 +1,6 @@
 import { DocumentData, DocumentReference, Firestore, Timestamp } from "firebase/firestore";
 import BaseDB from "../../base";
-import { UserData } from "../../../../types/firebase/db/user/usersTypes";
+import { UserData, UserMetaData } from "../../../../types/firebase/db/user/usersTypes";
 import { getInitialBaseDocumentData } from "../../../../functions/db/dbUtils";
 
 /**
@@ -28,16 +28,16 @@ export class UsersDB extends BaseDB<UserData> {
     uid: string,
     username: string,
     iconUrl: string,
-    spaceIds: string[],
     birthDate: Timestamp,
+    metaData: UserMetaData
   ): Promise<DocumentReference<DocumentData> | void> {
     try {
       const data: UserData = {
         ...getInitialBaseDocumentData(uid, uid),
         username,
         iconUrl,
-        spaceIds,
         birthDate,
+        metaData,
       };
       return this.createWithId(uid, data); // UIDを使ってドキュメントを作成
     } catch (error) {

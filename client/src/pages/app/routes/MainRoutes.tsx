@@ -10,6 +10,7 @@ import { CircularProgress } from '@mui/material';
 import { mainRootPaths } from '../../../types/path/mainPaths';
 import { autoUpdateTeams } from '../../../redux/actions/team/teamActions';
 import { autoUpdateSpaces, updateTotalLearningTime } from '../../../redux/actions/space/spaceActions';
+import TaskRoutes from '../task/TaskRoutes';
 
 const MainRoutes: FC = () => {
   const dispatch = useAppDispatch();
@@ -33,7 +34,7 @@ const MainRoutes: FC = () => {
         <Route path={mainRootPaths.chat} element={<ChatRoom chatRoomId='tmYbshDZiPUQ4Xmv2Z2V'/>} />
         <Route path={mainRootPaths.whiteboard} element={<div>Whiteboard</div>} />
         <Route path={mainRootPaths.calendar} element={<div>Calendar</div>} />
-        <Route path={mainRootPaths.todo} element={<div>Todo</div>} />
+        <Route path={mainRootPaths.task} element={<TaskRoutes />} />
         <Route path={mainRootPaths.team} element={<TeamRoutes />} />
         <Route path={mainRootPaths.goal} element={<div>Goal</div>} />
         <Route path={mainRootPaths.qAndA} element={<div>Q&A</div>} />

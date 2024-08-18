@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { TextField } from '@mui/material';
+import { FormStateChangeFunc } from '../../../types/util/componentsTypes';
 
 interface NumberFieldProps {
   value: number | string;
@@ -8,48 +9,72 @@ interface NumberFieldProps {
   initialValue?: number;
   min?: number;
   max?: number;
-  onValueChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: FormStateChangeFunc;
 }
 
 const NumberField: React.FC<NumberFieldProps> = ({
-    value, label, name = label, min = -Infinity, max = Infinity, onValueChange
+  value,
+  label,
+  name = label,
+  initialValue,
+  min = -Infinity,
+  max = Infinity,
+  onChange,
 }) => {
-    const clamp = (value: number, min: number, max: number): number => {
-        return Math.min(Math.max(value, min), max);
+  useEffect(() => {
+    if (initialValue !== undefined && value === '') {
+      onChange({
+        target: {
+          name,
+          value: initialValue.toString(),
+          type: 'number',
+        },
+      } as React.ChangeEvent<HTMLInputElement>);
     }
+  }, [initialValue, value, name, onChange]);
 
-    const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!!e.target.value) {
-            const inputValue = parseFloat(e.target.value);
-            const clampedValue = clamp(inputValue, min, max);
-            e.target.value = clampedValue.toString();
-            
-        }
+  const clampValue = (num: number) => Math.min(Math.max(num, min), max);
 
-        onValueChange(e);
+  const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = parseFloat(e.target.value);
+    if (!isNaN(inputValue)) {
+      e.target.value = clampValue(inputValue).toString();
     }
+    onChange(e);
+  };
+  
+  const getDisplayValue = (val: number | string): string => {
+    const numValue = parseFloat(val.toString());
+    return !isNaN(numValue) ? numValue.toString() : '';
+  };
 
-    const setValue = (value: string | number): string => {
-        value = parseFloat(value.toString());
-        if (value) {
-            return value.toString();
-        }
-        return "";
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    if (isNaN(parseFloat(e.target.value))) {
+      onChange({
+        target: {
+          name,
+          value: initialValue || min !== -Infinity ? min.toString() : max !== Infinity ? max.toString() : '0',
+          type: 'number',
+        },
+      } as React.ChangeEvent<HTMLInputElement>);
     }
+  };
 
-    return (
-        <TextField
-        className='w-full h-14'
-        id={name}
-        name={name}
-        label={label}
-        variant="filled"
-        type="number"
-        value={setValue(value)}
-        onChange={handleValueChange}
-        fullWidth
-        />
-    );
+  return (
+    <TextField
+      className="w-full h-14"
+      id={name}
+      name={name}
+      label={label}
+      variant="filled"
+      type="number"
+      value={getDisplayValue(value)}
+      onChange={handleValueChange}
+      onBlur={handleBlur}
+      inputProps={{ min, max }}
+      fullWidth
+    />
+  );
 };
 
 export default NumberField;

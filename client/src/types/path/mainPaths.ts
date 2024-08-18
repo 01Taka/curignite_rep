@@ -6,7 +6,7 @@ export const relativeMainPaths = {
   chat: 'chat',
   whiteboard: 'whiteboard',
   calendar: 'calendar',
-  todo: 'todo',
+  task: 'task',
   team: 'team',
   goal: 'goal',
   qAndA: 'q-and-a',
@@ -59,9 +59,16 @@ export const calendarPaths = {
   index: `${mainPaths.calendar}/index`,
 };
 
-export const todoPaths = {
-  base: mainPaths.todo,
-  index: `${mainPaths.todo}/index`,
+export const taskPaths = {
+  base: mainPaths.task,
+  home: `${mainPaths.task}/home`,
+  collections: `${mainPaths.task}/collections`,
+  create: `${mainPaths.task}/home/create`,
+  createChildren: {
+    individual:`${mainPaths.task}/home/create/individual`,
+    collection:`${mainPaths.task}/home/create/collection`, 
+    batch:`${mainPaths.task}/home/create/batch/:${PathParam.CollectionId}`,
+  }
 };
 
 export const teamPaths = {

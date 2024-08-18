@@ -49,6 +49,7 @@ export interface RelativeFormat extends FormatBase {
 
 export interface AbsoluteFormat extends FormatBase {
     format: string;
+    formatAtMidnight?: string;
     isAbsolute: true;
 }
 

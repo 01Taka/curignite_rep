@@ -1,6 +1,6 @@
 import React from 'react';
 import SelectField from '../../../../../components/input/field/SelectFiled';
-import { FormStateChangeFunc, SelectFieldChange, SelectItem } from '../../../../../types/util/componentsTypes';
+import { FormStateChangeFunc, SelectItem } from '../../../../../types/util/componentsTypes';
 import { SpaceTimerMode } from '../../../../../types/app/space/spaceTypes';
 
 
@@ -36,7 +36,7 @@ const TimerControls: React.FC<TimerControlsProps> = ({
           selectItems={timerModes}
           value={timerMode}
           variant="outlined"
-          onChange={onTimerModeChange as SelectFieldChange}
+          onChange={onTimerModeChange}
         />
       </div>
       }

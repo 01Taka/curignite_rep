@@ -1,6 +1,60 @@
 import { Timestamp } from "firebase/firestore";
 import { RoleType } from "../types/firebase/db/baseTypes";
 import { SpaceData, SpacePermissionType, SpacePublicationTarget } from "../types/firebase/db/space/spacesTypes";
+import {
+  TaskListIndividualTaskData,
+  TaskListTaskCollectionData,
+  TaskCollectionBatchTaskData,
+  TaskPriority,
+} from "../types/firebase/db/todo/TodoTypes"; // 適切なファイルパスに変更してください
+
+// TaskListIndividualTaskDataのサンプルデータ
+export const sampleTaskListIndividualTaskData: TaskListIndividualTaskData = {
+  docId: "individualTask123",
+  createdAt: Timestamp.now(),
+  updatedAt: Timestamp.now(),
+  isActive: true,
+  createdById: "user123",
+  title: "Individual Task Sample",
+  dueDateTime: Timestamp.fromDate(new Date(2024, 7, 18, 17, 30)),
+  taskNote: "",
+  priority: "high" as TaskPriority,
+  progress: 50,
+  completed: false,
+  estimatedDuration: 7200000, // 2 hours in milliseconds
+};
+
+// TaskListTaskCollectionDataのサンプルデータ
+export const sampleTaskListTaskCollectionData: TaskListTaskCollectionData = {
+  docId: "taskCollection123",
+  createdAt: Timestamp.now(),
+  updatedAt: Timestamp.now(),
+  isActive: true,
+  createdById: "user123",
+  name: "Sample Task Collection",
+  totalPages: 10,
+  timePerPage: 1800000, // 30 minutes per page in milliseconds
+  completedPageIndices: [1, 3, 5],
+  description: "This is a sample task collection description.",
+};
+
+// TaskCollectionBatchTaskDataのサンプルデータ
+export const sampleTaskCollectionBatchTaskData: TaskCollectionBatchTaskData = {
+  docId: "batchTask123",
+  createdAt: Timestamp.now(),
+  updatedAt: Timestamp.now(),
+  isActive: true,
+  createdById: "user123",
+  title: "Batch Task Sample",
+  dueDateTime: Timestamp.fromDate(new Date(2024, 11, 30, 12, 0)),
+  taskNote: "This is a sample note for a batch task.",
+  priority: "medium" as TaskPriority,
+  progress: 75,
+  completed: false,
+  collectionId: "taskCollection123",
+  pagesInRange: [2, 3, 4],
+  completedPages: [2, 4],
+};
 
 export const sampleSpaceData: SpaceData = {
   docId: "space123",

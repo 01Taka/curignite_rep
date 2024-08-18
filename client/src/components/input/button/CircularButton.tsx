@@ -14,10 +14,12 @@ const size = {
     x8l: 'w-48 h-48 text-4xl border-8',
 }
 
+export type CircularButtonSize = keyof typeof size;
+
 interface CircularButtonProps extends ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof circularButtonVariants> {
     children: ReactNode;
     invalidation?: boolean;
-    mobileSize?: keyof typeof size;
+    mobileSize?: CircularButtonSize;
 }
 
 // class-variance-authority を使ってスタイルのバリエーションを定義

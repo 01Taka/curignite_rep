@@ -1,7 +1,14 @@
-import { format, differenceInSeconds, differenceInMinutes, differenceInHours, differenceInDays, differenceInYears, subSeconds, subMinutes, subHours, subDays, subYears, startOfMinute, startOfHour, startOfDay, startOfYear } from 'date-fns';
+import { format, differenceInSeconds, differenceInMinutes, differenceInHours, differenceInDays, differenceInYears, subSeconds, subMinutes, subHours, subDays, subYears, startOfMinute, startOfHour, startOfDay, startOfYear, isSameMinute } from 'date-fns';
 import { Timestamp } from 'firebase/firestore';
 import { DecimalDigits } from '../types/util/componentsTypes';
 import { AbsoluteFormat, absoluteFormatItems, Days, DAYS_IN_MILLISECOND, DIGIT_SIZE, Format, FormatChange, HOURS_IN_MILLISECOND, ISODate, ISODateTime, MINUTES_IN_MILLISECOND, RelativeFormat, SECONDS_IN_MILLISECOND, TimeSizeUnit, TimeTypes, YEARS_IN_MILLISECOND } from '../types/util/dateTimeTypes';
+
+export const isMidnight = (dateTime: TimeTypes) => {
+    const date = toDate(dateTime);
+    const midnight = new Date(date);
+    midnight.setHours(0, 0, 0, 0);
+    return isSameMinute(date, midnight);
+}
 
 export const isMatchDay = (date: TimeTypes, targetDay: Days = "01") => {
     return `${format(toDate(date), "dd")}` === targetDay;
@@ -87,9 +94,13 @@ export const toTimestamp = (input: TimeTypes): Timestamp => {
  * @returns 0時0分のタイムスタンプ
  */
 export const getMidnightTimestamp = (date: TimeTypes = new Date()): Timestamp => {
-    const midnight = startOfDay(toDate(date));
-    return Timestamp.fromDate(midnight);
+    return Timestamp.fromDate(getMidnightDate(date));
 };
+
+export const getMidnightDate = (date: TimeTypes = new Date()): Date => {
+    const midnight = startOfDay(toDate(date));
+    return midnight;
+}
 
 /**
  * TimeTypes の入力を特定のフォーマットで文字列に変換する。
@@ -106,7 +117,10 @@ const formatDateAsAbsolute = (dateTime: TimeTypes, absoluteFormat: AbsoluteForma
     const date = toDate(dateTime);
 
     try {
-        let formattedDate = format(date, absoluteFormat.format);
+        const formats = (absoluteFormat.formatAtMidnight && isMidnight(date))
+        ? absoluteFormat.formatAtMidnight : absoluteFormat.format;
+
+        let formattedDate = format(date, formats);
 
         if (absoluteFormat.truncateNotReachDigit) {
             const nonZeroUnits = /[1-9]/;
@@ -267,9 +281,9 @@ export const dateTimeToString = (
         for (const formatChange of formatChanges) {
             if (date.getTime() < getPastTime(formatChange.borderUnit, formatChange.borderDateTime, formatChange.format.truncateNotReachDigit).getTime()) {
                 if (formatChange.format.isAbsolute) {
-                    return `${formatDateAsAbsolute(date, formatChange.format)}${formatChange.format.endingUnit ?? ""}`;
+                    return `${formatDateAsAbsolute(date, formatChange.format)}`;
                 } else {
-                    return `${formatDateAsRelative(date, formatChange.format)}${formatChange.format.endingUnit ?? ""}`;
+                    return `${formatDateAsRelative(date, formatChange.format)}`;
                 }
             }
         }
@@ -277,7 +291,6 @@ export const dateTimeToString = (
 
     return (
         `${defaultFormat.isAbsolute ? formatDateAsAbsolute(date, defaultFormat)
-        : formatDateAsRelative(date, defaultFormat)}
-        ${defaultFormat.endingUnit ?? ""}`
+        : formatDateAsRelative(date, defaultFormat)}`
     );
 };

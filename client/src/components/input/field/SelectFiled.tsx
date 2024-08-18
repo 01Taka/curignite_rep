@@ -1,5 +1,5 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
-import { SelectFieldChange, SelectItem } from '../../../types/util/componentsTypes';
+import { FormStateChangeFunc, SelectFieldChange, SelectItem } from '../../../types/util/componentsTypes';
 
 // ジェネリック型に制約を追加
 interface SelectFieldProps<T extends string | number> {
@@ -8,7 +8,7 @@ interface SelectFieldProps<T extends string | number> {
   selectItems: SelectItem<T>[];
   value: T;
   variant?: "standard" | "filled" | "outlined",
-  onChange: SelectFieldChange;
+  onChange: FormStateChangeFunc;
 }
 
 // ジェネリック型 T を使用してコンポーネントを定義
@@ -28,7 +28,7 @@ const SelectField = <T extends string | number>({ label, name, selectItems, valu
         type="select"
         name={name}
         value={isValidValue ? value : ''} // 無効な値の場合、空文字を設定
-        onChange={onChange}
+        onChange={onChange as SelectFieldChange}
       >
         {selectItems && selectItems.map((item, index) => (
           <MenuItem key={index} value={item.value}>

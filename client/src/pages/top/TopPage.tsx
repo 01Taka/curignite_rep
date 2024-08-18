@@ -2,18 +2,18 @@ import React from 'react'
 import TopPageView from './TopView';
 import { useNavigate } from 'react-router-dom';
 import serviceFactory from '../../firebase/db/factory';
-import { useAppSelector } from '../../redux/hooks';
 import { rootPaths } from '../../types/path/paths';
 import { authPaths } from '../../types/path/authPaths';
+import { getAuth } from 'firebase/auth';
 
 const TopPage: React.FC = () => {
     const navigate = useNavigate();
-    const { uid } = useAppSelector(state => state.userSlice);
 
     const onSignUp = async () => {
+        const uid = getAuth().currentUser?.uid || null;
+
         if (!uid) {
             navigate(rootPaths.auth);
-            return;
         }
 
         const userService = serviceFactory.createUserService();

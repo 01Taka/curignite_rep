@@ -1,31 +1,10 @@
 import { Timestamp } from "firebase/firestore";
 import serviceFactory from "../../../../firebase/db/factory";
-import { NavigateFunction } from "react-router-dom";
 import { InitialSetupFormState } from "./InitialSetupView";
 import { authStorage } from "../../../../functions/localStorage/storages";
 import { UserData } from "../../../../types/firebase/db/user/usersTypes";
 import { getUniqueUserName } from "../../../../firebase/util/getUniqueName";
-import { rootPaths } from "../../../../types/path/paths";
 import { ConvertTimestampToNumber } from "../../../../types/firebase/db/formatTypes";
-
-export const navigateByAuthState = async (uid: string | null, navigate: NavigateFunction) => {
-  const userService = serviceFactory.createUserService();
-  const state = await userService.getUserAuthState(uid);
-  switch (state) {
-    case "new":
-      navigate(rootPaths.top);
-      break;
-    case "noUserData":
-      navigate(rootPaths.auth);
-      break;
-    case "verified":
-      navigate(rootPaths.main);
-      break;
-    default:
-      console.error("一致する認証状態がありません。");
-      break;
-  }
-}
 
 export const getUniqueName = async (
   userData?: ConvertTimestampToNumber<UserData> | null
@@ -38,8 +17,12 @@ export const getUniqueName = async (
 export const handleCreateUser = async (uid: string, formState: InitialSetupFormState) => {
   const { username, birthday } = formState;
 
+  console.log(username, birthday);
+  
+
   // ユーザー名と誕生日のチェック
   if (!username || !birthday) {
+    console.error('ユーザー名または誕生日が正しく設定されていません。');
     throw new Error('ユーザー名または誕生日が正しく設定されていません。');
   }
 

@@ -2,16 +2,18 @@ import { UserData } from "../../../../types/firebase/db/user/usersTypes";
 import { UsersDB } from "./users";
 import { BaseDocumentData, Member } from "../../../../types/firebase/db/baseTypes";
 import { AuthStates } from "../../../../types/util/stateTypes";
-import { Timestamp } from "firebase/firestore";
+import { DocumentData, DocumentReference, Timestamp } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { DocumentIdMap } from "../../../../types/firebase/db/formatTypes";
+import { TaskListService } from "../todo/taskListService";
 
 export class UserService {
-    constructor(private usersDB: UsersDB) {}
+    constructor(private usersDB: UsersDB, private taskListService: TaskListService) {}
 
-    async createUser(uid: string, username: string, iconUrl: string, birthDate: Timestamp) {
+    async createUser(uid: string, username: string, iconUrl: string, birthDate: Timestamp): Promise<DocumentReference<DocumentData> | void> {
         try {
-            return await this.usersDB.createUser(uid, username, iconUrl, [], birthDate);
+            const taskListRef = await this.taskListService.createTaskListForUser(uid);
+            return await this.usersDB.createUser(uid, username, iconUrl, birthDate, { spaceIds: [], taskListId: taskListRef.id });
         } catch (error) {
             throw new Error("Failed to create user.");
         }

@@ -11,6 +11,7 @@ export enum PathParam {
     TeamId = "teamId",
     SpaceId = "spaceId",
     Name = "name",
+    CollectionId = "collectionId"
 }
 
 export type ParamReplace = Partial<Record<PathParam, string>>;

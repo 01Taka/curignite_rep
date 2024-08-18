@@ -1,15 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import UserInitialSetupView, { InitialSetupFormState } from './InitialSetupView';
 import { useNavigate } from 'react-router-dom';
-import { getUniqueName, handleCreateUser, navigateByAuthState } from './handleUserInitialSetup';
+import { getUniqueName, handleCreateUser } from './handleUserInitialSetup';
 import { handleFormStateChange } from '../../../../functions/utils';
-import { useAppSelector } from '../../../../redux/hooks';
 import { rootPaths } from '../../../../types/path/paths';
+import { getAuth } from 'firebase/auth';
 
 const InitialSetup: React.FC = () => {
   const navigate = useNavigate();
 
-  const { uid, userData } = useAppSelector(state => state.userSlice);
+  const [uid, setUid] = useState<string | null>(null);
+
+  useEffect(() => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (user) {
+      setUid(user.uid);
+    } else {
+      console.error("No user is logged in");
+    }
+  }, []);
 
   const [isLoadingName, setIsLoadingName] = useState(true);
   const [formState, setFormState] = useState<InitialSetupFormState>({
@@ -23,18 +34,18 @@ const InitialSetup: React.FC = () => {
     // ユーザー名を一意なものに置き換える
     const updateUserName = async () => {
       setIsLoadingName(true);
-      const uniqueName = await getUniqueName(userData);
+      const uniqueName = await getUniqueName(null);
       setFormState(prev => ({...prev, username: uniqueName}));
       setIsLoadingName(false);
     };
 
     const preprocessing = async () => {
-      await navigateByAuthState(uid, navigate);
+      // await navigateByAuthState(uid, navigate);
       await updateUserName();
     }
 
     preprocessing();
-  }, [navigate, uid, userData]);
+  }, [navigate, uid]);
 
   const createUserProcessing = async () => {
     if (!uid) {
@@ -54,15 +65,7 @@ const InitialSetup: React.FC = () => {
       setSubmitDisabled(false);
     }
   };
-
-  const handleBirthdayChange = (
-    value: Date | null,
-  ) => {
-    if (value) {
-      setFormState(prev => ({ ...prev, birthday: value }));
-    }
-  };
-
+  
   return (
     <UserInitialSetupView
       isLoading={isLoadingName}
@@ -70,7 +73,6 @@ const InitialSetup: React.FC = () => {
       submitDisabled={submitDisabled}
       error={error}
       onFormStateChange={e => handleFormStateChange(e, setFormState)}
-      onBirthdayChange={handleBirthdayChange}
       onSetUserData={createUserProcessing}
     />
   );

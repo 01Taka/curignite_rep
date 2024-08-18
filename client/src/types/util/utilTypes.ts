@@ -5,3 +5,7 @@ export type Stringify<T> = {
 };
 
 export type HexColorCode = `#${string}`;
+
+export type StringNumber = `${number}`
+
+export type ComparisonOperator = '>' | '>=' | '<' | '<=' | '===' | '!==' | '==' | '!=';
