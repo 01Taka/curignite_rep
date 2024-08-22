@@ -1,5 +1,5 @@
 import React from 'react';
-import SelectField from '../../../../../components/input/field/SelectFiled';
+import SelectField from '../../../../../components/input/field/SelectField';
 import { FormStateChangeFunc, SelectItem } from '../../../../../types/util/componentsTypes';
 import { SpaceTimerMode } from '../../../../../types/app/space/spaceTypes';
 

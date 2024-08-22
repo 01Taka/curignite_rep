@@ -4,12 +4,12 @@ import { CreateIndividualTaskViewFormState } from '../../../../../types/app/task
 import { keyMirror } from '../../../../../functions/objectUtils';
 import { NumberField, StringField } from '../../../../../components/input/inputIndex';
 import MultilineField from '../../../../../components/input/field/MultilineField';
-import SelectField from '../../../../../components/input/field/SelectFiled';
+import SelectField from '../../../../../components/input/field/SelectField';
 import CircularButton, { CircularButtonSize } from '../../../../../components/input/button/CircularButton';
 import { taskPrioritySelectItem } from '../../../../../types/app/task/taskForm';
 import { cn } from '../../../../../functions/utils';
 import { Typography } from '@mui/material';
-import DateTimeFiled from '../../../../../components/input/field/DateTimeFiled';
+import DateTimeField from '../../../../../components/input/field/DateTimeField';
 
 interface CreateIndividualTaskViewProps {
   formState: CreateIndividualTaskViewFormState;
@@ -33,7 +33,7 @@ const CreateIndividualTaskView: FC<CreateIndividualTaskViewProps> = ({
       <Typography className='w-full p-2' variant='h4'>
         タスクを追加
       </Typography>
-      <DateTimeFiled
+      <DateTimeField
         label='提出日時'
         name={names.dueDateTime}
         value={formState.dueDateTime}

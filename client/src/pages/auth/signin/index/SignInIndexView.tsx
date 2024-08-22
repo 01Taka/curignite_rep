@@ -3,6 +3,7 @@ import Divider from '@mui/material/Divider';
 import { Alert, Button } from '@mui/material';
 import { FormContainer, Heading } from '../../../../components/container/containerIndex';
 import { EmailField } from '../../../../components/input/inputIndex';
+import CircularButton from '../../../../components/input/button/CircularButton';
 
 interface SignInIndexViewProps {
     email: string;
@@ -20,16 +21,17 @@ const SignInIndexView: React.FC<SignInIndexViewProps> = ({
     onEmailSignIn,
 }) => {
   return (
-        <FormContainer>
-            <Heading children='ログインする' level={1} className='mt-16'/>
-            <div className='mt-16 sm:w-80 w-64'>
-                <div className='flex flex-col'>
-                    <Button variant="outlined" size="large" onClick={onGoogleSignIn}>Googleでログイン</Button>
-                </div>
+        <FormContainer flexCenter>
+            <div className='flex items-center mt-8 space-x-8'>
+                <Heading children='ログインする' level={1} />
+                <CircularButton size="x4l" looks="frame" bgColor="main" onClick={onGoogleSignIn}>
+                    Google<br/>でログイン
+                </CircularButton>
+            </div>
             <div className='mt-10 w-full'>
                 <Divider>または</Divider>
             </div>
-            <div className='flex flex-col justify-center mt-8 mb-16 w-full'>
+            <div className='flex flex-col justify-center mt-8 mb-16 w-full max-w-96'>
                 <div className='flex flex-col bg-gray-50 px-3 py-4 rounded-xl'>
                     <Heading children='メールでログイン' level={4}/>
                     <EmailField email={email} onEmailChange={onEmailChange} />
@@ -41,9 +43,6 @@ const SignInIndexView: React.FC<SignInIndexViewProps> = ({
                     <Button children='パスワードを忘れた場合はこちら' variant='outlined' size='large' />
                 </div>
             </div>
-            </div>
-
-
             {error && <Alert severity='error'>{error}</Alert>}
         </FormContainer>
     )

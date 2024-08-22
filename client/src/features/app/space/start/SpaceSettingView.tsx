@@ -3,9 +3,9 @@ import { SpaceSettingViewProps } from '../../../../types/app/space/spaceTypes';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import StringField from '../../../../components/input/field/StringField';
 import MultilineField from '../../../../components/input/field/MultilineField';
-import CheckBoxFiled from '../../../../components/input/field/CheckBoxFiled';
+import CheckBoxField from '../../../../components/input/field/CheckBoxField';
 import CircularButton from '../../../../components/input/button/CircularButton';
-import SelectField from '../../../../components/input/field/SelectFiled';
+import SelectField from '../../../../components/input/field/SelectField';
 import FormContainer from '../../../../components/container/FormContainer';
 import { Alert, CircularProgress, Typography } from '@mui/material';
 import { publicationTargetForSelect } from '../../../../types/firebase/db/space/spacesTypes';
@@ -53,7 +53,7 @@ const SpaceSettingView: FC<SpaceSettingViewProps> = ({ formState, isStarting, on
             onChange={onChangeFormState}
             selectItems={publicationTargetForSelect}
           />
-          <CheckBoxFiled
+          <CheckBoxField
             label="参加には承認が必要"
             name={names.requiresApproval}
             checked={formState.requiresApproval}

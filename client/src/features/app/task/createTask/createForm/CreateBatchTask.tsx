@@ -9,6 +9,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { PathParam } from '../../../../../types/path/paths';
 import SelectCollection from './SelectCollection';
 import { taskPaths } from '../../../../../types/path/mainPaths';
+import { rangesToArray } from '../../../../../functions/objectUtils';
 
 const CreateBatchTask: FC= () => {
   const params = useParams();
@@ -22,7 +23,7 @@ const CreateBatchTask: FC= () => {
     dueDateTime: null,
     taskNote: "",
     priority: "medium",
-    pagesInRange: [],
+    pagesInRange: [{ min: 0, max: 10 }],
   });
 
   useEffect(() => {
@@ -42,7 +43,7 @@ const CreateBatchTask: FC= () => {
           formState.dueDateTime ? toTimestamp(formState.dueDateTime): null,
           formState.taskNote,
           formState.priority,
-          formState.pagesInRange
+          rangesToArray(formState.pagesInRange),
         );
         navigate(taskPaths.create);
         console.log('Batch task created successfully!'); // 成功メッセージ
@@ -59,6 +60,7 @@ const CreateBatchTask: FC= () => {
       {id !== null ? (
         <CreateBatchTaskView 
           formState={formState}
+          rangeMax={200}
           onFormStateChange={(e) => handleFormStateChange(e, setFormState)}
           onCreate={handleCreateBatchTask}
         />

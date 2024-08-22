@@ -1,5 +1,5 @@
 import { TaskPriority } from "../../firebase/db/todo/TodoTypes";
-import { SelectItem } from "../../util/componentsTypes";
+import { Range, SelectItem } from "../../util/componentsTypes";
 
 interface BaseTaskFormState {
   title: string;
@@ -36,5 +36,5 @@ export interface CreateTaskCollectionViewFormState {
 }
 
 export interface CreateBatchTaskViewFormState extends BaseTaskFormState {
-  pagesInRange: number[];
+  pagesInRange: Range[];
 }

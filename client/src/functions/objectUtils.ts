@@ -1,3 +1,4 @@
+import { Range } from "../types/util/componentsTypes";
 import { StringNumber } from "../types/util/utilTypes";
 import { performComparison } from "./utils";
 
@@ -165,6 +166,24 @@ export const getValueBetween = <T extends number | string | StringNumber, K>(
 
   return valueMap[closestKey];
 };
+
+export const getRangeWithValues = (start: number, end: number): number[] => {
+  return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+}
+
+export const rangesToArray = (ranges: Range[]): number[] => {
+  const setRanges = new Set<number>();
+  ranges.forEach(range => {
+    const numbers = getRangeWithValues(range.min, range.min);
+    numbers.forEach(number => setRanges.add(number));
+  })
+  return Array.from(setRanges);
+}
+
+export const union = <T>(...setsOrArrays: (Set<T> | T[])[]): Set<T> => {
+  const sets = setsOrArrays.map(value => new Set(value));
+  return sets.reduce((acc, set) => new Set([...acc, ...set]), new Set<T>());
+}
 
 /**
  * オブジェクトのキーをその値に反映させる関数

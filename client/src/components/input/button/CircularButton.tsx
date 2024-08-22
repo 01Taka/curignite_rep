@@ -5,21 +5,33 @@ import { useAppSelector } from '../../../redux/hooks';
 
 // CircularButtonProps インターフェースを定義
 const size = {
-    xs: 'w-9 h-9 text-xs border-2',
-    sm: 'w-12 h-12 text-xs border-2',
-    md: 'w-16 h-16 text-sm border-4',
-    lg: 'w-20 h-20 text-md border-4',
-    xl: 'w-24 h-24 text-xl border-4',
-    x4l: 'w-32 h-32 text-2xl border-4',
-    x8l: 'w-48 h-48 text-4xl border-8',
-}
+    xs: 'w-9 h-9 border-2',
+    sm: 'w-12 h-12 border-2',
+    md: 'w-16 h-16 border-2',
+    lg: 'w-20 h-20 border-2',
+    xl: 'w-24 h-24 border-4',
+    x4l: 'w-32 h-32 border-4',
+    x8l: 'w-48 h-48 border-8',
+};
+
+const textSize = {
+    xs: 'text-xs',
+    sm: 'text-xs',
+    md: 'text-sm',
+    lg: 'text-md',
+    xl: 'text-xl',
+    x4l: 'text-2xl',
+    x8l: 'text-4xl',
+};
 
 export type CircularButtonSize = keyof typeof size;
+export type CircularButtonTextSize = keyof typeof textSize;
 
 interface CircularButtonProps extends ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof circularButtonVariants> {
     children: ReactNode;
     invalidation?: boolean;
     mobileSize?: CircularButtonSize;
+    textSize?: CircularButtonTextSize; // New prop for text size
 }
 
 // class-variance-authority を使ってスタイルのバリエーションを定義
@@ -52,16 +64,23 @@ const circularButtonVariants = cva("rounded-full flex items-center justify-cente
             textColor: 'auto',
         }
     }
-)
+);
 
 // CircularButton コンポーネントを定義
-const CircularButton: FC<CircularButtonProps> = ({ children, className, bgColor, size, mobileSize, textColor, looks, invalidation, ...props }) => {
+const CircularButton: FC<CircularButtonProps> = ({ children, className, bgColor, size, mobileSize, textSize: customTextSize, textColor, looks, invalidation, ...props }) => {
     const { device } = useAppSelector(state => state.userSlice);
     
-    const applySize = mobileSize ? (device === "mobile" ? mobileSize : size) : size;
-    const buttonClass = cn(circularButtonVariants({ bgColor, size: applySize, looks, textColor }), className, {
-        'bg-gray-400 hover:bg-gray-400 hover:scale-100': invalidation,
-    });
+    const applySize = (mobileSize ? (device === "mobile" ? mobileSize : size) : size) || "md";
+    const applyTextSize = customTextSize ? textSize[customTextSize] : textSize[applySize];
+    
+    const buttonClass = cn(
+        circularButtonVariants({ bgColor, size: applySize, looks, textColor }), 
+        applyTextSize, // Apply the determined text size
+        className, 
+        {
+            'bg-gray-400 hover:bg-gray-400 hover:scale-100': invalidation,
+        }
+    );
 
     return (
         <button 

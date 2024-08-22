@@ -2,14 +2,17 @@ import React, { useEffect, useState } from 'react';
 import UserInitialSetupView, { InitialSetupFormState } from './InitialSetupView';
 import { useNavigate } from 'react-router-dom';
 import { getUniqueName, handleCreateUser } from './handleUserInitialSetup';
-import { handleFormStateChange } from '../../../../functions/utils';
 import { rootPaths } from '../../../../types/path/paths';
 import { getAuth } from 'firebase/auth';
+import { handleFormStateChange } from '../../../../functions/utils';
 
 const InitialSetup: React.FC = () => {
   const navigate = useNavigate();
-
   const [uid, setUid] = useState<string | null>(null);
+  const [isLoadingName, setIsLoadingName] = useState(true);
+  const [formState, setFormState] = useState<InitialSetupFormState>({ username: "", birthday: null });
+  const [submitDisabled, setSubmitDisabled] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const auth = getAuth();
@@ -22,58 +25,47 @@ const InitialSetup: React.FC = () => {
     }
   }, []);
 
-  const [isLoadingName, setIsLoadingName] = useState(true);
-  const [formState, setFormState] = useState<InitialSetupFormState>({
-    username: "",
-    birthday: new Date(),
-  });
-  const [submitDisabled, setSubmitDisabled] = useState(false);
-  const [error, setError] = useState("");
-
   useEffect(() => {
-    // ユーザー名を一意なものに置き換える
-    const updateUserName = async () => {
+    const initializeUser = async () => {
       setIsLoadingName(true);
       const uniqueName = await getUniqueName(null);
-      setFormState(prev => ({...prev, username: uniqueName}));
+      setFormState(prev => ({ ...prev, username: uniqueName }));
       setIsLoadingName(false);
     };
 
-    const preprocessing = async () => {
-      // await navigateByAuthState(uid, navigate);
-      await updateUserName();
+    if (uid) {
+      initializeUser();
     }
+  }, [uid]);
 
-    preprocessing();
-  }, [navigate, uid]);
-
-  const createUserProcessing = async () => {
-    if (!uid) {
+  const handleSubmit = async () => {
+    if (!uid) return;
+    if (!formState.birthday) {
+      setError("生年月日が入力されていません。");
       return;
     }
-    
+
     setSubmitDisabled(true);
     setError("");
+
     try {
       await handleCreateUser(uid, formState);
       navigate(rootPaths.main);
     } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
-      }
+      if (error instanceof Error) setError(error.message);
     } finally {
       setSubmitDisabled(false);
     }
   };
-  
+
   return (
     <UserInitialSetupView
       isLoading={isLoadingName}
       formState={formState}
       submitDisabled={submitDisabled}
       error={error}
-      onFormStateChange={e => handleFormStateChange(e, setFormState)}
-      onSetUserData={createUserProcessing}
+      onFormStateChange={(e) => handleFormStateChange(e, setFormState)}
+      onSubmit={handleSubmit}
     />
   );
 };

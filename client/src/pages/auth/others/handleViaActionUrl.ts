@@ -3,6 +3,8 @@ import { verifyActionCode } from "../../../firebase/auth/signUp";
 import { authPaths } from "../../../types/path/authPaths";
 
 export const actionNavigation = (action: string, navigate: NavigateFunction) => {
+  console.log("ACTION", action);
+  
     switch (action) {
         case 'resetPassword':
           navigate('/reset-password');
@@ -11,7 +13,7 @@ export const actionNavigation = (action: string, navigate: NavigateFunction) => 
           // Display email recovery handler and UI.
           break;
         case 'verifyEmail':
-          navigate(authPaths.accountEndpoint);
+          navigate(authPaths.initialSetup);
           break;
         default:
           console.error('Unknown action:', action);

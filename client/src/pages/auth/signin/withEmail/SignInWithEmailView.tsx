@@ -28,12 +28,12 @@ const SignInWithEmailView: React.FC<SignInWithEmailViewProps> = ({
     }
 
     return (
-        <FormContainer>
+        <FormContainer flexCenter>
             <Heading children='ログインする' level={1} className='mt-20'/>
-            <form onSubmit={handleSubmit} className='w-64 mt-12'>
+            <form onSubmit={handleSubmit} className='w-80 mt-12 space-y-4'>
                 <EmailField email={email} onEmailChange={onEmailChange} />
                 <PasswordField password={password} onPasswordChange={onPasswordChange} />
-                <div className='w-full my-16'>
+                <div className='w-full pt-12'>
                     <Button
                         type='submit'
                         size="large"

@@ -31,13 +31,13 @@ interface CreateAccountViewProps {
     };
 
     return (
-            <FormContainer>
+            <FormContainer flexCenter>
                 <Heading children='アカウントを作成' level={1} className='mt-20'/>
-                <form onSubmit={handleSubmit} className='flex flex-col items-center w-64 mt-12'>
+                <form onSubmit={handleSubmit} className='flex flex-col items-center space-y-4 w-80 mt-12'>
                     <EmailField email={formState.email} onEmailChange={onFormStateChange} />
                     <UserNameField username={formState.username} onUserNameChange={onFormStateChange} />
                     <PasswordField password={formState.password} onPasswordChange={onFormStateChange} />
-                    <div className='w-full my-16'>
+                    <div className='w-full pt-12'>
                         <Button
                             disabled={submitDisabled}
                             type='submit'

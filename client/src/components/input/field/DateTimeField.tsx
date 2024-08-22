@@ -2,6 +2,7 @@ import React from 'react';
 import { ThemeProvider, CssBaseline, createTheme } from '@mui/material';
 import { LocalizationProvider, DateTimePicker, DateTimePickerProps, PickerValidDate } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { ja } from 'date-fns/locale';
 import { FormStateChangeEvent, FormStateChangeFunc, HTMLDateElement } from '../../../types/util/componentsTypes';
 import { cn } from '../../../functions/utils';
 
@@ -13,14 +14,14 @@ const theme = createTheme({
   },
 });
 
-interface DateTimeFiledProps extends Omit<DateTimePickerProps<PickerValidDate>, 'onChange'> {
+interface DateTimeFieldProps extends Omit<DateTimePickerProps<PickerValidDate>, 'onChange'> {
     label: string;
     name: string;
     onChange: FormStateChangeFunc;
     fullWidth?: boolean;
 }
 
-const DateTimeFiled: React.FC<DateTimeFiledProps> = ({ label, name, onChange, fullWidth = true, ...props }) => {
+const DateTimeField: React.FC<DateTimeFieldProps> = ({ label, name, onChange, fullWidth = true, ...props }) => {
   const handleDateTimeChange = (value: Date | null) => {
     const event: FormStateChangeEvent = {
       target: {
@@ -35,7 +36,7 @@ const DateTimeFiled: React.FC<DateTimeFiledProps> = ({ label, name, onChange, fu
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <LocalizationProvider dateAdapter={AdapterDateFns}>
+      <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ja}>
         <div className={cn("mx-auto", fullWidth && "w-full")}>
           <DateTimePicker
             label={label}
@@ -49,4 +50,4 @@ const DateTimeFiled: React.FC<DateTimeFiledProps> = ({ label, name, onChange, fu
   );
 };
 
-export default DateTimeFiled;
+export default DateTimeField;

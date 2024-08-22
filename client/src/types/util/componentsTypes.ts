@@ -2,13 +2,18 @@ import { SelectChangeEvent } from "@mui/material";
 import { ReactNode } from "react";
 import { BGColorClass } from "../module/tailwindTypes";
 
-export type HTMLDateElement = {
+export type HTMLElement<T, K extends string> = {
     name: string;
-    value: Date | null;
-    type: "date";
+    value: T,
+    type: K;
 }
 
-export type FormStateChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | HTMLDateElement>;
+export type HTMLDateElement = HTMLElement<Date | null, "date">;
+export type HTMLRangeElement = HTMLElement<Range[], "range">;
+
+type CustomHTMLElement = HTMLDateElement | HTMLRangeElement;
+
+export type FormStateChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | CustomHTMLElement>;
 
 export type FormStateChangeFunc = (e: FormStateChangeEvent) => void;
 
@@ -49,4 +54,9 @@ export interface Pomodoro {
 export interface HeatmapCellColor {
     borderCount: number;
     colorClass: BGColorClass;
+}
+
+export interface Range {
+    min: number;
+    max: number;
 }

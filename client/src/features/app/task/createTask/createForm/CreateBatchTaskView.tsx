@@ -4,14 +4,16 @@ import { CreateBatchTaskViewFormState, taskPrioritySelectItem } from '../../../.
 import { keyMirror } from '../../../../../functions/objectUtils';
 import { StringField } from '../../../../../components/input/inputIndex';
 import MultilineField from '../../../../../components/input/field/MultilineField';
-import SelectField from '../../../../../components/input/field/SelectFiled';
+import SelectField from '../../../../../components/input/field/SelectField';
 import { cn } from '../../../../../functions/utils';
 import CircularButton, { CircularButtonSize } from '../../../../../components/input/button/CircularButton';
 import { Typography } from '@mui/material';
-import DateTimeFiled from '../../../../../components/input/field/DateTimeFiled';
+import DateTimeField from '../../../../../components/input/field/DateTimeField';
+import RangeField from '../../../../../components/input/field/RangeField';
 
 interface CreateBatchTaskViewProps {
   formState: CreateBatchTaskViewFormState;
+  rangeMax: number;
   onFormStateChange: FormStateChangeFunc;
   onCreate: () => void;
   enterButtonSize?: CircularButtonSize,
@@ -20,6 +22,7 @@ interface CreateBatchTaskViewProps {
 
 const CreateBatchTaskView: FC<CreateBatchTaskViewProps> = ({
   formState,
+  rangeMax,
   onFormStateChange,
   onCreate,
   enterButtonSize = "lg",
@@ -32,11 +35,21 @@ const CreateBatchTaskView: FC<CreateBatchTaskViewProps> = ({
       <Typography className='w-full p-2' variant='h4'>
         ページを追加
       </Typography>
-      <DateTimeFiled
+      <DateTimeField
         label='提出日時'
         name={names.dueDateTime}
         value={formState.dueDateTime}
         onChange={onFormStateChange}
+        fullWidth
+      />
+      <RangeField 
+        label='範囲'
+        name={names.pagesInRange}
+        value={formState.pagesInRange}
+        onChange={onFormStateChange}
+        max={rangeMax}
+        minLabel='開始'
+        maxLabel='終了'
         fullWidth
       />
       <StringField

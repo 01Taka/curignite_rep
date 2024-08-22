@@ -7,6 +7,7 @@ import SignInIndex from './signin/index/SignInIndex';
 import SignInWithEmail from './signin/withEmail/SignInWithEmail';
 import AuthIndex from './index/AuthIndex';
 import { relativeAuthPaths } from '../../types/path/authPaths';
+import ViaActionUrlPage from './others/ViaActionUrlPage';
 
 const AuthRoutes: FC = () => {
   return (
@@ -17,6 +18,7 @@ const AuthRoutes: FC = () => {
       <Route path={relativeAuthPaths.createAccount} element={<CreateAccount />} />
       <Route path={relativeAuthPaths.accountEndpoint} element={<CreateAccountEndPointPage />} />
       <Route path={relativeAuthPaths.initialSetup} element={<InitialSetup />} />
+      <Route path={relativeAuthPaths.viaActionUrl} element={<ViaActionUrlPage />} />
     </Routes>
   );
 };
