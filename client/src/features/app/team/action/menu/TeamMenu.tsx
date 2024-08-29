@@ -3,7 +3,9 @@ import JoinCreateTeam from '../../../../../pages/app/team/actions/JoinCreateTeam
 
 const TeamMenu: FC = () => {
   return (
-    <JoinCreateTeam />
+    <div className='mt-20'>
+      <JoinCreateTeam />
+    </div>
   )
 }
 

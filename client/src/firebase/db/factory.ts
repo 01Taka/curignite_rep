@@ -1,5 +1,6 @@
 import { Firestore } from "firebase/firestore";
 import { db } from "../firebase";
+import { StorageManager, storageManager } from "../storage/storageManager";
 
 // Team-related imports
 import TeamsDB from "./app/team/teams";
@@ -35,12 +36,13 @@ import TaskListTaskCollectionsDB from "./app/todo/subCollection/taskListTaskColl
 import { TaskListIndividualTaskService } from "./app/todo/subCollection/taskListIndividualTaskService";
 import { TaskCollectionBatchTaskService } from "./app/todo/subCollection/subCollection/taskCollectionBatchTaskService";
 import { TaskListTaskCollectionService } from "./app/todo/subCollection/taskListTaskCollectionService";
+//
 
 class ServiceFactory {
     private firestore: Firestore;
     private instances: Record<string, any> = {};
 
-    constructor(firestore: Firestore) {
+    constructor(firestore: Firestore, private storageManager: StorageManager) {
         this.firestore = firestore;
     }
 
@@ -71,6 +73,7 @@ class ServiceFactory {
     // コレクションサービス
     createUserService = (): UserService => new UserService(
         this.getUsersDB(),
+        this.createUserTeamService(),
         this.createTaskListService(),
     );
 
@@ -78,6 +81,7 @@ class ServiceFactory {
         new UserTeamService(
             this.getTeamsDB(),
             this.getUsersDB(),
+            this.createTeamService(),
             this.createTeamCodeService(),
             this.createTeamGroupService(),
             this.createUserTeamsDB
@@ -89,7 +93,7 @@ class ServiceFactory {
         );
 
     createTeamService = (): TeamService => 
-        new TeamService(this.getTeamsDB(), this.createUserService());
+        new TeamService(this.getTeamsDB(), this.storageManager);
 
     createSpaceService = (): SpaceService => {
         return new SpaceService(
@@ -128,6 +132,6 @@ class ServiceFactory {
         new TaskCollectionBatchTaskService(this.createTaskCollectionBatchTasksDB, this.createTaskListTaskCollectionsDB);
 }
 
-const serviceFactory = new ServiceFactory(db);
+const serviceFactory = new ServiceFactory(db, storageManager);
 
 export default serviceFactory;

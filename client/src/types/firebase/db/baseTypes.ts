@@ -1,4 +1,4 @@
-import { DocumentData, Timestamp } from "firebase/firestore";
+import { DocumentData, DocumentReference, Timestamp } from "firebase/firestore";
 import { UserData } from "./user/usersTypes";
 
 
@@ -33,6 +33,11 @@ export interface MemberData {
 
 // ユーザーが参加できる機能を持つデータにおいて各ユーザーの権限を保存するフィールドの型
 export type BasePermissions<T> =  { [role in RoleType]?: T[] };
+
+export interface DocumentRefWithFileUrl<T extends string | number> {
+    documentRef: DocumentReference<DocumentData>;
+    filesUrl: Record<T, string | null>;
+}
 
 // 参加禁止者や招待された人など特別なイベントを受けているユーザーの定義
 export interface ActionInfo<T extends any = string> {

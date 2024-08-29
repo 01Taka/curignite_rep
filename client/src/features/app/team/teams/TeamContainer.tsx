@@ -1,37 +1,19 @@
 import { Avatar, CardHeader } from '@mui/material';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC } from 'react';
 import { cn } from '../../../../functions/utils';
 import { Member } from '../../../../types/firebase/db/baseTypes';
-import serviceFactory from '../../../../firebase/db/factory';
-import { useAppSelector } from '../../../../redux/hooks';
 
 interface TeamContainerProps {
-  teamId: string;
   teamName: string;
-  iconPath: string;
-  members: Member[];
+  iconUrl: string;
+  learningMembers: Member[];
   myTeam: boolean;
   currentDisplay: boolean;
   memberNumber: number;
   maxDisplayLearningNumber?: number;
 }
 
-const TeamContainer: FC<TeamContainerProps> = ({ teamId, teamName, iconPath, members, myTeam, currentDisplay, memberNumber, maxDisplayLearningNumber = 3 }) => {
-  const { uid } = useAppSelector(state => state.userSlice);
-
-  const [learningMembers, setLearningMembers] = useState<Member[]>([]);
-
-  useEffect(() => {
-    const updateLearningMembers = async () => {
-      if (uid && members.length > 0) {
-        const teamService = serviceFactory.createTeamService();
-        const members = await teamService.getLearningMember(teamId);
-        setLearningMembers(members);
-      }
-    }
-    updateLearningMembers();
-  }, [uid, teamId, members])
-
+const TeamContainer: FC<TeamContainerProps> = ({ teamName, iconUrl, myTeam, currentDisplay, memberNumber, learningMembers, maxDisplayLearningNumber = 3 }) => {  
   return (
     <div className={cn(
         currentDisplay && "border-2 scale-105",
@@ -42,7 +24,7 @@ const TeamContainer: FC<TeamContainerProps> = ({ teamId, teamName, iconPath, mem
       )}
     >
       <CardHeader
-        avatar={<Avatar src={iconPath} alt="チームアイコン" />}
+        avatar={<Avatar src={iconUrl} alt="チームアイコン" />}
         title={<TitleContent teamName={teamName} memberNumber={memberNumber} myTeam={myTeam} />}
         subheader={<SubheaderContent learningMembers={learningMembers} maxDisplayNumber={maxDisplayLearningNumber}/>}
       />
@@ -73,7 +55,7 @@ interface SubheaderContentProps {
 }
 
 const SubheaderContent: FC<SubheaderContentProps> = ({ learningMembers, maxDisplayNumber = 3 }) => {
-  if (maxDisplayNumber < 1) {
+  if (maxDisplayNumber < 1 || !learningMembers || learningMembers.length === 0) {
     return null;
   }
 

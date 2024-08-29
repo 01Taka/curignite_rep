@@ -1,19 +1,18 @@
 import { FC, useEffect, useMemo, useState } from 'react';
 import { useAppSelector } from '../../../../../redux/hooks';
 import { revertTimestampConversion } from '../../../../../functions/db/dataFormatUtils';
-import { sortJoinRequestsByActionTime, sortSpaceMembers } from '../../../../../functions/app/space/menuUtils';
+import { sortJoinRequestsByActionTime } from '../../../../../functions/app/space/menuUtils';
 import { UserData } from '../../../../../types/firebase/db/user/usersTypes';
 import { DocumentIdMap } from '../../../../../types/firebase/db/formatTypes';
 import serviceFactory from '../../../../../firebase/db/factory';
 import Participants from './participants/Participants';
-import { sampleSpaceData } from '../../../../../test/testData';
+// import { sampleSpaceData } from '../../../../../test/testData';
 
 const ActionIndex: FC = () => {
   const { currentSpaceId, spaces } = useAppSelector(state => state.spaceSlice);
   const [userDataMap, setUserDataMap] = useState<DocumentIdMap<UserData>>({});
 
   const currentSpace = useMemo(() => {
-    return sampleSpaceData
     const space = spaces[currentSpaceId];
     return space ? revertTimestampConversion(space) : null;
   }, [currentSpaceId, spaces]);
@@ -30,7 +29,7 @@ const ActionIndex: FC = () => {
         ...(awayMembers ? awayMembers.map(member => member.userId) : []),
         ...(sortedJoinRequests ? sortedJoinRequests.map(request => request.userId) : []),
       ];
-      const userMap = await userService.getUsersDataByUids(uids);
+      const userMap = await userService.getUserMapByUids(uids);
       setUserDataMap(userMap);
     };
     updateUserMap();

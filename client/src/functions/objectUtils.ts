@@ -180,6 +180,28 @@ export const rangesToArray = (ranges: Range[]): number[] => {
   return Array.from(setRanges);
 }
 
+/**
+ * 指定されたキーに基づいてオブジェクトの配列から重複を除去します。
+ * 
+ * @param objects - 重複を除去する対象のオブジェクトの配列。
+ * @param key - 重複をチェックするために使用するオブジェクトのキー。
+ * @returns 重複が除去されたオブジェクトの配列。
+ */
+export const removeDuplicatesByKey = <T extends Record<string, any>>(objects: T[], key: keyof T): T[] => {
+  // 既に見た値を保存するためのセット
+  const seenValues = new Set<any>();
+
+  return objects.filter(object => {
+    const value = object[key];
+    if (seenValues.has(value)) {
+      return false;
+    }
+
+    seenValues.add(value);
+    return true;
+  });
+}
+
 export const union = <T>(...setsOrArrays: (Set<T> | T[])[]): Set<T> => {
   const sets = setsOrArrays.map(value => new Set(value));
   return sets.reduce((acc, set) => new Set([...acc, ...set]), new Set<T>());

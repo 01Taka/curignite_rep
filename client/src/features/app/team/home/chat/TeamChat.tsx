@@ -13,8 +13,6 @@ const TeamChat: FC = () => {
       const teamGroupsDB = serviceFactory.createTeamGroupsDB(currentTeam.docId);
       const group = await teamGroupsDB.getTeamGroup(currentTeam.wholeGroupId);
       if (group) {
-        console.log(group.chatroomId);
-        
         setChatRoomId(group.chatroomId);
       }
     } catch (error) {

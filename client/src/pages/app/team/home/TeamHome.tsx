@@ -9,6 +9,8 @@ import serviceFactory from '../../../../firebase/db/factory';
 import { JoinState } from '../../../../types/firebase/db/baseTypes';
 import { isApprovedJoinState } from '../../../../functions/db/dbUtils';
 import AccessStateErrorMessage from '../../../../features/utils/messages/AccessStateErrorMessage';
+import TeamSetting from '../../../../features/app/team/setting/TeamSetting';
+import Participants from './Participants';
 
 const TeamHome: FC = () => {
   const params = useParams();
@@ -30,8 +32,9 @@ const TeamHome: FC = () => {
   return isApprovedJoinState(joinState) ? (
     <Routes>
       <Route path={getLastSegment(teamPaths.homeChildren.chat)} element={<TeamChat />} />
-      <Route path={getLastSegment(teamPaths.homeChildren.participants)} element={<div>参加者</div>} />
+      <Route path={getLastSegment(teamPaths.homeChildren.participants)} element={<Participants />} />
       <Route path={getLastSegment(teamPaths.homeChildren.whiteboard)} element={<div>ホワイトボード</div>} />
+      <Route path={getLastSegment(teamPaths.homeChildren.setting)} element={<TeamSetting />} />
     </Routes>
   ) : (
     <AccessStateErrorMessage joinState={joinState} message='このチームへのアクセスは許可されていません。'/>

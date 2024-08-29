@@ -1,4 +1,4 @@
-import { UserData } from "../../../../types/firebase/db/user/usersTypes";
+import { UserData, UserMetaData } from "../../../../types/firebase/db/user/usersTypes";
 import { UsersDB } from "./users";
 import { BaseDocumentData, Member } from "../../../../types/firebase/db/baseTypes";
 import { AuthStates } from "../../../../types/util/stateTypes";
@@ -6,14 +6,15 @@ import { DocumentData, DocumentReference, Timestamp } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { DocumentIdMap } from "../../../../types/firebase/db/formatTypes";
 import { TaskListService } from "../todo/taskListService";
+import { UserTeamService } from "./subCollection/userTeamService";
 
 export class UserService {
-    constructor(private usersDB: UsersDB, private taskListService: TaskListService) {}
+    constructor(private usersDB: UsersDB, private userTeamService: UserTeamService, private taskListService: TaskListService) {}
 
     async createUser(uid: string, username: string, iconUrl: string, birthDate: Timestamp): Promise<DocumentReference<DocumentData> | void> {
         try {
             const taskListRef = await this.taskListService.createTaskListForUser(uid);
-            return await this.usersDB.createUser(uid, username, iconUrl, birthDate, { spaceIds: [], taskListId: taskListRef.id });
+            return await this.usersDB.createUser(uid, username, iconUrl, birthDate, { isLearning: false, spaceIds: [], taskListId: taskListRef.id });
         } catch (error) {
             throw new Error("Failed to create user.");
         }
@@ -35,6 +36,22 @@ export class UserService {
         }
         return uidOrUserData;
     }
+
+    async updateMetadata(userId: string, newMetaData: Partial<UserMetaData>) {
+        try {
+            const userData = await this.usersDB.getUser(userId);
+            
+            if (!userData) {
+                throw new Error(`ユーザーが見つかりません: ${userId}`);
+            }
+    
+            const updatedMetaData = { ...userData.metaData, ...newMetaData };
+    
+            await this.usersDB.updateUser(userId, { metaData: updatedMetaData });
+        } catch (error) {
+            console.error(`メタデータ更新中にエラーが発生しました: `, error);
+        }
+    }    
 
     /**
      * ユーザーの認証段階を確認する
@@ -95,7 +112,7 @@ export class UserService {
      * @param uids ユーザーのUIDの配列
      * @returns ユーザーのデータを含む辞書オブジェクト
      */
-    async getUsersDataByUids(uids: string[]): Promise<DocumentIdMap<UserData>> {
+    async getUserMapByUids(uids: string[]): Promise<DocumentIdMap<UserData>> {
         try {
             const userEntries = await Promise.all(
                 uids.map(async (uid) => {
@@ -120,7 +137,7 @@ export class UserService {
     async getCreatorDataByDocuments (data: BaseDocumentData[]): Promise<DocumentIdMap<UserData>> {
         try {
             const uids = data.map(value => value.createdById);
-            return await this.getUsersDataByUids(uids);
+            return await this.getUserMapByUids(uids);
         } catch (error) {
             console.error("Error fetching users data by Documents: ", error);
             throw new Error("Failed to fetch users data by Documents");
@@ -152,17 +169,23 @@ export class UserService {
         }
     }
 
-    /**
-     * ユーザーが学習中かを確認する関数
-     * @param uid ユーザーID
-     * @returns ユーザーが学習中であるかのフラグ
-     */
-    async isLearning(uid: string): Promise<boolean> {
+    async startLearning(userId: string): Promise<void> {
         try {
-            const user = await this.usersDB.read(uid);
-            return user ? user.spaceIds.length > 0 : false;
+            await this.updateMetadata(userId, { isLearning: true });
+            await this.userTeamService.addLearningMember(userId);
         } catch (error) {
-            throw new Error("Failed to check if Learning.");
+            console.error("Failed to start learning:", error);
+            throw new Error("Unable to start learning. Please try again later.");
+        }
+    }
+    
+    async finishLearning(userId: string): Promise<void> {
+        try {
+            await this.updateMetadata(userId, { isLearning: false });
+            await this.userTeamService.removeLearningMember(userId);
+        } catch (error) {
+            console.error("Failed to finish learning:", error);
+            throw new Error("Unable to finish learning. Please try again later.");
         }
     }
 

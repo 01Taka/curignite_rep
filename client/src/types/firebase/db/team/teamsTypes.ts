@@ -17,15 +17,17 @@ export interface TeamData extends BaseDocumentData {
     teamName: string;
     iconUrl?: string;
     description?: string;
-    hashedPassword: string;
     requiresApproval: boolean;
     members: Member[];
+    learningMembers: ActionInfo<"learning">[];
     permissions: TeamPermissions;
     pendingRequests: ActionInfo<"pending">[];
     invitedUsers: ActionInfo<"invited">[];
     rejectedUsers: ActionInfo<"rejected">[];
     wholeGroupId: string;
 }
+
+export type TeamActionTypes = "pending" | "invited" | "rejected";
 
 // デフォルトのチーム権限を設定
 export const defaultTeamPermissions: TeamPermissions = {

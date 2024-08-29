@@ -7,12 +7,12 @@ import MultilineField from '../../../../../components/input/field/MultilineField
 import CircularButton from '../../../../../components/input/button/CircularButton';
 import { FormStateChangeFunc } from '../../../../../types/util/componentsTypes';
 import { keyMirror } from '../../../../../functions/objectUtils';
+import ImageUploadField from '../../../../../components/input/field/ImageUploadField';
 
 export type CreateTeamFormState = {
   teamName: string;
-  iconPath: string;
+  iconImage: File | null;
   description: string;
-  password: string;
   requiresApproval: boolean;
 };
 
@@ -42,11 +42,13 @@ const CreateTeamView: FC<CreateTeamViewProps> = ({
           required
           onChange={onFormStateChange}
         />
-        <StringField
-          value={formState.password}
-          label="パスワード"
-          name={names.password}
+        <ImageUploadField 
+          label='チームアイコン'
+          name={names.iconImage}
+          value={formState.iconImage}
           onChange={onFormStateChange}
+          shape='circle'
+          borderStyle='dashed'
         />
         <CheckBoxField
           label="参加には承認が必要"

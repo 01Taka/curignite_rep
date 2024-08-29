@@ -5,7 +5,7 @@ import TeamNavigation from "./pageNavigation/TeamPageNavigation";
 
 export const teamDesktopNavigation: NavigationItems[] = [
   {
-    path: [`${teamPaths.base}/home`, teamPaths.menu],
+    path: [`${teamPaths.base}/home`],
     pathParameters: true,
     contentsTopBar: {
       children: <TeamNavigation />
@@ -13,7 +13,15 @@ export const teamDesktopNavigation: NavigationItems[] = [
     sideList: {
       children: <TeamIndexNavigation />,
     },
-  }
+  },
+  {
+    path: [`${teamPaths.base}/home`, teamPaths.menu],
+    pathParameters: true,
+    sideList: {
+      children: <TeamIndexNavigation />,
+    },
+  },
+
 ];
 
 export const teamMobileNavigation: NavigationItems[] = [

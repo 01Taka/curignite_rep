@@ -2,7 +2,7 @@ import React, { FC, useEffect } from 'react'
 import CircularButton from '../../../../components/input/button/CircularButton';
 import { Home, ArrowBack } from '@mui/icons-material';
 import Teams from '../teams/Teams';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { teamPaths } from '../../../../types/path/mainPaths';
 import { useAppDispatch, useAppSelector } from '../../../../redux/hooks';
 import { replaceParams } from '../../../../functions/path/pathUtils';
@@ -11,6 +11,7 @@ import { setCurrentTeamId } from '../../../../redux/slices/team/teamSlice';
 
 const TeamIndexNavigation: FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useAppDispatch();
   const { device } = useAppSelector(state => state.userSlice);
   const { teams, currentTeamId } = useAppSelector(state => state.teamSlice);
@@ -27,11 +28,14 @@ const TeamIndexNavigation: FC = () => {
     }
 
     dispatch(setCurrentTeamId(defaultTeamId));
-    navigate(
-      replaceParams(teamPaths.homeChildren.participants, { [PathParam.TeamId]: defaultTeamId }),
-      { replace: true }
-    );
-  }, [device, teams, currentTeamId, dispatch, navigate]);
+
+    if (location.pathname === teamPaths.base) {
+      navigate(
+        replaceParams(teamPaths.homeChildren.participants, { [PathParam.TeamId]: defaultTeamId }),
+        { replace: true }
+      );
+    }
+  }, [device, teams, currentTeamId, location, dispatch, navigate]);
 
   const handleToHome = () => {
     navigate(teamPaths.menu);

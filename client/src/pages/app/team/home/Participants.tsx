@@ -1,44 +1,24 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, memo } from 'react';
 import { useAppSelector } from '../../../../redux/hooks';
-import ParticipantsView from '../../../../features/app/team/home/participants/ParticipantsView';
-import { MemberData } from '../../../../types/firebase/db/baseTypes';
-import { getMembersData } from '../../../../functions/db/dbUtils';
+import TeamMembers from '../../../../features/app/team/participants/members/TeamMembers';
+import { Typography, Box } from '@mui/material';
 
 const Participants: FC = () => {
-  const { teams, currentTeamId } = useAppSelector(state => state.teamSlice);
+  const { teams, currentTeamId } = useAppSelector((state) => state.teamSlice);
   const currentDisplayTeam = teams[currentTeamId];
-  const [members, setMembers] = useState<MemberData[]>([]);
-  const [myTeam, setMyTeam] = useState(false);
-  const { uid } = useAppSelector(state => state.userSlice);
-
-  useEffect(() => {
-    const team = currentDisplayTeam;
-
-    const updateMyTeam = async () => {
-      if (team && uid) {
-        setMyTeam(team.authorUid === uid);
-      }
-    }
-    
-    const updateParticipants = async () => {
-      if (team) {
-        const members = await getMembersData(team.members);
-        setMembers(members);
-      }
-    }
-
-    updateMyTeam();
-    updateParticipants();
-  }, [currentDisplayTeam, uid])
 
   if (!currentDisplayTeam) {
-    return null;
+    return <Typography variant="h6">チームが見つかりません。</Typography>;
   }
-    
-  return <ParticipantsView
-    members={members}
-    myTeam={myTeam}
-  />
-}
 
-export default Participants
+  return (
+    <Box className="flex justify-center items-center w-full h-full">
+      <Box className="flex flex-col p-4 space-y-4 border-2 border-main rounded-lg w-full max-w-lg h-4/5 overflow-y-auto">
+        <Typography variant="h4">メンバー</Typography>
+        <TeamMembers members={currentDisplayTeam.members} />
+      </Box>
+    </Box>
+  );
+};
+
+export default memo(Participants);

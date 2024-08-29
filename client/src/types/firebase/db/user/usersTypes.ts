@@ -3,6 +3,7 @@ import { BaseDocumentData } from "../baseTypes";
 import { ConvertTimestampToNumber } from "../formatTypes";
 
 export interface UserMetaData {
+    isLearning: boolean;
     spaceIds: string[];
     taskListId: string;
 }

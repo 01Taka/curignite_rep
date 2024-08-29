@@ -27,7 +27,10 @@ export const startNewSpace = async (
 ) => {
     try {
         setIsStartingSpace(true);
+        const userService = serviceFactory.createUserService();
         const spaceService = serviceFactory.createSpaceService();
+
+        await userService.startLearning(uid);
 
         // スペースの作成処理
         const spaceRef = await spaceService.createSpace(

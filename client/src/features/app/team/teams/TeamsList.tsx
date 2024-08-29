@@ -2,26 +2,28 @@ import { FC } from "react";
 import TeamContainer from "./TeamContainer";
 import { cn } from "../../../../functions/utils";
 import { TeamData } from "../../../../types/firebase/db/team/teamsTypes";
+import { DocumentIdMap } from "../../../../types/firebase/db/formatTypes";
+import { Member } from "../../../../types/firebase/db/baseTypes";
 
 export interface TeamsListProps {
-  teamDataList: TeamData[];
-  uid: string;
+  teams: TeamData[];
+  learningMembersMap: DocumentIdMap<Member[]>;
+  currentUserId: string;
   currentDisplayTeamId: string | undefined;
   hideTeamsWithoutIds?: boolean;
   onTeamClick: (team: TeamData) => void;
 }
 
-const TeamsList: FC<TeamsListProps> = ({ teamDataList, uid, currentDisplayTeamId, onTeamClick }) => {
+const TeamsList: FC<TeamsListProps> = ({ teams, learningMembersMap, currentUserId, currentDisplayTeamId, onTeamClick }) => {
     return (
       <div className='flex flex-col items-center w-full mt-8'>
-        {teamDataList && teamDataList.map((team) => (
+        {teams && teams.map((team) => (
           <div key={team.docId} className={cn('w-11/12 my-2')} onClick={() => onTeamClick(team)}>
             <TeamContainer
-              teamId={team.docId}
               teamName={team.teamName}
-              iconPath={team.iconPath}
-              members={team.members}
-              myTeam={team.createdById === uid}
+              iconUrl={team.iconUrl ?? ""}
+              learningMembers={learningMembersMap[team.docId]}
+              myTeam={team.createdById === currentUserId}
               currentDisplay={team.docId === currentDisplayTeamId}
               memberNumber={team.members.length}
             />

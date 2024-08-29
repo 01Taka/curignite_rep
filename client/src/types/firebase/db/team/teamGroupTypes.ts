@@ -33,7 +33,7 @@ export interface TeamGroupData extends BaseDocumentData {
     members: Member[]; // グループのメンバーのユーザーIDリスト
     permissions: TeamGroupPermissions; // グループ内の役割ごとの権限設定
     visibility: TeamGroupVisibility; // グループの公開設定
-    invitedUsers: ActionInfo[]; // グループへの招待者のリスト
+    invitedUsers: ActionInfo<"invited">[]; // グループへの招待者のリスト
     status: TeamGroupStatus; // グループの現在のステータス
     tags: TeamGroupTag[]; // グループに関連するタグやカテゴリ
 }

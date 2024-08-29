@@ -22,6 +22,10 @@ class BaseDB<T extends BaseDocumentData> {
     this.collectionRef = collection(this.firestore, collectionPath) as CollectionReference<T>;
   }
 
+  getCollectionPath(): string {
+    return this.collectionRef.path;
+  }
+
   async handleFirestoreOperation<T>(operation: Promise<T>, errorMessage: string): Promise<T> {
     try {
         return await operation;

@@ -78,6 +78,7 @@ export const teamPaths = {
     participants: `${mainPaths.team}/home/:${PathParam.TeamId}/participants`,
     chat: `${mainPaths.team}/home/:${PathParam.TeamId}/chat`,
     whiteboard: `${mainPaths.team}/home/:${PathParam.TeamId}/whiteboard`,
+    setting: `${mainPaths.team}/home/:${PathParam.TeamId}/setting`,
   },
   list: `${mainPaths.team}/list`,
   menu: `${mainPaths.team}/menu`,

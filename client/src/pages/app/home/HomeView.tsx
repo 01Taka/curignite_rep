@@ -36,25 +36,24 @@ const HomeView: FC<HomeViewProps> = ({ radius, routeElements, centerItem, angleA
           </div>
         )}
 
-        {routeElements && routeElements.map((route, index) => {
+        {routeElements.map((route, index) => {
           const theta = ((angle * index) + angleAdjustment) * (Math.PI / 180);
           const x = (radius + radius * Math.cos(theta)) + (buttonSize / 2);
           const y = (radius + radius * Math.sin(theta)) + (buttonSize / 2);
 
           return (
-            <>
-              <div key={index} style={{ position: 'absolute', left: `${x}px`, top: `${y}px`, transform: `translate(-${buttonSize / 2}px, -${buttonSize / 2}px)` }}>
-                <CircularButton
-                  children={route.text}
-                  size='x4l'
-                  bgColor='secondaryBase'
-                  invalidation={route.invalidation}
-                  onClick={() => onNavigate(route.path)}
-                />
-              </div>
-            </>
+            <div key={index} style={{ position: 'absolute', left: `${x}px`, top: `${y}px`, transform: `translate(-${buttonSize / 2}px, -${buttonSize / 2}px)` }}>
+              <CircularButton
+                children={route.text}
+                size='x4l'
+                bgColor='secondaryBase'
+                invalidation={route.invalidation}
+                onClick={() => onNavigate(route.path)}
+              />
+            </div>
           );
         })}
+
       </div>
     </div>
   );

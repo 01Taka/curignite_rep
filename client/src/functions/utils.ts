@@ -1,7 +1,7 @@
 import clsx, { ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { FormStateChangeEvent } from "../types/util/componentsTypes";
-import { ComparisonOperator, StringNumber } from "../types/util/utilTypes";
+import { ComparisonOperator } from "../types/util/utilTypes";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));

@@ -1,7 +1,6 @@
 import { DocumentData, DocumentReference, Firestore } from "firebase/firestore";
 import BaseDB from "../../base";
 import { defaultTeamPermissions, TeamData } from "../../../../types/firebase/db/team/teamsTypes";
-import { hashDataSHA256 } from "../../../../functions/hash";
 import { createInitialAdminMember, getInitialBaseDocumentData } from "../../../../functions/db/dbUtils";
 
 class TeamsDB extends BaseDB<TeamData> {
@@ -24,27 +23,26 @@ class TeamsDB extends BaseDB<TeamData> {
         teamName: string,
         iconPath: string,
         description: string,
-        password: string | "",
         requiresApproval: boolean,
     ): Promise<DocumentReference<DocumentData>> {
         try {
-            const hashedPassword = password ? hashDataSHA256(password) : "";
             const wholeGroupId = "グループを作成してIDを取得"
             const data: TeamData = {
                 ...getInitialBaseDocumentData(createdById),
                 teamName,
                 iconPath,
                 description,
-                hashedPassword,
                 requiresApproval,
                 members: await createInitialAdminMember(createdById),
+                learningMembers: [],
                 permissions: defaultTeamPermissions,
                 pendingRequests: [],
                 invitedUsers: [],
                 rejectedUsers: [],
                 wholeGroupId,
             };
-            return this.create(data);
+            const teamRef =  this.create(data);
+            return teamRef;
         } catch (error) {
             console.error("Error creating team: ", error);
             throw new Error("Failed to create team"); // エラー発生時にカスタムエラーメッセージをスロー

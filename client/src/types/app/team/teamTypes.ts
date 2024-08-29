@@ -1,1 +1,1 @@
-export type TeamHomePages = "participants" | "chat" | "whiteboard";
+export type TeamHomePages = "participants" | "chat" | "whiteboard" | "setting";
