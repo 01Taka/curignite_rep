@@ -36,7 +36,6 @@ const MainRoutes: FC = () => {
         <Route path={mainRootPaths.task} element={<TaskRoutes />} />
         <Route path={mainRootPaths.team} element={<TeamRoutes />} />
         <Route path={mainRootPaths.goal} element={<div>Goal</div>} />
-        <Route path={mainRootPaths.qAndA} element={<div>Q&A</div>} />
       </Routes>
     </div>
   );
