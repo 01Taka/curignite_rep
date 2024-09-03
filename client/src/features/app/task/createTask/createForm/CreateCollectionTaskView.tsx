@@ -1,6 +1,6 @@
 import React, { FC, useMemo } from 'react';
 import { FormStateChangeFunc } from '../../../../../types/util/componentsTypes';
-import { CreateBatchTaskViewFormState, taskPrioritySelectItem } from '../../../../../types/app/task/taskForm';
+import { CreateCollectionTaskViewFormState, taskPrioritySelectItem } from '../../../../../types/app/task/taskForm';
 import { keyMirror } from '../../../../../functions/objectUtils';
 import { StringField } from '../../../../../components/input/inputIndex';
 import MultilineField from '../../../../../components/input/field/MultilineField';
@@ -11,8 +11,8 @@ import { Typography } from '@mui/material';
 import DateTimeField from '../../../../../components/input/field/DateTimeField';
 import RangeField from '../../../../../components/input/field/RangeField';
 
-interface CreateBatchTaskViewProps {
-  formState: CreateBatchTaskViewFormState;
+interface CreateCollectionTaskViewProps {
+  formState: CreateCollectionTaskViewFormState;
   rangeMax: number;
   onFormStateChange: FormStateChangeFunc;
   onCreate: () => void;
@@ -20,7 +20,7 @@ interface CreateBatchTaskViewProps {
   className?: string;
 }
 
-const CreateBatchTaskView: FC<CreateBatchTaskViewProps> = ({
+const CreateCollectionTaskView: FC<CreateCollectionTaskViewProps> = ({
   formState,
   rangeMax,
   onFormStateChange,
@@ -79,4 +79,4 @@ const CreateBatchTaskView: FC<CreateBatchTaskViewProps> = ({
   );
 };
 
-export default CreateBatchTaskView;
+export default CreateCollectionTaskView;

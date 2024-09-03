@@ -1,17 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { SpaceSliceState } from '../../../types/module/redux/space/spaceSliceTypes';
+import { SpaceInfoMap, SpaceSliceState } from '../../../types/module/redux/space/spaceSliceTypes';
 import { TimestampConvertedDocumentMap } from '../../../types/firebase/db/formatTypes';
-import { SpaceFullData } from '../../../types/firebase/db/space/spaceStructure';
 import { AsyncThunkStatus } from '../../../types/module/redux/asyncThunkTypes';
-import { addAsyncCases, isSuccessfulPayload } from '../../../functions/redux/reduxUtils';
-import { updateTotalLearningTime } from '../../actions/space/spaceActions';
 
 const initialState: SpaceSliceState = {
   currentSpaceId: "",
   spaceInfoMap: {},
-  todayTotalLearningTime: 0,
-  spacesUpdateState: "idle",
-  updateTotalLearningTimeState: { state: "idle" },
+  spaceInfoUpdateState: "idle",
 };
 
 const spaceSlice = createSlice({
@@ -21,21 +16,13 @@ const spaceSlice = createSlice({
     setCurrentSpaceId: (state, action: PayloadAction<string>) => {
       state.currentSpaceId = action.payload;
     },
-    assignSpaceInfoMap: (state, action: PayloadAction<TimestampConvertedDocumentMap<Partial<SpaceFullData>>>) => {
+    assignSpaceInfoMap: (state, action: PayloadAction<TimestampConvertedDocumentMap<SpaceInfoMap>>) => {
       state.spaceInfoMap = Object.assign({}, state.spaceInfoMap, action.payload);
     },
     setSpacesUpdateState: (state, action: PayloadAction<AsyncThunkStatus>) => {
-      state.spacesUpdateState = action.payload;
+      state.spaceInfoUpdateState = action.payload;
     },
-  },
-  extraReducers(builder) {
-    addAsyncCases(builder, updateTotalLearningTime, (state, payload) => {
-      state.updateTotalLearningTimeState = payload;
-      if (isSuccessfulPayload(payload) && payload.value !== null) {
-        state.todayTotalLearningTime = payload.value;
-      }
-    });
-  },
+  }
 });
 
 export const { setCurrentSpaceId, assignSpaceInfoMap, setSpacesUpdateState } = spaceSlice.actions;

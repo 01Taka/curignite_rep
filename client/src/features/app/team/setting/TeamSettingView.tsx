@@ -1,17 +1,17 @@
 import React, { FC, useState } from 'react';
-import { TeamData } from '../../../../types/firebase/db/team/teamsTypes';
 import { Avatar, Switch, Typography, Tabs, Tab, Box } from '@mui/material';
-import TeamMembers from '../participants/members/TeamMembers';
-import TeamActions from '../participants/actions/TeamActions';
-import serviceFactory from '../../../../firebase/db/factory';
+import TeamMembers from '../list/members/TeamMembers';
 import TeamCodeHandler from './TeamCodeHandler';
+import { TeamData, TeamMemberData } from '../../../../types/firebase/db/team/teamStructure';
+import { JoinRequestData } from '../../../../types/firebase/db/common/joinRequest/joinRequestStructure';
 
 interface TeamSettingViewProps {
   team: TeamData;
+  members?: TeamMemberData[]; // UNDONE 本来オプションじゃない
+  joinRequests?: JoinRequestData[];// UNDONE 本来オプションじゃない
 }
 
-const TeamSettingView: FC<TeamSettingViewProps> = ({ team }) => {
-  const teamActions = serviceFactory.createTeamService().getTeamActions(team);
+const TeamSettingView: FC<TeamSettingViewProps> = ({ team, members, joinRequests }) => {
   const [tabIndex, setTabIndex] = useState(0);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -54,8 +54,7 @@ const TeamSettingView: FC<TeamSettingViewProps> = ({ team }) => {
         </Tabs>
 
         <Box className='mt-4'>
-          {tabIndex === 0 && <TeamActions actions={teamActions} />}
-          {tabIndex === 1 && <TeamMembers members={team.members} />}
+           {/* {tabIndex === 1 && <TeamMembers members={members} />} UNDONE */}
         </Box>
       </div>
     </div>

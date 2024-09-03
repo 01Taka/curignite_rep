@@ -1,26 +1,42 @@
+import { Avatar, ListItemAvatar } from '@mui/material'
 import React, { FC } from 'react'
-import { Typography } from '@mui/material';
-import { Member } from '../../../../../../types/firebase/db/baseTypes';
 import { DocumentIdMap } from '../../../../../../types/firebase/db/formatTypes';
-import { UserData } from '../../../../../../types/firebase/db/user/usersTypes';
-import MembersContainer from './MembersContainer';
+import { cn } from '../../../../../../functions/utils';
+import { BaseMemberRole } from '../../../../../../types/firebase/db/baseTypes';
+import { SpaceMemberData } from '../../../../../../types/firebase/db/space/spaceStructure';
+import { UserData } from '../../../../../../types/firebase/db/user/userStructure';
 
 interface MembersProps {
-  members: Member[];
-  awayMembers: Member[];
+  members: SpaceMemberData[];
   userMap: DocumentIdMap<UserData>;
-  onClickMember?: (member: Member, isAway: boolean) => void;
+  onClickMember?: (member: SpaceMemberData) => void;
 }
 
-const Members: FC<MembersProps> = ({ members, awayMembers, userMap, onClickMember }) => {
-  return (
-    <>
-      <div className='grid grid-cols-2 gap-2'>
-        <MembersContainer members={members} userMap={userMap} away={false} onClickMember={onClickMember} />
-        <MembersContainer members={awayMembers} userMap={userMap} away={true} onClickMember={onClickMember} />
-      </div>
-    </>
-  )
-}
+const Members: FC<MembersProps> = ({ members, userMap, onClickMember }) => (
+  <>
+    {members ? members.map((member) => {
+      const user = userMap[member.userId];
+      return (
+        <div
+          key={member.userId}
+          className={cn('flex h-14 p-2 rounded-md', member.isAway ? "bg-gray-300" : "bg-secondaryBase")}
+          onClick={onClickMember ? () => onClickMember(member) : () => {}}
+        >
+          <ListItemAvatar>
+            <Avatar src={user?.iconUrl} />
+          </ListItemAvatar>
+          <div className={cn('flex flex-col justify-center')}>
+            <span className={cn("text-sm", member.role === BaseMemberRole.Admin && "text-red-500", member.role === BaseMemberRole.Guest && "text-green-500")}>
+              {member.role === BaseMemberRole.Admin ? "管理人"
+              : member.role === BaseMemberRole.Guest ?
+              "ゲスト" : ""
+              }</span>
+            <span className='text-grayText'>{user?.username}</span>
+          </div>
+        </div>
+      );
+    }) : null}
+  </>
+)
 
 export default Members

@@ -1,51 +1,41 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect } from 'react';
 import SpaceHomeView from '../../../../features/app/space/home/SpaceHomeView';
 import { useAppDispatch, useAppSelector } from '../../../../redux/hooks';
 import { useParams } from 'react-router-dom';
 import { PathParam } from '../../../../types/path/paths';
 import { setCurrentSpaceId } from '../../../../redux/slices/space/spaceSlice';
-import { useSpaceJoinState } from './useSpaceJoinState';
-import { revertTimestampConversion } from '../../../../functions/db/dataFormatUtils';
-import { moveLearningSession } from '../../../../functions/app/space/learningSessionUtils';
-import { JoinRequestState } from '../../../../types/firebase/db/common/joinRequest/joinRequestStructure';
 import AccessStateErrorMessage from '../../../../features/utils/messages/AccessStateErrorMessage';
+import { BaseParticipationStatus } from '../../../../types/firebase/db/baseTypes';
+import { CircularProgress } from '@mui/material';
+import { useSpaceParticipationStatus } from '../../../../features/app/space/hooks/useSpaceParticipationState';
 
 const SpaceHome: FC = () => {
   const params = useParams();
   const spaceId = params[PathParam.SpaceId];
   const dispatch = useAppDispatch();
-  const { spaces, currentSpaceId } = useAppSelector(state => state.spaceSlice);
+  const { currentSpaceId } = useAppSelector(state => state.spaceSlice);
   const { uid } = useAppSelector(state => state.userSlice);
-  const [joinState, setJoinState] = useState<JoinRequestState | "loading" | "error">("loading");
-  
-  const currentSpace = revertTimestampConversion(spaces[currentSpaceId]);
-  const joinStateFromHook = useSpaceJoinState(uid, currentSpaceId, currentSpace);
 
-  useEffect(() => {
-    if (currentSpace) {
-      setJoinState(joinStateFromHook);
-    }
-  }, [currentSpace, joinStateFromHook]);
+  const participationStatus = useSpaceParticipationStatus();
 
   useEffect(() => {
     if (uid && spaceId && currentSpaceId !== spaceId) {
       dispatch(setCurrentSpaceId(spaceId));
-      moveLearningSession(dispatch, uid, spaceId); // 非同期関数です
+      // moveLearningSession(dispatch, uid, spaceId); // UNDONE
     }
   }, [uid, spaceId, currentSpaceId, dispatch]);
 
-  return joinState === "allowed" ? (
+  const isValidParticipationStatus = (status: BaseParticipationStatus | "error"): boolean => {
+    if (status === "error") return false;
+    return [BaseParticipationStatus.Active, BaseParticipationStatus.Declined].includes(status);
+  }
+
+  return participationStatus === "loading" ? (
+    <CircularProgress />
+  ) : isValidParticipationStatus(participationStatus) ? (
     <SpaceHomeView />
   ) : (
-    <AccessStateErrorMessage
-      joinState={joinState}
-      message={
-        <>
-          このスペースは存在しないかアクセスが許可されていません。<br />
-          URLが正しいかを確認してください。
-        </>
-      }
-    />
+    <AccessStateErrorMessage message='このチームへのアクセスは許可されていません。'/>
   );
 };
 

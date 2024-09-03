@@ -1,11 +1,16 @@
+import { JoinRequestData } from "../../../firebase/db/common/joinRequest/joinRequestStructure";
 import { TimestampConvertedDocumentMap } from "../../../firebase/db/formatTypes";
-import { SpaceFullData } from "../../../firebase/db/space/spaceStructure";
-import { AsyncThunkState, AsyncThunkStatus } from "../asyncThunkTypes";
+import { SpaceData, SpaceMemberData } from "../../../firebase/db/space/spaceStructure";
+import { AsyncThunkStatus } from "../asyncThunkTypes";
+
+export interface SpaceInfoMap {
+  space: SpaceData;
+  members?: SpaceMemberData[];
+  joinRequests: JoinRequestData[];
+}
 
 export interface SpaceSliceState {
   currentSpaceId: string;
-  spaceInfoMap: TimestampConvertedDocumentMap<Partial<SpaceFullData>>;
-  todayTotalLearningTime: number;
-  updateTotalLearningTimeState: AsyncThunkState<number>,
-  spacesUpdateState: AsyncThunkStatus;
+  spaceInfoMap: TimestampConvertedDocumentMap<SpaceInfoMap>;
+  spaceInfoUpdateState: AsyncThunkStatus;
 }

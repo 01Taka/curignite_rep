@@ -1,10 +1,10 @@
 import { Timestamp } from "firebase/firestore";
 import serviceFactory from "../../../../firebase/db/factory";
 import { InitialSetupFormState } from "./InitialSetupView";
-import { authStorage } from "../../../../functions/localStorage/storages";
-import { UserData } from "../../../../types/firebase/db/user/usersTypes";
+import { authStorage } from "../../../../functions/browserStorage/localStorage/storages";
 import { getUniqueUserName } from "../../../../firebase/util/getUniqueName";
 import { ConvertTimestampToNumber } from "../../../../types/firebase/db/formatTypes";
+import { UserData } from "../../../../types/firebase/db/user/userStructure";
 
 export const getUniqueName = async (
   userData?: ConvertTimestampToNumber<UserData> | null

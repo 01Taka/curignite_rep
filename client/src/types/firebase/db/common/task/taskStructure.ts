@@ -16,7 +16,7 @@ export interface IndividualTaskData extends BaseTaskData {
 }
 
 export interface TaskCollectionData extends BaseDocumentData {
-  name: string;
+  collectionName: string;
   totalPages: number;
   timePerPage: number;
   completedPageIndices: number[]; 
@@ -31,9 +31,19 @@ export interface TaskCollectionTaskData extends BaseTaskData {
 
 
 // データベース外インターフェース
+
+/**
+ * remainingPages = pagesInRange - completedPages
+ */
+export interface CollectionTaskField {
+  collection: TaskCollectionData;
+  pagesInRange: number[];
+  completedPages: number[];
+  remainingPages: number[];
+}
+
 export interface TaskData extends IndividualTaskData {
-  pagesInRange?: number[];
-  completedPages?: number[];
+  collectionTaskField?: CollectionTaskField;
 }
 
 export interface CollectionWithTasks {

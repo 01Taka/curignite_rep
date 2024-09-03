@@ -1,4 +1,4 @@
-import { TaskPriority } from "../../firebase/db/task/taskStructure";
+import { TaskPriority } from "../../firebase/db/common/task/taskSupplementTypes";
 import { Range, SelectItem } from "../../util/componentsTypes";
 
 interface BaseTaskFormState {
@@ -24,7 +24,7 @@ export const taskPrioritySelectItem: SelectItem<TaskPriority>[] = [
 ];
 
 
-export interface CreateIndividualTaskViewFormState extends BaseTaskFormState{
+export interface CreateIndividualTaskViewFormState extends BaseTaskFormState {
   estimatedDuration: number;
 }
 
@@ -35,6 +35,6 @@ export interface CreateTaskCollectionViewFormState {
   description: string;
 }
 
-export interface CreateBatchTaskViewFormState extends BaseTaskFormState {
+export interface CreateCollectionTaskViewFormState extends BaseTaskFormState {
   pagesInRange: Range[];
 }

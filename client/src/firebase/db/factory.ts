@@ -6,6 +6,7 @@ import { UserService } from './app/user/userService';
 import { UserTeamService } from './app/user/subCollection/userTeamService';
 import { UserTaskManagementService } from './app/user/subCollection/userTaskManagementService';
 import { UserLearningSessionService } from './app/user/subCollection/userLearningSessionService';
+import { UserPartnerService } from './app/user/subCollection/userPartnerService';
 import { UserGoalService } from './app/user/subCollection/userGoalService';
 import { UserHelpService } from './app/user/subCollection/userHelpService';
 import { HelpAnswerService } from './app/user/subCollection/helpAnswerService';
@@ -56,6 +57,10 @@ class ServiceFactory {
     return this.getInstance('userTaskManagementService', UserTaskManagementService);
   }
 
+  createUserPartnerService() {
+    return this.getInstance('userPartnerService', UserPartnerService);
+  }
+
   createUserGoalService() {
     return this.getInstance('userGoalService', UserGoalService);
   }
@@ -73,6 +78,7 @@ class ServiceFactory {
       this.storageManager,
       this.createTeamMemberService(),
       this.createTeamJoinRequestService(),
+      this.createTeamCodeService(),
       this.createUserTeamService(),
       this.createChatRoomService()
     );

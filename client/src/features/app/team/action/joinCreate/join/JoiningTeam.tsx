@@ -1,25 +1,25 @@
 import React, { FC, useState } from 'react';
 import { Alert, Avatar, Typography } from '@mui/material';
-import { TeamData } from '../../../../../../types/firebase/db/team/teamsTypes';
 import CircularButton from '../../../../../../components/input/button/CircularButton';
 import serviceFactory from '../../../../../../firebase/db/factory';
+import { TeamData } from '../../../../../../types/firebase/db/team/teamStructure';
 
 interface JoiningTeamProps {
   team: TeamData;
-  code: string;
+  codeId: string;
   uid: string;
   onCancel: () => void;
   onJoined: () => void;
 }
 
-const JoiningTeam: FC<JoiningTeamProps> = ({ team, code, uid, onCancel, onJoined }) => {
+const JoiningTeam: FC<JoiningTeamProps> = ({ team, codeId, uid, onCancel, onJoined }) => {
   const [error, setError] = useState<string | null>(null);
 
   const handleJoin = async () => {
     setError(null);
     try {
-      const userTeamService = serviceFactory.createUserTeamService();
-      await userTeamService.requestToJoinTeamByCode(uid, code);
+      const teamService = serviceFactory.createTeamService();
+      await teamService.handleTeamJoinWithTeamCodeId(uid, codeId);
       onJoined();
     } catch (err) {
       console.error('Failed to join team:', err);

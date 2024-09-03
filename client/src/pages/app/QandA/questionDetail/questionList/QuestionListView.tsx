@@ -1,7 +1,6 @@
 import React from 'react'
 import QuestionContainer from './questionContainer/QuestionContainer';
 import { Question } from '../../../../../types/firebase/db/qAndA/questionTypes';
-import { UserOrganizationData } from '../../../../../types/firebase/db/user/userOrganizationTypes';
 
 export interface QuestionPost {
   userOrganizationData: UserOrganizationData | null;

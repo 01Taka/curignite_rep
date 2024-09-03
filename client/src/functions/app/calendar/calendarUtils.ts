@@ -18,13 +18,13 @@ export const getHeatmapCellColor = (count: number, heatmap: HeatmapCellColor[]):
 // データベースから取得した学習時間に基づき、カレンダーの日付に色分けを適用する関数
 export const getLearningTimeHeatmapFromDB = async (userId: string, daysAgo: number = 21): Promise<Record<ISODate, BGColorClass>> => {
   try {
-    const logService = serviceFactory.createUserDailyLogService();
-    const logs = await logService.getLatestLogsByDaysAgo(userId, daysAgo, true);
-    if (!logs) {
-      console.error('No logs found');
+    const sessionService = serviceFactory.createUserLearningSessionService();
+    const sessions = await sessionService.getLatestSessionsByDaysAgo(userId, daysAgo, true);
+    if (!sessions) {
+      console.error('No sessions found');
       return {};
     }
-    const timeMap = logService.getLearningTimeMapByLogs(logs);
+    const timeMap = sessionService.convertToSessionsMapByDate(sessions);
     const heatmap: Record<ISODate, BGColorClass> = {};
     for (let key of Object.keys(timeMap)) {
       heatmap[key as ISODate] = getHeatmapCellColor(timeMap[key as ISODate], HEATMAP_BY_LEARNING_TIME)

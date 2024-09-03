@@ -5,7 +5,7 @@ import { TaskContainerComponentProps } from '../../../../../types/app/task/taskT
 import OverViewInfo from './OverViewInfo';
 
 
-const TaskContainer: FC<TaskContainerComponentProps> = ({ task, estimatedDuration, remainingPages, size }) => {
+const TaskContainer: FC<TaskContainerComponentProps> = ({ task, size }) => {
   return (
     <div className="m-4 shadow-lg max-w-lg rounded-lg bg-secondaryBase ">
       <div className='p-2'>
@@ -19,12 +19,11 @@ const TaskContainer: FC<TaskContainerComponentProps> = ({ task, estimatedDuratio
               {task.taskNote}
             </Typography>
             <div className='flex pl-4 space-x-4'>
-              {remainingPages &&
-                <Typography>残り: {remainingPages}p</Typography>
+              {task.collectionTaskField &&
+                <Typography>残り: {task.collectionTaskField.remainingPages}p</Typography>
               }
-              {estimatedDuration && 
-                <Typography>
-                  推定: {dateTimeToString(estimatedDuration, {
+              <Typography>
+                  推定: {dateTimeToString(task.estimatedDuration, {
                     isAbsolute: false,
                     countUpTime: true,
                     conversion: {
@@ -32,7 +31,6 @@ const TaskContainer: FC<TaskContainerComponentProps> = ({ task, estimatedDuratio
                       minTruncateTimeSizeUnit: "minutes"
                     }})}
                 </Typography>
-              }
             </div>
           </div>
           <OverViewInfo task={task} size={size} />

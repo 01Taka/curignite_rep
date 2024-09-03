@@ -1,11 +1,11 @@
 import React, { FC } from 'react';
-import { ChatData } from '../../../types/firebase/db/chat/chatsTypes';
 import { dateTimeToString } from '../../../functions/dateTimeUtils';
 import { Avatar } from '@mui/material';
 import { cn } from '../../../functions/utils';
 import { useAppSelector } from '../../../redux/hooks';
 import ChatMessage from './ChatMessage';
 import { FormatChange } from '../../../types/util/dateTimeTypes';
+import { ChatData } from '../../../types/firebase/db/chat/chatRoomStructure';
 
 interface ChatProps {
     chat: ChatData;

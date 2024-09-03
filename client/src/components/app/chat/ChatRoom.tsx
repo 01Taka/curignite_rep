@@ -2,16 +2,18 @@ import React, { useEffect, useRef, useState } from "react";
 import { getNextPageChatsByRedux, moveToChatRoom } from "../../../functions/redux/chat/reduxChatUtils";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import ChatRoomView from "./ChatRoomView";
-import { ChatData, ChatFormData, ChatAttachment } from "../../../types/firebase/db/chat/chatsTypes";
 import { sortChatIdMap } from "../../../functions/app/chat/chatUtils";
 import serviceFactory from "../../../firebase/db/factory";
+import { ChatFormState } from "../../input/message/ChatInput";
+import { ChatData } from "../../../types/firebase/db/chat/chatRoomStructure";
+import { handleFormStateChange } from "../../../functions/utils";
 
 interface ChatProps {
     chatRoomId: string;
 }
 
 const ChatRoom: React.FC<ChatProps> = ({ chatRoomId }) => {
-    const [chat, setChat] = useState<ChatFormData>({ content: "", attachments: [] });
+    const [chatState, setChatState] = useState<ChatFormState>({ content: "", files: [] });
     const [chats, setChats] = useState<ChatData[]>([]);
     const chatEndRef = useRef<HTMLDivElement>(null);
     const dispatch = useAppDispatch();
@@ -29,32 +31,11 @@ const ChatRoom: React.FC<ChatProps> = ({ chatRoomId }) => {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [chats]);
 
-    const handleChangeChatContent = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setChat({
-            ...chat,
-            content: e.target.value,
-        });
-    };
-
-    const handleAttachFile = (files: FileList) => {
-        const attachments: ChatAttachment[] = Array.from(files).map(file => ({
-            type: "file", // 適切なタイプに変更してください
-            url: URL.createObjectURL(file),
-            fileName: file.name,
-            fileSize: file.size,
-        }));
-
-        setChat(prevChat => ({
-            ...prevChat,
-            attachments: [...(prevChat.attachments || []), ...attachments],
-        }));
-    };
-
     const handleSendChat = async () => {
         if (uid) {
-            setChat({ content: "", attachments: [] });
+            setChatState({ content: "", files: [] });
             const chatService = serviceFactory.createChatRoomChatService();
-            await chatService.sendChat(chatRoomId, uid, chat.content, chat.attachments);
+            await chatService.sendChat(chatRoomId, uid, chatState.content, chatState.files, chatState.replyTo);
         }
     };
 
@@ -68,10 +49,9 @@ const ChatRoom: React.FC<ChatProps> = ({ chatRoomId }) => {
 
     return (
         <ChatRoomView
-            chat={chat}
+            chatState={chatState}
             chats={chats}
-            onChangeChatContent={handleChangeChatContent}
-            onAttachFile={handleAttachFile}
+            onChatStateChange={(e) => handleFormStateChange(e, setChatState)}
             onSendChat={handleSendChat}
             onScrollToEnd={getAdditionalChat}
         />

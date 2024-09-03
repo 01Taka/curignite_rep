@@ -169,6 +169,39 @@ class BaseDB<T extends BaseDocumentData> {
     });
   }
 
+    /**
+   * 指定されたフィールドと値のペアに基づいてドキュメントを取得します。
+   * 値リストが10個を超える場合は、複数のクエリに分割して取得します。
+   */
+    async getByConditions(field: keyof T, values: any[]): Promise<T[]> {
+      const uniqueValues = Array.from(new Set(values));
+      const chunkedValues = this.chunkArray(uniqueValues, 10);
+  
+      const queries = chunkedValues.map(chunk => {
+        const q = query(this.collectionRef, where(field as string, "in", chunk));
+        return getDocs(q);
+      });
+  
+      const querySnapshots = await Promise.all(queries);
+  
+      const documents = querySnapshots.flatMap((snapshot: QuerySnapshot) =>
+        snapshot.docs.map(doc => doc.data() as T)
+      );
+  
+      return documents;
+    }
+  
+    /**
+     * 配列を指定したサイズごとのチャンクに分割するヘルパーメソッド
+     */
+    private chunkArray<K>(array: K[], size: number): K[][] {
+      const chunkedArray: K[][] = [];
+      for (let i = 0; i < array.length; i += size) {
+        chunkedArray.push(array.slice(i, i + size));
+      }
+      return chunkedArray;
+    }
+
   /**
    * 指定されたフィールドと値に一致する最初のドキュメントを取得するメソッド
    * @param field 検索するフィールド名

@@ -1,20 +1,17 @@
 import { FC } from "react";
 import TeamContainer from "./TeamContainer";
-import { cn } from "../../../../functions/utils";
-import { TeamData } from "../../../../types/firebase/db/team/teamsTypes";
-import { DocumentIdMap } from "../../../../types/firebase/db/formatTypes";
-import { Member } from "../../../../types/firebase/db/baseTypes";
+import { cn } from "../../../../../functions/utils";
+import { TeamData } from "../../../../../types/firebase/db/team/teamStructure";
 
 export interface TeamsListProps {
   teams: TeamData[];
-  learningMembersMap: DocumentIdMap<Member[]>;
   currentUserId: string;
   currentDisplayTeamId: string | undefined;
   hideTeamsWithoutIds?: boolean;
   onTeamClick: (team: TeamData) => void;
 }
 
-const TeamsList: FC<TeamsListProps> = ({ teams, learningMembersMap, currentUserId, currentDisplayTeamId, onTeamClick }) => {
+const TeamsList: FC<TeamsListProps> = ({ teams, currentUserId, currentDisplayTeamId, onTeamClick }) => {
     return (
       <div className='flex flex-col items-center w-full mt-8'>
         {teams && teams.map((team) => (
@@ -22,7 +19,6 @@ const TeamsList: FC<TeamsListProps> = ({ teams, learningMembersMap, currentUserI
             <TeamContainer
               teamName={team.teamName}
               iconUrl={team.iconUrl ?? ""}
-              learningMembers={learningMembersMap[team.docId]}
               myTeam={team.createdById === currentUserId}
               currentDisplay={team.docId === currentDisplayTeamId}
               memberNumber={team.members.length}

@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useAppSelector } from '../../../../redux/hooks';
 import { DocumentIdMap } from '../../../../types/firebase/db/formatTypes';
-import { UserData } from '../../../../types/firebase/db/user/usersTypes';
 import { revertTimestampConversion } from '../../../../functions/db/dataFormatUtils';
 import serviceFactory from '../../../../firebase/db/factory';
 import JoinRequestService from '../../../../firebase/db/common/joinRequestService';
 import { sortArray } from '../../../../functions/objectUtils';
+import { UserData } from '../../../../types/firebase/db/user/userStructure';
 
 const useSpaceData = () => {
   const { currentSpaceId, spaceInfoMap } = useAppSelector(state => state.spaceSlice);

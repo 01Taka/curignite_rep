@@ -1,4 +1,4 @@
-import { ChatData } from "../../../firebase/db/chat/chatsTypes";
+import { ChatData } from "../../../firebase/db/chat/chatRoomStructure";
 import { TimestampConvertedDocumentMap } from "../../../firebase/db/formatTypes";
 import { AsyncThunkState } from "../asyncThunkTypes";
 

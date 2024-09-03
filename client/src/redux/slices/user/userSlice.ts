@@ -4,7 +4,7 @@ import { AsyncThunkState } from "../../../types/module/redux/asyncThunkTypes";
 import { addAsyncCases, isSuccessfulPayload } from "../../../functions/redux/reduxUtils";
 import { updateUserData } from "../../actions/user/updateUserState";
 import { ConvertTimestampToNumber } from "../../../types/firebase/db/formatTypes";
-import { UserData } from "../../../types/firebase/db/user/usersTypes";
+import { UserData } from "../../../types/firebase/db/user/userStructure";
 
 export interface UserState {
     uid: string | null;

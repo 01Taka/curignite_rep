@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material';
-import { SpaceMemberData } from '../../../../../types/firebase/db/space/spaceMembersTypes';
+import { SpaceMemberData } from '../../../../../types/firebase/db/space/spaceStructure';
 
 interface MemberSelectorProps {
   label: string;

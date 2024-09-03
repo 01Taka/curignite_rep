@@ -23,9 +23,9 @@ const CreateIndividualTask: FC = () => {
   const handleCreateIndividualTask = async () => {
     if (uid && userData) {
       try {
-        const individualTaskService = serviceFactory.createTaskListIndividualTaskService();
-        await individualTaskService.createIndividualTasks(
-          userData.metaData.taskListId,
+        const individualTaskService = serviceFactory.createUserTaskManagementService();
+        await individualTaskService.getIndividualTaskService().createTask(
+          uid,
           uid,
           formState.title,
           formState.dueDateTime ? toTimestamp(formState.dueDateTime) : formState.dueDateTime,

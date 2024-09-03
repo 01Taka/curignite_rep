@@ -8,19 +8,18 @@ import serviceFactory from '../../../../firebase/db/factory';
 import { SpaceStartFormState } from '../../../../types/app/space/spaceTypes';
 import { SpaceData } from '../../../../types/firebase/db/space/spaceStructure';
 import { startNewSpace } from '../../../../functions/app/space/spaceDBUtils';
-import { getInitialSpaceStartFormState, setDefaultSpaceFormState } from '../../../../functions/app/space/spaceUtils';
 import { spacePaths } from '../../../../types/path/mainPaths';
 import { getLastSegment, replaceParams } from '../../../../functions/path/pathUtils';
 import { PathParam } from '../../../../types/path/paths';
 import { handleFormStateChange } from '../../../../functions/utils';
-import { BaseParticipationState } from '../../../../types/firebase/db/baseTypes';
 import { useSpaces } from '../../../../features/app/space/hooks/useSpaceInfo';
 import { getSpaceInfo } from '../../../../redux/actions/space/spaceActions';
+import { BaseParticipationStatus } from '../../../../types/firebase/db/baseTypes';
 
 interface JoinSpacePopupProps {
   open: boolean;
   space: SpaceData | null;
-  participationState: BaseParticipationState | "error";
+  participationStatus: BaseParticipationStatus | "error";
 }
 
 const SpaceStart: FC = () => {
@@ -30,12 +29,13 @@ const SpaceStart: FC = () => {
   const { uid, userData } = useAppSelector(state => state.userSlice);
 
   const [formState, setFormState] = useState<SpaceStartFormState>(
-    getInitialSpaceStartFormState(userData?.username)
+    //  getInitialSpaceStartFormState(userData?.username)
   );
+
   const [joinSpacePopup, setJoinSpacePopup] = useState<JoinSpacePopupProps>({
     open: false,
     space: null,
-    participationState: 'error',
+    participationStatus: 'error',
   });
   const [isStartingSpace, setIsStartingSpace] = useState(false);
 
@@ -46,26 +46,26 @@ const SpaceStart: FC = () => {
     if (!uid) return;
 
     try {
-      await startNewSpace(formState, uid, setIsStartingSpace, navigate, dispatch);
+      // await startNewSpace(formState, uid, setIsStartingSpace, navigate, dispatch);
     } catch (error) {
       console.error('Failed to start new space:', error);
     }
   }, [uid, formState, navigate, dispatch]);
 
-  /**
-   * デフォルト設定でスペースを開始する
-   */
-  const handleStartSpaceWithDefaultSettings = useCallback(async () => {
-    setFormState(getInitialSpaceStartFormState(userData?.username));
-    await handleStartSpace();
-  }, [userData?.username, handleStartSpace]);
+  // /**
+  //  * デフォルト設定でスペースを開始する
+  //  */
+  // const handleStartSpaceWithDefaultSettings = useCallback(async () => {
+  //   setFormState(getInitialSpaceStartFormState(userData?.username));
+  //   await handleStartSpace();
+  // }, [userData?.username, handleStartSpace]);
 
-  /**
-   * 現在のフォーム状態をデフォルト設定として保存する
-   */
-  const handleSaveDefaultFormState = useCallback(() => {
-    setDefaultSpaceFormState(formState);
-  }, [formState]);
+  // /**
+  //  * 現在のフォーム状態をデフォルト設定として保存する
+  //  */
+  // const handleSaveDefaultFormState = useCallback(() => {
+  //   setDefaultSpaceFormState(formState);
+  // }, [formState]);
 
   /**
    * 指定したスペースIDのスペースに参加するポップアップを開く
@@ -77,9 +77,9 @@ const SpaceStart: FC = () => {
       const space = getSpaceInfo(spaceId).space;
       if (space) {
         const spaceService = serviceFactory.createSpaceService();
-        const participationState = await spaceService.getParticipationState(uid, spaceId);
+        const participationStatus = await spaceService.getParticipationState(uid, spaceId);
 
-        setJoinSpacePopup({ open: true, space, participationState });
+        setJoinSpacePopup({ open: true, space, participationStatus });
         navigate(replaceParams(spacePaths.home, { [PathParam.SpaceId]: spaceId }));
       }
     } catch (error) {
@@ -98,11 +98,11 @@ const SpaceStart: FC = () => {
    * 指定したスペースに参加する
    */
   const handleJoinSpace = useCallback(async (spaceId: string) => {
-    if (!userData) return;
+    if (!uid) return;
 
     try {
       const spaceService = serviceFactory.createSpaceService();
-      const result = await spaceService.handleSpaceJoin(spaceId, userData);
+      const result = await spaceService.handleSpaceJoin(spaceId, uid);
 
       if (result === "joined") {
         navigate(replaceParams(spacePaths.home, { [PathParam.SpaceId]: spaceId }));
@@ -110,7 +110,7 @@ const SpaceStart: FC = () => {
     } catch (error) {
       console.error('Failed to join space:', error);
     }
-  }, [userData, navigate]);
+  }, [uid, navigate]);
 
   return (
     <>
@@ -120,7 +120,7 @@ const SpaceStart: FC = () => {
           element={
             <SpaceStartView
               toSetting={() => navigate(spacePaths.startChildren.setting)}
-              onStart={handleStartSpaceWithDefaultSettings}
+              onStart={() => {}}
               isStarting={isStartingSpace}
               spaces={spaces}
               onSpaceClick={handleOpenJoinSpacePopup}
@@ -128,22 +128,22 @@ const SpaceStart: FC = () => {
           }
         />
         <Route
-          path={getLastSegment(spacePaths.startChildren.setting)}
-          element={
-            <SpaceSettingView
-              formState={formState}
-              isStarting={isStartingSpace}
-              onChangeFormState={e => handleFormStateChange(e, setFormState)}
-              onCompletion={handleStartSpace}
-              onUpdateDefaultSetting={handleSaveDefaultFormState}
-            />
-          }
+          // path={getLastSegment(spacePaths.startChildren.setting)}
+          // element={
+          //   <SpaceSettingView
+          //     formState={formState}
+          //     isStarting={isStartingSpace}
+          //     onChangeFormState={e => handleFormStateChange(e, setFormState)}
+          //     onCompletion={handleStartSpace}
+          //     onUpdateDefaultSetting={handleSaveDefaultFormState}
+          //   />
+          // } UNDONE
         />
       </Routes>
       {joinSpacePopup.open && (
         <SpaceJoinPopup
           space={joinSpacePopup.space}
-          joinState={joinSpacePopup.participationState}
+          participationStatus={joinSpacePopup.participationStatus}
           onClose={handleCloseJoinSpacePopup}
           handleSpaceJoin={handleJoinSpace}
         />

@@ -1,6 +1,6 @@
 import React, { FC, memo } from 'react';
 import { useAppSelector } from '../../../../redux/hooks';
-import TeamMembers from '../../../../features/app/team/participants/members/TeamMembers';
+import TeamMembers from '../../../../features/app/team/list/members/TeamMembers';
 import { Typography, Box } from '@mui/material';
 
 const Participants: FC = () => {

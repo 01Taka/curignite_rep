@@ -8,7 +8,6 @@ import CircularButton from '../../../../components/input/button/CircularButton';
 import SelectField from '../../../../components/input/field/SelectField';
 import FormContainer from '../../../../components/container/FormContainer';
 import { Alert, CircularProgress, Typography } from '@mui/material';
-import { publicationTargetForSelect } from '../../../../types/firebase/db/space/spaceStructure';
 import { keyMirror } from '../../../../functions/objectUtils';
 
 const SpaceSettingView: FC<SpaceSettingViewProps> = ({ formState, isStarting, onChangeFormState, onCompletion, onUpdateDefaultSetting }) => {
@@ -46,13 +45,13 @@ const SpaceSettingView: FC<SpaceSettingViewProps> = ({ formState, isStarting, on
             value={formState.description}
             onChange={onChangeFormState}
           />
-          <SelectField
+          {/* <SelectField
             label='公開対象'
             value={formState.publicationTarget}
             name={names.publicationTarget}
             onChange={onChangeFormState}
-            selectItems={publicationTargetForSelect}
-          />
+            selectItems={publicationTargetForSelect} // UNDONE
+          /> */}
           <CheckBoxField
             label="参加には承認が必要"
             name={names.requiresApproval}

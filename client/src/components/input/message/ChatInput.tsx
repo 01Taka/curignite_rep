@@ -1,18 +1,24 @@
 import React, { FC, useState } from 'react';
-import { Divider, IconButton, InputBase, Paper, Popover, Button, Box } from '@mui/material';
+import { Divider, IconButton, InputBase, Paper, Popover } from '@mui/material';
 import AddLinkIcon from '@mui/icons-material/AddLink';
 import SendIcon from '@mui/icons-material/Send';
-import { ChatFormData } from '../../../types/firebase/db/chat/chatsTypes';
+import { FormStateChangeFunc } from '../../../types/util/componentsTypes';
+import FileSelector from './FileSelector';
 
-interface ChatInputProps {
-  chat: ChatFormData;
-  placeholder: string;
-  onChangeChatContent: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onSendChat: () => void;
-  onAttachFile: (files: FileList) => void;
+export interface ChatFormState {
+  content: string;
+  files: File[];
+  replyTo?: string; // TODO: リプライ先を指定するフォームを作成
 }
 
-const ChatInput: FC<ChatInputProps> = ({ chat, placeholder, onChangeChatContent, onSendChat, onAttachFile }) => {
+interface ChatInputProps {
+  formState: ChatFormState;
+  placeholder: string;
+  onFormStateChange: FormStateChangeFunc;
+  onSendChat: () => void;
+}
+
+const ChatInput: FC<ChatInputProps> = ({ formState, placeholder, onFormStateChange, onSendChat }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleClickOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -21,13 +27,6 @@ const ChatInput: FC<ChatInputProps> = ({ chat, placeholder, onChangeChatContent,
 
   const handleClose = () => {
     setAnchorEl(null);
-  };
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      onAttachFile(event.target.files);
-      handleClose();
-    }
   };
 
   const open = Boolean(anchorEl);
@@ -50,8 +49,8 @@ const ChatInput: FC<ChatInputProps> = ({ chat, placeholder, onChangeChatContent,
           sx={{ ml: 1, flex: 1 }}
           placeholder={placeholder}
           inputProps={{ 'aria-label': placeholder }}
-          value={chat.content}
-          onChange={onChangeChatContent}
+          value={formState.content}
+          onChange={onFormStateChange}
         />
         <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
         <IconButton color="primary" sx={{ p: '10px' }} aria-label="directions" onClick={onSendChat}>
@@ -69,44 +68,13 @@ const ChatInput: FC<ChatInputProps> = ({ chat, placeholder, onChangeChatContent,
           horizontal: 'left',
         }}
       >
-        <AttachmentsSelector 
-          handleFileChange={handleFileChange}
+        <FileSelector 
+          onFileChange={onFormStateChange}
           handleClose={handleClose}
         />
       </Popover>
     </>
   );
 };
-
-interface AttachmentsSelectorProps {
-  handleFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  handleClose: () => void;
-}
-
-const AttachmentsSelector: FC<AttachmentsSelectorProps> = ({ handleFileChange, handleClose }) => {
-  return (
-    <Box p={2}>
-    <div>
-      <input
-        type="file"
-        id="file-upload"
-        onChange={handleFileChange}
-        multiple
-        style={{ display: "none" }}
-      />
-      <label htmlFor="file-upload">
-        <Button variant="contained" component="span">
-          アップロードするファイルを選択
-        </Button>
-      </label>
-    </div>
-      <Box mt={1}>
-        <Button onClick={handleClose} color="primary">
-          Cancel
-        </Button>
-      </Box>
-    </Box>
-  )
-}
 
 export default ChatInput;

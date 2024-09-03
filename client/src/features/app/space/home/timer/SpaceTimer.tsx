@@ -5,7 +5,6 @@ import TimerControls from './TimerControls';
 import { spaceTimerModes, SpaceTimerMode } from '../../../../../types/app/space/spaceTypes';
 import { useAppDispatch, useAppSelector } from '../../../../../redux/hooks';
 import { SECONDS_IN_MILLISECOND } from '../../../../../types/util/dateTimeTypes';
-import { addLearningTime } from '../../../../../functions/app/space/learningSessionUtils';
 
 interface SpaceTimerProps {
   spaceId: string;
@@ -62,7 +61,7 @@ const SpaceTimer: FC<SpaceTimerProps> = ({ spaceId }) => {
       if (diff >= 1000) {
         const second = Math.floor(time / SECONDS_IN_MILLISECOND)
         setPrevSecond(second);
-        addLearningTime(dispatch, uid, spaceId, 1000);
+        // addLearningTime(dispatch, uid, spaceId, 1000); UNDONE
       }
     }
   }, [spaceId, uid, isBreak, prevSecond, time, dispatch]);

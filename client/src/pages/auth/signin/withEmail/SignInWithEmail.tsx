@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import SignInWithEmailView from './SignInWithEmailView';
 import { useNavigate } from 'react-router-dom';
 import { signInWithEmail } from '../../../../firebase/auth/signIn';
-import { authStorage } from '../../../../functions/localStorage/storages';
+import { authStorage } from '../../../../functions/browserStorage/localStorage/storages';
 import { rootPaths } from '../../../../types/path/paths';
 
 const SignInWithEmail: React.FC = () => {

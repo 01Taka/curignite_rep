@@ -21,14 +21,14 @@ const CreateTaskCollection: FC = () => {
   const handleCreate = async () => {
     if (uid && userData) {
       try {
-        const collectionService = serviceFactory.createTaskListTaskCollectionService();
-        await collectionService.createTaskCollection(
-          userData.metaData.taskListId,
+        const collectionService = serviceFactory.createUserTaskManagementService();
+        await collectionService.getTaskCollectionService().createCollection(
+          uid,
           uid,
           formState.name,
+          formState.description,
           formState.totalPages,
-          formState.timePerPage * MINUTES_IN_MILLISECOND,
-          formState.description
+          formState.timePerPage * MINUTES_IN_MILLISECOND
         );
         navigate(taskPaths.create);
       } catch (error) {

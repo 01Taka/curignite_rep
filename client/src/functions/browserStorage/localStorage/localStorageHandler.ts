@@ -3,7 +3,7 @@ import CryptoJS from 'crypto-js';
 // Encryption key
 const ENCRYPTION_KEY = process.env.REACT_APP_ENCRYPTION_KEY || 'default-secret-key';
 
-export class LocalStorageHandler<T extends Record<keyof T, string>> {
+export class LocalStorageHandler<T extends Record<keyof T, any>> {
     private id: string;
     private keys: (keyof T)[];
 
@@ -38,10 +38,11 @@ export class LocalStorageHandler<T extends Record<keyof T, string>> {
         return true;
     }
 
-    public setData(key: keyof T, data: string, param?: string, password: string = ""): void {
+    public setData(key: keyof T, data: any, param?: string, password: string = ""): void {
         if (this.isValidKey(key)) {
             const fullKey = this.getFullKey(key, param);
-            const encryptedData = this.encrypt(data, password);
+            const jsonData = JSON.stringify(data);  // Convert object to JSON string
+            const encryptedData = this.encrypt(jsonData, password);
             localStorage.setItem(fullKey, encryptedData);
         }
     }
@@ -49,19 +50,25 @@ export class LocalStorageHandler<T extends Record<keyof T, string>> {
     public setDataAllAtOnce(data: Partial<T>, password: string = ""): void {
         Object.entries(data).forEach(([key, value]) => {
             if (value !== null && value !== undefined) {
-                this.setData(key as keyof T, value.toString(), undefined, password);
+                this.setData(key as keyof T, value, undefined, password);
             }
         });
     }
 
-    public getData(key: keyof T, param?: string, password: string = ""): string | null {
+    public getData(key: keyof T, param?: string, password: string = ""): any | null {
         if (this.isValidKey(key)) {
             const fullKey = this.getFullKey(key, param);
             const encryptedData = localStorage.getItem(fullKey);
             if (encryptedData) {
-                return this.decrypt(encryptedData, password);
+                const decryptedData = this.decrypt(encryptedData, password);
+                if (decryptedData) {
+                    try {
+                        return JSON.parse(decryptedData);  // Convert JSON string back to object
+                    } catch (e) {
+                        console.error('Error parsing JSON:', e);
+                    }
+                }
             }
-            // console.warn(`No data found for key: ${String(key)} with param: ${param}.`);
         }
         return null;
     }

@@ -5,7 +5,7 @@ import { AsyncThunkState } from '../../../types/module/redux/asyncThunkTypes';
 import { fulfillWithState } from '../../../functions/redux/reduxUtils';
 import { convertTimestampsToNumbers } from '../../../functions/db/dataFormatUtils';
 import { ConvertTimestampToNumber } from '../../../types/firebase/db/formatTypes';
-import { UserData } from '../../../types/firebase/db/user/usersTypes';
+import { UserData } from '../../../types/firebase/db/user/userStructure';
 
 export const updateUserData = createAsyncThunk<
   AsyncThunkState<ConvertTimestampToNumber<UserData> | null>,

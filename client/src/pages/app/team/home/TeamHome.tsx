@@ -6,30 +6,36 @@ import TeamChat from '../../../../features/app/team/home/chat/TeamChat';
 import { PathParam } from '../../../../types/path/paths';
 import { useAppSelector } from '../../../../redux/hooks';
 import serviceFactory from '../../../../firebase/db/factory';
-import { JoinState } from '../../../../types/firebase/db/baseTypes';
-import { isApprovedJoinState } from '../../../../functions/db/dbUtils';
 import AccessStateErrorMessage from '../../../../features/utils/messages/AccessStateErrorMessage';
 import TeamSetting from '../../../../features/app/team/setting/TeamSetting';
 import Participants from './Participants';
+import { BaseParticipationStatus } from '../../../../types/firebase/db/baseTypes';
+import { CircularProgress } from '@mui/material';
 
 const TeamHome: FC = () => {
   const params = useParams();
   const { uid } = useAppSelector(state => state.userSlice);
   const teamId = params[PathParam.TeamId];
-  const [joinState, setJoinState] = useState<JoinState>("loading");
+  const [participationStatus, setParticipationStatus] = useState<BaseParticipationStatus | "loading">("loading");
 
   useEffect(() => {
-    const updateJoinState = async () => {
+    const updateParticipationStatus = async () => {
       if (uid && teamId) {
         const teamService = serviceFactory.createTeamService();
-        const state = await teamService.getSpaceJoinState(uid, teamId);
-        setJoinState(state);
+        const state = await teamService.getParticipationState(uid, teamId);
+        setParticipationStatus(state);
       }
     }
-    updateJoinState();
+    updateParticipationStatus();
   }, [uid, teamId]);
+
+  const isValidParticipationStatus = (status: BaseParticipationStatus): boolean => {
+    return [BaseParticipationStatus.Active, BaseParticipationStatus.Declined].includes(status);
+  }
   
-  return isApprovedJoinState(joinState) ? (
+  return participationStatus === "loading" ? (
+    <CircularProgress />
+  ) : isValidParticipationStatus(participationStatus) ? (
     <Routes>
       <Route path={getLastSegment(teamPaths.homeChildren.chat)} element={<TeamChat />} />
       <Route path={getLastSegment(teamPaths.homeChildren.participants)} element={<Participants />} />
@@ -37,7 +43,7 @@ const TeamHome: FC = () => {
       <Route path={getLastSegment(teamPaths.homeChildren.setting)} element={<TeamSetting />} />
     </Routes>
   ) : (
-    <AccessStateErrorMessage joinState={joinState} message='このチームへのアクセスは許可されていません。'/>
+    <AccessStateErrorMessage message='このチームへのアクセスは許可されていません。'/>
   );
 }
 

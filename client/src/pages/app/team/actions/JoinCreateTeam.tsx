@@ -6,34 +6,34 @@ import { replaceParams } from '../../../../functions/path/pathUtils';
 import { PathParam } from '../../../../types/path/paths';
 import serviceFactory from '../../../../firebase/db/factory';
 import Popup from '../../../../components/util/Popup';
-import { TeamData } from '../../../../types/firebase/db/team/teamsTypes';
 import { CircularProgress } from '@mui/material';
 import NotFoundJoiningTeam from '../../../../features/app/team/action/joinCreate/join/NotFoundJoiningTeam';
 import JoiningTeam from '../../../../features/app/team/action/joinCreate/join/JoiningTeam';
 import { useAppSelector } from '../../../../redux/hooks';
+import { TeamData } from '../../../../types/firebase/db/team/teamStructure';
 
 const JoinCreateTeam: FC = () => {
     const navigate = useNavigate();
     const uid = useAppSelector(state => state.userSlice.uid);
 
-    const [joinTeamValue, setJoinTeamValue] = useState('');
-    const [createTeamValue, setCreateTeamValue] = useState('');
+    const [teamCodeId, setTeamCodeId] = useState('');
+    const [createTeamName, setCreateTeamName] = useState('');
     const [popupState, setPopupState] = useState<"open" | "close" | "loading">("close");
     const [joiningTeam, setJoiningTeam] = useState<TeamData | null>(null);
 
-    const handleJoinTeamValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setJoinTeamValue(event.target.value);
+    const handleTeamCodeIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setTeamCodeId(event.target.value);
     }
 
-    const handleCreateTeamValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setCreateTeamValue(event.target.value);
+    const handleCreateTeamNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setCreateTeamName(event.target.value);
     }
 
     const handleJoinEnter = useCallback(async () => {
         try {
           setPopupState('loading');
-          const codeService = serviceFactory.createTeamCodeService();
-          const team = await codeService.validateTeamCode(joinTeamValue);
+          const teamService = serviceFactory.createTeamService();
+          const team = await teamService.getTeamDataWithTeamCodeId(teamCodeId);
           setJoiningTeam(team);
           setPopupState('open');
         } catch (error) {
@@ -41,14 +41,14 @@ const JoinCreateTeam: FC = () => {
           setPopupState('open');
           setJoiningTeam(null);
         }
-      }, [joinTeamValue]);
+      }, [teamCodeId]);
     
       const handleCreateEnter = useCallback(() => {
-        if (createTeamValue.trim()) {
-          navigate(replaceParams(teamPaths.create, { [PathParam.Name]: createTeamValue }));
-          console.log('Creating team with name:', createTeamValue);
+        if (createTeamName.trim()) {
+          navigate(replaceParams(teamPaths.create, { [PathParam.Name]: createTeamName }));
+          console.log('Creating team with name:', createTeamName);
         }
-      }, [createTeamValue, navigate]);
+      }, [createTeamName, navigate]);
 
     const handleClosePopup = () => {
         setPopupState("close");
@@ -56,16 +56,16 @@ const JoinCreateTeam: FC = () => {
 
     const onJoined = () => {
         handleClosePopup();
-        setJoinTeamValue("");
+        setTeamCodeId("");
     }
 
     return (
         <>
             <JoinCreateTeamView
-                joinTeamValue={joinTeamValue}
-                createTeamValue={createTeamValue}
-                onJoinTeamValueChange={handleJoinTeamValueChange}
-                onCreateTeamValueChange={handleCreateTeamValueChange}
+                teamCodeId={teamCodeId}
+                createTeamName={createTeamName}
+                onTeamCodeIdChange={handleTeamCodeIdChange}
+                onCreateTeamNameChange={handleCreateTeamNameChange}
                 onJoinEnter={handleJoinEnter}
                 onCreateEnter={handleCreateEnter}
             />
@@ -74,7 +74,7 @@ const JoinCreateTeam: FC = () => {
                     {popupState === "loading" ? (
                         <CircularProgress />
                     ) : (joiningTeam && uid ? (
-                        <JoiningTeam team={joiningTeam} code={joinTeamValue} uid={uid} onCancel={handleClosePopup} onJoined={onJoined} />
+                        <JoiningTeam team={joiningTeam} codeId={teamCodeId} uid={uid} onCancel={handleClosePopup} onJoined={onJoined} />
                     ) : (
                         <NotFoundJoiningTeam />
                     ))}

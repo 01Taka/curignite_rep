@@ -6,8 +6,6 @@ import { replaceParams } from "../../path/pathUtils";
 import { PathParam } from "../../../types/path/paths";
 import { Dispatch } from "@reduxjs/toolkit";
 import { setCurrentSpaceId } from "../../../redux/slices/space/spaceSlice";
-import { startLearningSession } from "./learningSessionUtils";
-
 
 /**
  * 新しいスペースを作成します。ユーザーIDとフォーム状態に基づいてスペースの詳細を指定します。
@@ -37,7 +35,6 @@ export const startNewSpace = async (
             uid,
             formState.spaceName,
             formState.description,
-            formState.publicationTarget,
             formState.requiresApproval
         );
 
@@ -46,7 +43,7 @@ export const startNewSpace = async (
         dispatch(setCurrentSpaceId(newSpaceId));
 
         // スペース参加のためのストレージ設定
-        startLearningSession(dispatch, uid, newSpaceId);
+        // startLearningSession(dispatch, uid, newSpaceId); UNDONE
     } catch (error) {
         console.error("新しいスペースの作成に失敗しました:", error);
         // エラーハンドリングの追加

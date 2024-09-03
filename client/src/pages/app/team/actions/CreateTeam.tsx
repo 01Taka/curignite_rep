@@ -37,15 +37,15 @@ const CreateTeam: FC = () => {
       // チームの作成と追加
       if (uid) {
         setCreating(true);
-        const userTeamService = serviceFactory.createUserTeamService();
-        const teamRef = await userTeamService.createTeam(
+        const teamService = serviceFactory.createTeamService();
+        const result = await teamService.createTeam(
           uid,
           formState.teamName,
           formState.iconImage,
           formState.description,
           formState.requiresApproval
         )
-        navigateToTeamHome(teamRef.id, dispatch, navigate, teamPaths.homeChildren.setting);
+        navigateToTeamHome(result.documentRef.id, dispatch, navigate, teamPaths.homeChildren.setting);
       } else {
         console.error("uidが取得できませんでした。");
       }

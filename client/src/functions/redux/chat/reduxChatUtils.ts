@@ -1,7 +1,7 @@
 import { fetchChats } from "../../../redux/actions/chat/chatRoomActions";
 import { clearChatRoom, setCurrentRoomId, setStartAfterMessageId } from "../../../redux/slices/chat/chatRoomSlice";
 import store from "../../../redux/store";
-import { ChatData } from "../../../types/firebase/db/chat/chatsTypes";
+import { ChatData } from "../../../types/firebase/db/chat/chatRoomStructure";
 import { ConvertTimestampToNumber, TimestampConvertedDocumentMap } from "../../../types/firebase/db/formatTypes";
 import { AppDispatch } from "../../../types/module/redux/reduxTypes";
 import { sortChatIdMap } from "../../app/chat/chatUtils";

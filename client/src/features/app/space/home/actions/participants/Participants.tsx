@@ -1,21 +1,23 @@
-import { FC, useState } from "react";
-import { ActionInfo, Member } from "../../../../../../types/firebase/db/baseTypes";
-import { SpaceActionTypes } from "../../../../../../types/firebase/db/space/spaceStructure";
-import { Card, CardContent, Tabs, Tab } from "@mui/material";
-import { UserData } from "../../../../../../types/firebase/db/user/usersTypes";
-import { DocumentIdMap } from "../../../../../../types/firebase/db/formatTypes";
+import { FC, useEffect, useState } from "react";
+import { Card, Tabs, Tab } from "@mui/material";
 import Members from "./Members";
 import JoinRequests from "./JoinRequests";
+import { JoinRequestData } from "../../../../../../types/firebase/db/common/joinRequest/joinRequestStructure";
+import { SpaceMemberData } from "../../../../../../types/firebase/db/space/spaceStructure";
+import { useUserMap } from "../../../../../hooks/useUserMap";
 
 interface ParticipantsProps {
-  members: Member[];
-  awayMembers: Member[];
-  joinRequests: ActionInfo<SpaceActionTypes>[];
-  userMap: DocumentIdMap<UserData>;
+  members: SpaceMemberData[];
+  joinRequests: JoinRequestData[];
 }
 
-const Participants: FC<ParticipantsProps> = ({ members, awayMembers, joinRequests, userMap }) => {
+const Participants: FC<ParticipantsProps> = ({ members, joinRequests }) => {
   const [tabIndex, setTabIndex] = useState(0);
+
+  const userMap = useUserMap([
+    ...members.map(member => member.docId),
+    ...joinRequests.map(request => request.docId)
+  ]).userMap;
 
   const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setTabIndex(newValue);
@@ -29,10 +31,10 @@ const Participants: FC<ParticipantsProps> = ({ members, awayMembers, joinRequest
       </Tabs>
       <Card className="h-full p-4 rounded-lg bg-gray-50 overflow-y-auto">
         {tabIndex === 0 && (
-          <Members members={members} awayMembers={awayMembers} userMap={userMap} />
+          <Members members={members} userMap={userMap} />
         )}
         {tabIndex === 1 && (
-          <JoinRequests joinRequests={joinRequests} userMap={userMap} />
+          <JoinRequests joinRequests={joinRequests} userMap={userMap} activeMembersId={members.map(member => member.docId)} />
         )}
       </Card>
     </div>

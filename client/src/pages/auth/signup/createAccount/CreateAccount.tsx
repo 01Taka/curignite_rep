@@ -3,7 +3,7 @@ import CreateAccountView, { CreateAccountFormState } from './CreateAccountView';
 import { useNavigate } from 'react-router-dom';
 import { signUpWithEmail } from '../../../../firebase/auth/signUp';
 import { handleFormStateChange } from '../../../../functions/utils';
-import { authStorage } from '../../../../functions/localStorage/storages';
+import { authStorage } from '../../../../functions/browserStorage/localStorage/storages';
 import { authPaths } from '../../../../types/path/authPaths';
 
 const CreateAccount: React.FC = () => {

@@ -1,7 +1,6 @@
 import React, { FC, useEffect, useState } from 'react'
-import CreateBatchTaskView from './CreateBatchTaskView'
+import CreateCollectionTaskView from './CreateCollectionTaskView'
 import { handleFormStateChange } from '../../../../../functions/utils';
-import { CreateBatchTaskViewFormState } from '../../../../../types/app/task/taskForm';
 import serviceFactory from '../../../../../firebase/db/factory';
 import { useAppSelector } from '../../../../../redux/hooks';
 import { toTimestamp } from '../../../../../functions/dateTimeUtils';
@@ -10,15 +9,16 @@ import { PathParam } from '../../../../../types/path/paths';
 import SelectCollection from './SelectCollection';
 import { taskPaths } from '../../../../../types/path/mainPaths';
 import { rangesToArray } from '../../../../../functions/objectUtils';
+import { CreateCollectionTaskViewFormState } from '../../../../../types/app/task/taskForm';
 
-const CreateBatchTask: FC= () => {
+const CreateCollectionTask: FC= () => {
   const params = useParams();
   const navigate = useNavigate();
   const collectionId = params[PathParam.CollectionId];
   const [id, setId] = useState<string | null>(null);
 
   const { uid, userData } = useAppSelector(state => state.userSlice);
-  const [formState, setFormState] = useState<CreateBatchTaskViewFormState>({
+  const [formState, setFormState] = useState<CreateCollectionTaskViewFormState>({
     title: "",
     dueDateTime: null,
     taskNote: "",
@@ -31,24 +31,24 @@ const CreateBatchTask: FC= () => {
     setId(id);
   }, [collectionId])
 
-  const handleCreateBatchTask = async () => {
+  const handleCreateCollectionTask = async () => {
     if (uid && userData && id) {
       try {
-        const batchTaskService = serviceFactory.createTaskCollectionBatchTaskService();
-        await batchTaskService.createBatchTask(
+        const CollectionTaskService = serviceFactory.createUserTaskManagementService();
+        await CollectionTaskService.getTaskCollectionTaskService().createTask(
           userData.metaData.taskListId,
           id,
           uid,
           formState.title,
-          formState.dueDateTime ? toTimestamp(formState.dueDateTime): null,
+          formState.dueDateTime ? toTimestamp(formState.dueDateTime) : null,
           formState.taskNote,
           formState.priority,
           rangesToArray(formState.pagesInRange),
         );
         navigate(taskPaths.create);
-        console.log('Batch task created successfully!'); // 成功メッセージ
+        console.log('Collection task created successfully!'); // 成功メッセージ
       } catch (error) {
-        console.error('Failed to create batch task:', error);
+        console.error('Failed to create Collection task:', error);
       }
     } else {
       console.error('User is not authenticated or user data is missing.'); // 認証エラー
@@ -58,11 +58,11 @@ const CreateBatchTask: FC= () => {
   return (
     <>
       {id !== null ? (
-        <CreateBatchTaskView 
+        <CreateCollectionTaskView 
           formState={formState}
           rangeMax={200}
           onFormStateChange={(e) => handleFormStateChange(e, setFormState)}
-          onCreate={handleCreateBatchTask}
+          onCreate={handleCreateCollectionTask}
         />
       ) : (
         <SelectCollection />
@@ -71,4 +71,4 @@ const CreateBatchTask: FC= () => {
   )
 }
 
-export default CreateBatchTask
+export default CreateCollectionTask

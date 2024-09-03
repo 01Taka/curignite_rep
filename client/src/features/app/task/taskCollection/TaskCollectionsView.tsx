@@ -1,22 +1,20 @@
 import React, { FC } from 'react'
-import { TaskCollectionBatchTaskData, TaskListTaskCollectionData } from '../../../../types/firebase/db/task/taskStructure'
 import CollectionContainer from './CollectionContainer';
-import { DocumentIdMap } from '../../../../types/firebase/db/formatTypes';
+import { CollectionWithTasks, TaskCollectionData } from '../../../../types/firebase/db/common/task/taskStructure';
 
 interface TaskCollectionsViewProps {
-  taskCollections: TaskListTaskCollectionData[];
-  batchTaskMapByCollectionId: DocumentIdMap<TaskCollectionBatchTaskData[]>;
-  onClickCollection?: (taskCollection: TaskListTaskCollectionData) => void;
+  collectionWithTasks: CollectionWithTasks[];
+  onClickCollection?: (taskCollection: TaskCollectionData) => void;
 }
 
-const TaskCollectionsView: FC<TaskCollectionsViewProps> = ({ taskCollections, batchTaskMapByCollectionId, onClickCollection = () => {} }) => {
+const TaskCollectionsView: FC<TaskCollectionsViewProps> = ({ collectionWithTasks, onClickCollection = () => {} }) => {
   return (
     <div className='flex flex-wrap justify-center gap-4'>
-      {taskCollections && taskCollections.map((collection) => (
-        <div key={collection.docId} className='w-44 h-64'>
+      {collectionWithTasks && collectionWithTasks.map((data) => (
+        <div key={data.collectionData.docId} className='w-44 h-64'>
           <CollectionContainer
-            taskCollection={collection}
-            batchTasks={batchTaskMapByCollectionId[collection.docId]}
+            taskCollection={data.collectionData}
+            collectionTasks={data.tasksInCollection}
             onClickCollection={onClickCollection}
           />
         </div>

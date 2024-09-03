@@ -55,6 +55,10 @@ export class UserService {
     return user;
   }
 
+  async getUsers(usersId: string[]): Promise<UserData[]> {
+    return await this.baseDB.getByConditions("id", usersId);
+  }
+
   /**
    * UIDがDBに存在するかどうかをチェックします。
    */
@@ -175,7 +179,7 @@ export class UserService {
   // ヘルパーメソッド群
   private async getUsersByIds(userIds: string[]): Promise<UserData[]> {
     const data = await Promise.all(userIds.map(id => this.baseDB.read(id)));
-    return data.filter(user => user !== null);
+    return data.filter(user => user !== null) as UserData[];
   }
 
   private createSpaceIdMap(users: UserData[]): DocumentIdMap<string[]> {

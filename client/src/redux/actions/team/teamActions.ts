@@ -1,6 +1,5 @@
 import { Dispatch } from '@reduxjs/toolkit';
 import serviceFactory from '../../../firebase/db/factory';
-import { TeamData } from '../../../types/firebase/db/team/teamsTypes';
 import { setCurrentTeamId, setTeams, setTeamsUpdateState } from '../../slices/team/teamSlice';
 import store from '../../store';
 import { autoUpdateCollection } from '../../../functions/redux/reduxUtils';
@@ -10,6 +9,7 @@ import { NavigateFunction } from 'react-router-dom';
 import { replaceParams } from '../../../functions/path/pathUtils';
 import { PathParam } from '../../../types/path/paths';
 import { arrayToDictWithTimestampToNumbers } from '../../../functions/db/dataFormatUtils';
+import { TeamData } from '../../../types/firebase/db/team/teamStructure';
 /**
  * ユーザーの所属チーム情報を自動更新する関数
  * @param dispatch - Reduxのdispatch関数

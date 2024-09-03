@@ -1,7 +1,6 @@
 import { DocumentData, DocumentReference, Firestore } from "firebase/firestore";
 import BaseDB from "../../base";
 import { getInitialBaseDocumentData } from "../../../../functions/db/dbUtils";
-import { spacesDB } from "../../dbs";
 import { UserService } from "../user/userService";
 import { ChatRoomService } from "../chat/chatRoomService";
 import { SpaceMemberService } from "./subCollection/spaceMemberService";
@@ -27,7 +26,6 @@ export class SpaceService {
     spaceName: string,
     description: string,
     requiresApproval: boolean,
-    chatRoomId: string
   ): Promise<DocumentReference<DocumentData, DocumentData>> {
     try {
       const data: SpaceData = {
@@ -35,7 +33,7 @@ export class SpaceService {
         spaceName,
         description,
         requiresApproval,
-        chatRoomId: chatRoomId ?? ""
+        chatRoomId: ""
       };
 
       const spaceRef = await this.baseDB.create(data);
@@ -46,7 +44,7 @@ export class SpaceService {
         { parentId: spaceRef.id, parentType: "space" }
       );
 
-      await spacesDB.update(spaceRef.id, { chatRoomId: chatRoomRef.id });
+      await this.baseDB.update(spaceRef.id, { chatRoomId: chatRoomRef.id });
       await this.userService.appendSpaceId(createdById, spaceRef.id);
 
       return chatRoomRef;;

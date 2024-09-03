@@ -5,19 +5,19 @@ import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import EditIcon from '@mui/icons-material/Edit';
 
 interface JoinCreateTeamViewProps {
-    joinTeamValue: string;
-    createTeamValue: string;
-    onJoinTeamValueChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    onCreateTeamValueChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    teamCodeId: string;
+    createTeamName: string;
+    onTeamCodeIdChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    onCreateTeamNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     onJoinEnter: () => void;
     onCreateEnter: () => void;
 }
 
 const JoinCreateTeamView: FC<JoinCreateTeamViewProps> = ({
-    joinTeamValue,
-    createTeamValue,
-    onJoinTeamValueChange,
-    onCreateTeamValueChange,
+    teamCodeId,
+    createTeamName,
+    onTeamCodeIdChange,
+    onCreateTeamNameChange,
     onJoinEnter,
     onCreateEnter,
 }) => {
@@ -29,9 +29,9 @@ const JoinCreateTeamView: FC<JoinCreateTeamViewProps> = ({
                     icon={<GroupAddIcon fontSize='inherit' />}
                     explanation='チームコードを入力してチームに参加します。'
                     label='コードを入力'
-                    value={joinTeamValue}
+                    value={teamCodeId}
                     enterText='参加する'
-                    onValueChange={onJoinTeamValueChange}
+                    onValueChange={onTeamCodeIdChange}
                     onEnter={onJoinEnter}
                 />
                 <div className='px-8'/>
@@ -40,9 +40,9 @@ const JoinCreateTeamView: FC<JoinCreateTeamViewProps> = ({
                     icon={<EditIcon fontSize='inherit' />}
                     explanation='チーム名を入力して新しいチームを作成します。'
                     label='チーム名'
-                    value={createTeamValue}
+                    value={createTeamName}
                     enterText='作成する'
-                    onValueChange={onCreateTeamValueChange}
+                    onValueChange={onCreateTeamNameChange}
                     onEnter={onCreateEnter}
                 />
             </div>

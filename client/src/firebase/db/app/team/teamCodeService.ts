@@ -1,14 +1,15 @@
 import { DocumentData, DocumentReference, Firestore } from "firebase/firestore";
-import { toTimestamp } from "../../../../functions/dateTimeUtils";
+import { isBeforeDateTime, toTimestamp } from "../../../../functions/dateTimeUtils";
 import { TimeTypes } from "../../../../types/util/dateTimeTypes";
 import BaseDB from "../../base";
 import { getInitialBaseDocumentData } from "../../../../functions/db/dbUtils";
 import { TeamCodeData } from "../../../../types/firebase/db/team/teamCodeStructure";
+import { TeamService } from "./teamService";
 
 export class TeamCodeService {
     baseDB: BaseDB<TeamCodeData>;
 
-    constructor(firestore: Firestore) {
+    constructor(firestore: Firestore, private teamService: TeamService) {
         this.baseDB = new BaseDB(firestore, "teamCodes");
      }
 
@@ -57,4 +58,27 @@ export class TeamCodeService {
             return null;
         }
     }
+
+    async softDeleteTeamCode(teamCodeId: string): Promise<void> {
+        this.baseDB.softDelete(teamCodeId);
+    }
+
+    /**
+   * チームコードを確認する
+   * @param teamCode - チームコード
+   * @returns 正常true 問題false
+   */
+  async isValidTeamCode(teamCode: TeamCodeData): Promise<boolean> {
+    if (!teamCode.valid) {
+      console.error(`チームコード "${teamCode.code}" は無効としてマークされています。`);
+      return false;
+    }
+
+    if (teamCode.period && isBeforeDateTime(new Date(), teamCode.period)) {
+      console.error(`チームコード "${teamCode.code}" の使用期限が切れています。`);
+      return false;
+    }
+    
+    return true;
+  }
 }

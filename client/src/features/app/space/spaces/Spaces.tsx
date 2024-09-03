@@ -5,8 +5,8 @@ import SpacesEmptyMessage from './SpacesEmptyMessage';
 import { dateTimeToString } from '../../../../functions/dateTimeUtils';
 import { SpacesProps } from '../../../../types/app/space/spaceTypes';
 import { DocumentIdMap } from '../../../../types/firebase/db/formatTypes';
-import { UserData } from '../../../../types/firebase/db/user/usersTypes';
 import serviceFactory from '../../../../firebase/db/factory';
+import { UserData } from '../../../../types/firebase/db/user/userStructure';
 
 const Spaces: FC<SpacesProps> = ({ spaces, onSpaceClick }) => {
   const [usersData, setUsersData] = useState<DocumentIdMap<UserData>>({});
@@ -39,7 +39,7 @@ const Spaces: FC<SpacesProps> = ({ spaces, onSpaceClick }) => {
               authorName={usersData[space.createdById]?.username || "不明"}
               startTime={dateTimeToString(space.createdAt, {})}
               introduction={space.introduction}
-              someMemberName={space.members.length > 0 ? space.members.slice(0, 3).map(member => member.username) : []}
+              someMemberName={[]} // UNDONE
               memberNumber={space.members.length}
               requiresApproval={space.requiresApproval}
               onClick={() => onSpaceClick(space.docId)}

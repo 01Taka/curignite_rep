@@ -1,11 +1,9 @@
-import { BaseTaskData } from "../../firebase/db/task/taskStructure";
+import { TaskData } from "../../firebase/db/common/task/taskStructure";
 
 export type GradientCircleSize = 'sm' | 'md' | 'lg';
 
 export interface TaskContainerComponentProps {
-  task: BaseTaskData;
-  estimatedDuration?: number;
-  remainingPages?: number;
+  task: TaskData;
   size: GradientCircleSize;
 }
 

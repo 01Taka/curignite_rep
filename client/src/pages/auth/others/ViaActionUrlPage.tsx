@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import ViaActionUrlView from './ViaActionUrlView';
 import { actionNavigation, checkActionCode } from './handleViaActionUrl';
 import { resendEmail } from '../../../firebase/auth/signUp';
-import { authStorage } from '../../../functions/localStorage/storages';
+import { authStorage } from '../../../functions/browserStorage/localStorage/storages';
 import { AuthStorageProps } from '../../../types/app/localStorageTypes';
 import { authPaths } from '../../../types/path/authPaths';
 

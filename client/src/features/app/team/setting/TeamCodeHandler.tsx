@@ -1,5 +1,4 @@
 import React, { FC, useEffect, useState, useCallback } from 'react';
-import { TeamData } from '../../../../types/firebase/db/team/teamsTypes';
 import serviceFactory from '../../../../firebase/db/factory';
 import { TimeTypes } from '../../../../types/util/dateTimeTypes';
 import { useAppSelector } from '../../../../redux/hooks';
@@ -7,9 +6,10 @@ import { Alert, Divider, Typography } from '@mui/material';
 import CircularButton from '../../../../components/input/button/CircularButton';
 import DateField from '../../../../components/input/field/DateField';
 import { FormStateChangeEvent } from '../../../../types/util/componentsTypes';
-import { TeamCodeData } from '../../../../types/firebase/db/team/teamCodesTypes';
 import CopyButton from '../../../../components/input/button/CopyButton';
 import { dateTimeToString } from '../../../../functions/dateTimeUtils';
+import { TeamCodeData } from '../../../../types/firebase/db/team/teamCodeStructure';
+import { TeamData } from '../../../../types/firebase/db/team/teamStructure';
 
 interface TeamCodeHandlerProps {
   team: TeamData;
@@ -46,7 +46,7 @@ const TeamCodeHandler: FC<TeamCodeHandlerProps> = ({ team }) => {
     try {
       if (uid && team && newCodePeriod) {
         const codeService = serviceFactory.createTeamCodeService();
-        await codeService.createNewTeamCode(uid, team.docId, newCodePeriod);
+        await codeService.createTeamCode(uid, team.docId, newCodePeriod);
         await updateCurrentCode();
         setReissuedCode(true);
         setMessage("新しい参加コードが発行されました。");
@@ -64,8 +64,8 @@ const TeamCodeHandler: FC<TeamCodeHandlerProps> = ({ team }) => {
     setError("");
     try {
       if (joinCode) {
-        const codesDB = serviceFactory.getTeamCodesDB();
-        await codesDB.updateTeamCodeValidity(joinCode.docId, false);
+        const codesDB = serviceFactory.createTeamCodeService();
+        await codesDB.softDeleteTeamCode(joinCode.docId);
         setJoinCode(null);
         setMessage("参加コードが停止されました。");
       } else {

@@ -3,7 +3,7 @@ import { googleProvider } from '../../../../firebase/firebase';
 import SignInIndexView from './SignInIndexView';
 import { useNavigate } from 'react-router-dom';
 import { signInWithProvider } from '../../../../firebase/auth/signIn';
-import { authStorage } from '../../../../functions/localStorage/storages';
+import { authStorage } from '../../../../functions/browserStorage/localStorage/storages';
 import { authPaths } from '../../../../types/path/authPaths';
 import { rootPaths } from '../../../../types/path/paths';
 

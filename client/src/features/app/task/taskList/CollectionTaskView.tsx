@@ -1,13 +1,13 @@
 import React, { FC } from 'react';
-import { TaskCollectionBatchTaskData, TaskListTaskCollectionData } from '../../../../types/firebase/db/task/taskStructure';
 import CollectionTaskContainer from './containerComponents/CollectionTaskContainer';
+import { TaskCollectionData, TaskCollectionTaskData } from '../../../../types/firebase/db/common/task/taskStructure';
 
 interface CollectionTaskViewProps {
-  tasks: TaskCollectionBatchTaskData[];
-  collection: TaskListTaskCollectionData;
+  tasks: TaskCollectionTaskData[];
+  collection: TaskCollectionData;
 }
 
-const calculateEstimatedDuration = (task: TaskCollectionBatchTaskData, collection: TaskListTaskCollectionData) => {
+const calculateEstimatedDuration = (task: TaskCollectionTaskData, collection: TaskCollectionData) => {
   const remainingPages = task.pagesInRange.length - collection.completedPageIndices.filter(value => task.pagesInRange.includes(value)).length;
   return remainingPages * collection.timePerPage;
 };

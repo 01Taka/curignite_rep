@@ -1,9 +1,12 @@
-import { Firestore, QueryConstraint } from "firebase/firestore";
+import { Firestore, QueryConstraint, Timestamp } from "firebase/firestore";
 import BaseDB from "../../base";
 import { TaskCollectionTaskData } from "../../../../types/firebase/db/common/task/taskStructure";
+import { getInitialBaseDocumentData } from "../../../../functions/db/dbUtils";
+import { TaskCollectionService } from "./taskCollectionService";
+import { TaskPriority } from "../../../../types/firebase/db/common/task/taskSupplementTypes";
 
 export class TaskCollectionTaskService {
-  constructor(private firestore: Firestore, private path: string) {}
+  constructor(private firestore: Firestore, private path: string, private taskCollectionService: TaskCollectionService) {}
 
   createBaseDB(taskCollectionId: string, docId: string): BaseDB<TaskCollectionTaskData> {
     return new BaseDB(this.firestore, `${this.path}/${docId}/taskCollections/${taskCollectionId}/tasks`);
@@ -12,11 +15,34 @@ export class TaskCollectionTaskService {
   async createTask(
     docId: string,
     taskCollectionId: string,
-    taskId: string,
-    data: TaskCollectionTaskData,
+    createdById: string,
+    title: string,
+    dueDateTime: Timestamp | null,
+    taskNote: string,
+    priority: TaskPriority,
+    pagesInRange: number[],
   ): Promise<void> {
     try {
-      await this.createBaseDB(taskCollectionId, docId).createWithId(taskId, data);
+      const collection  = await this.taskCollectionService.getCollection(docId, taskCollectionId);
+      if (!collection) {
+        throw new Error("タスクコレクションが見つかりませんでした。");
+      }
+      const completedPages = pagesInRange.filter(page => collection.completedPageIndices.includes(page));
+      const progress = pagesInRange.length > 0 ? completedPages.length / pagesInRange.length : 0;
+      const completed = progress === 1;
+      const data: TaskCollectionTaskData = {
+        ...getInitialBaseDocumentData(createdById),
+        collectionId: taskCollectionId,
+        title,
+        dueDateTime,
+        taskNote,
+        priority,
+        pagesInRange,
+        completedPages,
+        progress,
+        completed,
+      }
+      await this.createBaseDB(taskCollectionId, docId).create(data);
     } catch (error) {
       console.error("Error creating task: ", error);
       throw new Error("Failed to create task");

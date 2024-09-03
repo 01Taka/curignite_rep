@@ -12,7 +12,7 @@ export class TaskManagementService {
   constructor(firestore: Firestore, basePath: string) {
     this.individualTaskService = new IndividualTaskService(firestore, basePath);
     this.taskCollectionService = new TaskCollectionService(firestore, basePath);
-    this.taskCollectionTaskService = new TaskCollectionTaskService(firestore, basePath);
+    this.taskCollectionTaskService = new TaskCollectionTaskService(firestore, basePath, this.getTaskCollectionService());
   }
 
   getIndividualTaskService() {
@@ -74,6 +74,12 @@ export class TaskManagementService {
         return tasksInCollection.map(task => ({
           ...task,
           estimatedDuration,
+          collectionTaskField: {
+            collection: collectionData,
+            pagesInRange: task.pagesInRange,
+            completedPages: task.completedPages,
+            remainingPages: task.pagesInRange?.filter(page => task.completedPages?.includes(page)) || []
+          }
         } as TaskData));
       });
 

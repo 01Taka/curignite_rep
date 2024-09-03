@@ -2,10 +2,10 @@ import React, { FC } from 'react'
 import GradientCircle from '../../../../../components/app/task/GradientCircle'
 import { dueDateColors, progressColors } from './gradientColors'
 import { dateTimeToString, getMidnightDate, isMidnight } from '../../../../../functions/dateTimeUtils'
-import { BaseTaskData } from '../../../../../types/firebase/db/task/taskStructure'
 import { differenceInDays } from 'date-fns'
 import { GradientCircleSize } from '../../../../../types/app/task/taskTypes'
 import { cn } from '../../../../../functions/utils'
+import { BaseTaskData } from '../../../../../types/firebase/db/common/task/taskStructure'
 
 interface OverViewInfoProps {
   task: BaseTaskData;

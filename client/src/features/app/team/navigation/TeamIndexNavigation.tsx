@@ -1,7 +1,7 @@
 import React, { FC, useEffect } from 'react'
 import CircularButton from '../../../../components/input/button/CircularButton';
 import { Home, ArrowBack } from '@mui/icons-material';
-import Teams from '../teams/Teams';
+import Teams from '../list/teams/Teams';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { teamPaths } from '../../../../types/path/mainPaths';
 import { useAppDispatch, useAppSelector } from '../../../../redux/hooks';

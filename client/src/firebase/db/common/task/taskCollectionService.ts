@@ -3,6 +3,7 @@ import BaseDB from "../../base";
 import { TaskCollectionData } from "../../../../types/firebase/db/common/task/taskStructure";
 import { DocumentIdMap } from "../../../../types/firebase/db/formatTypes";
 import { arrayToDict } from "../../../../functions/objectUtils";
+import { getInitialBaseDocumentData } from "../../../../functions/db/dbUtils";
 
 export class TaskCollectionService {
   constructor(private firestore: Firestore, private path: string) {}
@@ -11,18 +12,34 @@ export class TaskCollectionService {
     return new BaseDB(this.firestore, `${this.path}/${docId}/taskCollections`);
   }
 
-  async getTaskCollectionMap(docId: string): Promise<DocumentIdMap<TaskCollectionData>> {
-    const collections = await this.getAllCollections(docId);
-    return arrayToDict(collections, "docId");
-  }
-
-  async createCollection(docId: string, collectionId: string, data: TaskCollectionData): Promise<void> {
+  async createCollection(
+    docId: string,
+    createdById: string,
+    collectionName: string,
+    description: string,
+    totalPages: number,
+    timePerPage: number,
+    completedPageIndices: number[] = [],
+  ): Promise<void> {
     try {
-      await this.createBaseDB(docId).createWithId(collectionId, data);
+      const data: TaskCollectionData = {
+        ...getInitialBaseDocumentData(createdById),
+        collectionName,
+        description,
+        totalPages,
+        timePerPage,
+        completedPageIndices,
+      }
+      await this.createBaseDB(docId).create(data);
     } catch (error) {
       console.error("Error creating collection: ", error);
       throw new Error("Failed to create collection");
     }
+  }
+
+  async getTaskCollectionMap(docId: string): Promise<DocumentIdMap<TaskCollectionData>> {
+    const collections = await this.getAllCollections(docId);
+    return arrayToDict(collections, "docId");
   }
 
   async getCollection(docId: string, collectionId: string): Promise<TaskCollectionData | null> {

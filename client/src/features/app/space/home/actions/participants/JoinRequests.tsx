@@ -1,40 +1,45 @@
 import { Avatar, List, ListItem, ListItemAvatar, ListItemText, Typography } from '@mui/material';
 import React, { FC, useMemo } from 'react';
-import { ActionInfo } from '../../../../../../types/firebase/db/baseTypes';
 import { DocumentIdMap } from '../../../../../../types/firebase/db/formatTypes';
-import { UserData } from '../../../../../../types/firebase/db/user/usersTypes';
-import { SpaceActionTypes } from '../../../../../../types/firebase/db/space/spaceStructure';
 import { cn } from '../../../../../../functions/utils';
 import { dateTimeToString } from '../../../../../../functions/dateTimeUtils';
+import { UserData } from '../../../../../../types/firebase/db/user/userStructure';
+import { JoinRequestStatus } from '../../../../../../types/firebase/db/common/joinRequest/joinRequestSupplementTypes';
+import { JoinRequestData } from '../../../../../../types/firebase/db/common/joinRequest/joinRequestStructure';
 
-interface JoinRequestsProps {
-  joinRequests: ActionInfo<SpaceActionTypes>[];
-  userMap: DocumentIdMap<UserData>;
-}
+type JoinStatus = JoinRequestStatus | "active";
 
-const actionNames: Record<SpaceActionTypes, string> = {
-  approved: "参加中",
+const actionNames: Record<JoinStatus, string> = {
+  active: "参加中",
   pending: "承認待ち",
-  invited: "許可しました",
+  allowed: "許可しました",
   rejected: "拒否中",
 };
 
-const actionColors: Record<SpaceActionTypes, string> = {
-  approved: "text-gray-500",
+const actionColors: Record<JoinStatus, string> = {
+  active: "text-gray-500",
   pending: "text-blue-500",
-  invited: "text-green-500",
+  allowed: "text-green-500",
   rejected: "text-red-500",
 };
 
-const getActionName = (actionType: SpaceActionTypes): string => actionNames[actionType] || "";
-const getActionColorClass = (actionType: SpaceActionTypes): string => actionColors[actionType] || "";
+const getActionName = (actionType: JoinStatus): string => actionNames[actionType];
+const getActionColorClass = (actionType: JoinStatus): string => actionColors[actionType];
 
-const JoinRequests: FC<JoinRequestsProps> = ({ joinRequests, userMap }) => {
+interface JoinRequestsProps {
+  joinRequests: JoinRequestData[];
+  activeMembersId: string[];
+  userMap: DocumentIdMap<UserData>;
+}
+
+const JoinRequests: FC<JoinRequestsProps> = ({ joinRequests, userMap, activeMembersId }) => {
   const requestElements = useMemo(() => {
-    return joinRequests ? joinRequests.map((request) => {
-      const user = userMap[request.userId];
-      const actionName = getActionName(request.actionType);
-      const actionColorClass = getActionColorClass(request.actionType);
+    return joinRequests.map((request) => {
+      const user = userMap[request.docId];
+      const isActive = activeMembersId.includes(request.docId);
+      const status = request.status === "allowed" && isActive ? "active" : request.status;
+      const actionName = getActionName(status);
+      const actionColorClass = getActionColorClass(status);
       const actionTime = dateTimeToString(request.actionAt, { isAbsolute: true, format: "mm:ss" });
 
       return (
@@ -51,8 +56,8 @@ const JoinRequests: FC<JoinRequestsProps> = ({ joinRequests, userMap }) => {
           </Typography>
         </ListItem>
       );
-    }) : null;
-  }, [joinRequests, userMap]);
+    });
+  }, [joinRequests, userMap, activeMembersId]);
 
   return (
     <div className='w-full'>

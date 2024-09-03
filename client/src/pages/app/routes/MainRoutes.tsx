@@ -9,7 +9,7 @@ import ChatRoom from '../../../components/app/chat/ChatRoom';
 import { CircularProgress } from '@mui/material';
 import { mainRootPaths } from '../../../types/path/mainPaths';
 import { autoUpdateTeams } from '../../../redux/actions/team/teamActions';
-import { autoUpdateSpaces, updateTotalLearningTime } from '../../../redux/actions/space/spaceActions';
+import { autoUpdateSpaces } from '../../../redux/actions/space/spaceActions';
 import TaskRoutes from '../task/TaskRoutes';
 
 const MainRoutes: FC = () => {
@@ -20,7 +20,6 @@ const MainRoutes: FC = () => {
     if (uid) {
       autoUpdateTeams(dispatch, uid);
       autoUpdateSpaces(dispatch, uid);
-      dispatch(updateTotalLearningTime(uid));
     }
   }, [dispatch, uid]);
 

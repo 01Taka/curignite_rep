@@ -11,29 +11,26 @@ const LearningSummary: React.FC<LearningSummaryProps> = () => {
   const [weeklyTotal, setWeeklyTotal] = useState<number>(0);
   const [todayTotal, setTodayTotal] = useState<number>(0);
   const { uid } = useAppSelector(state => state.userSlice);
-  const { learningTime } = useAppSelector(state => state.learningSessionSlice);
-  const { currentSpaceId, todayTotalLearningTime } = useAppSelector(state => state.spaceSlice)
 
-  useEffect(() => {
-    const fetchLearnData = async () => {
-      if (uid) {
-        const logService = serviceFactory.createUserDailyLogService();
-        const monthlyAvg = await logService.getRecentDaysAvg(uid);
-        const weeklySum = await logService.getWeeklyTotalLearningTime(uid);
+  // useEffect(() => {
+  //   const fetchLearnData = async () => {
+  //     if (uid) {
+  //       const monthlyAvg = await logService.getRecentDaysAvg(uid);
+  //       const weeklySum = await logService.getWeeklyTotalLearningTime(uid);
   
-        setMonthlyAverage(monthlyAvg);
-        setWeeklyTotal(weeklySum); 
-      }
-    };
-    fetchLearnData();
-  }, [uid]);
+  //       setMonthlyAverage(monthlyAvg);
+  //       setWeeklyTotal(weeklySum); 
+  //     }
+  //   };
+  //   fetchLearnData();
+  // }, [uid]);
 
-  useEffect(() => {
-    if (uid && currentSpaceId) {
-      const total = learningTime + todayTotalLearningTime;
-      setTodayTotal(total);
-    }
-  }, [uid, currentSpaceId, todayTotalLearningTime, learningTime])
+  // useEffect(() => {
+  //   if (uid && currentSpaceId) {
+  //     const total = learningTime + todayTotalLearningTime;
+  //     setTodayTotal(total);
+  //   }
+// }, [uid, currentSpaceId, todayTotalLearningTime, learningTime]) // UNDONE
 
   return (
     <div>

@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { TeamData } from '../../../types/firebase/db/team/teamsTypes';
 import { TimestampConvertedDocumentMap } from '../../../types/firebase/db/formatTypes';
 import { AsyncThunkStatus } from '../../../types/module/redux/asyncThunkTypes';
+import { TeamData } from '../../../types/firebase/db/team/teamStructure';
 
 interface TeamSliceState {
     currentTeamId: string;

@@ -1,4 +1,5 @@
-import { ChatData } from "../../../types/firebase/db/chat/chatsTypes";
+
+import { ChatData } from "../../../types/firebase/db/chat/chatRoomStructure";
 import { TimestampConvertedDocumentMap } from "../../../types/firebase/db/formatTypes";
 import { revertTimestampConversion } from "../../db/dataFormatUtils";
 

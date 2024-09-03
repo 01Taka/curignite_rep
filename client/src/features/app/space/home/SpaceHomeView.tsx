@@ -3,7 +3,6 @@ import SpaceTimer from './timer/SpaceTimer';
 import { Grid } from '@mui/material';
 import LearningSummary from './learningData/LearningSummary';
 import FinishLearning from './finishLearning/FinishLearning';
-import { getCurrentSessionSpaceId } from '../../../../functions/app/space/learningSessionUtils';
 import SpaceHeatmap from './heatmap/SpaceHeatmap';
 import ActionIndex from './actions/ActionIndex';
 
@@ -20,7 +19,7 @@ const SpaceHomeView: FC<SpaceHomeViewProps> = () => {
         <ActionIndex />
       </Grid>
       <Grid item xs={4} className="flex items-center justify-center h-1/2 bggray-300">
-        <SpaceTimer spaceId={getCurrentSessionSpaceId() ?? ""}/>
+        <SpaceTimer spaceId={""}/> {/* UNDONE */}
       </Grid>
       <Grid item xs={4} className="flex items-center justify-center h-1/2 bggray-400">
         <SpaceHeatmap />

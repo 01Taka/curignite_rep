@@ -1,18 +1,19 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
-import { ChatData, ChatFormData } from '../../../types/firebase/db/chat/chatsTypes';
 import Chat from './Chat';
-import ChatInput from '../../input/message/ChatInput';
+import ChatInput, { ChatFormState } from '../../input/message/ChatInput';
+import { ChatData } from '../../../types/firebase/db/chat/chatRoomStructure';
+import { FormStateChangeFunc } from '../../../types/util/componentsTypes';
+
 
 interface ChatRoomViewProps {
-    chat: ChatFormData;
+    chatState: ChatFormState;
     chats: ChatData[];
-    onChangeChatContent: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    onAttachFile: (files: FileList) => void;
+    onChatStateChange: FormStateChangeFunc;
     onSendChat: () => void;
     onScrollToEnd: () => void;
 }
 
-const ChatRoomView: FC<ChatRoomViewProps> = ({ chat, chats, onChangeChatContent, onAttachFile, onSendChat, onScrollToEnd }) => {
+const ChatRoomView: FC<ChatRoomViewProps> = ({ chatState, chats, onChatStateChange, onSendChat, onScrollToEnd }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const scrollEndRef = useRef<HTMLDivElement>(null);
     const [scrolledToEnd, setScrolledToEnd] = useState(false);
@@ -62,9 +63,8 @@ const ChatRoomView: FC<ChatRoomViewProps> = ({ chat, chats, onChangeChatContent,
             </div>
             <div className='fixed bottom-0 flex justify-center w-full bg-primaryBase p-1 pb-4'>
                 <ChatInput
-                    chat={chat}
-                    onChangeChatContent={onChangeChatContent}
-                    onAttachFile={onAttachFile}
+                    formState={chatState}
+                    onFormStateChange={onChatStateChange}
                     onSendChat={onSendChat}
                     placeholder='メッセージを入力'
                 />

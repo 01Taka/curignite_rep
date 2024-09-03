@@ -4,13 +4,13 @@ import BaseDB from "../../base";
 import { StorageManager } from "../../../storage/storageManager";
 import { getFileExtension } from "../../../../functions/fileUtils";
 import { BaseMemberRole, BaseParticipationStatus, DocumentRefWithFileUrl } from "../../../../types/firebase/db/baseTypes";
-import { isBeforeDateTime } from "../../../../functions/dateTimeUtils";
 import { UserTeamService } from "../user/subCollection/userTeamService";
 import { TeamMemberService } from "./subCollection/teamMemberService";
 import { TeamJoinRequestService } from "./subCollection/teamJoinRequestService";
 import { ChatRoomService } from "../chat/chatRoomService";
 import { TeamData } from "../../../../types/firebase/db/team/teamStructure";
 import { TeamCodeData } from "../../../../types/firebase/db/team/teamCodeStructure";
+import { TeamCodeService } from "./teamCodeService";
 
 export class TeamService {
   public baseDB: BaseDB<TeamData>;
@@ -20,6 +20,7 @@ export class TeamService {
     private storageManager: StorageManager,
     private teamMemberService: TeamMemberService,
     private teamJoinRequestService: TeamJoinRequestService,
+    private teamCodeService: TeamCodeService,
     private userTeamService: UserTeamService,
     private chatRoomService: ChatRoomService,
   ) {
@@ -63,7 +64,7 @@ export class TeamService {
         await this.baseDB.update(teamRef.id, { iconUrl });
       }
 
-      await this.chatRoomService.createChatRoom(userId, teamName, iconUrl ?? "", { parentId: teamRef.id, parentType: "team" });
+      await this.chatRoomService.createChatRoom(userId, teamName, { parentId: teamRef.id, parentType: "team" });
 
       await this.teamMemberService.addMember(teamRef.id, userId, BaseMemberRole.Admin);
 
@@ -92,9 +93,54 @@ export class TeamService {
     return this.baseDB.read(teamId);
   }
 
+  async getTeamDataWithTeamCodeId(teamCodeId: string): Promise<TeamData | null> {
+    try {
+      // チームコードの取得
+      const code = await this.teamCodeService.getTeamCode(teamCodeId);
+      if (!code) {
+        console.error(`チームコード "${teamCodeId}" が見つかりません。`);
+        throw new Error("チームコードが存在しません。");
+      }
+  
+      // チームコードの検証
+      const isValid = await this.teamCodeService.isValidTeamCode(code);
+      if (!isValid) {
+        console.error(`チームコード "${teamCodeId}" は無効です。`);
+        throw new Error("チームコードが有効ではありません。");
+      }
+  
+      // チームデータの取得
+      const teamData = await this.baseDB.read(code.teamId);
+      if (!teamData) {
+        console.error(`チームID "${code.teamId}" に関連するデータが見つかりません。`);
+      }
+      return teamData;
+  
+    } catch (error) {
+      console.error("エラーが発生しました: ", error);
+      throw new Error("チームデータの取得に失敗しました。");
+    }
+  }
+  
   async isTeamExist(teamId: string): Promise<boolean> {
     const snapshot = await this.baseDB.readAsDocumentSnapshot(teamId);
     return snapshot.exists();
+  }
+
+    /**
+   * チームコードIDを使用してチームに参加する
+   * - コードが有効であれば、ユーザーをチームに追加します。
+   * - チームが承認を必要とする場合は、参加リクエストを送信します。
+   * @param user - 参加するユーザーのデータ
+   * @param teamCode - チームコードのデータ
+   * @throws Error - チームコードが無効、チームが見つからない、またはリクエストの送信に失敗した場合
+   */
+  async handleTeamJoinWithTeamCodeId(userId: string, teamCodeId: string): Promise<void> {
+    const code = await this.teamCodeService.getTeamCode(teamCodeId);
+    if (!code) {
+      throw new Error("チームコードが見つかりませんでした。");
+    }
+    await this.handleTeamJoin(userId, code);
   }
 
   /**
@@ -107,7 +153,7 @@ export class TeamService {
    */
   async handleTeamJoin(userId: string, teamCode: TeamCodeData): Promise<void> {
     try {
-      const isCodeValid = await this.isValidCode(teamCode);
+      const isCodeValid = await this.teamCodeService.isValidTeamCode(teamCode);
       if (!isCodeValid) {
         throw new Error(`チームコード "${teamCode.code}" は無効です。`);
       }
@@ -126,30 +172,6 @@ export class TeamService {
       console.error("チームへの参加処理中にエラーが発生しました:", error);
       throw new Error("チームへの参加リクエストの送信に失敗しました。");
     }
-  }
-
-  /**
-   * チームコードを確認する
-   * @param teamCode - チームコード
-   * @returns 正常true 問題false
-   */
-  private async isValidCode(teamCode: TeamCodeData): Promise<boolean> {
-    if (!teamCode.valid) {
-      console.error(`チームコード "${teamCode.code}" は無効としてマークされています。`);
-      return false;
-    }
-
-    if (teamCode.period && isBeforeDateTime(new Date(), teamCode.period)) {
-      console.error(`チームコード "${teamCode.code}" の使用期限が切れています。`);
-      return false;
-    }
-
-    if (!await this.isTeamExist(teamCode.teamId)) {
-      console.error(`チームコード "${teamCode.code}" に関連するチームが見つかりません。`);
-      return false;
-    }
-
-    return true;
   }
 
   /**
