@@ -9,17 +9,15 @@ interface MembersProps {
   members: Member[];
   awayMembers: Member[];
   userMap: DocumentIdMap<UserData>;
+  onClickMember?: (member: Member, isAway: boolean) => void;
 }
 
-const Members: FC<MembersProps> = ({ members, awayMembers, userMap }) => {
+const Members: FC<MembersProps> = ({ members, awayMembers, userMap, onClickMember }) => {
   return (
     <>
-      <Typography variant="h6" className="mb-2">
-        Members
-      </Typography>
       <div className='grid grid-cols-2 gap-2'>
-        <MembersContainer members={members} userMap={userMap} away={false} />
-        <MembersContainer members={awayMembers} userMap={userMap} away={true} />
+        <MembersContainer members={members} userMap={userMap} away={false} onClickMember={onClickMember} />
+        <MembersContainer members={awayMembers} userMap={userMap} away={true} onClickMember={onClickMember} />
       </div>
     </>
   )

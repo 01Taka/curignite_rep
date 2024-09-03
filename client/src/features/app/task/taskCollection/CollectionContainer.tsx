@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { TaskCollectionBatchTaskData, TaskListTaskCollectionData } from '../../../../types/firebase/db/todo/TodoTypes'
+import { TaskCollectionBatchTaskData, TaskListTaskCollectionData } from '../../../../types/firebase/db/task/taskStructure'
 import { Divider, Typography } from '@mui/material';
 import CollectionTaskView from '../taskList/CollectionTaskView';
 import { MINUTES_IN_MILLISECOND } from '../../../../types/util/dateTimeTypes';

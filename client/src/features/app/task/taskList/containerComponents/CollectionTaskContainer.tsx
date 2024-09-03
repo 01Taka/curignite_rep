@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import OverViewInfo from './OverViewInfo';
-import { TaskCollectionBatchTaskData } from '../../../../../types/firebase/db/todo/TodoTypes';
+import { TaskCollectionBatchTaskData } from '../../../../../types/firebase/db/task/taskStructure';
 
 export interface CollectionTaskContainerProps {
   task: TaskCollectionBatchTaskData;

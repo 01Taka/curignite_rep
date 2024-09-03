@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { TaskCollectionBatchTaskData, TaskListTaskCollectionData } from '../../../../types/firebase/db/todo/TodoTypes';
+import { TaskCollectionBatchTaskData, TaskListTaskCollectionData } from '../../../../types/firebase/db/task/taskStructure';
 import CollectionTaskContainer from './containerComponents/CollectionTaskContainer';
 
 interface CollectionTaskViewProps {

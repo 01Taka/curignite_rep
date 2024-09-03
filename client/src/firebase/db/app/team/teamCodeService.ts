@@ -1,57 +1,60 @@
-import { DocumentData, DocumentReference } from "firebase/firestore";
+import { DocumentData, DocumentReference, Firestore } from "firebase/firestore";
 import { toTimestamp } from "../../../../functions/dateTimeUtils";
-import { TeamCodeData } from "../../../../types/firebase/db/team/teamCodesTypes";
-import { TeamData } from "../../../../types/firebase/db/team/teamsTypes";
 import { TimeTypes } from "../../../../types/util/dateTimeTypes";
-import TeamCodesDB from "./teamCodes";
-import TeamsDB from "./teams";
+import BaseDB from "../../base";
+import { getInitialBaseDocumentData } from "../../../../functions/db/dbUtils";
+import { TeamCodeData } from "../../../../types/firebase/db/team/teamCodeStructure";
 
 export class TeamCodeService {
-    constructor(private teamCodesDB: TeamCodesDB, private teamsDB: TeamsDB) { }
+    baseDB: BaseDB<TeamCodeData>;
 
-    async createNewTeamCode(createdById: string, teamId: string, period?: TimeTypes): Promise<DocumentReference<DocumentData, DocumentData>> {
+    constructor(firestore: Firestore) {
+        this.baseDB = new BaseDB(firestore, "teamCodes");
+     }
+
+    async createTeamCode(createdById: string, teamId: string, period?: TimeTypes): Promise<DocumentReference<DocumentData, DocumentData>> {
         try {
-            const prevCode = await this.teamCodesDB.getFirstMatch("teamId", teamId);
+            const prevCode = await this.baseDB.getFirstMatch("teamId", teamId);
             if (prevCode) {
-                await this.teamCodesDB.updateTeamCode(prevCode.docId, { valid: false, isActive: false });
+                await this.baseDB.update(prevCode.docId, { valid: false, isActive: false });
             }
-    
-            const newCodeRef = this.teamCodesDB.createTeamCode(createdById, teamId, period ? toTimestamp(period) : null);
-            return newCodeRef;
+
+            const data: TeamCodeData = {
+                ...getInitialBaseDocumentData(createdById),
+                teamId,
+                period: period ? toTimestamp(period) : null,
+                valid: true,
+            };
+            return this.baseDB.create(data);
         } catch (error) {
             // Handle the error appropriately
             console.error("Error creating new team code:", error);
             throw error;
         }
     }
+
+    /**
+     * チームコードデータを取得
+     * @param teamCodeId チームコードID
+     * @returns チームコードデータ
+     */
+    async getTeamCode(teamCodeId: string): Promise<TeamCodeData | null> {
+        try {
+            return await this.baseDB.read(teamCodeId);
+        } catch (error) {
+            console.error("Failed to get team code data: ", error);
+            return null;
+        }
+    }
+
     
     async getTeamCodeByTeamId(teamId: string): Promise<TeamCodeData | null> {
         try {
-            const code = await this.teamCodesDB.getFirstMatch("teamId", teamId);
+            const code = await this.baseDB.getFirstMatch("teamId", teamId);
             return code;
         } catch (error) {
             console.error(`Failed to fetch team code for teamId: ${teamId}`, error);
             return null;
         }
-    }
-    
-
-    /**
-     * チームコードを検証し、対応するチームを取得する
-     * @param teamCode - チームコードのID
-     * @returns チームデータまたはnull
-     */
-    async validateTeamCode(teamCode: string): Promise<TeamData | null> {
-        const teamCodeData = await this.teamCodesDB.getTeamCode(teamCode);
-        if (!teamCodeData) {
-            console.error(`Invalid team code: ${teamCode}`);
-            return null;
-        }
-        const team = await this.teamsDB.getTeam(teamCodeData.teamId);
-        if (!team) {
-            console.error(`Team not found for team code: ${teamCode}`);
-            return null;
-        }
-        return team;
     }
 }

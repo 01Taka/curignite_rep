@@ -60,3 +60,11 @@ export const performComparison = (
 export const isNumeric = (value: string | number): boolean => {
   return typeof value === "number" ? Number.isFinite(value) : !isNaN(Number(value));
 }
+
+/**
+ * NaNの場合に0を返します。
+ */
+export const safeNumber = (value: number) => {
+  const num = Number(value);
+  return Number.isNaN(num) ? 0 : num;
+}

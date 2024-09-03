@@ -46,6 +46,11 @@ const saveLearningSessionData = async (dispatch: AppDispatch, userId: string) =>
     }
 }
 
+const deleteSpace = async (spaceId: string) => {
+    const spacesDB = serviceFactory.getSpacesDB();
+    await spacesDB.deleteSpace(spaceId);
+}
+
 /**
  * 学習セッションを終了します。
  */

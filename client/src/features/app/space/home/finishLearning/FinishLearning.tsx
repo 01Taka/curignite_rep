@@ -2,11 +2,13 @@ import React, { FC, useState } from 'react';
 import CircularButton from '../../../../../components/input/button/CircularButton';
 import { useAppDispatch, useAppSelector } from '../../../../../redux/hooks';
 import { endLearningSession } from '../../../../../functions/app/space/learningSessionUtils';
-import CommonDialog from './CommonDialog';
 import { useNavigate } from 'react-router-dom';
 import { rootPaths } from '../../../../../types/path/paths';
 import serviceFactory from '../../../../../firebase/db/factory';
 import { spacePaths } from '../../../../../types/path/mainPaths';
+import Popup from '../../../../../components/util/Popup';
+import SpaceFinishDialog from './SpaceFinishDialog';
+import SpaceMoveDialog from './SpaceMoveDialog';
 
 const FinishLearning: FC = () => {
   const navigate = useNavigate();
@@ -14,7 +16,7 @@ const FinishLearning: FC = () => {
   const { uid } = useAppSelector(state => state.userSlice);
   const { currentSpaceId, } = useAppSelector(state => state.spaceSlice);
   const [openFinish, setOpenFinish] = useState(false);
-  const [openMove, setOpenMove] = useState(false); // State for MoveDialog
+  const [openMove, setOpenMove] = useState(false);
 
   const handleClickOpenFinish = () => {
     setOpenFinish(true);
@@ -62,22 +64,13 @@ const FinishLearning: FC = () => {
         学習を<br />終える
       </CircularButton>
 
-      <CommonDialog
-        open={openFinish}
-        handleClose={handleCloseFinish}
-        handleAction={handleFinishSpace}
-        title="確認"
-        content="本当に学習を終えますか？"
-        actionText="終える"
-      />
-      <CommonDialog
-        open={openMove}
-        handleClose={handleCloseMove}
-        handleAction={handleMoveSpace}
-        title="確認"
-        content="このスペースを一時的に離籍して他のスペースに移動しますか？"
-        actionText="移動"
-      />
+      <Popup open={openFinish} handleClose={handleCloseFinish} >
+        <SpaceFinishDialog />
+      </Popup>
+
+      <Popup open={openMove} handleClose={handleCloseMove} >
+        <SpaceMoveDialog />
+      </Popup>
     </div>
   );
 };

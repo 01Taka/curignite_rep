@@ -1,54 +1,48 @@
 import React, { FC, useEffect } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
-import { SpaceData } from '../../../../types/firebase/db/space/spacesTypes';
+import { SpaceData } from '../../../../types/firebase/db/space/spaceStructure';
 import CircularButton from '../../../../components/input/button/CircularButton';
-import { JoinState } from '../../../../types/firebase/db/baseTypes';
+import { BaseParticipationState } from '../../../../types/firebase/db/baseTypes';
 
 interface SpaceJoinPopupProps {
   space: SpaceData | null;
-  joinState: JoinState;
-  onSendRequest: (spaceId: string) => void;
-  onJoinSpace: (spaceId: string) => void;
+  joinState: BaseParticipationState | "error";
+  handleSpaceJoin: (spaceId: string) => void;
   onClose: () => void;
 }
 
-const SpaceJoinPopup: FC<SpaceJoinPopupProps> = ({ space, joinState, onSendRequest, onJoinSpace, onClose }) => {
-  const needAction = joinState === 'approved' || joinState === 'noInfo';
+const SpaceJoinPopup: FC<SpaceJoinPopupProps> = ({ space, joinState, handleSpaceJoin, onClose }) => {
+  const needAction = joinState === BaseParticipationState.Eligible || joinState === BaseParticipationState.None;
 
   useEffect(() => {
-    if (joinState === 'participated' && space) {
-      onJoinSpace(space.docId);
+    if (joinState === BaseParticipationState.Active && space) {
+      handleSpaceJoin(space.docId);
     }
-  }, [joinState, space, onJoinSpace]);
+  }, [joinState, space, handleSpaceJoin]);
 
   const renderJoinStateMessage = () => {
     if (!space) {
       return 'スペースが見つかりませんでした。';
     }
     switch (joinState) {
-      case 'participated':
-        return '';
-      case 'requesting':
+      case BaseParticipationState.Pending:
         return '参加リクエストを承認待ちです。';
-      case 'approved':
+      case BaseParticipationState.Eligible:
         return `${space.spaceName}に参加しますか？`;
-      case 'rejected':
+      case BaseParticipationState.Declined:
         return 'このスペースには参加できません。';
-      case 'noInfo':
+      case BaseParticipationState.None:
         return `${space.spaceName}に参加リクエストを送りますか？`;
       case 'error':
-      default:
         return 'エラーが発生しました。もう一度試してください。';
+      default:
+        return "";
     }
   };
 
   const onClickAction = () => {
-    if (!space) return;
-    if (joinState === 'approved') {
-      onJoinSpace(space.docId);
-    } else if (joinState === 'noInfo') {
-      onSendRequest(space.docId);
-    }
+    if (!space || !needAction) return;
+    handleSpaceJoin(space.docId);
   };
 
   return (
@@ -87,7 +81,7 @@ const SpaceJoinPopup: FC<SpaceJoinPopupProps> = ({ space, joinState, onSendReque
         </CircularButton>
         {needAction && (
           <CircularButton bgColor="main" onClick={onClickAction}>
-            {joinState === 'approved' ? '参加する' : 'リクエスト'}
+            {joinState === BaseParticipationState.Eligible ? '参加する' : 'リクエスト'}
           </CircularButton>
         )}
       </DialogActions>

@@ -41,7 +41,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
             <Typography variant="body1" className="text-grayText pt-4 pb-1">
                 {explanation}
             </Typography>
-            <form className="flex items-center w-11/12">
+            <div className="flex items-center w-11/12">
                 <StringField value={value} label={label} onChange={onValueChange} />
                 <CircularButton
                     onClick={onEnter} 
@@ -52,7 +52,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
                 >
                     {enterText}
                 </CircularButton>
-            </form>
+            </div>
         </div>
     );
 }

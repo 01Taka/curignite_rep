@@ -5,8 +5,7 @@ import Teams from '../teams/Teams';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { teamPaths } from '../../../../types/path/mainPaths';
 import { useAppDispatch, useAppSelector } from '../../../../redux/hooks';
-import { replaceParams } from '../../../../functions/path/pathUtils';
-import { PathParam, rootPaths } from '../../../../types/path/paths';
+import { rootPaths } from '../../../../types/path/paths';
 import { setCurrentTeamId } from '../../../../redux/slices/team/teamSlice';
 
 const TeamIndexNavigation: FC = () => {
@@ -14,30 +13,15 @@ const TeamIndexNavigation: FC = () => {
   const location = useLocation();
   const dispatch = useAppDispatch();
   const { device } = useAppSelector(state => state.userSlice);
-  const { teams, currentTeamId } = useAppSelector(state => state.teamSlice);
 
   useEffect(() => {
-    if (device !== "desktop") return;
-
-    const defaultTeam = teams[Object.keys(teams)[0]];
-    const defaultTeamId = currentTeamId || defaultTeam?.docId || "";
-
-    if (!defaultTeamId) {
+    if (device === "desktop" && location.pathname === teamPaths.base) {
       navigate(teamPaths.menu);
-      return;
     }
+  }, [device, location, navigate]);
 
-    dispatch(setCurrentTeamId(defaultTeamId));
-
-    if (location.pathname === teamPaths.base) {
-      navigate(
-        replaceParams(teamPaths.homeChildren.participants, { [PathParam.TeamId]: defaultTeamId }),
-        { replace: true }
-      );
-    }
-  }, [device, teams, currentTeamId, location, dispatch, navigate]);
-
-  const handleToHome = () => {
+  const handleToMenu = () => {
+    dispatch(setCurrentTeamId(""));
     navigate(teamPaths.menu);
   }
 
@@ -51,7 +35,7 @@ const TeamIndexNavigation: FC = () => {
           <CircularButton size="sm" looks="transparent" onClick={handleToAppIndex}>
             <ArrowBack />
           </CircularButton>
-          <CircularButton size="sm" onClick={handleToHome}>
+          <CircularButton size="sm" onClick={handleToMenu}>
               <Home />
           </CircularButton>
         </div>

@@ -1,4 +1,4 @@
-import { SpaceData, SpacePublicationTarget } from "../../firebase/db/space/spacesTypes";
+import { SpaceData, SpacePublicationTarget } from "../../firebase/db/space/spaceStructure";
 import { FormStateChangeFunc, SelectItem } from "../../util/componentsTypes";
 
 export interface SpaceStartFormState {

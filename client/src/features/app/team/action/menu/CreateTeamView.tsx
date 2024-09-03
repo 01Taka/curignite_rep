@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material';
+import { CircularProgress, Typography } from '@mui/material';
 import React, { FC, useMemo } from 'react';
 import FormContainer from '../../../../../components/container/FormContainer';
 import { StringField } from '../../../../../components/input/inputIndex';
@@ -18,12 +18,14 @@ export type CreateTeamFormState = {
 
 interface CreateTeamViewProps {
   formState: CreateTeamFormState;
+  creating: boolean;
   onFormStateChange: FormStateChangeFunc;
   onCreate: () => void;
 }
 
 const CreateTeamView: FC<CreateTeamViewProps> = ({
   formState,
+  creating,
   onFormStateChange,
   onCreate,
 }) => {
@@ -64,8 +66,8 @@ const CreateTeamView: FC<CreateTeamViewProps> = ({
           onChange={onFormStateChange}
         />
       </div>
-      <CircularButton size="lg" bgColor="main" onClick={onCreate} className='self-end'>
-        作成する
+      <CircularButton size="lg" bgColor="main" onClick={onCreate} className='self-end' invalidation={creating}>
+        {creating ? <CircularProgress /> : <>作成する</>}
       </CircularButton>
     </FormContainer>
   );

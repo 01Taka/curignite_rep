@@ -2,15 +2,12 @@ import React, { FC, useEffect, useState, useCallback, useMemo } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../../redux/hooks';
 import { TeamData } from '../../../../types/firebase/db/team/teamsTypes';
 import TeamsList from './TeamsList';
-import { teamPaths } from '../../../../types/path/mainPaths';
 import { useNavigate } from 'react-router-dom';
-import { setCurrentTeamId } from '../../../../redux/slices/team/teamSlice';
 import { dictToArrayWithRevertTimestampConversion } from '../../../../functions/db/dataFormatUtils';
-import { replaceParams } from '../../../../functions/path/pathUtils';
-import { PathParam } from '../../../../types/path/paths';
 import { Member } from '../../../../types/firebase/db/baseTypes';
 import { DocumentIdMap } from '../../../../types/firebase/db/formatTypes';
 import serviceFactory from '../../../../firebase/db/factory';
+import { navigateToTeamHome } from '../../../../redux/actions/team/teamActions';
 
 const Teams: FC = () => {
   const dispatch = useAppDispatch();
@@ -41,8 +38,7 @@ const Teams: FC = () => {
   }, [updateLearningMembersMap]);
 
   const setDisplayTeam = (teamId: string) => {
-    dispatch(setCurrentTeamId(teamId));
-    navigate(replaceParams(teamPaths.homeChildren.participants, { [PathParam.TeamId]: teamId }));
+    navigateToTeamHome(teamId, dispatch, navigate);
   };
 
   return (

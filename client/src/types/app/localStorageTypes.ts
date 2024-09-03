@@ -1,4 +1,4 @@
-import { SpacePublicationTarget } from "../firebase/db/space/spacesTypes";
+import { SpacePublicationTarget } from "../firebase/db/space/spaceStructure";
 import { StringBoolean } from "../util/componentsTypes";
 import { Stringify } from "../util/utilTypes";
 import { LearningSession } from "./space/learningSessionTypes";

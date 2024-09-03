@@ -1,15 +1,15 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { SpaceSliceState } from '../../../types/module/redux/space/spaceSliceTypes';
 import { TimestampConvertedDocumentMap } from '../../../types/firebase/db/formatTypes';
-import { SpaceData } from '../../../types/firebase/db/space/spacesTypes';
+import { SpaceFullData } from '../../../types/firebase/db/space/spaceStructure';
 import { AsyncThunkStatus } from '../../../types/module/redux/asyncThunkTypes';
 import { addAsyncCases, isSuccessfulPayload } from '../../../functions/redux/reduxUtils';
 import { updateTotalLearningTime } from '../../actions/space/spaceActions';
 
 const initialState: SpaceSliceState = {
   currentSpaceId: "",
-  spaces: {},
-  todayTotalLearningTime: 0, 
+  spaceInfoMap: {},
+  todayTotalLearningTime: 0,
   spacesUpdateState: "idle",
   updateTotalLearningTimeState: { state: "idle" },
 };
@@ -21,8 +21,8 @@ const spaceSlice = createSlice({
     setCurrentSpaceId: (state, action: PayloadAction<string>) => {
       state.currentSpaceId = action.payload;
     },
-    setSpaces: (state, action: PayloadAction<TimestampConvertedDocumentMap<SpaceData>>) => {
-      state.spaces = action.payload;
+    assignSpaceInfoMap: (state, action: PayloadAction<TimestampConvertedDocumentMap<Partial<SpaceFullData>>>) => {
+      state.spaceInfoMap = Object.assign({}, state.spaceInfoMap, action.payload);
     },
     setSpacesUpdateState: (state, action: PayloadAction<AsyncThunkStatus>) => {
       state.spacesUpdateState = action.payload;
@@ -38,5 +38,5 @@ const spaceSlice = createSlice({
   },
 });
 
-export const { setCurrentSpaceId, setSpaces, setSpacesUpdateState } = spaceSlice.actions;
+export const { setCurrentSpaceId, assignSpaceInfoMap, setSpacesUpdateState } = spaceSlice.actions;
 export default spaceSlice.reducer;

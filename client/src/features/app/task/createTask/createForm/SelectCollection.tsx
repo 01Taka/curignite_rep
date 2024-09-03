@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import TaskCollections from '../../../../../pages/app/task/TaskCollections'
-import { TaskListTaskCollectionData } from '../../../../../types/firebase/db/todo/TodoTypes'
+import { TaskListTaskCollectionData } from '../../../../../types/firebase/db/task/taskStructure'
 import { useNavigate } from 'react-router-dom'
 import { replaceParams } from '../../../../../functions/path/pathUtils'
 import { taskPaths } from '../../../../../types/path/mainPaths'

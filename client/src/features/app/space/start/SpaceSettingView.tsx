@@ -8,7 +8,7 @@ import CircularButton from '../../../../components/input/button/CircularButton';
 import SelectField from '../../../../components/input/field/SelectField';
 import FormContainer from '../../../../components/container/FormContainer';
 import { Alert, CircularProgress, Typography } from '@mui/material';
-import { publicationTargetForSelect } from '../../../../types/firebase/db/space/spacesTypes';
+import { publicationTargetForSelect } from '../../../../types/firebase/db/space/spaceStructure';
 import { keyMirror } from '../../../../functions/objectUtils';
 
 const SpaceSettingView: FC<SpaceSettingViewProps> = ({ formState, isStarting, onChangeFormState, onCompletion, onUpdateDefaultSetting }) => {

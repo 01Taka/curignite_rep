@@ -42,11 +42,7 @@ export const convertTimestampsToNumbers = <T>(data: T): ConvertTimestampToNumber
  * @param data - 変換対象のデータ
  * @returns 変換後のデータ
  */
-export const revertTimestampConversion = <T>(data: ConvertTimestampToNumber<T>): T | null=> {
-  if (!data) {
-    return null;
-  }
-
+export const revertTimestampConversion = <T>(data: ConvertTimestampToNumber<T>): T => {
   if (typeof data === 'number') {
     return new Timestamp(data, 0) as unknown as T;
   }

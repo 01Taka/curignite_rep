@@ -1,5 +1,6 @@
-import { Firestore, DocumentReference, DocumentSnapshot, QuerySnapshot, addDoc, collection, deleteDoc, doc, getDoc, getDocs, updateDoc, CollectionReference, QueryConstraint, query, where, limit, setDoc, startAfter, orderBy, onSnapshot, Unsubscribe } from "firebase/firestore";
+import { Firestore, DocumentReference, DocumentSnapshot, QuerySnapshot, addDoc, collection, deleteDoc, doc, getDoc, getDocs, updateDoc, CollectionReference, QueryConstraint, query, where, limit, setDoc, startAfter, orderBy, onSnapshot, Unsubscribe, DocumentData, Transaction, runTransaction } from "firebase/firestore";
 import { BaseDocumentData } from "../../types/firebase/db/baseTypes";
+import FirestoreCallbacks from "./callbacks";
 
 export interface Callback<T extends BaseDocumentData> {
   unsubscribe?: Unsubscribe;
@@ -14,19 +15,37 @@ export interface CollectionCallback<T extends BaseDocumentData> {
 }
 
 class BaseDB<T extends BaseDocumentData> {
-  protected collectionRef: CollectionReference<T>;
-  private callbacks: { [documentId: string]: Callback<T> } = {};
-  private collectionCallbacks: CollectionCallback<T> = { active: false, func: [] };
+  private collectionRef: CollectionReference<T>;
+  private callbacksManager?: FirestoreCallbacks<T>;
   
-  constructor(protected firestore: Firestore, collectionPath: string) {
+  constructor(private firestore: Firestore, collectionPath: string) {
     this.collectionRef = collection(this.firestore, collectionPath) as CollectionReference<T>;
+    this.callbacksManager = new FirestoreCallbacks<T>(this.collectionRef);
   }
 
+  /**
+   * コレクション参照を取得するメソッド
+   * @returns Firestoreのコレクション参照
+   */
+  getCollectionRef(): CollectionReference<T, DocumentData> {
+    return this.collectionRef;
+  }
+
+  /**
+   * コレクションパスを取得するメソッド
+   * @returns コレクションパスの文字列
+   */
   getCollectionPath(): string {
     return this.collectionRef.path;
   }
 
-  async handleFirestoreOperation<T>(operation: Promise<T>, errorMessage: string): Promise<T> {
+  /**
+   * Firestore操作をハンドリングするユーティリティメソッド
+   * @param operation 実行するFirestore操作のPromise
+   * @param errorMessage エラーメッセージ
+   * @returns Firestore操作の結果
+   */
+  private async handleFirestoreOperation<T>(operation: Promise<T>, errorMessage: string): Promise<T> {
     try {
         return await operation;
     } catch (error) {
@@ -35,22 +54,43 @@ class BaseDB<T extends BaseDocumentData> {
     }
   }
 
+  /**
+   * ドキュメントを作成するメソッド
+   * @param data 作成するドキュメントのデータ
+   * @returns 作成されたドキュメントの参照
+   */
   async create(data: T): Promise<DocumentReference<T>> {
     data.isActive = true;
     return this.handleFirestoreOperation(addDoc(this.collectionRef, data), "Failed to create document");
   }
 
-  async createWithId(documentId: string, data: T): Promise<DocumentReference<T> | void> {
+  /**
+   * 指定されたIDでドキュメントを作成するメソッド
+   * @param documentId 作成するドキュメントのID
+   * @param data 作成するドキュメントのデータ
+   * @param merge 既存のドキュメントにデータをマージするかどうか
+   */
+  async createWithId(documentId: string, data: T, merge: boolean = false): Promise<void> {
     data.isActive = true;
     const docRef = doc(this.collectionRef, documentId);
-    return this.handleFirestoreOperation(setDoc(docRef, data), "Failed to create document with ID");
+    return this.handleFirestoreOperation(setDoc(docRef, data, { merge }), "Failed to create document with ID");
   }
 
+  /**
+   * ドキュメントをDocumentSnapshotとして読み込むメソッド
+   * @param documentId 読み込むドキュメントのID
+   * @returns 読み込んだドキュメントのDocumentSnapshot
+   */
   async readAsDocumentSnapshot(documentId: string): Promise<DocumentSnapshot<T>> {
     const docRef = doc(this.collectionRef, documentId);
     return this.handleFirestoreOperation(getDoc(docRef), "Failed to read document snapshot");
   }
 
+  /**
+   * ドキュメントを読み込むメソッド
+   * @param documentId 読み込むドキュメントのID
+   * @returns 読み込んだドキュメントのデータ、存在しない場合はnull
+   */
   async read(documentId: string): Promise<T | null> {
     const docSnapshot = await this.readAsDocumentSnapshot(documentId);
     if (docSnapshot.exists()) {
@@ -68,16 +108,29 @@ class BaseDB<T extends BaseDocumentData> {
     }
   }
 
+  /**
+   * ドキュメントを更新するメソッド
+   * @param documentId 更新するドキュメントのID
+   * @param data 更新するドキュメントのデータ（部分的）
+   */
   async update(documentId: string, data: Partial<T>): Promise<void> {
     const docRef = doc(this.collectionRef, documentId) as DocumentReference<T>;
     return this.handleFirestoreOperation(updateDoc(docRef, data as T), "Failed to update document");
   }
 
+  /**
+   * ドキュメントを物理削除するメソッド
+   * @param documentId 削除するドキュメントのID
+   */
   async hardDelete(documentId: string): Promise<void> {
     const docRef = doc(this.collectionRef, documentId);
     return this.handleFirestoreOperation(deleteDoc(docRef), "Failed to hard delete document");
   }  
 
+  /**
+   * ドキュメントを論理削除するメソッド
+   * @param documentId 削除するドキュメントのID
+   */
   async softDelete(documentId: string): Promise<void> {
     const deleteData = await this.read(documentId);
     if (deleteData) {
@@ -90,13 +143,23 @@ class BaseDB<T extends BaseDocumentData> {
       console.warn(`Document with ID ${documentId} does not exist or is already deleted.`);
       return Promise.resolve();
     }
-  }  
+  }
 
+  /**
+   * 条件に合致するすべてのドキュメントをQuerySnapshotとして取得するメソッド
+   * @param queryConstraints クエリの制約条件
+   * @returns クエリスナップショット
+   */
   async getAllAsQuerySnapshot(...queryConstraints: QueryConstraint[]): Promise<QuerySnapshot<T>> {
     const q = query(this.collectionRef, where("isActive", "==", true), ...queryConstraints);
     return this.handleFirestoreOperation(getDocs(q), "Failed to get query snapshot");
   }
 
+  /**
+   * 条件に合致するすべてのドキュメントを取得するメソッド
+   * @param queryConstraints クエリの制約条件
+   * @returns 取得したドキュメントの配列
+   */
   async getAll(...queryConstraints: QueryConstraint[]): Promise<T[]> {
     const querySnapshot = await this.getAllAsQuerySnapshot(...queryConstraints);
     return querySnapshot.docs.map(doc => {
@@ -106,6 +169,12 @@ class BaseDB<T extends BaseDocumentData> {
     });
   }
 
+  /**
+   * 指定されたフィールドと値に一致する最初のドキュメントを取得するメソッド
+   * @param field 検索するフィールド名
+   * @param value 検索する値
+   * @returns 一致するドキュメント、存在しない場合はnull
+   */
   async getFirstMatch(field: keyof T, value: any): Promise<T | null> {
     const q = query(this.collectionRef, where(field as string, "==", value), where("isActive", "==", true), limit(1));
     const querySnapshot: QuerySnapshot<T> = await this.handleFirestoreOperation(getDocs(q), "Failed to get first match");
@@ -158,186 +227,46 @@ class BaseDB<T extends BaseDocumentData> {
     }
   }
 
+  /**
+   * トランザクションを使用してドキュメントを読み書きするメソッド
+   * @param transactionFunc 実行するトランザクション関数
+   * @returns トランザクションの結果
+   */
+  async runTransaction<R>(transactionFunc: (transaction: Transaction) => Promise<R>): Promise<R> {
+    return this.handleFirestoreOperation(runTransaction(this.firestore, transactionFunc), "Transaction failed");
+  }
+
   // ドキュメントのコールバック関数管理
 
-  /**
-   * コールバック関数を追加します。
-   * @param documentId - ドキュメントのID
-   * @param callback - コールバック関数
-   */
+  private getOrCreateFirestoreCallbacks(): FirestoreCallbacks<T> {
+    if (!this.callbacksManager) {
+      this.callbacksManager = new FirestoreCallbacks(this.collectionRef);
+    }
+    return this.callbacksManager;
+  }
+
   addCallback(documentId: string, callback: (data: T) => void): void {
-    if (!this.callbacks[documentId]) {
-      this.callbacks[documentId] = { active: true, func: [] };
-      this.registerSnapshotListener(documentId);
-    }
-    if (!this.callbacks[documentId].func.includes(callback)) {
-      this.callbacks[documentId].func.push(callback);
-    }
+    this.getOrCreateFirestoreCallbacks().addCallback(documentId, callback);
   }
 
-  /**
-   * 指定したコールバック関数を削除します。
-   * @param documentId - ドキュメントのID
-   * @param callback - 削除するコールバック関数
-   */
   removeCallback(documentId: string, callback: (data: T) => void): void {
-    const callbackEntry = this.callbacks[documentId];
-    if (callbackEntry) {
-      callbackEntry.func = callbackEntry.func.filter(cb => cb !== callback);
-      if (callbackEntry.func.length === 0) {
-        this.removeSnapshotListener(documentId);
-        delete this.callbacks[documentId];
-      }
-    }
-  }  
+    this.callbacksManager?.removeCallback(documentId, callback);
+  }
 
-  /**
-   * ドキュメントIDに関連付けられたコールバックのアクティブ状態を設定します。
-   * @param documentId - ドキュメントのID
-   * @param isActive - コールバックを有効にするかどうか
-   */
   setActiveState(documentId: string, isActive: boolean): void {
-    if (this.callbacks[documentId]) {
-      this.callbacks[documentId].active = isActive;
-    }
+    this.callbacksManager?.setActiveState(documentId, isActive);
   }
 
-  /**
-   * スナップショットからデータを取得し、コールバックを実行します。
-   * @param documentId - ドキュメントのID
-   * @param snapshot - ドキュメントのスナップショット
-   */
-  private handleSnapshot(documentId: string, snapshot: DocumentSnapshot<T>): void {
-    if (snapshot.exists()) {
-      const data = snapshot.data() as T;
-      if (this.callbacks[documentId]?.active) {
-        this.callbacks[documentId].func.forEach(func => {
-          try {
-            func(data);
-          } catch (error) {
-            console.error(`Callback function error for document ${documentId}:`, error);
-          }
-        });
-      }
-    } else {
-      console.warn(`Document ${documentId} does not exist.`);
-    }
-  }
-
-  /**
-   * 指定したドキュメントIDに対して登録されているコールバック関数を実行します。
-   * @param documentId - ドキュメントのID
-   * @returns {Promise<void>} - 非同期処理の完了を示すPromise
-   */
   async executeCallbacks(documentId: string): Promise<void> {
-    try {
-      const snapshot = await this.readAsDocumentSnapshot(documentId);
-      this.handleSnapshot(documentId, snapshot);
-    } catch (error) {
-      console.error(`Error fetching document ${documentId}:`, error);
-    }
+    await this.callbacksManager?.executeCallbacks(documentId);
   }
 
-  /**
-   * ドキュメントIDに対してスナップショットリスナーを登録します。
-   * @param documentId - ドキュメントのID
-   */
-  registerSnapshotListener(documentId: string): void {
-    this.removeSnapshotListener(documentId);
-    const docRef = doc(this.firestore, documentId);
-    const unsubscribe = onSnapshot(docRef, snapshot => {
-      this.handleSnapshot(documentId, snapshot as DocumentSnapshot<T>);
-    }, error => {
-      console.error(`Error listening to document ${documentId}:`, error);
-    });
-    
-    this.callbacks[documentId].unsubscribe = unsubscribe;
-  }
-  
-  /**
-   * ドキュメントIDに対して登録されているスナップショットリスナーを削除します。
-   * @param documentId - ドキュメントのID
-   */
-  removeSnapshotListener(documentId: string): void {
-    if (!!this.callbacks[documentId]?.unsubscribe) {
-      this.callbacks[documentId].unsubscribe!();
-      this.callbacks[documentId].unsubscribe = undefined;
-    }
-  }
-  
-  // コレクションのコールバック関数管理
-
-  /**
-   * コレクション用ののコールバック関数を追加します。
-   * @param callback - コールバック関数
-   */
   addCollectionCallback(callback: (data: T[]) => void): void {
-    if (!this.collectionCallbacks.active) {
-      this.collectionCallbacks.active = true;
-      this.registerCollectionSnapshotListener();
-    }
-    if (!this.collectionCallbacks.func.includes(callback)) {
-      this.collectionCallbacks.func.push(callback);
-    }
+    this.getOrCreateFirestoreCallbacks().addCollectionCallback(callback);
   }
-  
-  /**
-   * 指定したコレクション用のコールバック関数を削除します。
-   * @param callback - 削除するコールバック関数
-   */
-    removeCollectionCallback(callback: (data: T[]) => void): void {
-      this.collectionCallbacks.func = this.collectionCallbacks.func.filter(cb => cb !== callback);
-      if (this.collectionCallbacks.func.length === 0) {
-        this.removeCollectionSnapshotListener();
-        this.collectionCallbacks.active = false;
-      }
-    }
-  
-  /**
-   * スナップショットからデータを取得し、コールバックを実行します。
-   * @param documentId - ドキュメントのID
-   * @param snapshot - ドキュメントのスナップショット
-   */
-  private handleCollectionSnapshot(snapshot: QuerySnapshot<T>): void {
-    const data = snapshot.docs.map(doc => {
-      const docData = doc.data();
-      docData.docId = doc.id;
-      return docData;
-    });
 
-    if (this.collectionCallbacks.active) {
-      this.collectionCallbacks.func.forEach(func => {
-        try {
-          func(data);
-        } catch (error) {
-          console.error('Collection callback function error:', error);
-        }
-      });
-    }
-  }
-  
-  /**
-   * コレクションのスナップショットリスナーを登録します。
-   */
-  registerCollectionSnapshotListener(): void {
-    this.removeCollectionSnapshotListener();
-    const unsubscribe = onSnapshot(this.collectionRef, snapshot => {
-      this.handleCollectionSnapshot(snapshot);
-    }, error => {
-      console.error('Error listening to collection:', error);
-    });
-
-    this.collectionCallbacks.unsubscribe = unsubscribe;
-  }
-  
-  /**
-   * コレクションのスナップショットリスナーを削除します。
-   */
-  removeCollectionSnapshotListener(): void {
-    if (this.collectionCallbacks.unsubscribe) {
-      this.collectionCallbacks.unsubscribe();
-      this.collectionCallbacks.unsubscribe = undefined;
-    }
+  removeCollectionCallback(callback: (data: T[]) => void): void {
+    this.callbacksManager?.removeCollectionCallback(callback);
   }
 }
 

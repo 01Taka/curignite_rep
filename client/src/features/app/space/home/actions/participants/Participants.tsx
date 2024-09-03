@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
 import { ActionInfo, Member } from "../../../../../../types/firebase/db/baseTypes";
-import { SpaceActionTypes } from "../../../../../../types/firebase/db/space/spacesTypes";
+import { SpaceActionTypes } from "../../../../../../types/firebase/db/space/spaceStructure";
 import { Card, CardContent, Tabs, Tab } from "@mui/material";
 import { UserData } from "../../../../../../types/firebase/db/user/usersTypes";
 import { DocumentIdMap } from "../../../../../../types/firebase/db/formatTypes";

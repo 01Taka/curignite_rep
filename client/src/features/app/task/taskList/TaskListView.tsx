@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { TaskCollectionBatchTaskData, TaskListIndividualTaskData, TaskListTaskCollectionData } from '../../../../types/firebase/db/todo/TodoTypes';
+import { TaskCollectionBatchTaskData, TaskListIndividualTaskData, TaskListTaskCollectionData } from '../../../../types/firebase/db/task/taskStructure';
 import TaskContainer from './containerComponents/TaskContainer';
 import { DocumentIdMap } from '../../../../types/firebase/db/formatTypes';
 import { GradientCircleSize, TaskContainerComponentProps } from '../../../../types/app/task/taskTypes';

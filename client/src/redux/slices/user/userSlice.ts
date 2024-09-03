@@ -1,14 +1,15 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { SerializableUserData } from "../../../types/firebase/db/user/usersTypes";
 import { Device } from "../../../types/util/stateTypes";
 import { AsyncThunkState } from "../../../types/module/redux/asyncThunkTypes";
 import { addAsyncCases, isSuccessfulPayload } from "../../../functions/redux/reduxUtils";
 import { updateUserData } from "../../actions/user/updateUserState";
+import { ConvertTimestampToNumber } from "../../../types/firebase/db/formatTypes";
+import { UserData } from "../../../types/firebase/db/user/usersTypes";
 
 export interface UserState {
     uid: string | null;
-    userData: SerializableUserData | null;
-    userFetchState: AsyncThunkState<SerializableUserData | null>;
+    userData: ConvertTimestampToNumber<UserData> | null;
+    userFetchState: AsyncThunkState<ConvertTimestampToNumber<UserData> | null>;
     device: Device;
 }
 
@@ -23,7 +24,7 @@ const userSlice = createSlice({
     name: 'userData',
     initialState,
     reducers: {
-        setUserData: (state, action: PayloadAction<SerializableUserData>) => {
+        setUserData: (state, action: PayloadAction<ConvertTimestampToNumber<UserData>>) => {
             state.uid = action.payload.docId;
             state.userData = action.payload;
         },

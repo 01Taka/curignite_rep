@@ -10,14 +10,28 @@ export const isMidnight = (dateTime: TimeTypes) => {
     return isSameMinute(date, midnight);
 }
 
-export const isMatchDay = (date: TimeTypes, targetDay: Days = "01") => {
-    return `${format(toDate(date), "dd")}` === targetDay;
+export const isMatchDay = (date: TimeTypes, targetDay: Days | Days[]) => {
+    const formatDate = format(toDate(date), "dd") as Days;
+    return typeof targetDay === "string" ? formatDate === targetDay : targetDay.includes(formatDate); 
 }
 
 export const isEqualDate = (...days: TimeTypes[]): boolean => {
     const check = convertToMilliseconds(startOfDay(toDate(days[0])))
     const isDiff = days.some(day => check !== convertToMilliseconds(startOfDay(toDate(day))));
     return !isDiff;
+}
+
+/**
+ * 比較対象の日付が基準の日付よりも過去かを判断する
+ * @param baseDateTime - 基準となる日付と時間
+ * @param targetDateTime - 比較対象の日付と時間
+ * @param includesEqual - 基準日付と等しい場合も含めるかどうか
+ * @returns 比較結果（ターゲット日付が基準日付よりも過去の場合はtrue、そうでない場合はfalse）
+ */
+export const isBeforeDateTime = (baseDateTime: TimeTypes, targetDateTime: TimeTypes, includesEqual: boolean = false) => {
+    const baseMillis = convertToMilliseconds(baseDateTime);
+    const targetMillis = convertToMilliseconds(targetDateTime);
+    return includesEqual ? baseMillis >= targetMillis : baseMillis > targetMillis;
 }
 
 export const toISODate = (dateTime: TimeTypes): ISODate => {

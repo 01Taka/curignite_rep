@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from 'react'
 import TaskCollectionsView from '../../../features/app/task/taskCollection/TaskCollectionsView'
 import serviceFactory from '../../../firebase/db/factory';
 import { useAppSelector } from '../../../redux/hooks';
-import { TaskCollectionBatchTaskData, TaskListTaskCollectionData } from '../../../types/firebase/db/todo/TodoTypes';
+import { TaskCollectionBatchTaskData, TaskListTaskCollectionData } from '../../../types/firebase/db/task/taskStructure';
 import { DocumentIdMap } from '../../../types/firebase/db/formatTypes';
 
 interface TaskCollectionsProps {

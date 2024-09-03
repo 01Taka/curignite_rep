@@ -1,5 +1,5 @@
 import { ActionInfo, RoleType } from "../../../types/firebase/db/baseTypes";
-import { SpaceActionTypes, SpaceData } from "../../../types/firebase/db/space/spacesTypes";
+import { SpaceActionTypes, SpaceData } from "../../../types/firebase/db/space/spaceStructure";
 import { sortArray, sortByOrder } from "../../objectUtils";
 
 export const sortSpaceMembers = (space: SpaceData) => {

@@ -1,13 +1,14 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
-import { SerializableUserData } from '../../../types/firebase/db/user/usersTypes';
 import serviceFactory from '../../../firebase/db/factory';
 import { AsyncThunkState } from '../../../types/module/redux/asyncThunkTypes';
 import { fulfillWithState } from '../../../functions/redux/reduxUtils';
 import { convertTimestampsToNumbers } from '../../../functions/db/dataFormatUtils';
+import { ConvertTimestampToNumber } from '../../../types/firebase/db/formatTypes';
+import { UserData } from '../../../types/firebase/db/user/usersTypes';
 
 export const updateUserData = createAsyncThunk<
-  AsyncThunkState<SerializableUserData | null>,
+  AsyncThunkState<ConvertTimestampToNumber<UserData> | null>,
   void,
   { rejectValue: string }
 >(
@@ -28,14 +29,14 @@ export const updateUserData = createAsyncThunk<
 
       const userId = user.uid;
       const userService = serviceFactory.createUserService();
-      const userData = await userService.getUserData(userId);
+      const userData = await userService.getUser(userId);
 
       if (!userData) {
         return rejectWithValue("User data not found");
       }
 
       // タイムスタンプの変換
-      const convertedUserData: SerializableUserData = convertTimestampsToNumbers(userData);
+      const convertedUserData: ConvertTimestampToNumber<UserData> = convertTimestampsToNumbers(userData);
       return fulfillWithState(convertedUserData);
     } catch (error) {
       console.error("Error in updateUserState:", error);

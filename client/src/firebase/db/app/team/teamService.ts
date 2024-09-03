@@ -1,276 +1,206 @@
-import TeamsDB from "./teams";
-import { TeamActionTypes, TeamData, TeamMember } from "../../../../types/firebase/db/team/teamsTypes";
-import { UserTeamData, UserTeamStatus } from "../../../../types/firebase/db/user/userTeamsTypes";
-import { ActionInfo, DocumentRefWithFileUrl, JoinState, Member } from "../../../../types/firebase/db/baseTypes";
-import { isUserInActionInfo, isUserInMembers } from "../../../../functions/db/dbUtils";
-import { DocumentIdMap } from "../../../../types/firebase/db/formatTypes";
-import { Timestamp } from "firebase/firestore";
-import { removeDuplicatesByKey } from "../../../../functions/objectUtils";
+import { getInitialBaseDocumentData, isDocumentExist } from "../../../../functions/db/dbUtils";
+import { Firestore } from "firebase/firestore";
+import BaseDB from "../../base";
 import { StorageManager } from "../../../storage/storageManager";
 import { getFileExtension } from "../../../../functions/fileUtils";
+import { BaseMemberRole, BaseParticipationStatus, DocumentRefWithFileUrl } from "../../../../types/firebase/db/baseTypes";
+import { isBeforeDateTime } from "../../../../functions/dateTimeUtils";
+import { UserTeamService } from "../user/subCollection/userTeamService";
+import { TeamMemberService } from "./subCollection/teamMemberService";
+import { TeamJoinRequestService } from "./subCollection/teamJoinRequestService";
+import { ChatRoomService } from "../chat/chatRoomService";
+import { TeamData } from "../../../../types/firebase/db/team/teamStructure";
+import { TeamCodeData } from "../../../../types/firebase/db/team/teamCodeStructure";
 
 export class TeamService {
-    constructor (
-        private teamsDB: TeamsDB,
-        private storageManager: StorageManager,
-    ) { }
+  public baseDB: BaseDB<TeamData>;
 
-    /**
-     * チームを作成する。
-     * （注意）アプリケーション内でチームを作成する場合はuserServiceのcreateTeam関数を使う
-     * @param createdById 作成者のUID
-     * @param teamName チーム名
-     * @param iconImage チームアイコンFile
-     * @param description 説明文
-     * @param requiresApproval 参加に承認が必要か
-     * @returns 作成されたチームのドキュメントリファレンス
-     */
-    async createTeam(
-        createdById: string,
-        teamName: string,
-        iconImage: File | null,
-        description: string,
-        requiresApproval: boolean,
-    ): Promise<DocumentRefWithFileUrl<"icon">> {
-        try {
-            // チームを作成
-            const teamRef = await this.teamsDB.createTeam(
-                createdById,
-                teamName,
-                "",
-                description,
-                requiresApproval,
-            );
+  constructor(
+    firestore: Firestore,
+    private storageManager: StorageManager,
+    private teamMemberService: TeamMemberService,
+    private teamJoinRequestService: TeamJoinRequestService,
+    private userTeamService: UserTeamService,
+    private chatRoomService: ChatRoomService,
+  ) {
+    this.baseDB = new BaseDB(firestore, "teams");
+  }
 
-            let iconUrl: string | null = null;
+  /**
+   * 新しいチームを作成。（注意）アプリケーションで使う場合、serviceから作成
+   * @param teamName チーム名
+   * @param iconPath チームのアイコンパス
+   * @param description チームの紹介
+   * @param password チームのパスワード (空文字の場合、ハッシュされずそのまま空文字で保存される)
+   * @param requiresApproval 参加に承認が必要かどうか
+   * @param createdById チームの作成者のUID
+   * @returns 新しく作成されたチームのドキュメントリファレンス
+   */
+  async createTeam(
+    userId: string,
+    teamName: string,
+    iconImage: File | null,
+    description: string,
+    requiresApproval: boolean,
+  ): Promise<DocumentRefWithFileUrl<"icon">> {
+    try {
+      const data: TeamData = {
+        ...getInitialBaseDocumentData(userId),
+        teamName,
+        iconUrl: "",
+        description,
+        requiresApproval,
+        chatRoomId: "",
+      };
 
-            // アイコン画像が提供されている場合、ストレージにアップロード
-            if (iconImage) {
-                iconUrl = await this.uploadIconImage(teamRef.id, iconImage);
-                this.teamsDB.updateTeam(teamRef.id, { iconUrl });
-            }
+      const teamRef = await this.baseDB.create(data);
 
-            return { documentRef: teamRef, filesUrl: { icon: iconUrl } };
-        } catch (error) {
-            console.error('チームの作成に失敗しました:', error);
-            throw new Error('チームの作成に失敗しました。');
+      let iconUrl: string | null = null;
+
+      // アイコン画像が提供されている場合、ストレージにアップロード
+      if (iconImage) {
+        iconUrl = await this.uploadIconImage(teamRef.id, iconImage);
+        await this.baseDB.update(teamRef.id, { iconUrl });
+      }
+
+      await this.chatRoomService.createChatRoom(userId, teamName, iconUrl ?? "", { parentId: teamRef.id, parentType: "team" });
+
+      await this.teamMemberService.addMember(teamRef.id, userId, BaseMemberRole.Admin);
+
+      return { documentRef: teamRef, filesUrl: { icon: iconUrl } };
+    } catch (error) {
+      console.error("Failed to create team:", error);
+      throw new Error("Failed to create team");
+    }
+  }
+
+  private async uploadIconImage(teamId: string, iconImage: File): Promise<string> {
+    try {
+      return await this.storageManager.uploadFile(
+        this.baseDB.getCollectionPath(),
+        teamId,
+        getFileExtension(iconImage.type),
+        iconImage
+      );
+    } catch (error) {
+      console.error("Failed to upload icon image:", error);
+      throw new Error("Failed to upload icon image");
+    }
+  }
+
+  async getTeamData(teamId: string): Promise<TeamData | null> {
+    return this.baseDB.read(teamId);
+  }
+
+  async isTeamExist(teamId: string): Promise<boolean> {
+    const snapshot = await this.baseDB.readAsDocumentSnapshot(teamId);
+    return snapshot.exists();
+  }
+
+  /**
+   * チームコードを使用してチームに参加する
+   * - コードが有効であれば、ユーザーをチームに追加します。
+   * - チームが承認を必要とする場合は、参加リクエストを送信します。
+   * @param user - 参加するユーザーのデータ
+   * @param teamCode - チームコードのデータ
+   * @throws Error - チームコードが無効、チームが見つからない、またはリクエストの送信に失敗した場合
+   */
+  async handleTeamJoin(userId: string, teamCode: TeamCodeData): Promise<void> {
+    try {
+      const isCodeValid = await this.isValidCode(teamCode);
+      if (!isCodeValid) {
+        throw new Error(`チームコード "${teamCode.code}" は無効です。`);
+      }
+
+      const team = await this.getTeamData(teamCode.teamId);
+      if (!team) {
+        throw new Error(`チームID "${teamCode.teamId}" に対応するチームが見つかりません。`);
+      }
+
+      if (team.requiresApproval) {
+        await this.teamJoinRequestService.sendJoinRequest(userId, team.docId);
+      } else {
+        await this.teamMemberService.addMember(team.docId, userId);
+      }
+    } catch (error) {
+      console.error("チームへの参加処理中にエラーが発生しました:", error);
+      throw new Error("チームへの参加リクエストの送信に失敗しました。");
+    }
+  }
+
+  /**
+   * チームコードを確認する
+   * @param teamCode - チームコード
+   * @returns 正常true 問題false
+   */
+  private async isValidCode(teamCode: TeamCodeData): Promise<boolean> {
+    if (!teamCode.valid) {
+      console.error(`チームコード "${teamCode.code}" は無効としてマークされています。`);
+      return false;
+    }
+
+    if (teamCode.period && isBeforeDateTime(new Date(), teamCode.period)) {
+      console.error(`チームコード "${teamCode.code}" の使用期限が切れています。`);
+      return false;
+    }
+
+    if (!await this.isTeamExist(teamCode.teamId)) {
+      console.error(`チームコード "${teamCode.code}" に関連するチームが見つかりません。`);
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * ユーザーの承認済みのすべてのチームを取得する
+   * @param userId - ユーザーID
+   * @returns 承認済みのチームのリスト
+   */
+  async fetchApprovedTeams(userId: string): Promise<TeamData[]> {
+    const userTeams = await this.userTeamService.getAllUserTeams(userId);
+    try {
+      const teamPromises = userTeams.map(async (userTeam) => {
+        if (userTeam.joinStatus === "allowed") {
+          const team = await this.getTeamData(userTeam.teamId);
+          if (team && isDocumentExist(userId, team.members)) {
+            return team;
+          }
         }
+        return null;
+      });
+
+      const teams = (await Promise.all(teamPromises)).filter((team): team is TeamData => team !== null);
+
+      return teams;
+    } catch (error) {
+      console.error("ユーザーの承認済みチームの取得中にエラーが発生しました:", error);
+      return [];
     }
+  }
 
-    private async uploadIconImage(teamId: string, iconImage: File): Promise<string> {
-        try {
-            return await this.storageManager.uploadFile(
-                this.teamsDB.getCollectionPath(),
-                teamId,
-                getFileExtension(iconImage.type),
-                iconImage
-            );
-        } catch (error) {
-            console.error('アイコン画像のアップロードに失敗しました:', error);
-            throw new Error('アイコン画像のアップロードに失敗しました。');
-        }
+  async getParticipationState(teamId: string, userId: string): Promise<BaseParticipationStatus> {
+    try {
+      if (await this.teamMemberService.isUserExist(teamId, userId)) {
+        return BaseParticipationStatus.Active;
+      }
+
+      const joinRequest = await this.teamJoinRequestService.getJoinRequest(teamId, userId);
+      const joinState = joinRequest?.state;
+
+      switch (joinState) {
+        case "allowed":
+          return BaseParticipationStatus.Eligible;
+        case "pending":
+          return BaseParticipationStatus.Pending;
+        case "rejected":
+          return BaseParticipationStatus.Declined;
+        default:
+          return BaseParticipationStatus.None;
+      }
+    } catch (error) {
+      console.error("Failed to get participation state:", error);
+      throw new Error("Failed to get participation state");
     }
-    
-    /**
-     * ユーザーのステータスが認証済みであるチームのリストをフィルタリングする
-     * @param userTeamsData - ユーザーのチームデータ（省略可能）
-     * @returns ステータスが認証済みのチームデータのリスト
-     */
-    private async filterApprovedUserTeams(userTeamsData: UserTeamData[]): Promise<UserTeamData[]> {
-        try {
-            return userTeamsData.filter(teamData => teamData.status === UserTeamStatus.Approved);
-        } catch (error) {
-            console.error("Error filtering approved user teams:", error);
-            return [];
-        }
-    }
-
-        /**
-     * ユーザーのスペース参加状態を取得します。
-     * @param userId ユーザーID
-     * @param spaceId スペースID
-     * @param spaceData スペースデータ（オプション）
-     * @returns スペース参加状態
-     */
-    async getSpaceJoinState(userId: string, teamId: string, teamData?: TeamData | null): Promise<JoinState> {
-        const team = teamData || await this.teamsDB.getTeam(teamId);
-        if (!team) return "error";
-        if (isUserInActionInfo(userId, team.rejectedUsers)) return "rejected";
-        if (isUserInMembers(userId, team.members)) return "participated";
-        if (isUserInActionInfo(userId, team.pendingRequests)) return "requesting";
-        if (isUserInActionInfo(userId, team.approvedUsers) || isUserInActionInfo(userId, team.invitedUsers)) return "approved";
-        return "noInfo";
-    }
-
-    /**
-     * ユーザーの承認済みのすべてのチームを取得する
-     * @param userTeams - ユーザーのチームデータ（省略可能）
-     * @returns ユーザーが参加しているチームのリスト
-     */
-    async fetchApprovedTeamsForUser(userTeams: UserTeamData[]): Promise<TeamData[]> {
-        try {
-            const approvedUserTeams = await this.filterApprovedUserTeams(userTeams);
-            const teams = await Promise.all(approvedUserTeams.map(async (userTeam) => {
-                try {
-                    const team = await this.teamsDB.read(userTeam.teamId);
-                    return team ?? null;
-                } catch (error) {
-                    console.error(`Error fetching team data for teamId: ${userTeam.teamId}`, error);
-                    return null;
-                }
-            }));
-            return teams.filter(team => team !== null) as TeamData[];
-        } catch (error) {
-            console.error("Error fetching approved teams for user:", error);
-            return [];
-        }
-    }
-
-    /**
-     * 指定したユーザーIDに属するチームをフィルタリングします。
-     * @param userId - ユーザーID
-     * @param teams - チームデータの配列
-     * @returns 指定したユーザーIDに属するチームの配列
-     */
-    filterTeamsByUserId(userId: string, teams: TeamData[]): TeamData[] {
-        return teams.filter(team => Array.isArray(team.members) && team.members.some(member => member.userId === userId));
-    }
-
-    /**
-     * ユーザーが参加しているすべてのチームのすべてのユーザーを取得する
-     * @param userTeams - 対象のユーザーのユーザーチームの一覧
-     * @returns 同じチームに参加している他のユーザーとその役割
-     */
-    async fetchAllUsersInTeamsByUser(userTeams: UserTeamData[]): Promise<TeamMember[]> {
-        try {
-            const users: TeamMember[] = await Promise.all(
-                userTeams.map(async (userTeam) => {
-                    const team = await this.teamsDB.read(userTeam.teamId);
-                    if (team) {
-                        return team.members.map(member => {
-                            const teamMember: TeamMember = {
-                                ...member,
-                                teamId: team.docId,
-                            }
-                            return teamMember
-                        })
-                    } else {
-                        return [];
-                    }
-                })
-            ).then(results => results.flat());
-
-            return users;
-        } catch (error) {
-            console.error("Error fetching all users in teams by user:", error);
-            return [];
-        }
-    }
-
-    /**
-     * 学習メンバーの配列から重複を除去します。
-     * 
-     * @param members - 重複を除去する対象の学習メンバーの配列。
-     * @returns 重複が除去された学習メンバーの配列。
-     */
-    private getUniqueLearningMembers(members: ActionInfo<"learning">[]): ActionInfo<"learning">[] {
-        return removeDuplicatesByKey(members, "userId");
-    }
-
-    async addLearningMember(teamId: string, userId: string): Promise<void> {
-        try {
-            const team = await this.teamsDB.getTeam(teamId);
-            if (!team) {
-                return;
-            }
-
-            // 新しいメンバーの情報を作成
-            const newMember: ActionInfo<"learning"> = {
-                userId,
-                actionAt: Timestamp.now(),
-                actionType: "learning"
-            };
-    
-            // 既存のメンバーと新しいメンバーを統合し、重複を除去
-            const updatedLearningMembers = this.getUniqueLearningMembers([...team.learningMembers, newMember]);
-    
-            // データベースを更新
-            await this.teamsDB.update(team.docId, { learningMembers: updatedLearningMembers });
-    
-        } catch (error) {
-            // エラーハンドリング
-            console.error("Failed to add learning member:", error);
-            throw new Error("Unable to add learning member. Please try again later.");
-        }
-    }
-
-    async removeLearningMember(teamId: string, userId: string): Promise<void> {
-        try {
-            const team = await this.teamsDB.getTeam(teamId);
-            if (!team) {
-                return;
-            }
-
-            // team.learningMembersが存在するか確認
-            if (!team.learningMembers) {
-                throw new Error("team.learningMembers is undefined");
-            }
-    
-            // フィルタリングして新しいメンバーリストを作成
-            const updatedLearningMembers = team.learningMembers.filter(member => member.userId !== userId);
-    
-            // データベースを更新
-            await this.teamsDB.update(team.docId, { learningMembers: updatedLearningMembers });
-        } catch (error) {
-            // エラーハンドリング
-            console.error("Failed to remove learning member:", error);
-            throw new Error("Unable to remove learning member. Please try again later.");
-        }
-    }
-
-    async getLearningMember(teamId: string): Promise<Member[]> {
-        try {
-            const teamData = await this.teamsDB.getTeam(teamId);
-            if (!teamData || !teamData.members || !teamData.learningMembers) {
-                return []; // チームデータが存在しない場合は空
-            }
-
-            const learningMembersId = teamData.learningMembers.map(member => member.userId);
-    
-            // 各メンバーの学習状態をチェックするPromiseを作成し、並列実行する
-            const learningMembers = teamData.members.map(member => {
-                const isLearning = learningMembersId.includes(member.userId);
-                return isLearning ? member : null;
-            });
-
-            const filterMember = learningMembers.filter(member => member !== null);
-
-            // 学習中のメンバーの数を返す
-            return filterMember as Member[];
-        } catch (error) {
-            console.error("Error counting learning members:", error);
-            throw new Error("Error counting learning members.");
-        }
-    }
-
-    async getLearningMemberMap(teamsId: string[]): Promise<DocumentIdMap<Member[]>> {
-        try {
-            const learningMembersEntries = await Promise.all(
-                teamsId.map(async teamId => {
-                    const members = await this.getLearningMember(teamId);
-                    return [teamId, members];
-                })
-            );
-    
-            // Convert the array of tuples into an object
-            return Object.fromEntries(learningMembersEntries);
-        } catch (error) {
-            console.error('Failed to fetch learning members map:', error);
-            throw new Error('Failed to fetch learning members map');
-        }
-    }
-
-    getTeamActions(team: TeamData): ActionInfo<TeamActionTypes>[] {
-        return [...team.pendingRequests, ...team.rejectedUsers, ...team.invitedUsers];
-    }
+  }
 }

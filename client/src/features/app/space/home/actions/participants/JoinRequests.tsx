@@ -3,7 +3,7 @@ import React, { FC, useMemo } from 'react';
 import { ActionInfo } from '../../../../../../types/firebase/db/baseTypes';
 import { DocumentIdMap } from '../../../../../../types/firebase/db/formatTypes';
 import { UserData } from '../../../../../../types/firebase/db/user/usersTypes';
-import { SpaceActionTypes } from '../../../../../../types/firebase/db/space/spacesTypes';
+import { SpaceActionTypes } from '../../../../../../types/firebase/db/space/spaceStructure';
 import { cn } from '../../../../../../functions/utils';
 import { dateTimeToString } from '../../../../../../functions/dateTimeUtils';
 

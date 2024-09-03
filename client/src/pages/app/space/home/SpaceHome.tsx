@@ -4,12 +4,11 @@ import { useAppDispatch, useAppSelector } from '../../../../redux/hooks';
 import { useParams } from 'react-router-dom';
 import { PathParam } from '../../../../types/path/paths';
 import { setCurrentSpaceId } from '../../../../redux/slices/space/spaceSlice';
-import AccessStateErrorMessage from '../../../../features/utils/messages/AccessStateErrorMessage';
-import { isApprovedJoinState } from '../../../../functions/db/dbUtils';
 import { useSpaceJoinState } from './useSpaceJoinState';
 import { revertTimestampConversion } from '../../../../functions/db/dataFormatUtils';
 import { moveLearningSession } from '../../../../functions/app/space/learningSessionUtils';
-import { JoinState } from '../../../../types/firebase/db/baseTypes';
+import { JoinRequestState } from '../../../../types/firebase/db/common/joinRequest/joinRequestStructure';
+import AccessStateErrorMessage from '../../../../features/utils/messages/AccessStateErrorMessage';
 
 const SpaceHome: FC = () => {
   const params = useParams();
@@ -17,7 +16,7 @@ const SpaceHome: FC = () => {
   const dispatch = useAppDispatch();
   const { spaces, currentSpaceId } = useAppSelector(state => state.spaceSlice);
   const { uid } = useAppSelector(state => state.userSlice);
-  const [joinState, setJoinState] = useState<JoinState>("loading");
+  const [joinState, setJoinState] = useState<JoinRequestState | "loading" | "error">("loading");
   
   const currentSpace = revertTimestampConversion(spaces[currentSpaceId]);
   const joinStateFromHook = useSpaceJoinState(uid, currentSpaceId, currentSpace);
@@ -35,7 +34,7 @@ const SpaceHome: FC = () => {
     }
   }, [uid, spaceId, currentSpaceId, dispatch]);
 
-  return isApprovedJoinState(joinState) ? (
+  return joinState === "allowed" ? (
     <SpaceHomeView />
   ) : (
     <AccessStateErrorMessage

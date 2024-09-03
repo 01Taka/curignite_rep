@@ -32,7 +32,7 @@ interface HeatmapCellProps {
 const HeatmapCell: React.FC<HeatmapCellProps> = ({ date, color, baseDate }) => {
   const displayDate = isEqualDate(date, baseDate)
     ? `${format(date, 'd')}日`
-    : isMatchDay(date)
+    : isMatchDay(date, "01")
     ? `${format(date, 'M')}月`
     : '';
 

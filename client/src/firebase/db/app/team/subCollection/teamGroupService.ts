@@ -1,34 +1,35 @@
-import { DocumentData, DocumentReference } from "firebase/firestore";
-import ChatRoomsDB from "../../chat/chatRooms";
-import { TeamGroupsDB } from "./teamGroup";
-import { TeamGroupData } from "../../../../../types/firebase/db/team/teamGroupTypes";
+// import { DocumentData, DocumentReference } from "firebase/firestore";
 
-export class TeamGroupService {
-  constructor (private chatRoomsDB: ChatRoomsDB, private getTeamGroupsDBInstance: (teamId: string) => TeamGroupsDB) {}
+// import { TeamGroupsDB } from "./teamGroup";
+// import { TeamGroupData } from "../../../../../types/firebase/db/team/teamGroupTypes";
 
-  async createGroup(
-    teamId: string,
-    createdById: string,
-    groupName: string,
-    iconUrl: string,
-    description: string = "",
-  ): Promise<DocumentReference<TeamGroupData, DocumentData>> {
-    try {
-      const groupsDB = this.getTeamGroupsDBInstance(teamId);
+// export class TeamGroupService {
+//   constructor (private chatRoomsDB: ChatRoomsDB, private getTeamGroupsDBInstance: (teamId: string) => TeamGroupsDB) {}
 
-      // チームグループの作成
-      const groupRef = await groupsDB.createTeamGroup(createdById, groupName, iconUrl, description);
+//   async createGroup(
+//     teamId: string,
+//     createdById: string,
+//     groupName: string,
+//     iconUrl: string,
+//     description: string = "",
+//   ): Promise<DocumentReference<TeamGroupData, DocumentData>> {
+//     try {
+//       const groupsDB = this.getTeamGroupsDBInstance(teamId);
 
-      // グループに付属するチャットルームの作成
-      const chatRoomRef = await this.chatRoomsDB.createChatRoom(createdById, groupName, iconUrl, groupRef.id, "group");
+//       // チームグループの作成
+//       const groupRef = await groupsDB.createTeamGroup(createdById, groupName, iconUrl, description);
 
-      // チャットルームのIDをグループに保存
-      await groupsDB.updateTeamGroup(groupRef.id, { chatroomId: chatRoomRef.id });
+//       // グループに付属するチャットルームの作成
+//       const chatRoomRef = await this.chatRoomsDB.createChatRoom(createdById, groupName, iconUrl, groupRef.id, "group");
+
+//       // チャットルームのIDをグループに保存
+//       await groupsDB.updateTeamGroup(groupRef.id, { chatroomId: chatRoomRef.id });
       
-      return groupRef;
-    } catch (error) {
-      console.error(`Error creating group for team ${teamId}:`, error);
-      throw new Error(`Failed to create group '${groupName}' for team ${teamId}. Please try again.`);
-    }
-  }
-}
+//       return groupRef;
+//     } catch (error) {
+//       console.error(`Error creating group for team ${teamId}:`, error);
+//       throw new Error(`Failed to create group '${groupName}' for team ${teamId}. Please try again.`);
+//     }
+//   }
+// }
+export {}

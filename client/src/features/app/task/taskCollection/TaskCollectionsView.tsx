@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { TaskCollectionBatchTaskData, TaskListTaskCollectionData } from '../../../../types/firebase/db/todo/TodoTypes'
+import { TaskCollectionBatchTaskData, TaskListTaskCollectionData } from '../../../../types/firebase/db/task/taskStructure'
 import CollectionContainer from './CollectionContainer';
 import { DocumentIdMap } from '../../../../types/firebase/db/formatTypes';
 

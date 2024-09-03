@@ -1,242 +1,204 @@
-import { UserData, UserMetaData } from "../../../../types/firebase/db/user/usersTypes";
-import { UsersDB } from "./users";
-import { BaseDocumentData, Member } from "../../../../types/firebase/db/baseTypes";
 import { AuthStates } from "../../../../types/util/stateTypes";
-import { DocumentData, DocumentReference, Timestamp } from "firebase/firestore";
+import { DocumentData, DocumentReference, Firestore, Timestamp } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { DocumentIdMap } from "../../../../types/firebase/db/formatTypes";
-import { TaskListService } from "../todo/taskListService";
-import { UserTeamService } from "./subCollection/userTeamService";
+import { getInitialBaseDocumentData } from "../../../../functions/db/dbUtils";
+import BaseDB from "../../base";
+import { BaseDocumentData } from "../../../../types/firebase/db/baseTypes";
+import { TeamMemberService } from "../team/subCollection/teamMemberService";
+import { UserData } from "../../../../types/firebase/db/user/userStructure";
 
 export class UserService {
-    constructor(private usersDB: UsersDB, private userTeamService: UserTeamService, private taskListService: TaskListService) {}
+  private baseDB: BaseDB<UserData>;
 
-    async createUser(uid: string, username: string, iconUrl: string, birthDate: Timestamp): Promise<DocumentReference<DocumentData> | void> {
-        try {
-            const taskListRef = await this.taskListService.createTaskListForUser(uid);
-            return await this.usersDB.createUser(uid, username, iconUrl, birthDate, { isLearning: false, spaceIds: [], taskListId: taskListRef.id });
-        } catch (error) {
-            throw new Error("Failed to create user.");
-        }
+  constructor(
+    firestore: Firestore,
+    private teamMemberService: TeamMemberService,
+  ) {
+    this.baseDB = new BaseDB(firestore, "users");
+  }
+
+  /**
+   * ユーザーを作成し、タスクリストを初期化します。
+   */
+  async createUser(
+    userId: string,
+    username: string,
+    iconUrl: string,
+    birthTimestamp: Timestamp
+  ): Promise<DocumentReference<DocumentData> | void> {
+    try {
+      const data: UserData = {
+        ...getInitialBaseDocumentData(userId),
+        username,
+        iconUrl,
+        birthTimestamp,
+        isLearning: false,
+        lastLearningTimestamp: Timestamp.now(),
+        consecutiveLearningNumber: 0,
+        currentTargetGoalId: null,
+        totalLearningTime: 0,
+      };
+
+      await this.baseDB.createWithId(userId, data);
+    } catch (error) {
+      this.handleError("Failed to create user.", error);
     }
+  }
 
-    /**
-     * UID または UserData を受け取り、常に UserData を返す関数
-     * @param uidOrUserData ユーザーのUIDまたはユーザーデータオブジェクト
-     * @returns UserData ユーザーデータオブジェクト
-     * @throws エラーが発生した場合、エラーメッセージをスローします
-     */
-    async getUserData(uidOrUserData: string | UserData): Promise<UserData> {
-        if (typeof uidOrUserData === "string") {
-            const user = await this.usersDB.getUser(uidOrUserData);
-            if (!user) {
-                throw new Error(`User with ID ${uidOrUserData} not found.`);
-            }
-            return user;
-        }
-        return uidOrUserData;
+  /**
+   * ユーザー情報を取得します。
+   */
+  async getUser(userId: string): Promise<UserData> {
+    const user = await this.baseDB.read(userId);
+    if (!user) throw new Error(`User not found: ${userId}`);
+    return user;
+  }
+
+  /**
+   * UIDがDBに存在するかどうかをチェックします。
+   */
+  async checkIfUidExists(uid: string): Promise<boolean> {
+    try {
+      const userSnapshot = await this.baseDB.readAsDocumentSnapshot(uid);
+      return userSnapshot.exists();
+    } catch (error) {
+      this.handleError("Failed to check UID existence.", error);
     }
+  }
 
-    async updateMetadata(userId: string, newMetaData: Partial<UserMetaData>) {
-        try {
-            const userData = await this.usersDB.getUser(userId);
-            
-            if (!userData) {
-                throw new Error(`ユーザーが見つかりません: ${userId}`);
-            }
-    
-            const updatedMetaData = { ...userData.metaData, ...newMetaData };
-    
-            await this.usersDB.updateUser(userId, { metaData: updatedMetaData });
-        } catch (error) {
-            console.error(`メタデータ更新中にエラーが発生しました: `, error);
-        }
-    }    
-
-    /**
-     * ユーザーの認証段階を確認する
-     * @param userId ユーザーID
-     * @returns ユーザーの認証段階
-     */
-    async getUserAuthState(userId: string | null): Promise<AuthStates> {
-        try {
-            if (!userId) {
-                return "new";
-            }
-
-            const userData = await this.usersDB.getUser(userId);
-            if (userData) {
-                return "verified";
-            }
-    
-            const uidExists = !!getAuth().currentUser;
-            return uidExists ? "noUserData" : "new";
-        } catch (error: any) {
-            console.error(`Error in getUserAuthState for userId ${userId}:`, error);
-            throw new Error(`Failed to get auth state for userId ${userId}`);
-        }
-    }    
-
-    /**
-     * UID(ドキュメントID)がDBに存在するかどうかをチェックする関数
-     * @param uid チェックするUID
-     * @returns UIDが存在するかどうかの真偽値
-     */
-    async checkIfUidExists(uid: string): Promise<boolean> {
-        try {
-            const user = await this.usersDB.readAsDocumentSnapshot(uid);
-            return user.exists();
-        } catch (error) {
-            console.error("Error checking UID existence: ", error);
-            throw new Error("Failed to check UID existence");
-        }
+  /**
+   * ユーザー名がDBに存在するかどうかをチェックします。
+   */
+  async checkIfUserNameExists(username: string): Promise<boolean> {
+    try {
+      const user = await this.baseDB.getFirstMatch('username', username);
+      return user !== null;
+    } catch (error) {
+      this.handleError("Failed to check username existence.", error);
     }
+  }
 
-    /**
-     * ユーザー名がDBに存在するかどうかをチェックする関数
-     * @param username チェックするユーザー名
-     * @returns ユーザー名が存在するかどうかの真偽値
-     */
-    async checkIfUserNameExists(username: string): Promise<boolean> {
-        try {
-            const user = await this.usersDB.getFirstMatch('username', username);
-            return user !== null;
-        } catch (error) {
-            console.error("Error checking username existence: ", error);
-            throw new Error("Failed to check username existence");
-        }
+  /**
+   * UIDをキーとするデータの辞書を取得します。
+   */
+  async getUserMapByUids(uids: string[]): Promise<DocumentIdMap<UserData>> {
+    try {
+      const userEntries = await Promise.all(
+        uids.map(async (uid) => [uid, await this.baseDB.read(uid)] as [string, UserData])
+      );
+
+      return Object.fromEntries(userEntries);
+    } catch (error) {
+      this.handleError("Failed to fetch users data by UIDs.", error);
     }
+  }
 
-    /**
-     * uidをキーとするデータの辞書を取得
-     * @param uids ユーザーのUIDの配列
-     * @returns ユーザーのデータを含む辞書オブジェクト
-     */
-    async getUserMapByUids(uids: string[]): Promise<DocumentIdMap<UserData>> {
-        try {
-            const userEntries = await Promise.all(
-                uids.map(async (uid) => {
-                    const userData = await this.usersDB.getUser(uid);
-                    return [uid, userData] as [string, UserData];
-                })
-            );
-
-            const usersDataByUids = Object.fromEntries(userEntries);
-            return usersDataByUids;
-        } catch (error) {
-            console.error("Error fetching users data by UIDs: ", error);
-            throw new Error("Failed to fetch users data by UIDs");
-        }
+  /**
+   * ドキュメントデータからUIDをキーとするデータの辞書を取得します。
+   */
+  async getCreatorDataByDocuments(data: BaseDocumentData[]): Promise<DocumentIdMap<UserData>> {
+    try {
+      const uids = data.map(value => value.createdById);
+      return await this.getUserMapByUids(uids);
+    } catch (error) {
+      this.handleError("Failed to fetch users data by Documents.", error);
     }
+  }
 
-    /**
-     * ドキュメントデータからuidをキーとするデータの辞書を取得
-     * @param data ドキュメントデータの配列
-     * @returns ユーザーのデータを含む辞書オブジェクト
-     */
-    async getCreatorDataByDocuments (data: BaseDocumentData[]): Promise<DocumentIdMap<UserData>> {
-        try {
-            const uids = data.map(value => value.createdById);
-            return await this.getUserMapByUids(uids);
-        } catch (error) {
-            console.error("Error fetching users data by Documents: ", error);
-            throw new Error("Failed to fetch users data by Documents");
-        }
-    } 
+  /**
+   * 自分が作成したスペースIDのリストに新しくIDを追加します。
+   */
+  async appendSpaceId(userId: string, spaceId: string): Promise<void> {
+    await this.updateSpaceIdList(userId, spaceIds => {
+      if (!spaceIds.includes(spaceId)) {
+        return [...spaceIds, spaceId];
+      }
+      return spaceIds;
+    });
+  }
 
-    /**
-     * 自分が作成したスペースIDのリストに新しくIDを追加
-     * @param uidOrUserData ユーザーのUIDまたはユーザーデータオブジェクト
-     * @param spaceId 追加するスペースID
-     * @throws エラーが発生した場合、エラーメッセージをスローします
-     */
-    async appendSpaceIdToUserData(uidOrUserData: string | UserData, spaceId: string): Promise<void> {
-        try {
-            // ユーザーデータを取得
-            const user = await this.getUserData(uidOrUserData);
+  /**
+   * 自分が作成したスペースIDのリストからIDを削除します。
+   */
+  async removeSpaceId(userId: string, spaceId: string): Promise<void> {
+    await this.updateSpaceIdList(userId, spaceIds => spaceIds.filter(id => id !== spaceId));
+  }
 
-            const uid = user.docId;
-            const spaceIds = user.spaceIds || [];
+  /**
+   * ユーザーの認証段階を確認します。
+   */
+  async getUserAuthState(userId: string | null): Promise<AuthStates> {
+    if (!userId) return "new";
 
-            // 既存のスペースIDリストに新しいIDが含まれていない場合、追加
-            if (!spaceIds.includes(spaceId)) {
-                await this.usersDB.updateUser(uid, { spaceIds: [...spaceIds, spaceId] });
-            }
-
-        } catch (error) {
-            console.error('Failed to append spaceId:', error);
-            throw new Error('Failed to append spaceId.');
-        }
+    try {
+      const userData = await this.getUser(userId);
+      return userData ? "verified" : getAuth().currentUser ? "noUserData" : "new";
+    } catch (error) {
+      this.handleError(`Failed to get auth state for userId ${userId}`, error);
     }
+  }
 
-    async startLearning(userId: string): Promise<void> {
-        try {
-            await this.updateMetadata(userId, { isLearning: true });
-            await this.userTeamService.addLearningMember(userId);
-        } catch (error) {
-            console.error("Failed to start learning:", error);
-            throw new Error("Unable to start learning. Please try again later.");
-        }
+  /**
+   * 同じチームに所属するメンバーのスペースIDを取得します。
+   */
+  async getSameTeamMembersSpaceIdMap(userId: string): Promise<DocumentIdMap<string[]>> {
+    const userIds = await this.teamMemberService.getSameTeamMembersId(userId);
+    const users = await this.getUsersByIds(userIds);
+    return this.createSpaceIdMap(users);
+  }
+
+  /**
+   * ユーザーのタスクリストIDを取得します。
+   */
+  async getTaskListId(userId: string): Promise<string> {
+    try {
+      const user = await this.getUser(userId);
+      return user.relatedResources.taskListId;
+    } catch (error) {
+      this.handleError(`Failed to retrieve task list ID for userId ${userId}.`, error);
     }
-    
-    async finishLearning(userId: string): Promise<void> {
-        try {
-            await this.updateMetadata(userId, { isLearning: false });
-            await this.userTeamService.removeLearningMember(userId);
-        } catch (error) {
-            console.error("Failed to finish learning:", error);
-            throw new Error("Unable to finish learning. Please try again later.");
-        }
+  }
+
+  /**
+   * ユーザーの学習状態を設定します。
+   */
+  async setLearningState(userId: string, state: boolean): Promise<void> {
+    try {
+      await this.baseDB.update(userId, { isLearning: state });
+      await this.teamMemberService.updateAllTeamMemberForMember(userId, { isLearning: state });
+    } catch (error) {
+      this.handleError(`Failed to set learning state for user ${userId}.`, error);
     }
+  }
 
-    /**
-     * メンバーのユーザーデータを取得する
-     * @param members - チームの参加者データ
-     * @returns チームの参加者とその役割のユーザーデータ
-     */
-    async getMembersUserData(members: Member[]): Promise<UserData[]> {
-        try {
-            const usersData: (UserData | null)[] = await Promise.all(
-                members.map(async (member) => {
-                    try {
-                        const user = await this.usersDB.read(member.userId);
-                        return user ? user : null;
-                    } catch (error) {
-                        console.error(`Error fetching user data for userId: ${member.userId}`, error);
-                        return null;
-                    }
-                })
-            );
+  // ヘルパーメソッド群
+  private async getUsersByIds(userIds: string[]): Promise<UserData[]> {
+    const data = await Promise.all(userIds.map(id => this.baseDB.read(id)));
+    return data.filter(user => user !== null);
+  }
 
-            // nullの値を除外してユーザーデータを返す
-            return usersData.filter(user => user !== null) as UserData[];
-        } catch (error) {
-            console.error("Error fetching members' user data:", error);
-            return [];
-        }
+  private createSpaceIdMap(users: UserData[]): DocumentIdMap<string[]> {
+    return users.reduce((map, user) => {
+      if (user.relatedResources?.spaceIds) {
+        map[user.docId] = user.relatedResources.spaceIds;
+      }
+      return map;
+    }, {} as DocumentIdMap<string[]>);
+  }
+
+  private async updateSpaceIdList(userId: string, updateFn: (spaceIds: string[]) => string[]): Promise<void> {
+    try {
+      const user = await this.getUser(userId);
+      const updatedSpaceIds = updateFn(user.relatedResources.spaceIds || []);
+      await this.baseDB.update(userId, { "relatedResources.spaceIds": updatedSpaceIds });
+    } catch (error) {
+      this.handleError(`Failed to update space IDs for user ${userId}.`, error);
     }
+  }
 
-    // async getUserAsMember(userId: string, role: RoleType): Promise<Member> {
-    //     const user = await this.usersDB.read(userId);
-    //     if (!user) {
-    //         throw new Error("ユーザーデータが見つかりませんでした。");
-    //     }
-    //     const member: Member = {
-    //         userId,
-    //         username: user.username,
-    //         iconUrl: user.iconUrl,
-    //         role
-    //     }
-    //     return member;
-    // }
-
-    // readUserIdProperties<T extends { userId: string }>(array: T[]): string[] {
-    //     const userIds: string[] = [];
-    //     array.forEach(data => {
-    //         userIds.push(data.userId);
-    //     });
-    //     return userIds;
-    // }
-    // >>>    ...sortedMembers.map(member => member.userId),
-    // >>>    ...sortedJoinRequests.map(request => request.userId),
+  private handleError(message: string, error: unknown): never {
+    console.error(message, error);
+    throw new Error(message);
+  }
 }

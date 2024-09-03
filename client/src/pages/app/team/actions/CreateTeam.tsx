@@ -3,13 +3,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import CreateTeamView, { CreateTeamFormState } from '../../../../features/app/team/action/menu/CreateTeamView';
 import serviceFactory from '../../../../firebase/db/factory';
 import { handleFormStateChange } from '../../../../functions/utils';
-import { useAppSelector } from '../../../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../../../redux/hooks';
 import { teamPaths } from '../../../../types/path/mainPaths';
-import { replaceParams } from '../../../../functions/path/pathUtils';
-import { PathParam } from '../../../../types/path/paths';
+import { navigateToTeamHome } from '../../../../redux/actions/team/teamActions';
 
 const CreateTeam: FC = () => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const { name } = useParams<{ name: string }>();
   const { uid } = useAppSelector(state => state.userSlice);
 
@@ -19,6 +19,8 @@ const CreateTeam: FC = () => {
     description: '',
     requiresApproval: true,
   });
+
+  const [creating, setCreating] = useState(false);
 
   useEffect(() => {
     if (name) {
@@ -34,6 +36,7 @@ const CreateTeam: FC = () => {
     try {
       // チームの作成と追加
       if (uid) {
+        setCreating(true);
         const userTeamService = serviceFactory.createUserTeamService();
         const teamRef = await userTeamService.createTeam(
           uid,
@@ -42,19 +45,21 @@ const CreateTeam: FC = () => {
           formState.description,
           formState.requiresApproval
         )
-        navigate(replaceParams(teamPaths.homeChildren.setting, { [PathParam.TeamId]: teamRef.id }));
+        navigateToTeamHome(teamRef.id, dispatch, navigate, teamPaths.homeChildren.setting);
       } else {
-        throw new Error("uidが取得できませんでした。");
+        console.error("uidが取得できませんでした。");
       }
     } catch (error) {
       // エラーハンドリング
       console.error('Error creating team:', error);
     }
+    setCreating(false);
   };
   
   return (
     <CreateTeamView
       formState={formState}
+      creating={creating}
       onFormStateChange={(e) => handleFormStateChange(e, setFormState)}
       onCreate={handleCreateTeam}
     />

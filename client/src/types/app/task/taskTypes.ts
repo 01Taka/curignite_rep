@@ -1,4 +1,4 @@
-import { BaseTaskData } from "../../firebase/db/todo/TodoTypes";
+import { BaseTaskData } from "../../firebase/db/task/taskStructure";
 
 export type GradientCircleSize = 'sm' | 'md' | 'lg';
 

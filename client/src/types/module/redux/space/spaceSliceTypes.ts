@@ -1,10 +1,10 @@
 import { TimestampConvertedDocumentMap } from "../../../firebase/db/formatTypes";
-import { SpaceData } from "../../../firebase/db/space/spacesTypes";
+import { SpaceFullData } from "../../../firebase/db/space/spaceStructure";
 import { AsyncThunkState, AsyncThunkStatus } from "../asyncThunkTypes";
 
 export interface SpaceSliceState {
   currentSpaceId: string;
-  spaces: TimestampConvertedDocumentMap<SpaceData>;
+  spaceInfoMap: TimestampConvertedDocumentMap<Partial<SpaceFullData>>;
   todayTotalLearningTime: number;
   updateTotalLearningTimeState: AsyncThunkState<number>,
   spacesUpdateState: AsyncThunkStatus;
