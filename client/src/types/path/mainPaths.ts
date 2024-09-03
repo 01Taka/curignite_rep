@@ -9,7 +9,6 @@ export const relativeMainPaths = {
   task: 'task',
   team: 'team',
   goal: 'goal',
-  qAndA: 'q-and-a',
 };
 
 // 型定義
@@ -89,9 +88,4 @@ export const teamPaths = {
 export const goalPaths = {
   base: mainPaths.goal,
   index: `${mainPaths.goal}/index`,
-};
-
-export const qAndAPaths = {
-  base: mainPaths.qAndA,
-  index: `${mainPaths.qAndA}/index`,
 };

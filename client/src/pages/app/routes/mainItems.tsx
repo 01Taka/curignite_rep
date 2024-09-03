@@ -15,7 +15,6 @@ export const routeElements: routeElement[] = [
     {path: mainPaths.task, text: 'タスク管理', invalidation: false, explanation: '機能です'},
     {path: mainPaths.team, text: 'チーム', invalidation: false, explanation: '機能です'},
     {path: mainPaths.goal, text: '目標宣言', invalidation: false, explanation: '機能です'},
-    {path: mainPaths.qAndA, text: 'Q&A', invalidation: false, explanation: '機能です'},
 ];
 
 export const centerElement = {path: 'space', text: <>勉強を<br/>はじめる</>, invalidation: false, explanation: '機能です'}
