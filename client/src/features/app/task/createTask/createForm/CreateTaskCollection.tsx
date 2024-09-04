@@ -2,11 +2,11 @@ import React, { FC, useState } from 'react'
 import CreateTaskCollectionView from './CreateTaskCollectionView'
 import { handleFormStateChange } from '../../../../../functions/utils';
 import { CreateTaskCollectionViewFormState } from '../../../../../types/app/task/taskForm';
-import { MINUTES_IN_MILLISECOND } from '../../../../../types/util/dateTimeTypes';
 import serviceFactory from '../../../../../firebase/db/factory';
 import { useAppSelector } from '../../../../../redux/hooks';
 import { useNavigate } from 'react-router-dom';
 import { taskPaths } from '../../../../../types/path/mainPaths';
+import { MINUTES_IN_MILLISECOND } from '../../../../../constants/utils/dateTimeConstants';
 
 const CreateTaskCollection: FC = () => {
   const navigate = useNavigate();

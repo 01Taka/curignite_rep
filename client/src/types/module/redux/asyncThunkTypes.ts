@@ -4,11 +4,16 @@ export interface AsyncThunkDataState<T> {
   value?: T;
 }
 
+export enum AsyncThunkStatus {
+  IDLE = 'idle',
+  LOADING = 'loading',
+  SUCCESS = 'success',
+  ERROR = 'error',
+}
+
 // 状態の統一
 export type AsyncThunkState<T> =
-  | { state: "idle", value?: null }
-  | { state: "loading", value?: null }
+  | { state: AsyncThunkStatus.IDLE, value?: null }
+  | { state: AsyncThunkStatus.LOADING, value?: null }
   | AsyncThunkDataState<T>
-  | { state: "error"; value: string };
-
-export type AsyncThunkStatus = "idle" | "loading" | "success" | "error";
+  | { state: AsyncThunkStatus.ERROR; value: string };

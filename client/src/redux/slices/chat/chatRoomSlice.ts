@@ -2,12 +2,13 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { fetchChats } from '../../actions/chat/chatRoomActions';
 import { ChatRoomSliceState } from '../../../types/module/redux/chat/reduxChatTypes';
 import { addAsyncCases, isSuccessfulPayload } from '../../../functions/redux/reduxUtils';
+import { AsyncThunkStatus } from '../../../types/module/redux/asyncThunkTypes';
 
 const initialState: ChatRoomSliceState = {
   currentRoomId: null,
   startAfterMessageId: null,
   messages: {},
-  messageFetchStatus: { state: "idle" },
+  messageFetchStatus: { state: AsyncThunkStatus.IDLE },
 };
 
 const chatRoomSlice = createSlice({

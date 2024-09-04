@@ -4,7 +4,7 @@ import TimerDisplay from './TimerDisplay';
 import TimerControls from './TimerControls';
 import { spaceTimerModes, SpaceTimerMode } from '../../../../../types/app/space/spaceTypes';
 import { useAppDispatch, useAppSelector } from '../../../../../redux/hooks';
-import { SECONDS_IN_MILLISECOND } from '../../../../../types/util/dateTimeTypes';
+import { SECONDS_IN_MILLISECOND } from '../../../../../constants/utils/dateTimeConstants';
 
 interface SpaceTimerProps {
   spaceId: string;
@@ -64,7 +64,7 @@ const SpaceTimer: FC<SpaceTimerProps> = ({ spaceId }) => {
         // addLearningTime(dispatch, uid, spaceId, 1000); UNDONE
       }
     }
-  }, [spaceId, uid, isBreak, prevSecond, time, dispatch]);
+  }, [uid, isBreak, prevSecond, time]);
 
   const handleReset = useCallback(() => {
     setCycleNumber(1);

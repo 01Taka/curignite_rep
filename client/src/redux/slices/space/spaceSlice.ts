@@ -6,7 +6,7 @@ import { AsyncThunkStatus } from '../../../types/module/redux/asyncThunkTypes';
 const initialState: SpaceSliceState = {
   currentSpaceId: "",
   spaceInfoMap: {},
-  spaceInfoUpdateState: "idle",
+  spaceInfoUpdateState: AsyncThunkStatus.IDLE,
 };
 
 const spaceSlice = createSlice({

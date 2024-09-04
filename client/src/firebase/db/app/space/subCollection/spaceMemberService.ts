@@ -5,11 +5,9 @@ import { BaseMemberRole } from "../../../../../types/firebase/db/baseTypes";
 import { SpaceData, SpaceMemberData } from "../../../../../types/firebase/db/space/spaceStructure";
 
 export class SpaceMemberService {
-  constructor(
-    private firestore: Firestore
-  ) { }
+  constructor(private firestore: Firestore) {}
 
-  createBaseDB(spaceId: string): BaseDB<SpaceMemberData> {
+  private createBaseDB(spaceId: string): BaseDB<SpaceMemberData> {
     return new BaseDB(this.firestore, `spaces/${spaceId}/members`);
   }
 
@@ -34,27 +32,27 @@ export class SpaceMemberService {
     }
   }
 
-  async getAllMembers(spaceId: string) {
-    return await this.createBaseDB(spaceId).getAll();
+  async getAllMembers(spaceId: string): Promise<SpaceMemberData[]> {
+    return this.createBaseDB(spaceId).getAll();
   }
 
-  // ユーザーがすでにメンバーとして存在するか確認
   private async isUserAlreadyMember(spaceId: string, userId: string): Promise<boolean> {
-    return isDocumentExist(userId, await this.createBaseDB(spaceId).getAll());
+    const members = await this.createBaseDB(spaceId).getAll();
+    return isDocumentExist(userId, members);
   }
 
-  // メンバーをスペースに追加
-  async addMember(spaceId: string, userId: string, role: BaseMemberRole = BaseMemberRole.Member) {
-    if (await this.isUserAlreadyMember(spaceId, userId)) return;
+  async addMember(spaceId: string, userId: string, role: BaseMemberRole = BaseMemberRole.Member): Promise<void> {
+    const isMember = await this.isUserAlreadyMember(spaceId, userId);
+    if (isMember) return;
 
-    if (await this.isUserExist(spaceId, userId)) {
+    const exists = await this.isUserExist(spaceId, userId);
+    if (exists) {
       await this.updateMemberStatusAndRole(spaceId, userId, role);
     } else {
       await this.createMember(spaceId, userId, role);
     }
   }
 
-  // メンバーのステータスとロールを更新
   private async updateMemberStatusAndRole(spaceId: string, userId: string, role: BaseMemberRole): Promise<void> {
     await this.createBaseDB(spaceId).update(userId, { joinStatus: "allowed", role });
   }
@@ -76,32 +74,28 @@ export class SpaceMemberService {
     await this.createBaseDB(spaceId).update(userId, { role });
   }
 
-  async transferPrivileges(
-    spaceId: string,
-    assignorUserId: string,
-    transfereeUserId: string
-  ): Promise<void> {
-    const baseDB = this.createBaseDB(spaceId)
+  async transferPrivileges(spaceId: string, assignorUserId: string, transfereeUserId: string): Promise<void> {
+    const baseDB = this.createBaseDB(spaceId);
     await baseDB.runTransaction(async (transaction: Transaction) => {
       const assignorUserRef = doc(baseDB.getCollectionRef(), assignorUserId);
       const transfereeUserRef = doc(baseDB.getCollectionRef(), transfereeUserId);
-  
+
       const assignorSnapshot = await transaction.get(assignorUserRef);
       if (!assignorSnapshot.exists || assignorSnapshot.data()?.role !== "admin") {
         throw new Error(`User with ID ${assignorUserId} does not have admin privileges.`);
       }
-  
-      // assignorのロールをmemberに、transfereeのロールをadminに設定
+
       transaction.update(assignorUserRef, { role: "member" });
       transaction.update(transfereeUserRef, { role: "admin" });
     });
   }
 
-  filterNonMemberSpace(userId: string, spaces: SpaceData[]): Promise<SpaceData[]> {
-    const filterPromise = spaces.filter(async space => {
-        await this.isUserExist(space.docId, userId);
-    })
-
-    return Promise.all(filterPromise);
+  async filterNonMemberSpaces(userId: string, spaces: SpaceData[]): Promise<SpaceData[]> {
+    const results = await Promise.all(spaces.map(async space => {
+      const isMember = await this.isUserExist(space.docId, userId);
+      return isMember ? space : null;
+    }));
+    
+    return results.filter((space): space is SpaceData => space !== null);
   }
 }

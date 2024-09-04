@@ -5,12 +5,6 @@ export type Days = "01" | "02" | "03" | "04" | "05" | "06" | "07" | "08" | "09" 
 export type ISODate = `${string}-${Month}-${Days}`;
 export type ISODateTime = `${ISODate}T${string}Z`
 
-export const SECONDS_IN_MILLISECOND = 1000;
-export const MINUTES_IN_MILLISECOND = SECONDS_IN_MILLISECOND * 60;
-export const HOURS_IN_MILLISECOND = MINUTES_IN_MILLISECOND * 60;
-export const DAYS_IN_MILLISECOND = HOURS_IN_MILLISECOND * 24;
-export const YEARS_IN_MILLISECOND = DAYS_IN_MILLISECOND * 365;
-
 export const DIGIT_SIZE: Record<TimeSizeUnit, number> = {
   millis: 1000,
   seconds: 60,
@@ -20,7 +14,7 @@ export const DIGIT_SIZE: Record<TimeSizeUnit, number> = {
   years: 1,
 };
 
-export type TimeTypes = number | Timestamp | Date;
+export type TimeTypes = number | Timestamp | Date | ISODate | ISODateTime;
 
 export type TimeSizeUnit = "millis" | "seconds" | "minutes" | "hours" | "days" | "years";
 

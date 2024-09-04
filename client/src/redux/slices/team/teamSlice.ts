@@ -12,7 +12,7 @@ interface TeamSliceState {
 const initialState: TeamSliceState = {
     currentTeamId: "",
     teams: {},
-    teamsUpdateState: "idle",
+    teamsUpdateState: AsyncThunkStatus.IDLE,
 };
 
 const TeamSlice = createSlice({

@@ -1,9 +1,9 @@
 import React, { FC } from 'react'
 import { Divider, Typography } from '@mui/material';
 import CollectionTaskView from '../taskList/CollectionTaskView';
-import { MINUTES_IN_MILLISECOND } from '../../../../types/util/dateTimeTypes';
 import { cn } from '../../../../functions/utils';
 import { TaskCollectionData, TaskCollectionTaskData } from '../../../../types/firebase/db/common/task/taskStructure';
+import { MINUTES_IN_MILLISECOND } from '../../../../constants/utils/dateTimeConstants';
 
 interface CollectionContainerProps {
   taskCollection: TaskCollectionData;

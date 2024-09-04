@@ -1,6 +1,7 @@
 import { TimeTypes } from "../../../../types/util/dateTimeTypes";
-import { toDate } from "../../../dateTimeUtils";
+import { convertToDate } from "../../../dateTimeUtils";
 import { CurrentSession, Session } from "../../../../types/browserStorage/indexedDB/learningSessionsTypes";
+import { IndexedDBHandler } from "../indexedDBHandler";
 
 export class IndexedLearningSessionService {
   private static currentSessionDB: IndexedDBHandler<CurrentSession> = new IndexedDBHandler<CurrentSession>("learningSessions", "currentSession", 1);
@@ -8,7 +9,7 @@ export class IndexedLearningSessionService {
 
   public static async startSession(startTime: TimeTypes = new Date()) {
     try {
-      startTime = toDate(startTime);
+      startTime = convertToDate(startTime);
       const prevSession = await this.currentSessionDB.getData(0);
 
       if (prevSession) {
@@ -24,7 +25,7 @@ export class IndexedLearningSessionService {
 
   public static async endSession(endTime: TimeTypes = new Date()) {
     try {
-      endTime = toDate(endTime);
+      endTime = convertToDate(endTime);
       const currentSession = await this.currentSessionDB.getData(0);
       if (currentSession) {
         await this.sessionDB.addData({ startTime: currentSession.startTime, endTime });

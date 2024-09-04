@@ -24,11 +24,10 @@ export const autoUpdateSpaces = (dispatch: Dispatch, userId: string) => {
 
   const setFunc = (updatedData: SpaceData[]) => {
     const prevData = store.getState().spaceSlice.spaceInfoMap;
-  
+    
     const dataMap: TimestampConvertedDocumentMap<SpaceInfoMap> = updatedData.reduce((map, data) => {
       const existingData = prevData[data.docId] || {};
       
-      // 既存のデータを保持しつつ、必要な部分だけを上書きする
       map[data.docId] = {
         ...existingData,
         space: convertTimestampsToNumbers(data),
@@ -37,13 +36,13 @@ export const autoUpdateSpaces = (dispatch: Dispatch, userId: string) => {
       return map;
     }, {} as TimestampConvertedDocumentMap<SpaceInfoMap>);
   
-    dispatch(assignSpaceInfoMap({ ...prevData, ...dataMap }));
+    return assignSpaceInfoMap({ ...prevData, ...dataMap });
   };
 
   autoUpdateCollection(
     spaceService.baseDB,
     userId,
-    spaceMemberService.filterNonMemberSpace.bind(spaceService),
+    spaceMemberService.filterNonMemberSpaces.bind(spaceMemberService),
     setFunc,
     setSpacesUpdateState,
     dispatch

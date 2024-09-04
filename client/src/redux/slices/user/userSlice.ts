@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Device } from "../../../types/util/stateTypes";
-import { AsyncThunkState } from "../../../types/module/redux/asyncThunkTypes";
+import { AsyncThunkState, AsyncThunkStatus } from "../../../types/module/redux/asyncThunkTypes";
 import { addAsyncCases, isSuccessfulPayload } from "../../../functions/redux/reduxUtils";
 import { updateUserData } from "../../actions/user/updateUserState";
 import { ConvertTimestampToNumber } from "../../../types/firebase/db/formatTypes";
@@ -16,7 +16,7 @@ export interface UserState {
 const initialState: UserState = {
     uid: null,
     userData: null,
-    userFetchState: { state: "idle" },
+    userFetchState: { state: AsyncThunkStatus.IDLE },
     device: "desktop",
 };
 

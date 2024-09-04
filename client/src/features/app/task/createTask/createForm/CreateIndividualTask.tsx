@@ -2,12 +2,12 @@ import React, { FC, useState } from 'react'
 import CreateIndividualTaskView from './CreateIndividualTaskView'
 import { handleFormStateChange } from '../../../../../functions/utils';
 import { CreateIndividualTaskViewFormState } from '../../../../../types/app/task/taskForm';
-import { MINUTES_IN_MILLISECOND } from '../../../../../types/util/dateTimeTypes';
 import serviceFactory from '../../../../../firebase/db/factory';
 import { useAppSelector } from '../../../../../redux/hooks';
 import { toTimestamp } from '../../../../../functions/dateTimeUtils';
 import { useNavigate } from 'react-router-dom';
 import { taskPaths } from '../../../../../types/path/mainPaths';
+import { MINUTES_IN_MILLISECOND } from '../../../../../constants/utils/dateTimeConstants';
 
 const CreateIndividualTask: FC = () => {
   const navigate = useNavigate();

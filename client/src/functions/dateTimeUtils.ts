@@ -1,23 +1,24 @@
 import { format, differenceInSeconds, differenceInMinutes, differenceInHours, differenceInDays, differenceInYears, subSeconds, subMinutes, subHours, subDays, subYears, startOfMinute, startOfHour, startOfDay, startOfYear, isSameMinute } from 'date-fns';
 import { Timestamp } from 'firebase/firestore';
 import { DecimalDigits } from '../types/util/componentsTypes';
-import { AbsoluteFormat, absoluteFormatItems, Days, DAYS_IN_MILLISECOND, DIGIT_SIZE, Format, FormatChange, HOURS_IN_MILLISECOND, ISODate, ISODateTime, MINUTES_IN_MILLISECOND, RelativeFormat, SECONDS_IN_MILLISECOND, TimeSizeUnit, TimeTypes, YEARS_IN_MILLISECOND } from '../types/util/dateTimeTypes';
+import { AbsoluteFormat, absoluteFormatItems, Days, DIGIT_SIZE, Format, FormatChange, ISODate, ISODateTime, RelativeFormat, TimeSizeUnit, TimeTypes } from '../types/util/dateTimeTypes';
+import { DAYS_IN_MILLISECOND, HOURS_IN_MILLISECOND, MINUTES_IN_MILLISECOND, SECONDS_IN_MILLISECOND, YEARS_IN_MILLISECOND } from '../constants/utils/dateTimeConstants';
 
 export const isMidnight = (dateTime: TimeTypes) => {
-    const date = toDate(dateTime);
+    const date = convertToDate(dateTime);
     const midnight = new Date(date);
     midnight.setHours(0, 0, 0, 0);
     return isSameMinute(date, midnight);
 }
 
 export const isMatchDay = (date: TimeTypes, targetDay: Days | Days[]) => {
-    const formatDate = format(toDate(date), "dd") as Days;
+    const formatDate = format(convertToDate(date), "dd") as Days;
     return typeof targetDay === "string" ? formatDate === targetDay : targetDay.includes(formatDate); 
 }
 
 export const isEqualDate = (...days: TimeTypes[]): boolean => {
-    const check = convertToMilliseconds(startOfDay(toDate(days[0])))
-    const isDiff = days.some(day => check !== convertToMilliseconds(startOfDay(toDate(day))));
+    const check = convertToMilliseconds(startOfDay(convertToDate(days[0])))
+    const isDiff = days.some(day => check !== convertToMilliseconds(startOfDay(convertToDate(day))));
     return !isDiff;
 }
 
@@ -35,63 +36,83 @@ export const isBeforeDateTime = (baseDateTime: TimeTypes, targetDateTime: TimeTy
 }
 
 export const toISODate = (dateTime: TimeTypes): ISODate => {
-    const date = toDate(dateTime).toISOString();
+    const date = convertToDate(dateTime).toISOString();
     return date.slice(0, 10) as ISODate;
 }
 
 export const toISODateTime = (dateTime: TimeTypes): ISODateTime => {
-    const date = toDate(dateTime).toISOString();
+    const date = convertToDate(dateTime).toISOString();
     return date as ISODateTime;
 }
 
-export const convertToMilliseconds = (time: TimeTypes): number => {
-    if (typeof time === 'number') {
-        return time;
-    } else if (time instanceof Date) {
-        return time.getTime();
-    } else if (time instanceof Timestamp) {
-        return time.toMillis();
-    } else {
-        throw new Error('Unsupported time type');
-    }
+/**
+ * ISO形式の日付文字列をDateオブジェクトに変換します。
+ * @param isoDate - ISO形式の日付文字列
+ * @returns - 有効なDateオブジェクト、無効な場合はnull
+ */
+function parseISODate(isoDate: ISODate): Date | null {
+    const date = new Date(`${isoDate}T00:00:00Z`);
+    return isNaN(date.getTime()) ? null : date;
 }
 
 /**
- * 指定された時間単位の値をミリ秒に変換する。
- * @param unit - 時間の単位。
- * @param value - 変換する値。
- * @returns ミリ秒に相当する値。
+ * ISO形式の日時文字列をDateオブジェクトに変換します。
+ * @param isoDateTime - ISO形式の日時文字列
+ * @returns - 有効なDateオブジェクト、無効な場合はnull
  */
-const toMillis = (unit: TimeSizeUnit, value: number): number => {
-    const unitToMillisMap: Record<TimeSizeUnit, number> = {
-        millis: value,
-        seconds: value * SECONDS_IN_MILLISECOND,
-        minutes: value * MINUTES_IN_MILLISECOND,
-        hours: value * HOURS_IN_MILLISECOND,
-        days: value * DAYS_IN_MILLISECOND,
-        years: value * YEARS_IN_MILLISECOND,
-    };
-
-    return unitToMillisMap[unit];
-};
-
+const parseISODateTime = (isoDateTime: ISODateTime): Date | null => {
+    const date = new Date(isoDateTime);
+    return isNaN(date.getTime()) ? null : date;
+}
 
 /**
- * TimeTypes の入力を Date オブジェクトに変換する。
- * @param input - 変換する入力（数値、Timestamp、または Date）。
- * @returns 対応する Date オブジェクト。
+ * 様々な形式の時間をミリ秒に変換します。
+ * @param time - TimeTypesのいずれか
+ * @returns - ミリ秒またはnull（無効な場合）
  */
-export const toDate = (input: TimeTypes): Date => {
-    if (input instanceof Timestamp) {
-        return input.toDate();
-    } else if (input instanceof Date) {
-        return input;
-    } else if (typeof input === 'number') {
-        return new Date(input);
-    } else {
-        throw new Error('Invalid input type. Must be number, Timestamp, or Date.');
+export const convertToMilliseconds = (time: TimeTypes): number => {
+    return convertToDate(time).getMilliseconds();
+}
+
+/**
+ * ミリ秒をDateオブジェクトに変換します。
+ * @param time - 時間の入力（数値、Date、Timestamp、ISO形式の文字列）
+ * @returns - Dateオブジェクト
+ * @throws - 無効な変換の場合にエラーをスローします
+ */
+export const convertToDate = (time: TimeTypes): Date => {
+    if (typeof time === 'number') {
+        return new Date(time);
+    } 
+    
+    if (time instanceof Date) {
+        return time;
     }
-};
+    
+    if (time instanceof Timestamp) {
+        return time.toDate();
+    }
+    
+    // ISO形式の日時文字列の場合
+    if (typeof time === 'string' && time.endsWith("Z")) {
+        const date = parseISODateTime(time as ISODateTime);
+        if (!date) {
+            throw new Error(`Invalid ISODateTime string: ${time}`);
+        }
+        return date;
+    }
+    
+    // ISO形式の日付文字列の場合
+    if (typeof time === 'string') {
+        const date = parseISODate(time as ISODate);
+        if (!date) {
+            throw new Error(`Invalid ISODate string: ${time}`);
+        }
+        return date;
+    }
+
+    throw new Error(`Unsupported time type: ${typeof time}`);
+}
 
 /**
  * TimeTypes の入力を Timestamp オブジェクトに変換する。
@@ -99,7 +120,8 @@ export const toDate = (input: TimeTypes): Date => {
  * @returns 対応する Timestamp オブジェクト。
  */
 export const toTimestamp = (input: TimeTypes): Timestamp => {
-    return Timestamp.fromDate(toDate(input));
+    const date = convertToDate(convertToMilliseconds(input) ?? 0);
+    return Timestamp.fromDate(date);
 }
 
 /**
@@ -112,7 +134,7 @@ export const getMidnightTimestamp = (date: TimeTypes = new Date()): Timestamp =>
 };
 
 export const getMidnightDate = (date: TimeTypes = new Date()): Date => {
-    const midnight = startOfDay(toDate(date));
+    const midnight = startOfDay(convertToDate(date));
     return midnight;
 }
 
@@ -128,7 +150,7 @@ const formatDateAsAbsolute = (dateTime: TimeTypes, absoluteFormat: AbsoluteForma
         return "";
     }
 
-    const date = toDate(dateTime);
+    const date = convertToDate(dateTime);
 
     try {
         const formats = (absoluteFormat.formatAtMidnight && isMidnight(date))
@@ -167,8 +189,8 @@ const formatDateAsRelative = (
     timestamp: TimeTypes,
     relativeFormat: Partial<RelativeFormat> = {},
 ): string => {
-    const date = toDate(convertToMilliseconds(timestamp) * (relativeFormat.countUpTime ? -1 : 1));
-    const base = toDate(relativeFormat.baseDateTime ?? (relativeFormat.countUpTime ? 0 : new Date()));
+    const date = convertToDate(convertToMilliseconds(timestamp) * (relativeFormat.countUpTime ? -1 : 1));
+    const base = convertToDate(relativeFormat.baseDateTime ?? (relativeFormat.countUpTime ? 0 : new Date()));
 
     const diff = {
         seconds: differenceInSeconds(base, date),
@@ -276,6 +298,25 @@ const getPastTime = (unit: TimeSizeUnit, value: number, truncate: boolean = fals
 };
 
 /**
+ * 指定された時間単位の値をミリ秒に変換する。
+ * @param unit - 時間の単位。
+ * @param value - 変換する値。
+ * @returns ミリ秒に相当する値。
+ */
+const toMillis = (unit: TimeSizeUnit, value: number): number => {
+    const unitToMillisMap: Record<TimeSizeUnit, number> = {
+        millis: value,
+        seconds: value * SECONDS_IN_MILLISECOND,
+        minutes: value * MINUTES_IN_MILLISECOND,
+        hours: value * HOURS_IN_MILLISECOND,
+        days: value * DAYS_IN_MILLISECOND,
+        years: value * YEARS_IN_MILLISECOND,
+    };
+
+    return unitToMillisMap[unit];
+};
+
+/**
  * 日付/時間を一連のフォーマットと条件に基づいて文字列に変換する。
  * @param dateTime - 日付/時間の入力。
  * @param defaultFormat - デフォルトのフォーマット文字列。
@@ -287,7 +328,7 @@ export const dateTimeToString = (
     defaultFormat: Format,
     formatChanges?: FormatChange[]
 ): string => {
-    const date = toDate(dateTime);
+    const date = convertToDate(dateTime);
 
     if (formatChanges) {
         formatChanges.sort((a, b) => toMillis(a.borderUnit, a.borderDateTime) - toMillis(b.borderUnit, b.borderDateTime));
