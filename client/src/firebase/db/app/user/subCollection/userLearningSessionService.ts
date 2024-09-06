@@ -17,7 +17,7 @@ export class UserLearningSessionService {
   }
 
   private async validateTotalLearningTime(totalLearningTime: number): Promise<void> {
-    if (isNaN(totalLearningTime)) {
+    if (isNaN(totalLearningTime) || totalLearningTime < 0) {
       throw new Error(`Invalid totalLearningTime: ${totalLearningTime}`);
     }
   }
@@ -29,25 +29,35 @@ export class UserLearningSessionService {
   ): Promise<DocumentReference<UserLearningSessionData>> {
     await this.validateTotalLearningTime(totalLearningTime);
 
-    const dailySession = await this.fetchDailySession(userId, date);
-    if (dailySession) {
-      await this.createBaseDB(userId).update(dailySession.docId, { ...dailySession, totalLearningTime });
-      const snapshot = await this.createBaseDB(userId).readAsDocumentSnapshot(dailySession.docId)
-      return snapshot.ref;
-    }
+    try {
+      const dailySession = await this.fetchDailySession(userId, date);
+      if (dailySession) {
+        await this.createBaseDB(userId).update(dailySession.docId, { ...dailySession, totalLearningTime });
+        const snapshot = await this.createBaseDB(userId).readAsDocumentSnapshot(dailySession.docId);
+        return snapshot.ref;
+      }
 
-    const data: UserLearningSessionData = {
-      ...getInitialBaseDocumentData(userId),
-      date: getMidnightTimestamp(date),
-      sessions: [],
-      totalLearningTime,
-      sessionCount: 0,
-    };
-    return await this.createBaseDB(userId).create(data);
+      const data: UserLearningSessionData = {
+        ...getInitialBaseDocumentData(userId),
+        date: getMidnightTimestamp(date),
+        sessions: [],
+        totalLearningTime,
+        sessionCount: 0,
+      };
+      return await this.createBaseDB(userId).create(data);
+    } catch (error) {
+      console.error(`Failed to create or update daily session: ${error}`);
+      throw error;
+    }
   }
 
   async fetchDailySession(userId: string, date: TimeTypes = new Date()): Promise<UserLearningSessionData | null> {
-    return await this.createBaseDB(userId).getFirstMatch("date", getMidnightTimestamp(date));
+    try {
+      return await this.createBaseDB(userId).getFirstMatch("date", getMidnightTimestamp(date));
+    } catch (error) {
+      console.error(`Failed to fetch daily session: ${error}`);
+      throw error;
+    }
   }
 
   async isExistSession(userId: string, date: TimeTypes): Promise<boolean> {
@@ -55,28 +65,48 @@ export class UserLearningSessionService {
   }
 
   async fetchOrCreateDailySession(userId: string, date: TimeTypes): Promise<UserLearningSessionData> {
-    let sessionData = await this.fetchDailySession(userId, date);
-    if (!sessionData) {
-      await this.createOrUpdateDailySession(userId, date);
-      sessionData = await this.fetchDailySession(userId, date);
+    try {
+      let sessionData = await this.fetchDailySession(userId, date);
+      if (!sessionData) {
+        await this.createOrUpdateDailySession(userId, date);
+        sessionData = await this.fetchDailySession(userId, date);
+      }
+      return sessionData!;
+    } catch (error) {
+      console.error(`Failed to fetch or create daily session: ${error}`);
+      throw error;
     }
-    return sessionData!;
   }
 
   async fetchRecentSessions(userId: string, borderDate: TimeTypes): Promise<UserLearningSessionData[]> {
-    const borderTimestamp = getMidnightTimestamp(borderDate);
-    return await this.createBaseDB(userId).getAll(where("date", ">=", borderTimestamp));
+    try {
+      const borderTimestamp = getMidnightTimestamp(borderDate);
+      return await this.createBaseDB(userId).getAll(where("date", ">=", borderTimestamp));
+    } catch (error) {
+      console.error(`Failed to fetch recent sessions: ${error}`);
+      throw error;
+    }
   }
 
   async fetchWeeklySessions(userId: string, targetDate: TimeTypes = new Date()): Promise<UserLearningSessionData[]> {
-    const weekStart = startOfWeek(convertToDate(targetDate));
-    return await this.fetchRecentSessions(userId, weekStart);
+    try {
+      const weekStart = startOfWeek(convertToDate(targetDate));
+      return await this.fetchRecentSessions(userId, weekStart);
+    } catch (error) {
+      console.error(`Failed to fetch weekly sessions: ${error}`);
+      throw error;
+    }
   }
 
   async fetchRecentSessionsByDaysAgo(userId: string, daysAgo: number, fromStartOfWeek: boolean = false, baseDate: TimeTypes = new Date()): Promise<UserLearningSessionData[]> {
-    const millisDiff = convertToMilliseconds(baseDate) - daysAgo * DAYS_IN_MILLISECOND;
-    const diff: TimeTypes = fromStartOfWeek ? startOfWeek(convertToDate(millisDiff)) : millisDiff;
-    return await this.fetchRecentSessions(userId, diff);
+    try {
+      const millisDiff = convertToMilliseconds(baseDate) - daysAgo * DAYS_IN_MILLISECOND;
+      const diff: TimeTypes = fromStartOfWeek ? startOfWeek(convertToDate(millisDiff)) : millisDiff;
+      return await this.fetchRecentSessions(userId, diff);
+    } catch (error) {
+      console.error(`Failed to fetch recent sessions by days ago: ${error}`);
+      throw error;
+    }
   }
 
   async recordSession(
@@ -86,21 +116,26 @@ export class UserLearningSessionService {
     endTime: TimeTypes = Timestamp.now(), 
     targetDate: TimeTypes = new Date()
   ): Promise<void> {
-    const session: SessionData = {
-      startTime: toTimestamp(startTime),
-      endTime: toTimestamp(endTime),
-    };
+    try {
+      const session: SessionData = {
+        startTime: toTimestamp(startTime),
+        endTime: toTimestamp(endTime),
+      };
 
-    const sessionData = await this.fetchOrCreateDailySession(userId, targetDate);
-    const newTotalLearningTime = safeNumber(sessionData.totalLearningTime) + safeNumber(learningTime);
+      const sessionData = await this.fetchOrCreateDailySession(userId, targetDate);
+      const newTotalLearningTime = safeNumber(sessionData.totalLearningTime) + safeNumber(learningTime);
 
-    const newSessions = [...sessionData.sessions, session]
+      const newSessions = [...sessionData.sessions, session];
 
-    await this.createBaseDB(userId).update(sessionData.docId, {
-      sessions: newSessions,
-      totalLearningTime: newTotalLearningTime,
-      sessionCount: newSessions.length,
-    });
+      await this.createBaseDB(userId).update(sessionData.docId, {
+        sessions: newSessions,
+        totalLearningTime: newTotalLearningTime,
+        sessionCount: newSessions.length,
+      });
+    } catch (error) {
+      console.error(`Failed to record session: ${error}`);
+      throw error;
+    }
   }
 
   static mapLearningTimeByDate(sessions: UserLearningSessionData[]): Record<ISODate, number> {
@@ -115,7 +150,10 @@ export class UserLearningSessionService {
     return sessions.reduce((sum, session) => sum + session.totalLearningTime, 0);
   }
 
-  static calculateAverageLearningTime(sessions: UserLearningSessionData[], denoType: number | "length" | "dateDiff" = "dateDiff"): number {
+  static calculateAverageLearningTime(
+    sessions: UserLearningSessionData[], 
+    denoType: number | "length" | "dateDiff" = "dateDiff"
+  ): number {
     if (sessions.length === 0) return 0;
 
     const total = this.calculateTotalLearningTime(sessions);
@@ -135,12 +173,22 @@ export class UserLearningSessionService {
   }
 
   async calculateWeeklyTotalLearningTime(userId: string): Promise<number> {
-    const sessions = await this.fetchWeeklySessions(userId);
-    return UserLearningSessionService.calculateTotalLearningTime(sessions);
+    try {
+      const sessions = await this.fetchWeeklySessions(userId);
+      return UserLearningSessionService.calculateTotalLearningTime(sessions);
+    } catch (error) {
+      console.error(`Failed to calculate weekly total learning time: ${error}`);
+      throw error;
+    }
   }
 
   async calculateRecentDaysAverageLearningTime(userId: string, days: number = 30): Promise<number> {
-    const sessions = await this.fetchRecentSessionsByDaysAgo(userId, days);
-    return UserLearningSessionService.calculateAverageLearningTime(sessions, days);
+    try {
+      const sessions = await this.fetchRecentSessionsByDaysAgo(userId, days);
+      return UserLearningSessionService.calculateAverageLearningTime(sessions, days);
+    } catch (error) {
+      console.error(`Failed to calculate recent days average learning time: ${error}`);
+      throw error;
+    }
   }
 }

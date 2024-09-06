@@ -17,7 +17,7 @@ export const isMatchDay = (date: TimeTypes, targetDay: Days | Days[]) => {
 }
 
 export const isEqualDate = (...days: TimeTypes[]): boolean => {
-    const check = convertToMilliseconds(startOfDay(convertToDate(days[0])))
+    const check = convertToMilliseconds(startOfDay(convertToDate(days[0])));
     const isDiff = days.some(day => check !== convertToMilliseconds(startOfDay(convertToDate(day))));
     return !isDiff;
 }
@@ -71,7 +71,7 @@ const parseISODateTime = (isoDateTime: ISODateTime): Date | null => {
  * @returns - ミリ秒またはnull（無効な場合）
  */
 export const convertToMilliseconds = (time: TimeTypes): number => {
-    return convertToDate(time).getMilliseconds();
+    return convertToDate(time).getTime();
 }
 
 /**

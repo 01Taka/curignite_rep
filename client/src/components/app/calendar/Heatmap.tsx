@@ -8,7 +8,7 @@ import { isEqualDate, isMatchDay, toISODate } from '../../../functions/dateTimeU
 interface HeatmapProps {
   baseDate: Date;
   weeks: number;
-  dateColors: Record<ISODate, BGColorClass>; // 日付がキー、Tailwindのbg-colorクラスが値
+  dateColors: Record<ISODate, BGColorClass>;
 }
 
 const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];

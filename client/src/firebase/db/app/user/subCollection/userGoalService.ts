@@ -1,4 +1,4 @@
-import { Firestore, Timestamp } from "firebase/firestore";
+import { DocumentData, DocumentReference, Firestore, Timestamp } from "firebase/firestore";
 import BaseDB from "../../../base";
 import { getInitialBaseDocumentData } from "../../../../../functions/db/dbUtils";
 import { UserGoalData } from "../../../../../types/firebase/db/user/userStructure";
@@ -14,13 +14,11 @@ export class UserGoalService {
 
   async createUserGoal(
     userId: string,
-    goalId: string,
     objectives: string,
     subject: Subject,
     deadline: Timestamp,
     status: GoalStatus = "notStarted",
-    merge: boolean = false,
-  ): Promise<void> {
+  ): Promise<DocumentReference<UserGoalData, DocumentData>> {
     const data: UserGoalData = {
       ...getInitialBaseDocumentData(userId),
       objectives,
@@ -28,7 +26,7 @@ export class UserGoalService {
       deadline,
       status,
     };
-    return this.createBaseDB(userId).createWithId(goalId, data, merge);
+    return await this.createBaseDB(userId).create(data);
   }
 
   async isGoalExist(userId: string, goalId: string): Promise<boolean> {

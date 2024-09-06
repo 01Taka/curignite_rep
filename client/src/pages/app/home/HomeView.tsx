@@ -1,62 +1,73 @@
-import React, { FC } from 'react';
-import CircularButton from '../../../components/input/button/CircularButton';
-import { routeElement } from '../routes/mainItems';
+import React, { FC, useState } from 'react';
+import LearningOverview from '../../../features/app/learning/LearningOverview';
+import LearningTimeHeatmap from '../../../features/app/learning/LearningTimeHeatmap';
+import ImageButton from '../../../components/input/button/ImageButton';
+import UserProfileCard from '../../../features/app/user/UserProfileCard';
+import StartSessionPopup from '../../../features/app/learning/StartSessionPopup';
+import LearningSessions from '../../../features/app/learning/LearningSessions';
 
-interface HomeViewProps {
-  radius: number;
-  routeElements: routeElement[];
-  centerItem?: routeElement;
-  angleAdjustment?: number;
-  onNavigate: (path: string) => void;
+interface HomeViewProps {}
+
+interface StartLearningButtonProps {
+  onClick: () => void;
+} 
+
+const StartLearningButton: FC<StartLearningButtonProps> = ({ onClick }) => (
+  <div className='fixed flex justify-center bottom-8 w-full'>
+    <div className='relative'>
+      <div className='absolute inset-0 flex justify-center items-center w-full h-full'>
+        <button
+          className='w-36 h-36 bg-lime-400 hover:bg-lime-500 shadow-md rounded-full z-10 transition-all duration-300 hover:scale-110'
+          onClick={onClick}
+        >
+          <div className='text-2xl font-bold'>学習を開始</div>
+        </button>
+      </div>
+      <img
+        src='images/components/tower.png'
+        alt='ダンジョン入口'
+        className='w-auto h-80 rounded-3xl opacity-60 blur-sm'
+      />
+    </div>
+  </div>
+);
+
+const FixedSideContent: FC = () => (
+  <div className='fixed top-6 right-6'>
+    <UserProfileCard />
+    <LearningOverview />
+    <LearningTimeHeatmap />
+  </div>
+);
+
+const FixedImageButtons: FC = () => (
+  <div className='fixed top-6 left-6 flex items-center'>
+    <ImageButton src='images/components/team.png' alt='学習チーム' label='学習チーム' size="lg" textSize="md" shape="square" />
+    <ImageButton src='images/components/member.png' alt='学習中メンバー' label='学習中メンバー' size="lg" textSize="md" shape="square" />
+    <ImageButton src='images/components/partner.png' alt='学習パートナー' label='学習パートナー' size="lg" textSize="md" shape="square" />
+  </div>
+);
+
+const FixedInfo: FC = () => {
+  return (
+    <div className='fixed top-40 left-6'>
+      <LearningSessions />
+    </div>
+  )
 }
 
-
-const HomeView: FC<HomeViewProps> = ({ radius, routeElements, centerItem, angleAdjustment = 0, onNavigate }) => {
-  const angle = 360 / routeElements.length;
-  const buttonSize = 128; // CircularButtonのサイズ (px)
-  const centerButtonSize = 192; // 中心のCircularButtonのサイズ (px)
+const HomeView: FC<HomeViewProps> = () => {
+  const [open, setOpen] = useState(false);
 
   return (
-    <div className='flex justify-center items-center w-auto h-full'>
-      <div style={{ position: 'relative', width: `${2 * radius + buttonSize}px`, height: `${2 * radius + buttonSize}px` }}>
-        {centerItem && (
-          <div style={{
-            position: 'absolute',
-            left: '50%',
-            top: '50%',
-            transform: `translate(-${centerButtonSize / 2}px, -${centerButtonSize / 2}px)`
-          }}>
-            <CircularButton
-              children={centerItem.text}
-              size='x8l'
-              bgColor='main'
-              invalidation={centerItem.invalidation}
-              onClick={() => onNavigate(centerItem.path)}
-            />
-          </div>
-        )}
-
-        {routeElements.map((route, index) => {
-          const theta = ((angle * index) + angleAdjustment) * (Math.PI / 180);
-          const x = (radius + radius * Math.cos(theta)) + (buttonSize / 2);
-          const y = (radius + radius * Math.sin(theta)) + (buttonSize / 2);
-
-          return (
-            <div key={index} style={{ position: 'absolute', left: `${x}px`, top: `${y}px`, transform: `translate(-${buttonSize / 2}px, -${buttonSize / 2}px)` }}>
-              <CircularButton
-                children={route.text}
-                size='x4l'
-                bgColor='secondaryBase'
-                invalidation={route.invalidation}
-                onClick={() => onNavigate(route.path)}
-              />
-            </div>
-          );
-        })}
-
-      </div>
+    <div>
+      <StartLearningButton onClick={() => setOpen(true)} />
+      <FixedSideContent />
+      <FixedImageButtons />
+      <FixedInfo />
+      <StartSessionPopup open={open} handleClose={() => setOpen(false)} />
     </div>
   );
-}
+};
 
 export default HomeView;
