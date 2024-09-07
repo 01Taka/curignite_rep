@@ -1,16 +1,16 @@
 import React, { FC, useCallback, useState } from 'react';
-import JoinCreateTeamView from '../../../../features/app/team/action/joinCreate/JoinCreateTeamView';
-import { useNavigate } from 'react-router-dom';
-import { teamPaths } from '../../../../types/path/mainPaths';
-import { replaceParams } from '../../../../functions/path/pathUtils';
-import { PathParam } from '../../../../types/path/paths';
-import serviceFactory from '../../../../firebase/db/factory';
-import Popup from '../../../../components/util/Popup';
 import { CircularProgress } from '@mui/material';
-import NotFoundJoiningTeam from '../../../../features/app/team/action/joinCreate/join/NotFoundJoiningTeam';
-import JoiningTeam from '../../../../features/app/team/action/joinCreate/join/JoiningTeam';
+import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../../../../redux/hooks';
 import { TeamData } from '../../../../types/firebase/db/team/teamStructure';
+import serviceFactory from '../../../../firebase/db/factory';
+import { replaceParams } from '../../../../functions/path/pathUtils';
+import { teamPaths } from '../../../../types/path/mainPaths';
+import { PathParam } from '../../../../types/path/paths';
+import JoinCreateTeamView from './JoinCreateTeamView';
+import Popup from '../../../../components/util/Popup';
+import JoiningTeam from './join/JoiningTeam';
+import NotFoundJoiningTeam from './join/NotFoundJoiningTeam';
 
 const JoinCreateTeam: FC = () => {
     const navigate = useNavigate();

@@ -80,7 +80,6 @@ export class ChatRoomChatService {
     return this.storageManager.uploadFile(
       this.createPath(roomId),
       chatId,
-      getFileExtension(file.type),
       file
     );
   }

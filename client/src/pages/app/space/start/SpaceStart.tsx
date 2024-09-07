@@ -7,8 +7,8 @@ import { useAppDispatch, useAppSelector } from '../../../../redux/hooks';
 import serviceFactory from '../../../../firebase/db/factory';
 import { SpaceStartFormState } from '../../../../types/app/space/spaceTypes';
 import { SpaceData } from '../../../../types/firebase/db/space/spaceStructure';
-import { startNewSpace } from '../../../../functions/app/space/spaceDBUtils';
-import { spacePaths } from '../../../../types/path/mainPaths';
+// import { startNewSpace } from '../../../../functions/app/space/spaceDBUtils';
+// import { spacePaths } from '../../../../types/path/mainPaths';
 import { getLastSegment, replaceParams } from '../../../../functions/path/pathUtils';
 import { PathParam } from '../../../../types/path/paths';
 import { handleFormStateChange } from '../../../../functions/utils';
@@ -70,22 +70,22 @@ const SpaceStart: FC = () => {
   /**
    * 指定したスペースIDのスペースに参加するポップアップを開く
    */
-  const handleOpenJoinSpacePopup = useCallback(async (spaceId: string) => {
-    if (!uid || !spaceId) return;
+  // const handleOpenJoinSpacePopup = useCallback(async (spaceId: string) => {
+  //   if (!uid || !spaceId) return;
 
-    try {
-      const space = getSpaceInfo(spaceId).space;
-      if (space) {
-        const spaceService = serviceFactory.createSpaceService();
-        const participationStatus = await spaceService.getParticipationState(uid, spaceId);
+  //   try {
+  //     const space = getSpaceInfo(spaceId).space;
+  //     if (space) {
+  //       const spaceService = serviceFactory.createSpaceService();
+  //       const participationStatus = await spaceService.getParticipationStat(uid, spaceId);
 
-        setJoinSpacePopup({ open: true, space, participationStatus });
-        navigate(replaceParams(spacePaths.home, { [PathParam.SpaceId]: spaceId }));
-      }
-    } catch (error) {
-      console.error('Failed to open join space popup:', error);
-    }
-  }, [uid, navigate]);
+  //       setJoinSpacePopup({ open: true, space, participationStatus });
+  //       // navigate(replaceParams(spacePaths.home, { [PathParam.SpaceId]: spaceId }));
+  //     }
+  //   } catch (error) {
+  //     console.error('Failed to open join space popup:', error);
+  //   }
+  // }, [uid, navigate]);
 
   /**
    * スペース参加ポップアップを閉じる
@@ -105,7 +105,7 @@ const SpaceStart: FC = () => {
       const result = await spaceService.handleSpaceJoin(spaceId, uid);
 
       if (result === "joined") {
-        navigate(replaceParams(spacePaths.home, { [PathParam.SpaceId]: spaceId }));
+        // navigate(replaceParams(spacePaths.home, { [PathParam.SpaceId]: spaceId }));
       }
     } catch (error) {
       console.error('Failed to join space:', error);
@@ -115,7 +115,7 @@ const SpaceStart: FC = () => {
   return (
     <>
       <Routes>
-        <Route
+        {/* <Route
           path="/"
           element={
             <SpaceStartView
@@ -126,7 +126,7 @@ const SpaceStart: FC = () => {
               onSpaceClick={handleOpenJoinSpacePopup}
             />
           }
-        />
+        /> */}
         <Route
           // path={getLastSegment(spacePaths.startChildren.setting)}
           // element={

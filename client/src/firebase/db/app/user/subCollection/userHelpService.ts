@@ -1,31 +1,43 @@
-import { Firestore } from "firebase/firestore";
+import { DocumentData, DocumentReference, Firestore } from "firebase/firestore";
 import { UserHelpData } from "../../../../../types/firebase/db/user/userStructure";
 import BaseDB from "../../../base";
 import { getInitialBaseDocumentData } from "../../../../../functions/db/dbUtils";
 import { Subject } from "../../../../../types/firebase/db/common/commonTypes";
+import { storageManager, StorageManager } from "../../../../storage/storageManager";
 
 export class UserHelpService {
-  constructor(private firestore: Firestore) {}
+  constructor(private firestore: Firestore, private storageManager: StorageManager) {}
+
+  getPath(userId: string): string {
+    return `users/${userId}/helps`;
+  }
 
   createBaseDB(userId: string): BaseDB<UserHelpData> {
-    return new BaseDB(this.firestore, `users/${userId}/helps`);
+    return new BaseDB(this.firestore, this.getPath(userId));
   }
 
   async createUserHelp(
     userId: string,
-    helpId: string,
     subject: Subject,
     question: string,
-    fileUrls: string[] = [],
-    merge: boolean = false,
-  ): Promise<void> {
-    const data: UserHelpData = {
+    files: File[],
+  ): Promise<DocumentReference<UserHelpData, DocumentData>> {
+    const baseDB = this.createBaseDB(userId)
+    const helpRef: UserHelpData = {
       ...getInitialBaseDocumentData(userId),
       subject,
       question,
-      fileUrls,
+      fileUrls: [],
+      solved: false,
+      bestAnswerId: null,
     };
-    return this.createBaseDB(userId).createWithId(helpId, data, merge);
+
+    if (files.length > 0) {
+      const urls = await this.storageManager.uploadFiles(this.getPath(userId), helpRef.docId, 0, files);
+      baseDB.update(helpRef.docId, { fileUrls: urls });
+    }
+
+    return await baseDB.create(helpRef);
   }
 
   async isHelpExist(userId: string, helpId: string): Promise<boolean> {

@@ -26,6 +26,8 @@ import { SpaceMemberService } from './app/space/subCollection/spaceMemberService
 import { ChatRoomService } from './app/chat/chatRoomService';
 import { ChatRoomChatService } from './app/chat/subCollection/chatRoomChatService';
 
+type Constructor<T> = new (...args: any[]) => T;
+
 class ServiceFactory {
   private instances: Map<string, any> = new Map();
 
@@ -34,47 +36,54 @@ class ServiceFactory {
     private storageManager: StorageManager
   ) {}
 
-  private getInstance<T>(key: string, InstanceClass: new (...args: any[]) => T, ...args: any[]): T {
+  private getInstance<T>(
+    key: string,
+    InstanceClass: Constructor<T>,
+    ...args: ConstructorParameters<Constructor<T>>
+  ): T {
     if (!this.instances.get(key)) {
-      this.instances.set(key, new InstanceClass(this.firestore, this.storageManager, ...args));
+      this.instances.set(key, new InstanceClass(...args));
     }
     return this.instances.get(key) as T;
   }
 
   createUserService() {
-    return this.getInstance('userService', UserService, this.createTeamMemberService());
+    return this.getInstance('userService', UserService, this.firestore, this.storageManager, this.createTeamMemberService());
   }
 
   createUserTeamService() {
-    return this.getInstance('userTeamService', UserTeamService);
+    return this.getInstance('userTeamService', UserTeamService, this.firestore);
   }
 
   createUserLearningSessionService() {
-    return this.getInstance('userLearningSessionService', UserLearningSessionService);
+    return this.getInstance('userLearningSessionService', UserLearningSessionService, this.firestore);
   }
 
   createUserTaskManagementService() {
-    return this.getInstance('userTaskManagementService', UserTaskManagementService);
+    return this.getInstance('userTaskManagementService', UserTaskManagementService, this.firestore);
   }
 
   createUserPartnerService() {
-    return this.getInstance('userPartnerService', UserPartnerService);
+    return this.getInstance('userPartnerService', UserPartnerService, this.firestore);
   }
 
   createUserGoalService() {
-    return this.getInstance('userGoalService', UserGoalService);
+    return this.getInstance('userGoalService', UserGoalService, this.firestore);
   }
 
   createUserHelpService() {
-    return this.getInstance('userHelpService', UserHelpService);
+    return this.getInstance('userHelpService', UserHelpService, this.firestore);
   }
 
   createHelpAnswerService() {
-    return this.getInstance('helpAnswerService', HelpAnswerService);
+    return this.getInstance('helpAnswerService', HelpAnswerService, this.firestore);
   }
 
   createTeamService() {
-    return this.getInstance('teamService', TeamService,
+    return this.getInstance(
+      'teamService',
+      TeamService,
+      this.firestore,
       this.storageManager,
       this.createTeamMemberService(),
       this.createTeamJoinRequestService(),
@@ -85,19 +94,22 @@ class ServiceFactory {
   }
 
   createTeamJoinRequestService() {
-    return this.getInstance('teamJoinRequestService', TeamJoinRequestService, this.createUserTeamService());
+    return this.getInstance('teamJoinRequestService', TeamJoinRequestService, this.firestore);
   }
 
   createTeamMemberService() {
-    return this.getInstance('teamMemberService', TeamMemberService, this.createUserTeamService());
+    return this.getInstance('teamMemberService', TeamMemberService, this.firestore, this.createUserTeamService());
   }
 
   createTeamCodeService() {
-    return this.getInstance('teamCodeService', TeamCodeService);
+    return this.getInstance('teamCodeService', TeamCodeService, this.firestore);
   }
 
   createSpaceService() {
-    return this.getInstance('spaceService', SpaceService,
+    return this.getInstance(
+      'spaceService',
+      SpaceService,
+      this.firestore,
       this.createSpaceMemberService(),
       this.createSpaceJoinRequestService(),
       this.createUserService(),
@@ -106,19 +118,19 @@ class ServiceFactory {
   }
 
   createSpaceJoinRequestService() {
-    return this.getInstance('spaceJoinRequestService', SpaceJoinRequestService);
+    return this.getInstance('spaceJoinRequestService', SpaceJoinRequestService, this.firestore);
   }
 
   createSpaceMemberService() {
-    return this.getInstance('spaceMemberService', SpaceMemberService);
+    return this.getInstance('spaceMemberService', SpaceMemberService, this.firestore);
   }
 
   createChatRoomService() {
-    return this.getInstance('chatRoomService', ChatRoomService);
+    return this.getInstance('chatRoomService', ChatRoomService, this.firestore);
   }
 
   createChatRoomChatService() {
-    return this.getInstance('chatRoomChatService', ChatRoomChatService, this.storageManager);
+    return this.getInstance('chatRoomChatService', ChatRoomChatService, this.firestore, this.storageManager);
   }
 }
 

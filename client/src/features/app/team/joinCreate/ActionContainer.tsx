@@ -1,8 +1,8 @@
 import { Typography } from '@mui/material';
 import React, { FC, ReactNode } from 'react';
-import { cn } from '../../../../../../functions/utils';
-import { StringField } from '../../../../../../components/input/inputIndex';
-import CircularButton from '../../../../../../components/input/button/CircularButton';
+import { cn } from '../../../../functions/utils';
+import { StringField } from '../../../../components/input/inputIndex';
+import CircularButton from '../../../../components/input/button/CircularButton';
 
 interface ActionContainerProps {
     heading: string;

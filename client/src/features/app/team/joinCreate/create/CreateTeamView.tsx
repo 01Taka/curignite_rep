@@ -66,7 +66,7 @@ const CreateTeamView: FC<CreateTeamViewProps> = ({
           onChange={onFormStateChange}
         />
       </div>
-      <CircularButton size="lg" bgColor="main" onClick={onCreate} className='self-end' invalidation={creating}>
+      <CircularButton size="lg" bgColor="main" onClick={onCreate} className='ml-auto mt-2' invalidation={creating}>
         {creating ? <CircularProgress /> : <>作成する</>}
       </CircularButton>
     </FormContainer>

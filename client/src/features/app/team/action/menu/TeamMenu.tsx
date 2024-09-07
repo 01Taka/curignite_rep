@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import JoinCreateTeam from '../../../../../pages/app/team/actions/JoinCreateTeam'
+import JoinCreateTeam from '../../joinCreate/JoinCreateTeam'
 
 const TeamMenu: FC = () => {
   return (

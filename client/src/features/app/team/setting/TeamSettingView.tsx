@@ -1,6 +1,5 @@
 import React, { FC, useState } from 'react';
 import { Avatar, Switch, Typography, Tabs, Tab, Box } from '@mui/material';
-import TeamMembers from '../list/members/TeamMembers';
 import TeamCodeHandler from './TeamCodeHandler';
 import { TeamData, TeamMemberData } from '../../../../types/firebase/db/team/teamStructure';
 import { JoinRequestData } from '../../../../types/firebase/db/common/joinRequest/joinRequestStructure';

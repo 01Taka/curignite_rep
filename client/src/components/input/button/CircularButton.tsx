@@ -43,7 +43,9 @@ const circularButtonVariants = cva("rounded-full flex items-center justify-cente
                 primaryBase: 'bg-primaryBase hover:bg-primaryBase-hover border-primaryBase hover:border-primaryBase-hover',
                 secondaryBase: 'bg-secondaryBase hover:bg-secondaryBase-hover border-secondaryBase hover:border-secondaryBase-hover',
                 accent: 'bg-accent hover:bg-accent-hover border-accent hover:border-accent-hover',
-            },
+                success: 'bg-green-500 hover:bg-green-600 border-green-500 hover:border-green-600 text-white', // 完了用の緑
+                danger: 'bg-red-500 hover:bg-red-600 border-red-500 hover:border-red-600 text-white', // 破壊的操作用の赤
+            },            
             size: size,
             looks: {
                 fill: 'border-none',

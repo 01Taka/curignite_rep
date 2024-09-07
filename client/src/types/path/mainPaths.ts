@@ -2,13 +2,10 @@ import { PathParam, rootPaths } from "./paths";
 
 // Relative Main Paths
 export const relativeMainPaths = {
-  space: 'space',
-  chat: 'chat',
-  whiteboard: 'whiteboard',
-  calendar: 'calendar',
   task: 'task',
   team: 'team',
-  goal: 'goal',
+  activeMember: 'activeMember',
+  partner: 'partner',
 };
 
 // 型定義
@@ -32,31 +29,31 @@ export const mainPaths: MainPathsType = Object.fromEntries(
   Object.entries(relativeMainPaths).map(([key, value]) => [key, `${rootPaths.main}/${value}`])
 ) as MainPathsType;
 
-// Specific Path Groups
-export const spacePaths = {
-  base: mainPaths.space,
-  start: `${mainPaths.space}/start`,
-  startChildren: {
-    setting: `${mainPaths.space}/start/setting`,
-    joinProcessing: `${mainPaths.space}/start/join-processing/:${PathParam.SpaceId}`,
-  },
-  home: `${mainPaths.space}/home/:${PathParam.SpaceId}`,
-};
+// // Specific Path Groups
+// export const spacePaths = {
+//   base: mainPaths.space,
+//   start: `${mainPaths.space}/start`,
+//   startChildren: {
+//     setting: `${mainPaths.space}/start/setting`,
+//     joinProcessing: `${mainPaths.space}/start/join-processing/:${PathParam.SpaceId}`,
+//   },
+//   home: `${mainPaths.space}/home/:${PathParam.SpaceId}`,
+// };
 
-export const chatPaths = {
-  base: mainPaths.chat,
-  index: `${mainPaths.chat}/index`,
-};
+// export const chatPaths = {
+//   base: mainPaths.chat,
+//   index: `${mainPaths.chat}/index`,
+// };
 
-export const whiteboardPaths = {
-  base: mainPaths.whiteboard,
-  index: `${mainPaths.whiteboard}/index`,
-};
+// export const whiteboardPaths = {
+//   base: mainPaths.whiteboard,
+//   index: `${mainPaths.whiteboard}/index`,
+// };
 
-export const calendarPaths = {
-  base: mainPaths.calendar,
-  index: `${mainPaths.calendar}/index`,
-};
+// export const calendarPaths = {
+//   base: mainPaths.calendar,
+//   index: `${mainPaths.calendar}/index`,
+// };
 
 export const taskPaths = {
   base: mainPaths.task,
@@ -85,7 +82,7 @@ export const teamPaths = {
   join: `${mainPaths.team}/join`,
 };
 
-export const goalPaths = {
-  base: mainPaths.goal,
-  index: `${mainPaths.goal}/index`,
-};
+// export const goalPaths = {
+//   base: mainPaths.goal,
+//   index: `${mainPaths.goal}/index`,
+// };

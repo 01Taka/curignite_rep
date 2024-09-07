@@ -7,11 +7,11 @@ import { performComparison } from "./utils";
  * @param array - 配列データ
  * @returns ドキュメントIDをキーとする辞書
  */
-export const arrayToDict = <T extends Object>(array: T[], key: keyof T): Record<keyof T, T> => {
+export const objectArrayToDict = <T extends Object>(array: T[], key: keyof T): Record<string, T> => {
   return array.reduce((acc, item) => {
-    acc[key] = item;
+    acc[String(item[key])] = item;
     return acc;
-  }, {} as Record<keyof T, T>);
+  }, {} as Record<string, T>);
 };
 
 

@@ -55,9 +55,31 @@ export class UserService {
     return user;
   }
 
-  async getUsers(usersId: string[]): Promise<UserData[]> {
-    return await this.baseDB.getByConditions("id", usersId);
-  }
+  async getUsersWithNotExistIds(usersId: string[]): Promise<{ users: UserData[], notExistIds: string[] }> {
+    // 各IDに対するPromiseを作成
+    const dataPromises = usersId.map(async id => ({
+      id,
+      data: await this.baseDB.read(id)
+    }));
+  
+    // 全てのPromiseを解決
+    const dataResults = await Promise.all(dataPromises);
+  
+    // ユーザーデータが存在するかどうかで配列を分ける
+    const users: UserData[] = [];
+    const notExistIds: string[] = [];
+  
+    for (const { id, data } of dataResults) {
+      if (data) {
+        users.push(data);
+      } else {
+        notExistIds.push(id);
+      }
+    }
+  
+    // オブジェクトとして結果を返す
+    return { users, notExistIds };
+  }  
 
   /**
    * UIDがDBに存在するかどうかをチェックします。
@@ -164,15 +186,11 @@ export class UserService {
     }
   }
 
-  /**
-   * ユーザーの学習状態を設定します。
-   */
-  async setLearningState(userId: string, state: boolean): Promise<void> {
+  async setCurrentTargetGoalId(userId: string, goalId: string): Promise<void> {
     try {
-      await this.baseDB.update(userId, { isLearning: state });
-      await this.teamMemberService.updateAllTeamMemberForMember(userId, { isLearning: state });
+      await this.baseDB.update(userId, { currentTargetGoalId: goalId});
     } catch (error) {
-      this.handleError(`Failed to set learning state for user ${userId}.`, error);
+      this.handleError(`Failed to update currentTargetGoalId ${userId}`, error);
     }
   }
 

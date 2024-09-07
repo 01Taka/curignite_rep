@@ -2,7 +2,7 @@ import { Firestore, QueryConstraint } from "firebase/firestore";
 import BaseDB from "../../base";
 import { TaskCollectionData } from "../../../../types/firebase/db/common/task/taskStructure";
 import { DocumentIdMap } from "../../../../types/firebase/db/formatTypes";
-import { arrayToDict } from "../../../../functions/objectUtils";
+import { objectArrayToDict } from "../../../../functions/objectUtils";
 import { getInitialBaseDocumentData } from "../../../../functions/db/dbUtils";
 
 export class TaskCollectionService {
@@ -39,7 +39,7 @@ export class TaskCollectionService {
 
   async getTaskCollectionMap(docId: string): Promise<DocumentIdMap<TaskCollectionData>> {
     const collections = await this.getAllCollections(docId);
-    return arrayToDict(collections, "docId");
+    return objectArrayToDict(collections, "docId");
   }
 
   async getCollection(docId: string, collectionId: string): Promise<TaskCollectionData | null> {

@@ -5,6 +5,11 @@ import ImageButton from '../../../components/input/button/ImageButton';
 import UserProfileCard from '../../../features/app/user/UserProfileCard';
 import StartSessionPopup from '../../../features/app/learning/StartSessionPopup';
 import LearningSessions from '../../../features/app/learning/LearningSessions';
+import Goals from '../../../features/app/goal/Goals';
+import { useNavigate } from 'react-router-dom';
+import { mainPaths } from '../../../types/path/mainPaths';
+import { useAppSelector } from '../../../redux/hooks';
+import { revertTimestampConversion } from '../../../functions/db/dataFormatUtils';
 
 interface HomeViewProps {}
 
@@ -32,26 +37,44 @@ const StartLearningButton: FC<StartLearningButtonProps> = ({ onClick }) => (
   </div>
 );
 
-const FixedSideContent: FC = () => (
-  <div className='fixed top-6 right-6'>
-    <UserProfileCard />
+const FixedSideContent: FC = () => {
+  const userData = useAppSelector(state => state.userSlice.userData);
+  
+  return (
+    <div className='fixed top-6 right-6'>
+    <UserProfileCard userData={userData ? revertTimestampConversion(userData) : null} />
     <LearningOverview />
     <LearningTimeHeatmap />
   </div>
-);
+  )
+}
 
-const FixedImageButtons: FC = () => (
-  <div className='fixed top-6 left-6 flex items-center'>
-    <ImageButton src='images/components/team.png' alt='学習チーム' label='学習チーム' size="lg" textSize="md" shape="square" />
-    <ImageButton src='images/components/member.png' alt='学習中メンバー' label='学習中メンバー' size="lg" textSize="md" shape="square" />
-    <ImageButton src='images/components/partner.png' alt='学習パートナー' label='学習パートナー' size="lg" textSize="md" shape="square" />
-  </div>
-);
+const FixedNavigateButtons: FC = () => {
+  return (
+    <div className='fixed top-6 left-6 flex items-center'>
+      <NavigateButton src='images/components/team.png' label='学習チーム' navigatePath={mainPaths.team} />
+      <NavigateButton src='images/components/member.png' label='学習中メンバー' navigatePath={mainPaths.activeMember} />
+      <NavigateButton src='images/components/partner.png' label='学習パートナー' navigatePath={mainPaths.partner} />
+    </div>
+  )
+}
+
+interface NavigateButtonProps {
+  src: string;
+  label: string;
+  navigatePath: string;
+}
+
+const NavigateButton: FC<NavigateButtonProps> = ({ src, label, navigatePath }) => {
+  const navigate = useNavigate();
+  return <ImageButton src={src} alt={label} label={label} size="lg" textSize="md" shape="square" onClick={() => navigate(navigatePath)}/>
+}
 
 const FixedInfo: FC = () => {
   return (
     <div className='fixed top-40 left-6'>
       <LearningSessions />
+      <Goals />
     </div>
   )
 }
@@ -63,7 +86,7 @@ const HomeView: FC<HomeViewProps> = () => {
     <div>
       <StartLearningButton onClick={() => setOpen(true)} />
       <FixedSideContent />
-      <FixedImageButtons />
+      <FixedNavigateButtons />
       <FixedInfo />
       <StartSessionPopup open={open} handleClose={() => setOpen(false)} />
     </div>

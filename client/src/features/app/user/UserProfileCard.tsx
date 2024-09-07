@@ -1,15 +1,13 @@
 import React, { FC } from 'react';
-import { useAppSelector } from '../../../redux/hooks';
 import { Avatar, Box, Typography } from '@mui/material';
 import UserLevel from './UserLevel';
+import { UserData } from '../../../types/firebase/db/user/userStructure';
 
 interface UserProfileCardProps {
-
+  userData: UserData | null;
 }
 
-const UserProfileCard: FC<UserProfileCardProps> = () => {
-  const { userData } = useAppSelector(state => state.userSlice);
-
+const UserProfileCard: FC<UserProfileCardProps> = ({ userData }) => {
   if (!userData) {
     return (
       <Box className="p-4 bg-red-100 text-red-800 rounded-md shadow-md">

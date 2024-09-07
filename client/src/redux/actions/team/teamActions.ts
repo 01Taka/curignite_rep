@@ -1,6 +1,6 @@
 import { Dispatch } from '@reduxjs/toolkit';
 import serviceFactory from '../../../firebase/db/factory';
-import { setCurrentTeamId, setTeams, setTeamsUpdateState } from '../../slices/team/teamSlice';
+import { setTeams, setTeamsUpdateState } from '../../slices/team/teamSlice';
 import store from '../../store';
 import { autoUpdateCollection } from '../../../functions/redux/reduxUtils';
 import { AppDispatch } from '../../../types/module/redux/reduxTypes';
@@ -8,16 +8,28 @@ import { teamPaths } from '../../../types/path/mainPaths';
 import { NavigateFunction } from 'react-router-dom';
 import { replaceParams } from '../../../functions/path/pathUtils';
 import { PathParam } from '../../../types/path/paths';
-import { arrayToDictWithTimestampToNumbers } from '../../../functions/db/dataFormatUtils';
+import { arrayToDictWithTimestampToNumbers, convertTimestampsToNumbers } from '../../../functions/db/dataFormatUtils';
 import { TeamData } from '../../../types/firebase/db/team/teamStructure';
 import { AsyncThunkStatus } from '../../../types/module/redux/asyncThunkTypes';
+import { objectArrayToDict } from '../../../functions/objectUtils';
+import { DocumentIdMap } from '../../../types/firebase/db/formatTypes';
+
+export const setApprovedTeams = async (dispatch: AppDispatch, uid: string) => { // TODO 安全性を高めるためのエラーハンドリングなどを追加
+  try {
+    const teams = await serviceFactory.createTeamService().fetchApprovedTeams(uid);
+    const teamMap = objectArrayToDict(teams, "docId") as DocumentIdMap<TeamData>;
+    dispatch(setTeams(convertTimestampsToNumbers(teamMap)));
+  } catch (error) {
+    console.error('Error fetching approved teams:', error);
+  }
+}
 
 /**
  * ユーザーの所属チーム情報を自動更新する関数
  * @param dispatch - Reduxのdispatch関数
  * @param userId - ユーザーID
  */
-export const autoUpdateTeams = (dispatch: Dispatch, userId: string) => {
+const autoUpdateTeams = (dispatch: Dispatch, userId: string) => {
   try {
     const teamService = serviceFactory.createTeamService();
     const teamMemberService = serviceFactory.createTeamMemberService();
@@ -51,7 +63,6 @@ export const autoUpdateTeams = (dispatch: Dispatch, userId: string) => {
 
 export const navigateToTeamHome = (teamId: string, dispatch: AppDispatch, navigate: NavigateFunction, path: string = teamPaths.homeChildren.participants) => {
   console.log("nav", teamId, path);
-  
-  dispatch(setCurrentTeamId(teamId));
+
   navigate(replaceParams(path, { [PathParam.TeamId]: teamId }));
 }

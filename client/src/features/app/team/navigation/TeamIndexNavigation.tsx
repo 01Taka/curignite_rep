@@ -1,17 +1,18 @@
 import React, { FC, useEffect } from 'react'
 import CircularButton from '../../../../components/input/button/CircularButton';
 import { Home, ArrowBack } from '@mui/icons-material';
-import Teams from '../list/teams/Teams';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { teamPaths } from '../../../../types/path/mainPaths';
-import { useAppDispatch, useAppSelector } from '../../../../redux/hooks';
-import { rootPaths } from '../../../../types/path/paths';
-import { setCurrentTeamId } from '../../../../redux/slices/team/teamSlice';
+import { useAppSelector } from '../../../../redux/hooks';
+import { PathParam, rootPaths } from '../../../../types/path/paths';
+import TeamIcons from '../teams/TeamIcons';
+import { replaceParams } from '../../../../functions/path/pathUtils';
+import { ConvertTimestampToNumber } from '../../../../types/firebase/db/formatTypes';
+import { TeamData } from '../../../../types/firebase/db/team/teamStructure';
 
 const TeamIndexNavigation: FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const dispatch = useAppDispatch();
   const { device } = useAppSelector(state => state.userSlice);
 
   useEffect(() => {
@@ -21,12 +22,15 @@ const TeamIndexNavigation: FC = () => {
   }, [device, location, navigate]);
 
   const handleToMenu = () => {
-    dispatch(setCurrentTeamId(""));
     navigate(teamPaths.menu);
   }
 
   const handleToAppIndex = () => {
     navigate(rootPaths.main);
+  }
+
+  const handleNavigateToTeamView = (team: ConvertTimestampToNumber<TeamData>) => {
+    navigate(replaceParams(teamPaths.homeChildren.participants, { [PathParam.TeamId]: team.docId }))
   }
 
   return (
@@ -39,8 +43,8 @@ const TeamIndexNavigation: FC = () => {
               <Home />
           </CircularButton>
         </div>
-        <div className='h-8'/>
-        <Teams />
+        <div className='h-16'/>
+        <TeamIcons onClickTeam={handleNavigateToTeamView} />
     </div>
   )
 }

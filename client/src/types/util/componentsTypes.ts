@@ -11,8 +11,9 @@ export type HTMLElement<T, K extends string> = {
 export type HTMLDateElement = HTMLElement<Date | null, "date">;
 export type HTMLRangeElement = HTMLElement<Range[], "range">;
 export type HTMLFileElement = HTMLElement<File, "file">;
+export type HTMLFilesElement = HTMLElement<File[], "files">;
 
-type CustomHTMLElement = HTMLDateElement | HTMLRangeElement | HTMLFileElement;
+type CustomHTMLElement = HTMLDateElement | HTMLRangeElement | HTMLFileElement | HTMLFilesElement;
 
 export type FormStateChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | CustomHTMLElement>;
 

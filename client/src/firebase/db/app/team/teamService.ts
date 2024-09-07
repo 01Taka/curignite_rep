@@ -66,7 +66,7 @@ export class TeamService {
 
       await this.chatRoomService.createChatRoom(userId, teamName, { parentId: teamRef.id, parentType: "team" });
 
-      await this.teamMemberService.addMember(teamRef.id, userId, BaseMemberRole.Admin);
+      await this.teamMemberService.addMember(teamRef.id, userId, BaseMemberRole.Admin, "allowed");
 
       return { documentRef: teamRef, filesUrl: { icon: iconUrl } };
     } catch (error) {
@@ -80,7 +80,6 @@ export class TeamService {
       return await this.storageManager.uploadFile(
         this.baseDB.getCollectionPath(),
         teamId,
-        getFileExtension(iconImage.type),
         iconImage
       );
     } catch (error) {
@@ -180,12 +179,12 @@ export class TeamService {
    * @returns 承認済みのチームのリスト
    */
   async fetchApprovedTeams(userId: string): Promise<TeamData[]> {
-    const userTeams = await this.userTeamService.getAllUserTeams(userId);
     try {
+      const userTeams = await this.userTeamService.getAllUserTeams(userId);
       const teamPromises = userTeams.map(async (userTeam) => {
-        if (userTeam.joinStatus === "allowed") {
-          const team = await this.getTeamData(userTeam.teamId);
-          if (team && isDocumentExist(userId, team.members)) {
+        if (userTeam.status === "allowed") {
+          const team = await this.getTeamData(userTeam.docId);
+          if (team && await this.teamMemberService.isUserExist(team.docId, userId)) {
             return team;
           }
         }
@@ -201,7 +200,7 @@ export class TeamService {
     }
   }
 
-  async getParticipationState(teamId: string, userId: string): Promise<BaseParticipationStatus> {
+  async getParticipationStatus(teamId: string, userId: string): Promise<BaseParticipationStatus> {
     try {
       if (await this.teamMemberService.isUserExist(teamId, userId)) {
         return BaseParticipationStatus.Active;

@@ -1,8 +1,8 @@
 import React, { FC, useState } from 'react';
 import { Alert, Avatar, Typography } from '@mui/material';
-import CircularButton from '../../../../../../components/input/button/CircularButton';
-import serviceFactory from '../../../../../../firebase/db/factory';
-import { TeamData } from '../../../../../../types/firebase/db/team/teamStructure';
+import CircularButton from '../../../../../components/input/button/CircularButton';
+import serviceFactory from '../../../../../firebase/db/factory';
+import { TeamData } from '../../../../../types/firebase/db/team/teamStructure';
 
 interface JoiningTeamProps {
   team: TeamData;

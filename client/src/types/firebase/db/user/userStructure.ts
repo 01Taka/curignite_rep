@@ -62,6 +62,8 @@ export interface UserHelpData extends BaseDocumentData {
   subject: Subject;
   question: string;
   fileUrls: string[];
+  solved: boolean;
+  bestAnswerId: string | null;
 }
 
 /**

@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import ActionContainer from './actionContainer/ActionContainer';
+import ActionContainer from './ActionContainer';
 
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import EditIcon from '@mui/icons-material/Edit';

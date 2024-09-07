@@ -45,8 +45,10 @@ const StartSessionPopup: FC<StartSessionPopupProps> = ({ open, handleClose }) =>
   const handleCreateGoal = async () => {
     if (uid && formState.objectives && formState.subject !== Subject.NotSelected) {
       try {
+        const userService = serviceFactory.createUserService();
         const goalService = serviceFactory.createUserGoalService();
-        await goalService.createUserGoal(uid, formState.objectives, formState.subject, toTimestamp(formState.deadline));
+        const goalRef = await goalService.createUserGoal(uid, formState.objectives, formState.subject, toTimestamp(formState.deadline));
+        await userService.setCurrentTargetGoalId(uid, goalRef.id);
       } catch (error) {
         console.error("Error creating goal:", error);
         setErrorMessage("目標の作成中にエラーが発生しました。もう一度試してください。");
@@ -57,9 +59,7 @@ const StartSessionPopup: FC<StartSessionPopupProps> = ({ open, handleClose }) =>
   };                  
 
   const handleStartSession = async () => {
-    // await handleCreateGoal();
-    console.log("&&&&"); 
-  
+    await handleCreateGoal();
     await IndexedLearningSessionService.startSession();  
     handleClose(); // 成功時にポップアップを閉じる 
   }

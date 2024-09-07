@@ -1,7 +1,7 @@
 import React, { FC, memo } from 'react';
 import { useAppSelector } from '../../../../redux/hooks';
-import TeamMembers from '../../../../features/app/team/list/members/TeamMembers';
 import { Typography, Box } from '@mui/material';
+import TeamMembers from '../../../../features/app/team/members/TeamMembers';
 
 const Participants: FC = () => {
   const { teams, currentTeamId } = useAppSelector((state) => state.teamSlice);
@@ -15,7 +15,7 @@ const Participants: FC = () => {
     <Box className="flex justify-center items-center w-full h-full">
       <Box className="flex flex-col p-4 space-y-4 border-2 border-main rounded-lg w-full max-w-lg h-4/5 overflow-y-auto">
         <Typography variant="h4">メンバー</Typography>
-        <TeamMembers members={currentDisplayTeam.members} />
+        <TeamMembers />
       </Box>
     </Box>
   );

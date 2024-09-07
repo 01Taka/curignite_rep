@@ -1,10 +1,8 @@
 import { useDispatch } from "react-redux";
-import { useEffect, useState } from "react";
-import { fetchAndAddNewUsers } from "../../redux/actions/user/fetchedUserActions";
-import { useAppSelector } from "../../redux/hooks";
-import { revertTimestampConversion } from "../../functions/db/dataFormatUtils";
+import { useEffect, useMemo, useState } from "react";
 import { DocumentIdMap } from "../../types/firebase/db/formatTypes";
 import { UserData } from "../../types/firebase/db/user/userStructure";
+import { fetchAndSetUsers } from "../../redux/actions/user/fetchedUserActions";
 
 export const useUserMap = (userIds: string[]) => {
   const [userMap, setUserMap] = useState<DocumentIdMap<UserData>>({});
@@ -12,17 +10,19 @@ export const useUserMap = (userIds: string[]) => {
   const [error, setError] = useState<string | null>(null);
   const dispatch = useDispatch();
 
-  const usersFromStore = useAppSelector(state => state.fetchedUserSlice.users);
+  const memoizedUserIds = useMemo(() => userIds, [userIds.join(',')]);
 
   useEffect(() => {
     const fetchUsers = async () => {
-      if (userIds.length === 0) return;
-
-      setLoading(true);
       setError(null);
 
+      if (userIds.length === 0 || loading) return;
+
+      setLoading(true);
+
       try {
-        await fetchAndAddNewUsers(dispatch, userIds);
+        const userMap = await fetchAndSetUsers(dispatch, userIds);
+        setUserMap(userMap);
       } catch (err) {
         console.error("Error fetching users: ", err);
         setError("Failed to fetch users");
@@ -32,14 +32,7 @@ export const useUserMap = (userIds: string[]) => {
     };
 
     fetchUsers();
-  }, [userIds, dispatch]);
-
-  useEffect(() => {
-    if (usersFromStore) {
-      const convertedUsers = revertTimestampConversion(usersFromStore) as DocumentIdMap<UserData>;
-      setUserMap(convertedUsers);
-    }
-  }, [usersFromStore]);
+  }, [memoizedUserIds, dispatch]);
 
   return { userMap, loading, error };
 };

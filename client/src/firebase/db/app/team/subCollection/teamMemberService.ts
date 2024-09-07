@@ -5,6 +5,7 @@ import { getInitialBaseDocumentData } from "../../../../../functions/db/dbUtils"
 import { UserTeamService } from "../../user/subCollection/userTeamService";
 import { BaseMemberRole } from "../../../../../types/firebase/db/baseTypes";
 import { TeamData, TeamMemberData } from "../../../../../types/firebase/db/team/teamStructure";
+import { JoinRequestStatus } from "../../../../../types/firebase/db/common/joinRequest/joinRequestSupplementTypes";
 
 export class TeamMemberService {
   constructor(private firestore: Firestore, private userTeamService: UserTeamService) { }
@@ -35,7 +36,8 @@ export class TeamMemberService {
   async addMember(
     teamId: string,
     userId: string,
-    role: BaseMemberRole = BaseMemberRole.Member
+    role: BaseMemberRole = BaseMemberRole.Member,
+    joinStatus: JoinRequestStatus = "pending"
   ): Promise<void> {
     try {
       if (await this.isUserExist(teamId, userId)) return;
@@ -44,16 +46,20 @@ export class TeamMemberService {
       if (await this.userTeamService.isTeamExist(userId, teamId)) {
         await this.userTeamService.setJoinStatus(userId, teamId, "allowed");
       } else {
-        await this.userTeamService.createUserTeam(userId, teamId);
+        await this.userTeamService.createUserTeam(userId, teamId, joinStatus);
       }
     } catch (error) {
       console.error("Error adding member:", error);
       throw new Error("Failed to add member");
     }
   }
+  
+  async getMember(teamId: string, memberId: string) {
+    return await this.createBaseDB(teamId).read(memberId);
+  }
 
   async getAllMembers(teamId: string): Promise<TeamMemberData[]> {
-    return this.createBaseDB(teamId).getAll();
+    return await this.createBaseDB(teamId).getAll();
   }
 
   async getSameTeamMembersId(userId: string): Promise<string[]> {
@@ -105,23 +111,6 @@ export class TeamMemberService {
   async isUserExist(teamId: string, userId: string): Promise<boolean> {
     const snapshot = await this.createBaseDB(teamId).readAsDocumentSnapshot(userId);
     return snapshot.exists();
-  }
-
-  async updateAllTeamMemberForMember(
-    userId: string,
-    data: Partial<TeamMemberData>
-  ): Promise<void> {
-    try {
-      const userTeams = await this.userTeamService.getAllUserTeams(userId);
-      await Promise.all(
-        userTeams.map((userTeam) =>
-          this.createBaseDB(userTeam.teamId).update(userId, data)
-        )
-      );
-    } catch (error) {
-      console.error("Failed to update all members:", error);
-      throw new Error("Failed to update all members");
-    }
   }
 
   async filterNonMemberTeam(

@@ -1,7 +1,7 @@
 import { NavigateFunction } from "react-router-dom";
 import serviceFactory from "../../../firebase/db/factory";
 import { SpaceStartFormState } from "../../../types/app/space/spaceTypes";
-import { spacePaths } from "../../../types/path/mainPaths";
+// import { spacePaths } from "../../../types/path/mainPaths";
 import { replaceParams } from "../../path/pathUtils";
 import { PathParam } from "../../../types/path/paths";
 import { Dispatch } from "@reduxjs/toolkit";
@@ -16,7 +16,7 @@ import { setCurrentSpaceId } from "../../../redux/slices/space/spaceSlice";
  * @param navigate - ページ遷移を行うための関数。
  * @param dispatch - Reduxのディスパッチ関数。
  */
-export const startNewSpace = async (
+ const startNewSpace = async (
     formState: SpaceStartFormState,
     uid: string,
     setIsStartingSpace: React.Dispatch<React.SetStateAction<boolean>>,
@@ -28,7 +28,7 @@ export const startNewSpace = async (
         const userService = serviceFactory.createUserService();
         const spaceService = serviceFactory.createSpaceService();
 
-        await userService.setLearningState(uid, true);
+        // await userService.setLearningState(uid, true);
 
         // スペースの作成処理
         const spaceRef = await spaceService.createSpace(
@@ -39,7 +39,7 @@ export const startNewSpace = async (
         );
 
         const newSpaceId = spaceRef.id;
-        navigate(replaceParams(spacePaths.home, { [PathParam.SpaceId]: newSpaceId }));
+        // navigate(replaceParams(spacePaths.home, { [PathParam.SpaceId]: newSpaceId }));
         dispatch(setCurrentSpaceId(newSpaceId));
 
         // スペース参加のためのストレージ設定
