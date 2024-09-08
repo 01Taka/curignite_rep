@@ -4,7 +4,7 @@ import { convertToMilliseconds, getMidnightTimestamp, convertToDate, toISODate, 
 import { getMinAndMaxFromObjectArray } from "../../../../../functions/objectUtils";
 import BaseDB from "../../../base";
 import { getInitialBaseDocumentData } from "../../../../../functions/db/dbUtils";
-import { startOfWeek } from "date-fns";
+import { differenceInMilliseconds, startOfWeek } from "date-fns";
 import { safeNumber } from "../../../../../functions/utils";
 import { SessionData, UserLearningSessionData } from "../../../../../types/firebase/db/user/userStructure";
 import { DAYS_IN_MILLISECOND } from "../../../../../constants/utils/dateTimeConstants";
@@ -111,7 +111,6 @@ export class UserLearningSessionService {
 
   async recordSession(
     userId: string, 
-    learningTime: number, 
     startTime: TimeTypes, 
     endTime: TimeTypes = Timestamp.now(), 
     targetDate: TimeTypes = new Date()
@@ -123,7 +122,8 @@ export class UserLearningSessionService {
       };
 
       const sessionData = await this.fetchOrCreateDailySession(userId, targetDate);
-      const newTotalLearningTime = safeNumber(sessionData.totalLearningTime) + safeNumber(learningTime);
+      const addingTime = safeNumber(Math.max(0, differenceInMilliseconds(convertToDate(endTime), convertToDate(startTime))));
+      const newTotalLearningTime = safeNumber(sessionData.totalLearningTime) + addingTime;
 
       const newSessions = [...sessionData.sessions, session];
 

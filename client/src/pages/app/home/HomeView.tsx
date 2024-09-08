@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import LearningOverview from '../../../features/app/learning/LearningOverview';
 import LearningTimeHeatmap from '../../../features/app/learning/LearningTimeHeatmap';
 import ImageButton from '../../../components/input/button/ImageButton';
@@ -11,32 +11,9 @@ import { mainPaths } from '../../../types/path/mainPaths';
 import { useAppSelector } from '../../../redux/hooks';
 import { revertTimestampConversion } from '../../../functions/db/dataFormatUtils';
 import Helps from '../../../features/app/help/Helps';
+import StartLearningButton from '../../../features/app/learning/StartLearningButton';
 
 interface HomeViewProps {}
-
-interface StartLearningButtonProps {
-  onClick: () => void;
-} 
-
-const StartLearningButton: FC<StartLearningButtonProps> = ({ onClick }) => (
-  <div className='fixed flex justify-center bottom-8 w-full'>
-    <div className='relative'>
-      <div className='absolute inset-0 flex justify-center items-center w-full h-full'>
-        <button
-          className='w-36 h-36 bg-lime-400 hover:bg-lime-500 shadow-md rounded-full z-10 transition-all duration-300 hover:scale-110'
-          onClick={onClick}
-        >
-          <div className='text-2xl font-bold'>学習を開始</div>
-        </button>
-      </div>
-      <img
-        src='images/components/tower.png'
-        alt='ダンジョン入口'
-        className='w-auto h-80 rounded-3xl opacity-60 blur-sm'
-      />
-    </div>
-  </div>
-);
 
 const FixedSideContent: FC = () => {
   const userData = useAppSelector(state => state.userSlice.userData);
@@ -83,10 +60,11 @@ const FixedInfo: FC = () => {
 
 const HomeView: FC<HomeViewProps> = () => {
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div>
-      <StartLearningButton onClick={() => setOpen(true)} />
+      <StartLearningButton onClickAtNotLearning={() => setOpen(true)} onClickAtLearning={() => navigate(mainPaths.focusLearning)}/>
       <FixedSideContent />
       <FixedNavigateButtons />
       <FixedInfo />

@@ -1,11 +1,11 @@
 import React from 'react';
-import { TimerSize } from '../../../../../types/util/componentsTypes';
-import CountdownTimer from '../../../../../components/app/timer/CountdownTimer';
-import Stopwatch from '../../../../../components/app/timer/Stopwatch';
-import { SpaceTimerMode } from '../../../../../types/app/space/spaceTypes';
+import { TimerSize } from '../../../types/util/componentsTypes';
+import CountdownTimer from './CountdownTimer';
+import Stopwatch from './Stopwatch';
+import { TimerMode } from '../../../types/components/TimerTypes';
 
 interface TimerDisplayProps {
-  timerMode: SpaceTimerMode;
+  timerMode: TimerMode;
   size: TimerSize;
   isBreak: boolean;
   active: boolean;

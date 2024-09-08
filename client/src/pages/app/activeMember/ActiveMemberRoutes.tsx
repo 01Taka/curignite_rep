@@ -10,8 +10,6 @@ const ActiveMemberRoutes: FC = () => {
 
   useEffect(() => {
     if (location.pathname === activeMemberPaths.base) {
-      console.log("######");
-      
       navigate(activeMemberPaths.home, { replace: true });
     }
   }, [location.pathname, navigate]);

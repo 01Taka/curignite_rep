@@ -112,7 +112,6 @@ class IndexedDBStoreHandler<T extends { uid: string }> {
   public getAllData(uid: string): Promise<T[]> {
     return this.withTransaction('readonly', (store) => store.getAll())
       .then((data) => {
-        console.log(data);
         return data.filter((item) => item.uid === uid)
       });
   }

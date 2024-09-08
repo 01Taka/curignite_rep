@@ -1,13 +1,11 @@
 import React, { FC, useState, useEffect, useCallback } from 'react';
-import { Pomodoro, TimerSize } from '../../../../../types/util/componentsTypes';
-import TimerDisplay from '../../../../../components/app/timer/TimerDisplay';
-import TimerControls from '../../../../../components/app/timer/TimerControls';
-import { SpaceTimerMode } from '../../../../../types/app/space/spaceTypes';
-import { useAppDispatch, useAppSelector } from '../../../../../redux/hooks';
-import { SECONDS_IN_MILLISECOND } from '../../../../../constants/utils/dateTimeConstants';
+import { Pomodoro, TimerSize } from '../../../types/util/componentsTypes';
+import { TimerMode } from '../../../types/components/TimerTypes';
+import { SECONDS_IN_MILLISECOND } from '../../../constants/utils/dateTimeConstants';
+import TimerControls from '../../../components/app/timer/TimerControls';
+import TimerDisplay from '../../../components/app/timer/TimerDisplay';
 
 interface SpaceTimerProps {
-  spaceId: string;
   pomodoro?: Pomodoro;
   size?: TimerSize;
 }
@@ -15,15 +13,13 @@ interface SpaceTimerProps {
 const DEFAULT_POMODORO: Pomodoro = { cycle: 25 * 60 * 1000, break: 5 * 60 * 1000 };
 const DEFAULT_TIMER_INITIAL_TIME = 60 * 60 * 1000;
 
-const SpaceTimer: FC<SpaceTimerProps> = ({ spaceId }) => {
-  const dispatch = useAppDispatch();
-  const { uid } = useAppSelector(state => state.userSlice);
+const FocusLearningTimer: FC<SpaceTimerProps> = () => {
   const [prevSecond, setPrevSecond] = useState(0);
   const [time, setTime] = useState(0);
   const [active, setActive] = useState(false);
   const [cycleNumber, setCycleNumber] = useState(1);
   const [isBreak, setIsBreak] = useState(false);
-  const [timerMode, setTimerMode] = useState<SpaceTimerMode>("stopwatch");
+  const [timerMode, setTimerMode] = useState<TimerMode>("stopwatch");
   const [pomodoro, setPomodoro] = useState<Pomodoro>(DEFAULT_POMODORO);
   const [timerInitialTime, setTimerInitialTime] = useState(DEFAULT_TIMER_INITIAL_TIME);
 
@@ -32,7 +28,6 @@ const SpaceTimer: FC<SpaceTimerProps> = ({ spaceId }) => {
     setTime(time);
   }
   useEffect(() => {
-    // ローカルストレージからデータを取得する処理は、後で追加する
     setPomodoro(DEFAULT_POMODORO);
     setTimerInitialTime(DEFAULT_TIMER_INITIAL_TIME);
   }, []);
@@ -49,13 +44,11 @@ const SpaceTimer: FC<SpaceTimerProps> = ({ spaceId }) => {
   }, [timerMode, pomodoro.cycle, timerInitialTime]);
 
   useEffect(() => {
-    if (uid && spaceId) {
-      setTime(getInitialTime());
-    }
-  }, [spaceId, uid, getInitialTime, dispatch]);
+    setTime(getInitialTime());
+  }, [getInitialTime]);
 
   const handleUpdateTotalTime = useCallback((_: number) => {
-    if (!isBreak && uid) {
+    if (!isBreak) {
       const diff = Math.abs(time - (prevSecond * SECONDS_IN_MILLISECOND));
 
       if (diff >= 1000) {
@@ -64,7 +57,7 @@ const SpaceTimer: FC<SpaceTimerProps> = ({ spaceId }) => {
         // addLearningTime(dispatch, uid, spaceId, 1000); UNDONE
       }
     }
-  }, [uid, isBreak, prevSecond, time]);
+  }, [isBreak, prevSecond, time]);
 
   const handleReset = useCallback(() => {
     setCycleNumber(1);
@@ -92,7 +85,7 @@ const SpaceTimer: FC<SpaceTimerProps> = ({ spaceId }) => {
         timerMode={timerMode}
         size="xl"
         isBreak={isBreak}
-        active={!!spaceId && active}
+        active={active}
         initialTime={isBreak ? pomodoro.break : getInitialTime()}
         time={time}
         setTime={setTime}
@@ -105,10 +98,10 @@ const SpaceTimer: FC<SpaceTimerProps> = ({ spaceId }) => {
         cycleNumber={cycleNumber}
         timerMode={timerMode}
         active={active}
-        onTimerModeChange={(e) => setTimerMode(e.target.value as SpaceTimerMode)}
+        onTimerModeChange={(e) => setTimerMode(e.target.value as TimerMode)}
       />
     </div>
   );
 };
 
-export default SpaceTimer;
+export default FocusLearningTimer;

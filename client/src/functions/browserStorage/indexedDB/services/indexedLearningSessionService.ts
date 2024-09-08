@@ -71,6 +71,14 @@ export class IndexedLearningSessionService {
     }
   }
 
+  public static async deleteCurrentSession(userId: string) {
+    try {
+      await this.getCurrentSessionDB().deleteData(userId, 0);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   public static async clearSessions(userId: string): Promise<void> {
     try {
       await this.getSessionDB().clearStore(userId);

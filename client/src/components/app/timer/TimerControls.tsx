@@ -1,20 +1,19 @@
 import React from 'react';
-import SelectField from '../../../../../components/input/field/SelectField';
-import { FormStateChangeFunc, SelectItem } from '../../../../../types/util/componentsTypes';
-import { SpaceTimerMode } from '../../../../../types/app/space/spaceTypes';
+import SelectField from '../../input/field/SelectField';
+import { FormStateChangeFunc, SelectItem } from '../../../types/util/componentsTypes';
+import { TimerMode } from '../../../types/components/TimerTypes';
+import { timerModeSelectItems } from '../../../constants/selectItems/timerSelectItems';
 
 
 interface TimerControlsProps {
   cycleNumber: number;
-  timerModes: SelectItem<SpaceTimerMode>[];
-  timerMode: SpaceTimerMode;
+  timerMode: TimerMode;
   active: boolean;
   onTimerModeChange: FormStateChangeFunc;
 }
 
 const TimerControls: React.FC<TimerControlsProps> = ({
   cycleNumber,
-  timerModes,
   timerMode,
   active,
   onTimerModeChange,
@@ -33,7 +32,7 @@ const TimerControls: React.FC<TimerControlsProps> = ({
         <SelectField
           label='モード'
           name='timerMode'
-          selectItems={timerModes}
+          selectItems={timerModeSelectItems}
           value={timerMode}
           variant="outlined"
           onChange={onTimerModeChange}
