@@ -37,16 +37,15 @@ export class TeamMemberService {
     teamId: string,
     userId: string,
     role: BaseMemberRole = BaseMemberRole.Member,
-    joinStatus: JoinRequestStatus = "pending"
   ): Promise<void> {
     try {
       if (await this.isUserExist(teamId, userId)) return;
       await this.createMember(teamId, userId, role);
 
       if (await this.userTeamService.isTeamExist(userId, teamId)) {
-        await this.userTeamService.setJoinStatus(userId, teamId, "allowed");
+        await this.userTeamService.updateAsMember(userId, teamId);
       } else {
-        await this.userTeamService.createUserTeam(userId, teamId, joinStatus);
+        await this.userTeamService.createUserTeam(userId, teamId, "allowed", false);
       }
     } catch (error) {
       console.error("Error adding member:", error);

@@ -9,6 +9,7 @@ import { mainRootPaths } from '../../../types/path/mainPaths';
 import { autoUpdateSpaces } from '../../../redux/actions/space/spaceActions';
 import TaskRoutes from '../task/TaskRoutes';
 import { setApprovedTeams } from '../../../redux/actions/team/teamActions';
+import ActiveMemberRoutes from '../activeMember/ActiveMemberRoutes';
 
 const MainRoutes: FC = () => {
   const dispatch = useAppDispatch();
@@ -29,6 +30,7 @@ const MainRoutes: FC = () => {
         <Route path='*' element={<NotFound />} />
         <Route path={mainRootPaths.task} element={<TaskRoutes />} />
         <Route path={mainRootPaths.team} element={<TeamRoutes />} />
+        <Route path={mainRootPaths.activeMember} element={<ActiveMemberRoutes />} />
       </Routes>
     </div>
   );

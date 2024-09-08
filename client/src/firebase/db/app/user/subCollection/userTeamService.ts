@@ -14,13 +14,15 @@ export class UserTeamService {
     async createUserTeam(
         userId: string,
         teamId: string,
-        status: JoinRequestStatus = "pending",
+        status: JoinRequestStatus,
+        isMember: boolean,
         merge: boolean = false,
       ): Promise<void> {
         const data: UserTeamData = {
           ...getInitialBaseDocumentData(userId),
           requestedAt: Timestamp.now(),
           status,
+          isMember,
         }
         return this.createBaseDB(userId).createWithId(teamId, data, merge);
       }
@@ -35,6 +37,10 @@ export class UserTeamService {
       }
 
       async setJoinStatus(userId: string, teamId: string, joinStatus: JoinRequestStatus): Promise<void> {
-        await this.createBaseDB(userId).update(teamId, { joinStatus });
+        await this.createBaseDB(userId).update(teamId, { status: joinStatus });
+      }
+
+      async updateAsMember(userId: string, teamId: string): Promise<void> {
+        await this.createBaseDB(userId).update(teamId, { isMember: true, status: "allowed" });
       }
 }

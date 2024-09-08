@@ -101,7 +101,7 @@ class ServiceFactory {
   }
 
   createTeamJoinRequestService() {
-    return this.getInstance('teamJoinRequestService', TeamJoinRequestService, this.firestore);
+    return this.getInstance('teamJoinRequestService', TeamJoinRequestService, this.firestore, this.createUserTeamService());
   }
 
   createTeamMemberService() {

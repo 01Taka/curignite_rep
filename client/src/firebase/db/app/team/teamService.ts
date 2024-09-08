@@ -10,6 +10,7 @@ import { ChatRoomService } from "../chat/chatRoomService";
 import { TeamData, TeamWithSupplementary } from "../../../../types/firebase/db/team/teamStructure";
 import { TeamCodeData } from "../../../../types/firebase/db/team/teamCodeStructure";
 import { TeamCodeService } from "./teamCodeService";
+import { DocumentIdMap } from "../../../../types/firebase/db/formatTypes";
 
 export class TeamService {
   public baseDB: BaseDB<TeamData>;
@@ -65,7 +66,7 @@ export class TeamService {
 
       await this.chatRoomService.createChatRoom(userId, teamName, { parentId: teamRef.id, parentType: "team" });
 
-      await this.teamMemberService.addMember(teamRef.id, userId, BaseMemberRole.Admin, "allowed");
+      await this.teamMemberService.addMember(teamRef.id, userId, BaseMemberRole.Admin);
 
       return teamRef;
     } catch (error) {
@@ -90,6 +91,19 @@ export class TeamService {
   async getTeamData(teamId: string): Promise<TeamData | null> {
     return this.baseDB.read(teamId);
   }
+
+  async getTeamDataMap(teamsId: string[]): Promise<DocumentIdMap<TeamData>> {
+    // 非同期操作を含むマッピングを作成
+    const entries = await Promise.all(
+      teamsId.map(async id => {
+        const data = await this.getTeamData(id);
+        return [id, data] as [string, TeamData];
+      })
+    );
+  
+    // エントリ配列からオブジェクトを作成
+    return Object.fromEntries(entries);
+  }  
 
   async addSupplementaryToTeam(team: TeamData): Promise<TeamWithSupplementary> {
     const iconUrl = await this.storageManager.getFileUrl(team.iconId);
@@ -154,6 +168,31 @@ export class TeamService {
     }
     await this.handleTeamJoin(userId, code);
   }
+
+  
+  async tryBecomeMember(userId: string, teamId: string): Promise<boolean> {
+    try {
+      const participationStatus = await this.getParticipationStatus(teamId, userId);
+
+      console.log(participationStatus);
+      
+  
+      switch (participationStatus) {
+        case BaseParticipationStatus.Active:
+          console.warn("既にメンバーです。");
+          return true;
+        case BaseParticipationStatus.Eligible:
+          await this.teamMemberService.addMember(teamId, userId);
+          return true;
+        default:
+          console.error("参加が許可されていません。");
+          return false;
+      }
+    } catch (error) {
+      console.error("メンバーシップの処理中にエラーが発生しました:", error);
+      return false;
+    }
+  }  
 
   /**
    * チームコードを使用してチームに参加する
@@ -220,7 +259,7 @@ export class TeamService {
       }
 
       const joinRequest = await this.teamJoinRequestService.getJoinRequest(teamId, userId);
-      const joinState = joinRequest?.state;
+      const joinState = joinRequest?.status;
 
       switch (joinState) {
         case "allowed":

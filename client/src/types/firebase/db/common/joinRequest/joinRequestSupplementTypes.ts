@@ -1,1 +1,1 @@
-export type JoinRequestStatus = "pending" | "rejected" | "allowed"
+export type JoinRequestStatus = "pending" | "rejected" | "allowed";

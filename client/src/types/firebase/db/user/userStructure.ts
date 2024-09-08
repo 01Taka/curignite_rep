@@ -45,6 +45,7 @@ export interface UserLearningSessionData extends BaseDocumentData {
 export interface UserTeamData extends BaseDocumentData {
   requestedAt: Timestamp;
   status: JoinRequestStatus;
+  isMember: boolean;
 }
 
 /**

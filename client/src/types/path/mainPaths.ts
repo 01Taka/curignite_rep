@@ -55,6 +55,11 @@ export const mainPaths: MainPathsType = Object.fromEntries(
 //   index: `${mainPaths.calendar}/index`,
 // };
 
+export const activeMemberPaths = {
+  base: mainPaths.activeMember,
+  home: `${mainPaths.activeMember}/home`
+}
+
 export const taskPaths = {
   base: mainPaths.task,
   home: `${mainPaths.task}/home`,

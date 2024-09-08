@@ -1,43 +1,18 @@
-import React, { FC, useEffect, useMemo, useState } from 'react';
-import serviceFactory from '../../../../firebase/db/factory';
+import React, { FC } from 'react';
 import { useAppSelector } from '../../../../redux/hooks';
 import { Typography, CircularProgress } from '@mui/material';
-import { TeamMemberData } from '../../../../types/firebase/db/team/teamStructure';
 import UserProfileCard from '../../user/UserProfileCard';
 import { useUserMap } from '../../../hooks/useUserMap';
+import { useTeamMembers } from '../hooks/useTeamMembers';
 
 interface TeamMembersProps {}
 
 const TeamMembers: FC<TeamMembersProps> = () => {
   const teamId = useAppSelector(state => state.teamSlice.currentTeamId);
-  const [members, setMembers] = useState<TeamMemberData[]>([]);
-  const [loadingMembers, setLoadingMembers] = useState<boolean>(false);
-  const [errorMembers, setErrorMembers] = useState<string | null>(null);
+  const { members, loading: loadingMembers, error: errorMembers } = useTeamMembers(teamId);
   
   const userIds = members.map(member => member.docId);
   const { userMap, loading: loadingUsers, error: userError } = useUserMap(userIds);
-
-  useEffect(() => {
-    const fetchMembers = async () => {
-      setLoadingMembers(true);
-      setErrorMembers(null);
-      
-      try {
-        const memberService = serviceFactory.createTeamMemberService();
-        const fetchedMembers = await memberService.getAllMembers(teamId);
-        setMembers(fetchedMembers);
-      } catch (err) {
-        console.error("Failed to fetch team members:", err);
-        setErrorMembers("Failed to fetch team members.");
-      } finally {
-        setLoadingMembers(false);
-      }
-    };
-
-    if (teamId) {
-      fetchMembers();
-    }
-  }, [teamId]);
 
   if (loadingMembers || loadingUsers) {
     return <CircularProgress />;
