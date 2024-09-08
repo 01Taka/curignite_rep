@@ -48,7 +48,14 @@ class ServiceFactory {
   }
 
   createUserService() {
-    return this.getInstance('userService', UserService, this.firestore, this.storageManager, this.createTeamMemberService());
+    return this.getInstance(
+      'userService',
+      UserService,
+      this.firestore,
+      this.storageManager,
+      this.createUserLearningSessionService(),
+      this.createTeamMemberService()
+    );
   }
 
   createUserTeamService() {
@@ -72,7 +79,7 @@ class ServiceFactory {
   }
 
   createUserHelpService() {
-    return this.getInstance('userHelpService', UserHelpService, this.firestore);
+    return this.getInstance('userHelpService', UserHelpService, this.firestore, this.storageManager, this.createHelpAnswerService());
   }
 
   createHelpAnswerService() {

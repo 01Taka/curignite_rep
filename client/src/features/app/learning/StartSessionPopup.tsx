@@ -59,8 +59,9 @@ const StartSessionPopup: FC<StartSessionPopupProps> = ({ open, handleClose }) =>
   };                  
 
   const handleStartSession = async () => {
+    if (!uid) return;
     await handleCreateGoal();
-    await IndexedLearningSessionService.startSession();  
+    await IndexedLearningSessionService.startSession(uid);  
     handleClose(); // 成功時にポップアップを閉じる 
   }
 

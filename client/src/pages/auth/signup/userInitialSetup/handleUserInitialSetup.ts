@@ -15,22 +15,19 @@ export const getUniqueName = async (
 }
 
 export const handleCreateUser = async (uid: string, formState: InitialSetupFormState) => {
-  const { username, birthday } = formState;
-
-  console.log(username, birthday);
-  
+  const { username, birthday, iconFile } = formState;
 
   // ユーザー名と誕生日のチェック
-  if (!username || !birthday) {
-    console.error('ユーザー名または誕生日が正しく設定されていません。');
-    throw new Error('ユーザー名または誕生日が正しく設定されていません。');
+  if (!username || !birthday || !iconFile) {
+    console.error('ユーザー名または誕生日またはアイコンが正しく設定されていません。');
+    throw new Error('ユーザー名または誕生日またはアイコンが正しく設定されていません。');
   }
 
-  const usersDB = serviceFactory.createUserService();
+  const userService = serviceFactory.createUserService();
   
   try {
     // ユーザーの作成処理
-    await usersDB.createUser(uid, username, "", Timestamp.fromDate(birthday));
+    await userService.createUser(uid, username, iconFile, Timestamp.fromDate(birthday));
   } catch (error) {
     console.error('ユーザー作成中にエラーが発生しました:', error);
     throw new Error('ユーザーの作成に失敗しました。');

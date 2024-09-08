@@ -7,8 +7,10 @@ import { differenceInDays, differenceInMinutes } from 'date-fns';
 import CircularButton from '../../../components/input/button/CircularButton';
 import { MoreHoriz, ExpandLess, ExpandMore } from '@mui/icons-material';
 import { SECONDS_IN_MILLISECOND } from '../../../constants/utils/dateTimeConstants';
+import { useAppSelector } from '../../../redux/hooks';
 
 const LearningSessions: FC = () => {
+  const uid = useAppSelector(state => state.userSlice.uid);
   const [sessions, setSessions] = useState<Session[] | null>(null);
   const [currentSession, setCurrentSession] = useState<CurrentSession | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -17,9 +19,10 @@ const LearningSessions: FC = () => {
   useEffect(() => {
     const fetchSessions = async () => {
       try {
+        if (!uid) return;
         const [allSessions, curSession] = await Promise.all([
-          IndexedLearningSessionService.getAllSessions(),
-          IndexedLearningSessionService.getCurrentSession(),
+          IndexedLearningSessionService.getAllSessions(uid),
+          IndexedLearningSessionService.getCurrentSession(uid),
         ]);
         setSessions(allSessions);
         setCurrentSession(curSession);
@@ -34,15 +37,16 @@ const LearningSessions: FC = () => {
 
     const intervalId = setInterval(async () => {
       try {
-        const curSession = await IndexedLearningSessionService.getCurrentSession();
+        if (!uid) return;
+        const curSession = await IndexedLearningSessionService.getCurrentSession(uid);
         setCurrentSession(curSession);
       } catch (error) {
         console.error("Failed to update current session:", error);
       }
-    }, 30 * SECONDS_IN_MILLISECOND);
+    }, 20 * SECONDS_IN_MILLISECOND);
 
     return () => clearInterval(intervalId); // コンポーネントのアンマウント時にクリーンアップ
-  }, []);
+  }, [uid]);
 
   if (loading) {
     return (

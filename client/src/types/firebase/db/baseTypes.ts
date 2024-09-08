@@ -54,8 +54,3 @@ export enum BaseParticipationStatus {
 
 // ユーザーが参加できる機能を持つデータにおいて各ユーザーの権限を保存するフィールドの型
 export type BasePermissions<T> =  { [role in BaseMemberRole]?: T[] };
-
-export interface DocumentRefWithFileUrl<T extends string | number> {
-    documentRef: DocumentReference<DocumentData>;
-    filesUrl: Record<T, string | null>;
-}

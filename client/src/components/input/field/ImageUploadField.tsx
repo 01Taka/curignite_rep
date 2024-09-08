@@ -34,8 +34,8 @@ const imageVariants = cva('flex justify-center items-center mx-auto', {
   },
   defaultVariants: {
     size: 'md',
-    shape: 'square',
-    borderStyle: 'none',
+    shape: 'circle',
+    borderStyle: 'dashed',
   },
 });
 
@@ -45,8 +45,8 @@ const ImageUploadField: FC<ImageUploadFieldProps> = ({
   value,
   onChange,
   size = 'md',
-  shape = 'square',
-  borderStyle = 'none',
+  shape = 'circle',
+  borderStyle = 'dashed',
 }) => {
   const [imageUrl, setImageUrl] = useState("");
 

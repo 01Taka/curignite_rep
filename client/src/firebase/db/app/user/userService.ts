@@ -6,13 +6,18 @@ import { getInitialBaseDocumentData } from "../../../../functions/db/dbUtils";
 import BaseDB from "../../base";
 import { BaseDocumentData } from "../../../../types/firebase/db/baseTypes";
 import { TeamMemberService } from "../team/subCollection/teamMemberService";
-import { UserData } from "../../../../types/firebase/db/user/userStructure";
+import { UserData, UserWithSupplementary } from "../../../../types/firebase/db/user/userStructure";
+import { StorageManager } from "../../../storage/storageManager";
+import { UserLearningSessionService } from "./subCollection/userLearningSessionService";
+import { UserWithNotExistUsersId } from "../../../../types/module/redux/slice/userSliceTypes";
 
 export class UserService {
   private baseDB: BaseDB<UserData>;
 
   constructor(
     firestore: Firestore,
+    private storageManager: StorageManager,
+    private learningService: UserLearningSessionService,
     private teamMemberService: TeamMemberService,
   ) {
     this.baseDB = new BaseDB(firestore, "users");
@@ -24,14 +29,16 @@ export class UserService {
   async createUser(
     userId: string,
     username: string,
-    iconUrl: string,
+    iconFile: File,
     birthTimestamp: Timestamp
   ): Promise<DocumentReference<DocumentData> | void> {
     try {
+      const fileId = await this.storageManager.uploadFile(this.baseDB.getCollectionPath(), userId, iconFile);
+
       const data: UserData = {
         ...getInitialBaseDocumentData(userId),
         username,
-        iconUrl,
+        avatarIconId: fileId,
         birthTimestamp,
         isLearning: false,
         lastLearningTimestamp: Timestamp.now(),
@@ -39,8 +46,9 @@ export class UserService {
         currentTargetGoalId: null,
         totalLearningTime: 0,
       };
-
+      
       await this.baseDB.createWithId(userId, data);
+      await this.learningService.createOrUpdateDailySession(userId);
     } catch (error) {
       this.handleError("Failed to create user.", error);
     }
@@ -55,30 +63,35 @@ export class UserService {
     return user;
   }
 
-  async getUsersWithNotExistIds(usersId: string[]): Promise<{ users: UserData[], notExistIds: string[] }> {
+  async getUsersWithNotExistIdsAndSupplementary(usersId: string[]): Promise<UserWithNotExistUsersId> {
     // 各IDに対するPromiseを作成
-    const dataPromises = usersId.map(async id => ({
-      id,
-      data: await this.baseDB.read(id)
-    }));
+    const dataPromises = usersId.map(async id => {
+      const user = await this.baseDB.read(id)
+      const data = user ? {...user, avatarIconUrl: await this.getFileUrl(user.avatarIconId)} : null;
+
+      return {
+        id,
+        data,
+      }
+    });
   
     // 全てのPromiseを解決
     const dataResults = await Promise.all(dataPromises);
   
     // ユーザーデータが存在するかどうかで配列を分ける
-    const users: UserData[] = [];
-    const notExistIds: string[] = [];
+    const users: UserWithSupplementary[] = [];
+    const notExistUsersId: string[] = [];
   
     for (const { id, data } of dataResults) {
       if (data) {
         users.push(data);
       } else {
-        notExistIds.push(id);
+        notExistUsersId.push(id);
       }
     }
   
     // オブジェクトとして結果を返す
-    return { users, notExistIds };
+    return { users, notExistUsersId };
   }  
 
   /**
@@ -195,6 +208,10 @@ export class UserService {
   }
 
   // ヘルパーメソッド群
+  private async getFileUrl(fileId: string): Promise<string> {
+    return await this.storageManager.getFileUrl(fileId);
+  }
+
   private async getUsersByIds(userIds: string[]): Promise<UserData[]> {
     const data = await Promise.all(userIds.map(id => this.baseDB.read(id)));
     return data.filter(user => user !== null) as UserData[];

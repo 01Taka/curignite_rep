@@ -10,6 +10,9 @@ import { useNavigate } from 'react-router-dom';
 import { mainPaths } from '../../../types/path/mainPaths';
 import { useAppSelector } from '../../../redux/hooks';
 import { revertTimestampConversion } from '../../../functions/db/dataFormatUtils';
+import CreateHelpForm from '../../../features/app/help/CreateHelpForm';
+import Popup from '../../../components/util/Popup';
+import Helps from '../../../features/app/help/Helps';
 
 interface HomeViewProps {}
 
@@ -75,6 +78,7 @@ const FixedInfo: FC = () => {
     <div className='fixed top-40 left-6'>
       <LearningSessions />
       <Goals />
+      <Helps />
     </div>
   )
 }

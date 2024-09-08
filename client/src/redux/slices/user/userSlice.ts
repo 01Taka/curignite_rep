@@ -4,12 +4,12 @@ import { AsyncThunkState, AsyncThunkStatus } from "../../../types/module/redux/a
 import { addAsyncCases, isSuccessfulPayload } from "../../../functions/redux/reduxUtils";
 import { updateUserData } from "../../actions/user/updateUserState";
 import { ConvertTimestampToNumber } from "../../../types/firebase/db/formatTypes";
-import { UserData } from "../../../types/firebase/db/user/userStructure";
+import { UserWithSupplementary } from "../../../types/firebase/db/user/userStructure";
 
 export interface UserState {
     uid: string | null;
-    userData: ConvertTimestampToNumber<UserData> | null;
-    userFetchState: AsyncThunkState<ConvertTimestampToNumber<UserData> | null>;
+    userData: ConvertTimestampToNumber<UserWithSupplementary> | null;
+    userFetchState: AsyncThunkState<ConvertTimestampToNumber<UserWithSupplementary> | null>;
     device: Device;
 }
 
@@ -24,7 +24,7 @@ const userSlice = createSlice({
     name: 'userData',
     initialState,
     reducers: {
-        setUserData: (state, action: PayloadAction<ConvertTimestampToNumber<UserData>>) => {
+        setUserData: (state, action: PayloadAction<ConvertTimestampToNumber<UserWithSupplementary>>) => {
             state.uid = action.payload.docId;
             state.userData = action.payload;
         },

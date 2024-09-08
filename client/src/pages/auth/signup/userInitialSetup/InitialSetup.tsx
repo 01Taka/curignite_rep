@@ -10,7 +10,7 @@ const InitialSetup: React.FC = () => {
   const navigate = useNavigate();
   const [uid, setUid] = useState<string | null>(null);
   const [isLoadingName, setIsLoadingName] = useState(true);
-  const [formState, setFormState] = useState<InitialSetupFormState>({ username: "", birthday: null });
+  const [formState, setFormState] = useState<InitialSetupFormState>({ username: "", birthday: null, iconFile: null });
   const [submitDisabled, setSubmitDisabled] = useState(false);
   const [error, setError] = useState("");
 

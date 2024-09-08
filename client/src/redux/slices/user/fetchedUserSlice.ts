@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ConvertTimestampToNumber, DocumentIdMap } from '../../../types/firebase/db/formatTypes';
-import { UserData } from '../../../types/firebase/db/user/userStructure';
+import { UserWithSupplementary } from '../../../types/firebase/db/user/userStructure';
 import { FetchedUserSliceState } from '../../../types/module/redux/slice/userSliceTypes';
 
 const initialState: FetchedUserSliceState = {
@@ -12,7 +12,7 @@ const FetchedUserSlice = createSlice({
   name: 'fetchedUserSlice',
   initialState,
   reducers: {
-    setUsers: (state, action: PayloadAction<DocumentIdMap<ConvertTimestampToNumber<UserData>>>) => {
+    setUsers: (state, action: PayloadAction<DocumentIdMap<ConvertTimestampToNumber<UserWithSupplementary>>>) => {
       state.users = action.payload;
     },
     setNotExitsUsersId: (state, action: PayloadAction<string[]>) => {

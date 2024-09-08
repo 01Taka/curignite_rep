@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { TimestampConvertedDocumentMap } from '../../../types/firebase/db/formatTypes';
 import { AsyncThunkStatus } from '../../../types/module/redux/asyncThunkTypes';
-import { TeamData } from '../../../types/firebase/db/team/teamStructure';
+import { TeamWithSupplementary } from '../../../types/firebase/db/team/teamStructure';
 
 interface TeamSliceState {
     currentTeamId: string;
-    teams: TimestampConvertedDocumentMap<TeamData>;
+    teams: TimestampConvertedDocumentMap<TeamWithSupplementary>;
     teamsUpdateState: AsyncThunkStatus,
 }
 
@@ -22,7 +22,7 @@ const TeamSlice = createSlice({
     setCurrentTeamId: (state, action: PayloadAction<string>) => {
         state.currentTeamId = action.payload;
     },
-    setTeams: (state, action: PayloadAction<TimestampConvertedDocumentMap<TeamData>>) => {
+    setTeams: (state, action: PayloadAction<TimestampConvertedDocumentMap<TeamWithSupplementary>>) => {
       state.teams = action.payload;
     },
     setTeamsUpdateState: (state, action: PayloadAction<AsyncThunkStatus>) => {

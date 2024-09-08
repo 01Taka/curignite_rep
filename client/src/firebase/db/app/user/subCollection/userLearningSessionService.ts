@@ -24,7 +24,7 @@ export class UserLearningSessionService {
 
   async createOrUpdateDailySession(
     userId: string,
-    date: TimeTypes,
+    date: TimeTypes = new Date(),
     totalLearningTime: number = 0,
   ): Promise<DocumentReference<UserLearningSessionData>> {
     await this.validateTotalLearningTime(totalLearningTime);

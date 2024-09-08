@@ -9,15 +9,17 @@ import { NavigateFunction } from 'react-router-dom';
 import { replaceParams } from '../../../functions/path/pathUtils';
 import { PathParam } from '../../../types/path/paths';
 import { arrayToDictWithTimestampToNumbers, convertTimestampsToNumbers } from '../../../functions/db/dataFormatUtils';
-import { TeamData } from '../../../types/firebase/db/team/teamStructure';
+import { TeamData, TeamWithSupplementary } from '../../../types/firebase/db/team/teamStructure';
 import { AsyncThunkStatus } from '../../../types/module/redux/asyncThunkTypes';
 import { objectArrayToDict } from '../../../functions/objectUtils';
 import { DocumentIdMap } from '../../../types/firebase/db/formatTypes';
 
 export const setApprovedTeams = async (dispatch: AppDispatch, uid: string) => { // TODO 安全性を高めるためのエラーハンドリングなどを追加
   try {
-    const teams = await serviceFactory.createTeamService().fetchApprovedTeams(uid);
-    const teamMap = objectArrayToDict(teams, "docId") as DocumentIdMap<TeamData>;
+    const teamService = serviceFactory.createTeamService()
+    const teams = await teamService.fetchApprovedTeams(uid);
+    const fullTeams = await teamService.addSupplementaryToTeams(teams);
+    const teamMap = objectArrayToDict(fullTeams, "docId") as DocumentIdMap<TeamWithSupplementary>;
     dispatch(setTeams(convertTimestampsToNumbers(teamMap)));
   } catch (error) {
     console.error('Error fetching approved teams:', error);
@@ -34,9 +36,10 @@ const autoUpdateTeams = (dispatch: Dispatch, userId: string) => {
     const teamService = serviceFactory.createTeamService();
     const teamMemberService = serviceFactory.createTeamMemberService();
 
-    const setFunc = (updatedData: TeamData[]) => {
+    const setFunc = async (updatedData: TeamData[]) => {
       const prevData = store.getState().teamSlice.teams;
-      const newData = arrayToDictWithTimestampToNumbers(updatedData);
+      const fullTeams = await teamService.addSupplementaryToTeams(updatedData);
+      const newData = arrayToDictWithTimestampToNumbers(fullTeams);
       
       // データに変更がある場合のみ更新
       if (JSON.stringify(prevData) !== JSON.stringify({...prevData, ...newData})) {

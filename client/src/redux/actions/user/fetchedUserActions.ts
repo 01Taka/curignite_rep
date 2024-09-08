@@ -2,17 +2,18 @@ import serviceFactory from "../../../firebase/db/factory";
 import { convertTimestampsToNumbers, revertTimestampConversion } from "../../../functions/db/dataFormatUtils";
 import { objectArrayToDict, removeDuplicates } from "../../../functions/objectUtils";
 import { ConvertTimestampToNumber, DocumentIdMap } from "../../../types/firebase/db/formatTypes";
-import { UserData } from "../../../types/firebase/db/user/userStructure";
+import { UserWithSupplementary } from "../../../types/firebase/db/user/userStructure";
 import { AppDispatch } from "../../../types/module/redux/reduxTypes";
-import { FetchedUserSliceState } from "../../../types/module/redux/slice/userSliceTypes";
+import { FetchedUserSliceState, UserWithNotExistUsersId } from "../../../types/module/redux/slice/userSliceTypes";
 import { setNotExitsUsersId, setUsers } from "../../slices/user/fetchedUserSlice";
 import store from "../../store";
 
 // ユーザーを取得する関数
-const fetchUsers = async (targetIds: string[]) => {
+const fetchUsers = async (targetIds: string[]): Promise<UserWithNotExistUsersId> => {
   try {
     const userService = serviceFactory.createUserService();
-    return await userService.getUsersWithNotExistIds(targetIds);
+    const result = await userService.getUsersWithNotExistIdsAndSupplementary(targetIds);
+    return result;
   } catch (error) {
     console.error("Failed to fetch users:", error);
     throw error;
@@ -20,11 +21,11 @@ const fetchUsers = async (targetIds: string[]) => {
 };
 
 // ユーザーを状態に設定する関数
-const updateUserState = (dispatch: AppDispatch, state: FetchedUserSliceState, result: { users: UserData[], notExistIds: string[] }) => {
-  const newNotExistIds = removeDuplicates([...state.notExistUsersId, ...result.notExistIds]);
+const updateUserState = (dispatch: AppDispatch, state: FetchedUserSliceState, result: UserWithNotExistUsersId) => {
+  const newNotExistIds = removeDuplicates([...state.notExistUsersId, ...result.notExistUsersId]);
   dispatch(setNotExitsUsersId(newNotExistIds));
 
-  const fetchedUsersMap = convertTimestampsToNumbers(objectArrayToDict(result.users, "docId")) as DocumentIdMap<ConvertTimestampToNumber<UserData>>;
+  const fetchedUsersMap = convertTimestampsToNumbers(objectArrayToDict(result.users, "docId")) as DocumentIdMap<ConvertTimestampToNumber<UserWithSupplementary>>;
   const updatedUsers = { ...state.users, ...fetchedUsersMap };
 
   dispatch(setUsers(updatedUsers));
@@ -35,7 +36,7 @@ const updateUserState = (dispatch: AppDispatch, state: FetchedUserSliceState, re
 export const fetchAndSetUsers = async (
   dispatch: AppDispatch,
   userIdsToFetch: string[],
-): Promise<DocumentIdMap<UserData>> => {
+): Promise<DocumentIdMap<UserWithSupplementary>> => {
   const state = store.getState().fetchedUserSlice;
   
   const targetIds = userIdsToFetch.filter(id => !state.users[id] && !state.notExistUsersId.includes(id));

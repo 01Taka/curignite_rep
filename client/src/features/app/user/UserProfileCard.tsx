@@ -1,10 +1,10 @@
 import React, { FC } from 'react';
 import { Avatar, Box, Typography } from '@mui/material';
 import UserLevel from './UserLevel';
-import { UserData } from '../../../types/firebase/db/user/userStructure';
+import { UserWithSupplementary } from '../../../types/firebase/db/user/userStructure';
 
 interface UserProfileCardProps {
-  userData: UserData | null;
+  userData: UserWithSupplementary | null;
 }
 
 const UserProfileCard: FC<UserProfileCardProps> = ({ userData }) => {
@@ -22,7 +22,7 @@ const UserProfileCard: FC<UserProfileCardProps> = ({ userData }) => {
     <div className="flex justify-center items-center p-4 bg-white rounded-lg shadow-md">
       <Box className="flex flex-col items-center justify-center mr-2">
         <Avatar
-          src={userData.iconUrl}
+          src={userData.avatarIconUrl}
           alt="自分のユーザーアイコン"
           sx={{ width: 48, height: 48 }}
         >

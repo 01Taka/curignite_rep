@@ -4,11 +4,11 @@ import { DocumentIdMap } from '../../../../../../types/firebase/db/formatTypes';
 import { cn } from '../../../../../../functions/utils';
 import { BaseMemberRole } from '../../../../../../types/firebase/db/baseTypes';
 import { SpaceMemberData } from '../../../../../../types/firebase/db/space/spaceStructure';
-import { UserData } from '../../../../../../types/firebase/db/user/userStructure';
+import { UserWithSupplementary } from '../../../../../../types/firebase/db/user/userStructure';
 
 interface MembersProps {
   members: SpaceMemberData[];
-  userMap: DocumentIdMap<UserData>;
+  userMap: DocumentIdMap<UserWithSupplementary>;
   onClickMember?: (member: SpaceMemberData) => void;
 }
 
@@ -23,7 +23,7 @@ const Members: FC<MembersProps> = ({ members, userMap, onClickMember }) => (
           onClick={onClickMember ? () => onClickMember(member) : () => {}}
         >
           <ListItemAvatar>
-            <Avatar src={user?.iconUrl} />
+            <Avatar src={user?.avatarIconUrl} />
           </ListItemAvatar>
           <div className={cn('flex flex-col justify-center')}>
             <span className={cn("text-sm", member.role === BaseMemberRole.Admin && "text-red-500", member.role === BaseMemberRole.Guest && "text-green-500")}>

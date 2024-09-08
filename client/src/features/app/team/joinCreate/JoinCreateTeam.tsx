@@ -2,7 +2,7 @@ import React, { FC, useCallback, useState } from 'react';
 import { CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../../../../redux/hooks';
-import { TeamData } from '../../../../types/firebase/db/team/teamStructure';
+import { TeamWithSupplementary } from '../../../../types/firebase/db/team/teamStructure';
 import serviceFactory from '../../../../firebase/db/factory';
 import { replaceParams } from '../../../../functions/path/pathUtils';
 import { teamPaths } from '../../../../types/path/mainPaths';
@@ -19,7 +19,7 @@ const JoinCreateTeam: FC = () => {
     const [teamCodeId, setTeamCodeId] = useState('');
     const [createTeamName, setCreateTeamName] = useState('');
     const [popupState, setPopupState] = useState<"open" | "close" | "loading">("close");
-    const [joiningTeam, setJoiningTeam] = useState<TeamData | null>(null);
+    const [joiningTeam, setJoiningTeam] = useState<TeamWithSupplementary | null>(null);
 
     const handleTeamCodeIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setTeamCodeId(event.target.value);
@@ -34,7 +34,8 @@ const JoinCreateTeam: FC = () => {
           setPopupState('loading');
           const teamService = serviceFactory.createTeamService();
           const team = await teamService.getTeamDataWithTeamCodeId(teamCodeId);
-          setJoiningTeam(team);
+          const fullTeam = team ? await teamService.addSupplementaryToTeam(team) : null;
+          setJoiningTeam(fullTeam);
           setPopupState('open');
         } catch (error) {
           console.error('Failed to join team:', error);

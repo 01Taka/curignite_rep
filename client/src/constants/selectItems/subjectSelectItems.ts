@@ -14,7 +14,7 @@ export const subjectSelectItems: SelectItem<Subject>[] = [
   { label: "社会", value: Subject.SocialStudies },
   { label: "歴史", value: Subject.History },
   { label: "地理", value: Subject.Geography },
-  { label: "コンピュータ科学", value: Subject.ComputerScience },
+  { label: "情報", value: Subject.ComputerScience },
   { label: "未選択", value: Subject.NotSelected },
   { label: "その他", value: Subject.Other },
 ];

@@ -6,10 +6,13 @@ import Heading from '../../../../components/container/Heading';
 import CircularButton from '../../../../components/input/button/CircularButton';
 import { FormStateChangeFunc } from '../../../../types/util/componentsTypes';
 import DateField from '../../../../components/input/field/DateField';
+import ImageUploadField from '../../../../components/input/field/ImageUploadField';
+import { keyMirror } from '../../../../functions/objectUtils';
 
 export interface InitialSetupFormState {
   username: string;
   birthday: Date | null;
+  iconFile: File | null;
 }
 
 interface InitialSetupViewProps {
@@ -35,6 +38,7 @@ const InitialSetupView: React.FC<InitialSetupViewProps> = ({
   onFormStateChange,
   onSubmit,
 }) => {
+  const names = keyMirror(formState);
   return (
     <FormContainer flexCenter>
       {isLoading ? (
@@ -50,8 +54,15 @@ const InitialSetupView: React.FC<InitialSetupViewProps> = ({
             <DateField
               label="生年月日"
               value={formState.birthday}
-              name='birthday'
+              name={names.birthday}
               onChange={onFormStateChange}
+            />
+            <ImageUploadField
+              label='アイコン'
+              value={formState.iconFile}
+              name={names.iconFile}
+              onChange={onFormStateChange}
+              
             />
             <CircularButton
               type='submit'

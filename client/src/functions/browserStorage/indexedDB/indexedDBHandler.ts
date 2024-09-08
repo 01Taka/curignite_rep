@@ -6,7 +6,7 @@ export class IndexedDBHandler<T extends string> {
     private timeout: number = 5000
   ) { }
 
-  getStoreHandler<U>(storeName: T): IndexedDBStoreHandler<U> {
+  getStoreHandler<U extends { uid: string }>(storeName: T): IndexedDBStoreHandler<U> {
     return new IndexedDBStoreHandler<U>(this.openDB.bind(this), storeName);
   }
 
@@ -73,7 +73,9 @@ export class IndexedDBHandler<T extends string> {
   }
 }
 
-class IndexedDBStoreHandler<T> {
+
+// CURD操作本体を担当する
+class IndexedDBStoreHandler<T extends { uid: string }> {
   constructor(private dbPromise: () => Promise<IDBDatabase>, private storeName: string) {}
 
   private async withTransaction<R>(
@@ -98,29 +100,55 @@ class IndexedDBStoreHandler<T> {
     return this.withTransaction('readwrite', (store) => store.add(data));
   }
 
-  public getData(id: number): Promise<T | null> {
-    return this.withTransaction('readonly', (store) => store.get(id));
+  public putData(data: T): Promise<IDBValidKey> {
+    return this.withTransaction('readwrite', (store) => store.put(data));
   }
 
-  public getAllData(): Promise<T[]> {
-    return this.withTransaction('readonly', (store) => store.getAll());
+  public getData(uid: string, id: number): Promise<T | null> {
+    return this.withTransaction('readonly', (store) => store.get(id))
+      .then((data) => (data && data.uid === uid ? data : null));
   }
 
-  public async updateData(id: number, updatedData: Partial<T>): Promise<void> {
-    const currentData = await this.getData(id);
+  public getAllData(uid: string): Promise<T[]> {
+    return this.withTransaction('readonly', (store) => store.getAll())
+      .then((data) => {
+        console.log(data);
+        return data.filter((item) => item.uid === uid)
+      });
+  }
+
+  public async updateData(uid: string, id: number, updatedData: Partial<T>): Promise<void> {
+    const currentData = await this.getData(uid, id);
     if (!currentData) {
-      throw new Error(`Data with ID ${id} not found`);
+      throw new Error(`Data with ID ${id} not found for UID ${uid}`);
     }
   
     const mergedData = { ...currentData, ...updatedData };
     await this.withTransaction('readwrite', (store) => store.put(mergedData));
   }
 
-  public deleteData(id: number): Promise<void> {
-    return this.withTransaction('readwrite', (store) => store.delete(id));
+  public async deleteData(uid: string, id: number): Promise<void> {
+    const currentData = await this.getData(uid, id);
+    if (!currentData) {
+      throw new Error(`Data with ID ${id} not found for UID ${uid}`);
+    }
+
+    await this.withTransaction('readwrite', (store) => store.delete(id));
   }
 
-  public clearStore(): Promise<void> {
-    return this.withTransaction('readwrite', (store) => store.clear());
+  public clearStore(uid: string): Promise<IDBCursorWithValue | null> {
+    return this.withTransaction('readwrite', (store) => {
+      const clearRequest = store.openCursor();
+      clearRequest.onsuccess = (event) => {
+        const cursor = (event.target as IDBRequest<IDBCursorWithValue>).result;
+        if (cursor) {
+          if (cursor.value.uid === uid) {
+            cursor.delete();
+          }
+          cursor.continue();
+        }
+      };
+      return clearRequest;
+    });
   }
 }

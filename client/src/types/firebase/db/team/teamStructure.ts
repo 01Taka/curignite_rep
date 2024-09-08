@@ -3,10 +3,14 @@ import { BaseDocumentData, BaseMemberRole } from "../baseTypes";
 
 export interface TeamData extends BaseDocumentData {
   teamName: string;
-  iconUrl: string;
+  iconId: string;
   description: string;
   requiresApproval: boolean;
   chatRoomId: string,
+}
+
+export interface TeamWithSupplementary extends TeamData {
+  iconUrl: string
 }
 
 /**

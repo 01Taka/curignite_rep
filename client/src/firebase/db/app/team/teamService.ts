@@ -1,14 +1,13 @@
-import { getInitialBaseDocumentData, isDocumentExist } from "../../../../functions/db/dbUtils";
-import { Firestore } from "firebase/firestore";
+import { getInitialBaseDocumentData } from "../../../../functions/db/dbUtils";
+import { DocumentData, DocumentReference, Firestore } from "firebase/firestore";
 import BaseDB from "../../base";
 import { StorageManager } from "../../../storage/storageManager";
-import { getFileExtension } from "../../../../functions/fileUtils";
-import { BaseMemberRole, BaseParticipationStatus, DocumentRefWithFileUrl } from "../../../../types/firebase/db/baseTypes";
+import { BaseMemberRole, BaseParticipationStatus } from "../../../../types/firebase/db/baseTypes";
 import { UserTeamService } from "../user/subCollection/userTeamService";
 import { TeamMemberService } from "./subCollection/teamMemberService";
 import { TeamJoinRequestService } from "./subCollection/teamJoinRequestService";
 import { ChatRoomService } from "../chat/chatRoomService";
-import { TeamData } from "../../../../types/firebase/db/team/teamStructure";
+import { TeamData, TeamWithSupplementary } from "../../../../types/firebase/db/team/teamStructure";
 import { TeamCodeData } from "../../../../types/firebase/db/team/teamCodeStructure";
 import { TeamCodeService } from "./teamCodeService";
 
@@ -43,12 +42,12 @@ export class TeamService {
     iconImage: File | null,
     description: string,
     requiresApproval: boolean,
-  ): Promise<DocumentRefWithFileUrl<"icon">> {
+  ): Promise<DocumentReference<TeamData, DocumentData>> {
     try {
       const data: TeamData = {
         ...getInitialBaseDocumentData(userId),
         teamName,
-        iconUrl: "",
+        iconId: "",
         description,
         requiresApproval,
         chatRoomId: "",
@@ -56,19 +55,19 @@ export class TeamService {
 
       const teamRef = await this.baseDB.create(data);
 
-      let iconUrl: string | null = null;
+      let iconId: string | null = null;
 
       // アイコン画像が提供されている場合、ストレージにアップロード
       if (iconImage) {
-        iconUrl = await this.uploadIconImage(teamRef.id, iconImage);
-        await this.baseDB.update(teamRef.id, { iconUrl });
+        iconId = await this.uploadIconImage(teamRef.id, iconImage);
+        await this.baseDB.update(teamRef.id, { iconId });
       }
 
       await this.chatRoomService.createChatRoom(userId, teamName, { parentId: teamRef.id, parentType: "team" });
 
       await this.teamMemberService.addMember(teamRef.id, userId, BaseMemberRole.Admin, "allowed");
 
-      return { documentRef: teamRef, filesUrl: { icon: iconUrl } };
+      return teamRef;
     } catch (error) {
       console.error("Failed to create team:", error);
       throw new Error("Failed to create team");
@@ -90,6 +89,20 @@ export class TeamService {
 
   async getTeamData(teamId: string): Promise<TeamData | null> {
     return this.baseDB.read(teamId);
+  }
+
+  async addSupplementaryToTeam(team: TeamData): Promise<TeamWithSupplementary> {
+    const iconUrl = await this.storageManager.getFileUrl(team.iconId);
+    return { ...team, iconUrl } as TeamWithSupplementary;
+  }
+
+  async addSupplementaryToTeams(teams: TeamData[]): Promise<TeamWithSupplementary[]> {
+    const addSupplementaryPromise = teams.map(async team => {
+      const iconUrl = await this.storageManager.getFileUrl(team.iconId);
+      return { ...team, iconUrl } as TeamWithSupplementary;
+    })
+
+    return await Promise.all(addSupplementaryPromise);
   }
 
   async getTeamDataWithTeamCodeId(teamCodeId: string): Promise<TeamData | null> {

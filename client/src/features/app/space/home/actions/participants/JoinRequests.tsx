@@ -3,7 +3,7 @@ import React, { FC, useMemo } from 'react';
 import { DocumentIdMap } from '../../../../../../types/firebase/db/formatTypes';
 import { cn } from '../../../../../../functions/utils';
 import { dateTimeToString } from '../../../../../../functions/dateTimeUtils';
-import { UserData } from '../../../../../../types/firebase/db/user/userStructure';
+import { UserData, UserWithSupplementary } from '../../../../../../types/firebase/db/user/userStructure';
 import { JoinRequestStatus } from '../../../../../../types/firebase/db/common/joinRequest/joinRequestSupplementTypes';
 import { JoinRequestData } from '../../../../../../types/firebase/db/common/joinRequest/joinRequestStructure';
 
@@ -29,7 +29,7 @@ const getActionColorClass = (actionType: JoinStatus): string => actionColors[act
 interface JoinRequestsProps {
   joinRequests: JoinRequestData[];
   activeMembersId: string[];
-  userMap: DocumentIdMap<UserData>;
+  userMap: DocumentIdMap<UserWithSupplementary>;
 }
 
 const JoinRequests: FC<JoinRequestsProps> = ({ joinRequests, userMap, activeMembersId }) => {
@@ -45,7 +45,7 @@ const JoinRequests: FC<JoinRequestsProps> = ({ joinRequests, userMap, activeMemb
       return (
         <ListItem key={request.userId} className='h-14 border-2 border-gray-100 rounded-lg'>
           <ListItemAvatar>
-            <Avatar src={user?.iconUrl} />
+            <Avatar src={user?.avatarIconUrl} />
           </ListItemAvatar>
           <ListItemText
             primary={user?.username ?? "名前: 不明"}

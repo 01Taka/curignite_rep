@@ -1,7 +1,12 @@
 import { ConvertTimestampToNumber, DocumentIdMap } from "../../../firebase/db/formatTypes";
-import { UserData } from "../../../firebase/db/user/userStructure";
+import { UserWithSupplementary } from "../../../firebase/db/user/userStructure";
 
 export interface FetchedUserSliceState {
-  users: DocumentIdMap<ConvertTimestampToNumber<UserData>>;
+  users: DocumentIdMap<ConvertTimestampToNumber<UserWithSupplementary>>;
+  notExistUsersId: string[];
+}
+
+export interface UserWithNotExistUsersId {
+  users: UserWithSupplementary[];
   notExistUsersId: string[];
 }

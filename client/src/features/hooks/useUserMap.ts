@@ -1,11 +1,11 @@
 import { useDispatch } from "react-redux";
 import { useEffect, useMemo, useState } from "react";
 import { DocumentIdMap } from "../../types/firebase/db/formatTypes";
-import { UserData } from "../../types/firebase/db/user/userStructure";
+import { UserWithSupplementary } from "../../types/firebase/db/user/userStructure";
 import { fetchAndSetUsers } from "../../redux/actions/user/fetchedUserActions";
 
 export const useUserMap = (userIds: string[]) => {
-  const [userMap, setUserMap] = useState<DocumentIdMap<UserData>>({});
+  const [userMap, setUserMap] = useState<DocumentIdMap<UserWithSupplementary>>({});
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const dispatch = useDispatch();

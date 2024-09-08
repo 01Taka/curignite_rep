@@ -1,14 +1,14 @@
 import { FC } from "react";
 import TeamContainer from "./TeamContainer";
 import { cn } from "../../../../../functions/utils";
-import { TeamData } from "../../../../../types/firebase/db/team/teamStructure";
+import { TeamWithSupplementary } from "../../../../../types/firebase/db/team/teamStructure";
 
 export interface TeamsListProps {
-  teams: TeamData[];
+  teams: TeamWithSupplementary[];
   currentUserId: string;
   currentDisplayTeamId: string | undefined;
   hideTeamsWithoutIds?: boolean;
-  onTeamClick: (team: TeamData) => void;
+  onTeamClick: (team: TeamWithSupplementary) => void;
 }
 
 const TeamsList: FC<TeamsListProps> = ({ teams, currentUserId, currentDisplayTeamId, onTeamClick }) => {

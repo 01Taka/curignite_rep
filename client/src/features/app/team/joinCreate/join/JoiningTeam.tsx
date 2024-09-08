@@ -2,10 +2,10 @@ import React, { FC, useState } from 'react';
 import { Alert, Avatar, Typography } from '@mui/material';
 import CircularButton from '../../../../../components/input/button/CircularButton';
 import serviceFactory from '../../../../../firebase/db/factory';
-import { TeamData } from '../../../../../types/firebase/db/team/teamStructure';
+import { TeamWithSupplementary } from '../../../../../types/firebase/db/team/teamStructure';
 
 interface JoiningTeamProps {
-  team: TeamData;
+  team: TeamWithSupplementary;
   codeId: string;
   uid: string;
   onCancel: () => void;
@@ -41,7 +41,7 @@ const JoiningTeam: FC<JoiningTeamProps> = ({ team, codeId, uid, onCancel, onJoin
 };
 
 // チーム情報表示コンポーネント
-const TeamInfo: FC<{ team: TeamData }> = ({ team }) => (
+const TeamInfo: FC<{ team: TeamWithSupplementary }> = ({ team }) => (
   <div className="flex justify-center p-2 bg-secondaryBase rounded-lg min-w-64">
     <Avatar alt="チームアイコン" src={team.iconUrl} />
     <Typography variant="h4" className="ml-2">{team.teamName}</Typography>

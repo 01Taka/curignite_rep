@@ -4,10 +4,11 @@ import { useAppSelector } from '../../../../../redux/hooks';
 import CreateTeamView, { CreateTeamFormState } from './CreateTeamView';
 import serviceFactory from '../../../../../firebase/db/factory';
 import { handleFormStateChange } from '../../../../../functions/utils';
-import { DocumentRefWithFileUrl } from '../../../../../types/firebase/db/baseTypes';
+import { TeamData } from '../../../../../types/firebase/db/team/teamStructure';
+import { DocumentData, DocumentReference } from 'firebase/firestore';
 
 interface CreateTeamProps {
-  onCreatedTeam: (result: DocumentRefWithFileUrl<"icon">) => void;
+  onCreatedTeam: (teamRef: DocumentReference<TeamData, DocumentData>) => void;
 }
 
 const CreateTeam: FC<CreateTeamProps> = ({ onCreatedTeam }) => {

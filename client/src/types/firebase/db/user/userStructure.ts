@@ -9,7 +9,7 @@ import { JoinRequestStatus } from "../common/joinRequest/joinRequestSupplementTy
  */
 export interface UserData extends BaseDocumentData {
   username: string;
-  iconUrl: string;
+  avatarIconId: string;
   birthTimestamp: Timestamp;
 
   isLearning: boolean;
@@ -18,6 +18,10 @@ export interface UserData extends BaseDocumentData {
   lastLearningTimestamp: Timestamp;
   consecutiveLearningNumber: number;
   totalLearningTime: number;
+}
+
+export interface UserWithSupplementary extends UserData {
+  avatarIconUrl: string;
 }
 
 export interface SessionData {
@@ -61,7 +65,7 @@ export interface UserGoalData extends BaseDocumentData {
 export interface UserHelpData extends BaseDocumentData {
   subject: Subject;
   question: string;
-  fileUrls: string[];
+  fileIds: string[];
   solved: boolean;
   bestAnswerId: string | null;
 }
@@ -72,6 +76,16 @@ export interface UserHelpData extends BaseDocumentData {
  */
 export interface HelpAnswerData extends BaseDocumentData {
   answer: string;
-  fileUrls: string[];
+  fileIds: string[];
   answeredBy: string;
+}
+
+
+
+
+export interface HelpAndAnswersWithFileUrls {
+  help: UserHelpData;
+  helpFileUrls: string[];
+  answers: HelpAnswerData[];
+  answersFileUrls: Record<string, string[]>
 }

@@ -1,45 +1,42 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, FC } from 'react';
 import serviceFactory from '../../../firebase/db/factory';
 import { useAppSelector } from '../../../redux/hooks';
 import { UserGoalData } from '../../../types/firebase/db/user/userStructure';
 import { removeDuplicatesByKey } from '../../../functions/objectUtils';
+import { CircularProgress, Alert } from '@mui/material';
+import { SECONDS_IN_MILLISECOND } from '../../../constants/utils/dateTimeConstants';
+import GoalsView from './GoalsView';
 
-const Goals = () => {
+const Goals: FC = () => {
   const { uid, userData } = useAppSelector(state => state.userSlice);
   const [goals, setGoals] = useState<UserGoalData[]>([]);
   const [currentGoal, setCurrentGoal] = useState<UserGoalData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [showOtherGoals, setShowOtherGoals] = useState<boolean>(false);
 
   const updateGoals = useCallback(async () => {
     if (!uid) return;
-    
+
     setLoading(true);
     setError(null);
 
     try {
       const goalService = serviceFactory.createUserGoalService();
-      
-      // 並行してデータを取得
       const [progressGoals, todayGoals] = await Promise.all([
         goalService.getAllProgressGoals(uid),
         goalService.getAllTodayGoals(uid)
       ]);
 
-      const goalsData = [...progressGoals, ...todayGoals];
-      const goals = removeDuplicatesByKey(goalsData, "docId");
-
+      const goalsData = removeDuplicatesByKey([...progressGoals, ...todayGoals], "docId");
       let currentGoal = null;
+
       if (userData?.currentTargetGoalId) {
-        currentGoal = goals.find(goal => goal.docId === userData.currentTargetGoalId);
-        
-        // もし現在のゴールが見つからない場合、新たに取得
-        if (!currentGoal) {
-          currentGoal = await goalService.getGoal(uid, userData.currentTargetGoalId);
-        }
+        currentGoal = goalsData.find(goal => goal.docId === userData.currentTargetGoalId) 
+          || await goalService.getGoal(uid, userData.currentTargetGoalId);
       }
 
-      setGoals(goals);
+      setGoals(goalsData);
       setCurrentGoal(currentGoal);
     } catch (error) {
       console.error("Failed to update goals:", error);
@@ -51,34 +48,30 @@ const Goals = () => {
 
   useEffect(() => {
     updateGoals();
+    const interval = setInterval(() => setGoals(prevGoals => [...prevGoals]), 20 * SECONDS_IN_MILLISECOND);
+
+    return () => clearInterval(interval);
   }, [updateGoals]);
 
-  if (loading) {
-    return <div>ロード中...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
-
   return (
-    <div>
-      <h1>Goals</h1>
-      {goals.length === 0 ? (
-        <p>ゴールがありません。</p>
+    <div className='shadow-lg p-1 mt-4 rounded-lg max-h-80 overflow-y-auto'>
+      {loading ? (
+        <CircularProgress />
+      ) : error ? (
+        <Alert severity="error">{error}</Alert>
       ) : (
-        <ul>
-          {goals.map(goal => (
-            <div>
-              A
-              <div key={goal.docId}>{goal.objectives}</div>
-            </div>
-          ))}
-        </ul>
+        <GoalsView
+          currentGoal={currentGoal}
+          goals={goals}
+          showOtherGoals={showOtherGoals}
+          toggleOtherGoals={() => setShowOtherGoals(prev => !prev)}
+        />
       )}
-      {currentGoal && <p>現在のゴール: {currentGoal.objectives}</p>}
     </div>
   );
-}
+};
+
+
+
 
 export default Goals;

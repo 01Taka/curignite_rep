@@ -30,7 +30,7 @@ const TeamRoutes: FC = () => {
         <Route
           path={getLastSegment(teamPaths.create)}
           element={<CreateTeam
-          onCreatedTeam={(result) => navigate(replaceParams(teamPaths.home, { [PathParam.TeamId]: result.documentRef.id }))}/>}
+          onCreatedTeam={(teamRef) => navigate(replaceParams(teamPaths.home, { [PathParam.TeamId]: teamRef.id }))}/>}
         />
       </Routes>
     </>

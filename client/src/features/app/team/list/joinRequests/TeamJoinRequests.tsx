@@ -24,7 +24,7 @@ const TeamJoinRequests: FC<TeamJoinRequestsProps> = ({ joinRequests }) => {
         return (
           <ListItem key={request.docId} className={cn("bg-white rounded-md shadow-md p-2", "hover:bg-gray-50")}>
             <ListItemAvatar>
-              <Avatar src={user.iconUrl || ''} alt={user.username} />
+              <Avatar src={user.avatarIconUrl || ''} alt={user.username} />
             </ListItemAvatar>
             <ListItemText
               primary={user.username}

@@ -92,13 +92,10 @@ class BaseDB<T extends BaseDocumentData> {
    * @returns 読み込んだドキュメントのデータ、存在しない場合はnull
    */
   async read(documentId: string): Promise<T | null> {
+    console.log("Called read"); // 開発用
+
     const docSnapshot = await this.readAsDocumentSnapshot(documentId);
     if (docSnapshot.exists()) {
-      if (docSnapshot.metadata.fromCache) {
-        console.log('このデータはローカルキャッシュからのものです。');
-      } else {
-        console.log('このデータはサーバーからのものです。');
-      }
       const data = docSnapshot.data() as T;
       if (!data.isActive) return null; // Return null if the document is logically deleted
       data.docId = docSnapshot.id;
@@ -114,6 +111,8 @@ class BaseDB<T extends BaseDocumentData> {
    * @param data 更新するドキュメントのデータ（部分的）
    */
   async update(documentId: string, data: Partial<T>): Promise<void> {
+    console.log("Called update"); // 開発用
+
     const docRef = doc(this.collectionRef, documentId) as DocumentReference<T>;
     return this.handleFirestoreOperation(updateDoc(docRef, data as T), "Failed to update document");
   }
@@ -161,6 +160,8 @@ class BaseDB<T extends BaseDocumentData> {
    * @returns 取得したドキュメントの配列
    */
   async getAll(...queryConstraints: QueryConstraint[]): Promise<T[]> {
+    console.log("Called get All"); // 開発用
+  
     const querySnapshot = await this.getAllAsQuerySnapshot(...queryConstraints);
     return querySnapshot.docs.map(doc => {
       const data = doc.data();
@@ -173,7 +174,7 @@ class BaseDB<T extends BaseDocumentData> {
    * 指定されたフィールドと値のペアに基づいてドキュメントを取得します。
    * 値リストが10個を超える場合は、複数のクエリに分割して取得します。
    */
-    async getByConditions(field: keyof T, values: any[]): Promise<T[]> {
+    private async getByConditions(field: keyof T, values: any[]): Promise<T[]> {
       const uniqueValues = Array.from(new Set(values));
       const chunkedValues = this.chunkArray(uniqueValues, 10);
   
@@ -209,6 +210,8 @@ class BaseDB<T extends BaseDocumentData> {
    * @returns 一致するドキュメント、存在しない場合はnull
    */
   async getFirstMatch(field: keyof T, value: any): Promise<T | null> {
+    console.log("Called get first match"); // 開発用
+
     const q = query(this.collectionRef, where(field as string, "==", value), where("isActive", "==", true), limit(1));
     const querySnapshot: QuerySnapshot<T> = await this.handleFirestoreOperation(getDocs(q), "Failed to get first match");
 
