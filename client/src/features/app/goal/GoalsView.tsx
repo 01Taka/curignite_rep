@@ -23,7 +23,7 @@ const GoalsView: FC<GoalsViewProps> = ({ currentGoal, goals, showOtherGoals, tog
             </IconButton>
           )}
         </div>
-        <GoalCard goal={currentGoal} />
+        <GoalCard goal={currentGoal} shadow />
       </div>
     )}
 
@@ -32,7 +32,7 @@ const GoalsView: FC<GoalsViewProps> = ({ currentGoal, goals, showOtherGoals, tog
         <Typography variant='h6'>その他のゴール</Typography>
         <ul>
           {goals.filter(goal => goal.docId !== currentGoal?.docId).map(goal => (
-            <GoalCard key={goal.docId} goal={goal} />
+            <GoalCard key={goal.docId} goal={goal} shadow/>
           ))}
         </ul>
       </div>

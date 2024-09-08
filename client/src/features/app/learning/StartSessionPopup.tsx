@@ -56,12 +56,20 @@ const StartSessionPopup: FC<StartSessionPopupProps> = ({ open, handleClose }) =>
     } else {
       setErrorMessage("目標と教科を正しく設定してください。");
     }
-  };                  
+  };
+
+  const handleSetLearning = async () => {
+    if (!uid) return;
+
+    const userService = serviceFactory.createUserService();
+    await userService.setIsLearning(uid, true);
+  }
 
   const handleStartSession = async () => {
     if (!uid) return;
     await handleCreateGoal();
-    await IndexedLearningSessionService.startSession(uid);  
+    await handleSetLearning();
+    await IndexedLearningSessionService.startSession(uid);
     handleClose(); // 成功時にポップアップを閉じる 
   }
 

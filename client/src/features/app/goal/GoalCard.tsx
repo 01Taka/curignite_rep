@@ -5,12 +5,14 @@ import { differenceInMinutes, format, isToday } from "date-fns";
 import { convertToDate } from "../../../functions/dateTimeUtils";
 import { Typography } from "@mui/material";
 import SubjectIcon from "../../../components/util/SubjectIcon";
+import { cn } from "../../../functions/utils";
 
 interface GoalCardProps {
   goal: UserGoalData;
+  shadow?: boolean;
 }
 
-const GoalCard: FC<GoalCardProps> = ({ goal }) => {
+const GoalCard: FC<GoalCardProps> = ({ goal, shadow }) => {
   const formatTimeDifference = (time: TimeTypes) => {
     const remainingTime = Math.abs(differenceInMinutes(convertToDate(time), new Date()));
     const hours = Math.floor(remainingTime / 60);
@@ -40,7 +42,7 @@ const GoalCard: FC<GoalCardProps> = ({ goal }) => {
   };
 
   return (
-    <div className='relative p-4 shadow-md rounded-lg'>
+    <div className={cn('relative', shadow && "bg-white p-4 rounded-lg shadow-md")} >
       <Typography variant='h6'>{goal.objectives}</Typography>
       <Typography>{getFormattedDeadline(goal.deadline)}</Typography>
       <SubjectIcon subject={goal.subject} />

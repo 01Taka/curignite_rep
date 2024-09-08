@@ -2,12 +2,14 @@ import React, { FC } from 'react';
 import { Avatar, Box, Typography } from '@mui/material';
 import UserLevel from './UserLevel';
 import { UserWithSupplementary } from '../../../types/firebase/db/user/userStructure';
+import { cn } from '../../../functions/utils';
 
 interface UserProfileCardProps {
   userData: UserWithSupplementary | null;
+  shadow?: boolean;
 }
 
-const UserProfileCard: FC<UserProfileCardProps> = ({ userData }) => {
+const UserProfileCard: FC<UserProfileCardProps> = ({ userData, shadow }) => {
   if (!userData) {
     return (
       <Box className="p-4 bg-red-100 text-red-800 rounded-md shadow-md">
@@ -19,7 +21,7 @@ const UserProfileCard: FC<UserProfileCardProps> = ({ userData }) => {
   }
 
   return (
-    <div className="flex justify-center items-center p-4 bg-white rounded-lg shadow-md">
+    <div className={cn("flex justify-center items-center", shadow && "bg-white p-4 rounded-lg shadow-md")}>
       <Box className="flex flex-col items-center justify-center mr-2">
         <Avatar
           src={userData.avatarIconUrl}

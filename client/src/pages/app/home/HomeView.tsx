@@ -10,8 +10,6 @@ import { useNavigate } from 'react-router-dom';
 import { mainPaths } from '../../../types/path/mainPaths';
 import { useAppSelector } from '../../../redux/hooks';
 import { revertTimestampConversion } from '../../../functions/db/dataFormatUtils';
-import CreateHelpForm from '../../../features/app/help/CreateHelpForm';
-import Popup from '../../../components/util/Popup';
 import Helps from '../../../features/app/help/Helps';
 
 interface HomeViewProps {}
@@ -44,8 +42,8 @@ const FixedSideContent: FC = () => {
   const userData = useAppSelector(state => state.userSlice.userData);
   
   return (
-    <div className='fixed top-6 right-6'>
-    <UserProfileCard userData={userData ? revertTimestampConversion(userData) : null} />
+    <div className='fixed top-6 right-6 max-w-sm'>
+    <UserProfileCard userData={userData ? revertTimestampConversion(userData) : null} shadow />
     <LearningOverview />
     <LearningTimeHeatmap />
   </div>
@@ -75,7 +73,7 @@ const NavigateButton: FC<NavigateButtonProps> = ({ src, label, navigatePath }) =
 
 const FixedInfo: FC = () => {
   return (
-    <div className='fixed top-40 left-6'>
+    <div className='fixed top-40 left-6 max-w-sm'>
       <LearningSessions />
       <Goals />
       <Helps />

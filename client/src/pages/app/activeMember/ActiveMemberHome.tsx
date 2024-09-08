@@ -1,7 +1,7 @@
-import React from 'react'
-import ActiveMembers from '../../../features/activeMember/ActiveMembers'
+import React, { FC } from 'react'
+import ActiveMembers from '../../../features/app/activeMember/ActiveMembers'
 
-const ActiveMemberHome = () => {
+const ActiveMemberHome: FC = () => {
   return (
     <div>
       <ActiveMembers />

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
-import useActiveMembers from './hooks/useActiveMembers';
 import { Typography } from '@mui/material';
-
+import useActiveMembers from './hooks/useActiveMembers';
+import UserCard from '../user/UserCard';
 
 const ActiveMembers = () => {
   const { activeMemberMap, loading, error, updateSameTeamMembersId } = useActiveMembers();
@@ -20,13 +20,15 @@ const ActiveMembers = () => {
         <Typography>現在アクティブなメンバーはいません。</Typography>
       ) : (
         <ul>
-          {Object.keys(activeMemberMap).map((key) => (
-            <li key={key}>
-              <Typography>
-                {activeMemberMap[key].name} ({activeMemberMap[key].email})
-              </Typography>
-            </li>
-          ))}
+          {Object.keys(activeMemberMap).map((key) => {
+            const user = activeMemberMap[key];
+            if (!user) return null;
+            return (
+              <div key={key}>
+                <UserCard user={user}/>
+              </div>
+            )
+          })}
         </ul>
       )}
     </div>

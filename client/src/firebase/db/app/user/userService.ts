@@ -207,6 +207,10 @@ export class UserService {
     }
   }
 
+  async setIsLearning(userId: string, status: boolean): Promise<void> {
+    await this.baseDB.update(userId, { isLearning: status });
+  }
+
   // ヘルパーメソッド群
   private async getFileUrl(fileId: string): Promise<string> {
     return await this.storageManager.getFileUrl(fileId);
