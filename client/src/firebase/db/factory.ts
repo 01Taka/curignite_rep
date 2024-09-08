@@ -83,7 +83,7 @@ class ServiceFactory {
   }
 
   createHelpAnswerService() {
-    return this.getInstance('helpAnswerService', HelpAnswerService, this.firestore);
+    return this.getInstance('helpAnswerService', HelpAnswerService, this.firestore, this.storageManager);
   }
 
   createTeamService() {

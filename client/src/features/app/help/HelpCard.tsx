@@ -8,10 +8,11 @@ import { cn } from '../../../functions/utils';
 interface HelpCardProps {
   helpAndAnswersInfo: HelpAndAnswersWithFileUrls;
   shadow?: boolean;
-  onSelectAnswers: (helpAndAnswersInfo: HelpAndAnswersWithFileUrls) => void;
+  hiddenShowAnswerButton?: boolean;
+  onSelectAnswers?: (helpAndAnswersInfo: HelpAndAnswersWithFileUrls) => void;
 }
 
-const HelpCard: FC<HelpCardProps> = ({ helpAndAnswersInfo, shadow, onSelectAnswers }) => {
+const HelpCard: FC<HelpCardProps> = ({ helpAndAnswersInfo, shadow, hiddenShowAnswerButton = false, onSelectAnswers }) => {
   return (
     <>
     <div className={cn("relative break-words", shadow && "bg-white p-4 shadow-lg rounded-md")}>
@@ -27,9 +28,9 @@ const HelpCard: FC<HelpCardProps> = ({ helpAndAnswersInfo, shadow, onSelectAnswe
       </Typography>
       <div className='flex justify-between items-end'>
         <FilePreview urls={helpAndAnswersInfo.helpFileUrls} />
-        {helpAndAnswersInfo.answers.length > 0 && 
+        {!hiddenShowAnswerButton &&  helpAndAnswersInfo.answers.length > 0 && 
           <div
-            onClick={() => onSelectAnswers(helpAndAnswersInfo)}
+            onClick={() => onSelectAnswers ? onSelectAnswers(helpAndAnswersInfo) : {}}
             className='bg-blue-300 text-center font-bold w-44 h-min p-1 rounded-md hover:cursor-pointer hover:scale-110 transition-transform duration-300'
           >
             {helpAndAnswersInfo.answers.length}件の回答があります！

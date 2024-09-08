@@ -21,7 +21,6 @@ export class HelpAnswerService {
     answer: string,
     files: File[],
     answeredBy: string,
-    merge: boolean = false,
   ): Promise<Promise<DocumentReference<HelpAnswerData, DocumentData>>> {
     const data: HelpAnswerData = {
       ...getInitialBaseDocumentData(userId),

@@ -1,8 +1,10 @@
 import { FC, useState } from "react";
-import { HelpAndAnswersWithFileUrls } from "../../../types/firebase/db/user/userStructure";
+import { HelpAndAnswersWithFileUrls, UserHelpData } from "../../../types/firebase/db/user/userStructure";
 import useAnswerDisplayPopup from "../help/hooks/useAnswerDisplayPopup";
 import HelpCard from "../help/HelpCard";
 import { Button, Divider, Typography } from "@mui/material";
+import Popup from "../../../components/util/Popup";
+import CreateAnswerForm from "../help/CreateAnswerForm";
 
 interface HelpViewProps {
   helpAndAnswerInfo: HelpAndAnswersWithFileUrls[] | null;
@@ -11,6 +13,7 @@ interface HelpViewProps {
 
 const HelpView: FC<HelpViewProps> = ({ helpAndAnswerInfo, loading }) => {
   const [showFull, setShowFull] = useState(false);
+  const [answeringTarget, setAnsweringTarget] = useState<HelpAndAnswersWithFileUrls | null>(null);
   const { handleSelectAnswers, AnswerPopup } = useAnswerDisplayPopup();
 
   const handleToggleShowFull = () => {
@@ -37,6 +40,7 @@ const HelpView: FC<HelpViewProps> = ({ helpAndAnswerInfo, loading }) => {
             <HelpItem 
               value={value} 
               onSelectAnswers={handleSelectAnswers} 
+              onHelp={setAnsweringTarget}
             />
             {index === displayedInfo.length - 1 && isMultipleQuestions && (
               <ToggleShowButton 
@@ -48,17 +52,30 @@ const HelpView: FC<HelpViewProps> = ({ helpAndAnswerInfo, loading }) => {
         ))}
       </div>
       {AnswerPopup}
+      <Popup open={!!answeringTarget} handleClose={() => setAnsweringTarget(null)}>
+        {answeringTarget && <CreateAnswerForm targetHelpAndAnswersInfo={answeringTarget} onCreated={() => setAnsweringTarget(null)}/>}
+      </Popup>
     </>
   );
 };
 
+
+interface HelpItemProps {
+  value: HelpAndAnswersWithFileUrls;
+  onSelectAnswers: (answers: HelpAndAnswersWithFileUrls) => void;
+  onHelp: (targetHelp: HelpAndAnswersWithFileUrls) => void;
+}
+
 // ヘルプアイテムを独立したコンポーネントに分割
-const HelpItem: FC<{ value: HelpAndAnswersWithFileUrls, onSelectAnswers: (answers: HelpAndAnswersWithFileUrls) => void }> = ({ value, onSelectAnswers }) => (
+const HelpItem: FC<HelpItemProps> = ({ value, onSelectAnswers, onHelp }) => (
   <div className='flex justify-around items-center w-full'>
     <div className='min-w-96 max-w-96 px-4 py-2 bg-gray-200 rounded-lg'>
       <HelpCard helpAndAnswersInfo={value} onSelectAnswers={onSelectAnswers} />
     </div>
-    <button className='w-16 h-24 border-4 border-blue-300 bg-blue-300 bg-opacity-0 rounded-lg transition duration-300 hover:scale-110 hover:bg-opacity-100'>
+    <button
+      className='w-16 h-24 border-4 border-blue-300 bg-blue-300 bg-opacity-0 rounded-lg transition duration-300 hover:scale-110 hover:bg-opacity-100'
+      onClick={() => onHelp(value)}
+      >
       助ける
     </button>
   </div>
