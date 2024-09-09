@@ -6,6 +6,7 @@ import { startOfWeek } from 'date-fns';
 import { convertToDate } from '../../../functions/dateTimeUtils';
 import { UserLearningSessionService } from '../../../firebase/db/app/user/subCollection/userLearningSessionService';
 import { Card, CardContent, Tooltip, Typography } from '@mui/material';
+import { MINUTES_IN_MILLISECOND } from '../../../constants/utils/dateTimeConstants';
 
 const LearningOverview: FC = () => {
   const { uid, userData } = useAppSelector(state => state.userSlice);
@@ -22,7 +23,6 @@ const LearningOverview: FC = () => {
           const learningSession = serviceFactory.createUserLearningSessionService();
 
           const monthSessions = await learningSession.fetchRecentSessionsByDaysAgo(uid, 30);
-
           const weekStartDate = startOfWeek(new Date());
           const weekSessions = monthSessions.filter(session => convertToDate(session.date) >= weekStartDate);
 
@@ -30,7 +30,7 @@ const LearningOverview: FC = () => {
           const todaySessionData = monthSessions.find(session => convertToDate(session.date).getTime() === today.getTime()) || 
                                    await learningSession.fetchDailySession(uid, today);
 
-          const averageLearningTime = UserLearningSessionService.calculateAverageLearningTime(monthSessions);
+          const averageLearningTime = UserLearningSessionService.calculateAverageLearningTime(monthSessions, "length");
           const weeklyTotalLearningTime = UserLearningSessionService.calculateTotalLearningTime(weekSessions);
 
           setTodaySession(todaySessionData);
@@ -46,6 +46,14 @@ const LearningOverview: FC = () => {
     updateLearningSessions();
   }, [uid]);
 
+  // ミリ秒を時間と分に変換
+  const formatEstimatedDuration = (durationInMs: number) => {
+    const totalMinutes = durationInMs / MINUTES_IN_MILLISECOND;
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = Math.floor(totalMinutes % 60);
+    return `${hours ? `${hours}時間 ` : ''}${minutes}分`;
+  };
+
   return (
     <Card className="max-w-lg mx-auto my-4 shadow-lg">
       <CardContent className="bg-gray-50 p-6">
@@ -59,14 +67,14 @@ const LearningOverview: FC = () => {
         ) : (
           <div className="space-y-3">
             <Typography variant="body1" className="text-gray-700">
-              今日の合計: {todaySession ? `${todaySession.totalLearningTime}` : '0'} 分
+              今日の合計: {todaySession ? formatEstimatedDuration(todaySession.totalLearningTime) : '0分'}
             </Typography>
             <Typography variant="body1" className="text-gray-700">
-              今週の合計: {weekTotalTime} 分
+              今週の合計: {formatEstimatedDuration(weekTotalTime)}
             </Typography>
-            <Tooltip title="過去30日分の平均学習時間です" placement='left'>
+            <Tooltip title="過去30日のうち学習した日の平均学習時間" placement='left'>
               <Typography variant="body1" className="text-gray-700">
-                平均学習時間: {avgTime} 分
+                平均学習時間: {formatEstimatedDuration(avgTime)}
               </Typography>
             </Tooltip>
             <Typography variant="body1" className="text-gray-700">

@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 import LearningOverview from '../../../features/app/learning/LearningOverview';
 import LearningTimeHeatmap from '../../../features/app/learning/LearningTimeHeatmap';
 import ImageButton from '../../../components/input/button/ImageButton';
@@ -12,6 +12,7 @@ import { useAppSelector } from '../../../redux/hooks';
 import { revertTimestampConversion } from '../../../functions/db/dataFormatUtils';
 import Helps from '../../../features/app/help/Helps';
 import StartLearningButton from '../../../features/app/learning/StartLearningButton';
+import TaskPageLink from '../../../features/app/task/tasks/TaskPageLink';
 
 interface HomeViewProps {}
 
@@ -23,6 +24,7 @@ const FixedSideContent: FC = () => {
     <UserProfileCard userData={userData ? revertTimestampConversion(userData) : null} shadow />
     <LearningOverview />
     <LearningTimeHeatmap />
+    <TaskPageLink />
   </div>
   )
 }
@@ -32,7 +34,7 @@ const FixedNavigateButtons: FC = () => {
     <div className='fixed top-6 left-6 flex items-center'>
       <NavigateButton src='images/components/team.png' label='学習チーム' navigatePath={mainPaths.team} />
       <NavigateButton src='images/components/member.png' label='学習中メンバー' navigatePath={mainPaths.activeMember} />
-      <NavigateButton src='images/components/partner.png' label='学習パートナー' navigatePath={mainPaths.partner} />
+      {/* <NavigateButton src='images/components/partner.png' label='学習パートナー' navigatePath={mainPaths.partner} /> 未実装のためコメントアウト */}
     </div>
   )
 }

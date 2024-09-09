@@ -11,6 +11,7 @@ import TaskRoutes from '../task/TaskRoutes';
 import { setApprovedTeams } from '../../../redux/actions/team/teamActions';
 import ActiveMemberRoutes from '../activeMember/ActiveMemberRoutes';
 import FocusLearning from '../../../features/app/focusLearning/FocusLearning';
+import { updateCurrentSession } from '../../../redux/actions/learning/sessionActions';
 
 const MainRoutes: FC = () => {
   const dispatch = useAppDispatch();
@@ -20,6 +21,7 @@ const MainRoutes: FC = () => {
     if (uid) {
       setApprovedTeams(dispatch, uid);
       autoUpdateSpaces(dispatch, uid);
+      updateCurrentSession(dispatch, uid);
     }
   }, [dispatch, uid]);
 

@@ -49,6 +49,6 @@ export const getLevelAndRemainingXPFromLearningTime = (learningTime: TimeTypes) 
   const learningTimeMills = convertToMilliseconds(learningTime);
   if (isNaN(learningTimeMills)) throw new Error("値がNaNです");
   
-  const totalExp = learningTimeMills * MINUTES_IN_MILLISECOND;
+  const totalExp = learningTimeMills / MINUTES_IN_MILLISECOND;
   return getLevelAndRemainingXP(totalExp);
 };

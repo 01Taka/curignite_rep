@@ -9,20 +9,13 @@ interface StartLearningButtonProps {
 }
 
 const StartLearningButton: FC<StartLearningButtonProps> = ({ onClickAtLearning, onClickAtNotLearning }) => {
-  const uid = useAppSelector((state) => state.userSlice.uid);
+  const currentSession = useAppSelector(state => state.sessionSlice.currentSession);
   const [isLearning, setIsLearning] = useState(false);
   const [buttonText, setButtonText] = useState("学習中");
 
-  const updateIsLearning = useCallback(async () => {
-    if (uid) {
-      const currentSession = await IndexedLearningSessionService.getCurrentSession(uid);
-      setIsLearning(!!currentSession);
-    }
-  }, [uid]);
-
   useEffect(() => {
-    updateIsLearning();
-  }, [updateIsLearning]);
+    setIsLearning(!!currentSession);
+  }, [currentSession]);
 
   const handleMouseEnter = () => setButtonText("集中モード");
   const handleMouseLeave = () => setButtonText("学習中");

@@ -1,4 +1,4 @@
-import { DocumentData, DocumentReference, Timestamp } from "firebase/firestore";
+import { DocumentData, Timestamp } from "firebase/firestore";
 
 // すべての動的Firestoreドキュメントに存在するべきフィールド
 export interface BaseDocumentData extends DocumentData {

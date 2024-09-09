@@ -6,7 +6,6 @@ import {
 import BaseDB from '../../../base';
 import { getInitialBaseDocumentData } from '../../../../../functions/db/dbUtils';
 import { StorageManager } from '../../../../storage/storageManager';
-import { getFileExtension } from '../../../../../functions/fileUtils';
 import { ChatData } from '../../../../../types/firebase/db/chat/chatRoomStructure';
 
 export class ChatRoomChatService {

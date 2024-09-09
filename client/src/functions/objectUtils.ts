@@ -173,11 +173,41 @@ export const getRangeWithValues = (start: number, end: number): number[] => {
 
 export const rangesToArray = (ranges: Range[]): number[] => {
   const setRanges = new Set<number>();
-  ranges.forEach(range => {
-    const numbers = getRangeWithValues(range.min, range.min);
+  const mergedRanges = mergeRanges(ranges);
+  mergedRanges.forEach(range => {
+    const numbers = getRangeWithValues(range.min, range.max);
     numbers.forEach(number => setRanges.add(number));
   })
   return Array.from(setRanges);
+}
+
+export const mergeRanges = (ranges: Range[]): Range[] => {
+  if (ranges.length === 0) return [];
+
+  // minの昇順にソートする
+  ranges.sort((a, b) => a.min - b.min);
+
+  const result: Range[] = [];
+  let currentRange = ranges[0];
+
+  for (let i = 1; i < ranges.length; i++) {
+      const nextRange = ranges[i];
+
+      // currentRangeとnextRangeが重なっている、または連続している場合
+      if (currentRange.max >= nextRange.min - 1) {
+          // 結合して currentRange を更新
+          currentRange.max = Math.max(currentRange.max, nextRange.max);
+      } else {
+          // 結合できない場合、currentRangeを結果に追加し、nextRangeを新しいcurrentRangeにする
+          result.push(currentRange);
+          currentRange = nextRange;
+      }
+  }
+
+  // 最後のcurrentRangeを結果に追加
+  result.push(currentRange);
+
+  return result;
 }
 
 /**

@@ -5,7 +5,6 @@ import { getInitialBaseDocumentData } from "../../../../../functions/db/dbUtils"
 import { UserTeamService } from "../../user/subCollection/userTeamService";
 import { BaseMemberRole } from "../../../../../types/firebase/db/baseTypes";
 import { TeamData, TeamMemberData } from "../../../../../types/firebase/db/team/teamStructure";
-import { JoinRequestStatus } from "../../../../../types/firebase/db/common/joinRequest/joinRequestSupplementTypes";
 
 export class TeamMemberService {
   constructor(private firestore: Firestore, private userTeamService: UserTeamService) { }

@@ -21,7 +21,7 @@ const UserProfileCard: FC<UserProfileCardProps> = ({ userData, shadow }) => {
   }
 
   return (
-    <div className={cn("flex justify-center items-center", shadow && "bg-white p-4 rounded-lg shadow-md")}>
+    <div className={cn("flex justify-center items-center w-full", shadow && "bg-white p-4 rounded-lg shadow-md")}>
       <Box className="flex flex-col items-center justify-center mr-2">
         <Avatar
           src={userData.avatarIconUrl}

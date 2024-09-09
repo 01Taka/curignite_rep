@@ -1,18 +1,19 @@
 import { Timestamp } from "firebase/firestore";
 import { BaseDocumentData } from "../../baseTypes";
 import { TaskPriority } from "./taskSupplementTypes";
+import { Range } from "../../../../util/componentsTypes";
 
 export interface BaseTaskData extends BaseDocumentData {
   title: string;
   dueDateTime: Timestamp | null;
   taskNote: string;
   priority: TaskPriority;
-  progress: number;
-  completed: boolean;
 }
 
 export interface IndividualTaskData extends BaseTaskData {
   estimatedDuration: number;
+  progress: number;
+  completed: boolean;
 }
 
 export interface TaskCollectionData extends BaseDocumentData {
@@ -25,8 +26,7 @@ export interface TaskCollectionData extends BaseDocumentData {
 
 export interface TaskCollectionTaskData extends BaseTaskData {
   collectionId: string;
-  pagesInRange: number[];
-  completedPages: number[];
+  pagesInRange: Range[];
 }
 
 
@@ -37,7 +37,7 @@ export interface TaskCollectionTaskData extends BaseTaskData {
  */
 export interface CollectionTaskField {
   collection: TaskCollectionData;
-  pagesInRange: number[];
+  pagesInRange: Range[];
   completedPages: number[];
   remainingPages: number[];
 }
@@ -46,7 +46,12 @@ export interface TaskData extends IndividualTaskData {
   collectionTaskField?: CollectionTaskField;
 }
 
-export interface CollectionWithTasks {
+export interface CollectionWithCollectionTasks {
   collectionData: TaskCollectionData;
   tasksInCollection: TaskCollectionTaskData[];
+}
+
+export interface CollectionWithTasksData {
+  collectionData: TaskCollectionData;
+  tasksData: TaskData[];
 }

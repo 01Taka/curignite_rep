@@ -3,29 +3,26 @@ import { IndexedLearningSessionService } from '../../../functions/browserStorage
 import { CurrentSession, Session } from '../../../types/browserStorage/indexedDB/learningSessionsTypes';
 import { Typography, Box, CircularProgress, Divider, IconButton, Collapse } from '@mui/material';
 import { convertToMilliseconds, dateTimeToString } from '../../../functions/dateTimeUtils';
-import { differenceInDays, differenceInMinutes } from 'date-fns';
+import { differenceInDays, differenceInMilliseconds, differenceInMinutes } from 'date-fns';
 import CircularButton from '../../../components/input/button/CircularButton';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import { SECONDS_IN_MILLISECOND } from '../../../constants/utils/dateTimeConstants';
-import { useAppSelector } from '../../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import serviceFactory from '../../../firebase/db/factory';
+import { setCurrentSession } from '../../../redux/slices/learning/sessionSlice';
 
 const LearningSessions: FC = () => {
   const uid = useAppSelector(state => state.userSlice.uid);
+  const currentSession = useAppSelector(state => state.sessionSlice.currentSession);
   const [sessions, setSessions] = useState<Session[] | null>(null);
-  const [currentSession, setCurrentSession] = useState<CurrentSession | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [showSessions, setShowSessions] = useState<boolean>(false);
 
   const fetchSessions = useCallback(async () => {
     if (!uid) return;
     try {
-      const [allSessions, curSession] = await Promise.all([
-        IndexedLearningSessionService.getAllSessions(uid),
-        IndexedLearningSessionService.getCurrentSession(uid),
-      ]);
+      const allSessions = await IndexedLearningSessionService.getAllSessions(uid);
       setSessions(allSessions);
-      setCurrentSession(curSession);
     } catch (error) {
       console.error("Failed to fetch learning sessions:", error);
     } finally {
@@ -49,7 +46,7 @@ const LearningSessions: FC = () => {
   }
 
   return (
-    <Box className="p-4 shadow-md rounded-lg w-96 max-h-48 overflow-y-auto">
+    <Box className="shadow-md rounded-lg w-96 max-h-48 overflow-y-auto">
       <CurrentSessionDisplay
         currentSession={currentSession}
         showSessions={showSessions}
@@ -117,7 +114,7 @@ const CurrentSessionDisplay: FC<CurrentSessionDisplayProps> = ({
   const format = differenceInDays(currentSession.startTime, new Date()) < 1 ? 'HH:mm' : 'M/d HH:mm';
 
   return (
-    <div className="flex justify-around items-center">
+    <div className="relative flex justify-around items-center">
       <div className="flex flex-col">
         <Box className="flex justify-between items-center">
           <Box className="flex items-center">
@@ -147,42 +144,54 @@ const CurrentSessionDisplay: FC<CurrentSessionDisplayProps> = ({
   );
 };
 
-const OperateSessionButtons: FC = React.memo(() => {
-  const [loading, setLoading] = useState(false);
-  const [finishedSuccess, setFinishedSuccess] = useState(false);
 
+const OperateSessionButtons: FC = React.memo(() => {
+  const dispatch = useAppDispatch()
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [isFinished, setIsFinished] = useState(false);
   const uid = useAppSelector(state => state.userSlice.uid);
 
-  const handleFinishSession = useCallback(async () => {
-    if (uid) {
-      try {
-        setLoading(true);
-        setFinishedSuccess(false);
-        const userService = serviceFactory.createUserService();
-        const sessionService = serviceFactory.createUserLearningSessionService();
-        const currentSession = await IndexedLearningSessionService.getCurrentSession(uid);
-        if (!currentSession) return;
-        await sessionService.recordSession(uid, currentSession.startTime, new Date());
-        await userService.setIsLearning(uid, false);
-        await IndexedLearningSessionService.deleteCurrentSession(uid);
-        setFinishedSuccess(true);
-      } catch (error) {
-        console.error("Failed to finish session:", error);
-      } finally {
-        setLoading(false);
-      }
+  const finishCurrentSession = useCallback(async () => {
+    if (!uid) return;
+
+    try {
+      setIsProcessing(true);
+      setIsFinished(false);
+
+      const userService = serviceFactory.createUserService();
+      const sessionService = serviceFactory.createUserLearningSessionService();
+      const currentSession = await IndexedLearningSessionService.getCurrentSession(uid);
+      dispatch(setCurrentSession(null));
+      if (!currentSession) return;
+
+      await sessionService.recordSession(uid, currentSession.startTime, new Date());
+      await userService.addTotalLearningTime(uid, differenceInMilliseconds(new Date(), currentSession.startTime));
+      await userService.setIsLearning(uid, false);
+      await IndexedLearningSessionService.deleteCurrentSession(uid);
+
+      setIsFinished(true);
+    } catch (error) {
+      console.error("Failed to finish session:", error);
+    } finally {
+      setIsProcessing(false);
     }
   }, [uid]);
 
   return (
     <Box className="flex pt-1">
-      {finishedSuccess ? (
+      {isFinished ? (
         <div className='flex justify-center items-center w-20 h-20 rounded-full bg-gray-300'>
           終了しました
         </div>
       ) : (
-        <CircularButton bgColor="success" size="lg" onClick={handleFinishSession} invalidation={loading}>
-          {loading ? "セッションを終了" : <CircularProgress />}
+        <CircularButton 
+          bgColor="success" 
+          size="lg" 
+          onClick={finishCurrentSession} 
+          disabled={isProcessing}
+          className='bg-orange-400 hover:bg-orange-500'
+        >
+          {isProcessing ? <CircularProgress size={24}/> : "学習を終了"}
         </CircularButton>
       )}
     </Box>

@@ -17,6 +17,7 @@ export interface UserData extends BaseDocumentData {
 
   lastLearningTimestamp: Timestamp;
   consecutiveLearningNumber: number;
+  maxConsecutiveLearningNumber: number;
   totalLearningTime: number;
 }
 

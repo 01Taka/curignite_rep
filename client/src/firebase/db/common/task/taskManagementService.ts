@@ -1,8 +1,9 @@
 import { Firestore, QueryConstraint } from "firebase/firestore";
-import { CollectionWithTasks, TaskCollectionTaskData, TaskData } from "../../../../types/firebase/db/common/task/taskStructure";
+import { CollectionWithCollectionTasks, CollectionWithTasksData, TaskCollectionData, TaskCollectionTaskData, TaskData } from "../../../../types/firebase/db/common/task/taskStructure";
 import { TaskCollectionService } from "./taskCollectionService";
 import { IndividualTaskService } from "./individualTaskService";
 import { TaskCollectionTaskService } from "./taskCollectionTaskService";
+import { rangesToArray, removeDuplicates } from "../../../../functions/objectUtils";
 
 export class TaskManagementService {
   private individualTaskService: IndividualTaskService;
@@ -12,7 +13,7 @@ export class TaskManagementService {
   constructor(firestore: Firestore, basePath: string) {
     this.individualTaskService = new IndividualTaskService(firestore, basePath);
     this.taskCollectionService = new TaskCollectionService(firestore, basePath);
-    this.taskCollectionTaskService = new TaskCollectionTaskService(firestore, basePath, this.getTaskCollectionService());
+    this.taskCollectionTaskService = new TaskCollectionTaskService(firestore, basePath, this.taskCollectionService);
   }
 
   getIndividualTaskService() {
@@ -27,66 +28,98 @@ export class TaskManagementService {
     return this.taskCollectionTaskService;
   }
 
-  async getAllTasksFromCollections(
+  async getCollectionsWithTasksData(
     docId: string,
     collectionQueryConstraints: QueryConstraint[] = [],
     taskQueryConstraints: QueryConstraint[] = []
-  ): Promise<TaskCollectionTaskData[]> {
+  ): Promise<CollectionWithTasksData[]> {
     try {
-      const collections = await this.taskCollectionService.getAllCollections(docId, ...collectionQueryConstraints);
-      const allTasksInCollections = await Promise.all(
-        collections.map(collection => this.taskCollectionTaskService.getAllTasks(docId, collection.docId, ...taskQueryConstraints))
-      );
-      return allTasksInCollections.flat();
+      const collectionTasks = await this.getCollectionsWithCollectionTasks(docId, collectionQueryConstraints, taskQueryConstraints);
+      return collectionTasks.map(data => ({
+        collectionData: data.collectionData,
+        tasksData: this.processCollectionTasks([data])
+      }));
     } catch (error) {
-      console.error("Error getting all tasks from collections:", error);
-      throw new Error("Failed to get all tasks from collections");
+      this.logErrorAndThrow("getting collections with tasks", error);
     }
   }
 
-  async getCollectionsWithTasks(
+  async getCollectionsWithCollectionTasks(
     docId: string,
     collectionQueryConstraints: QueryConstraint[] = [],
     taskQueryConstraints: QueryConstraint[] = []
-  ): Promise<CollectionWithTasks[]> {
+  ): Promise<CollectionWithCollectionTasks[]> {
     try {
       const collections = await this.taskCollectionService.getAllCollections(docId, ...collectionQueryConstraints);
-      const collectionTaskMapping = await Promise.all(
-        collections.map(async collection => ({
-          collectionData: collection,
-          tasksInCollection: await this.taskCollectionTaskService.getAllTasks(docId, collection.docId, ...taskQueryConstraints)
-        }))
+      return await Promise.all(
+        collections.map(async (collectionData) => {
+          const tasksInCollection = await this.taskCollectionTaskService.getAllTasks(docId, collectionData.docId, ...taskQueryConstraints);
+          return { collectionData, tasksInCollection } as CollectionWithCollectionTasks;
+        })
       );
-      return collectionTaskMapping;
     } catch (error) {
-      console.error("Error getting collections with tasks:", error);
-      throw new Error("Failed to get collections with tasks");
+      this.logErrorAndThrow("getting collections with tasks", error);
     }
   }
 
   async getAllTasks(docId: string, queryConstraints: QueryConstraint[] = [], collectionQueryConstraints: QueryConstraint[] = []): Promise<TaskData[]> {
     try {
-      const individualTasks = await this.individualTaskService.getAllTasks(docId, ...queryConstraints);
-      const collectionTaskMappings = await this.getCollectionsWithTasks(docId, collectionQueryConstraints, queryConstraints);
-
-      const collectionTasksWithDuration = collectionTaskMappings.flatMap(({ collectionData, tasksInCollection }) => {
-        const estimatedDuration = collectionData.timePerPage * tasksInCollection.length;
-        return tasksInCollection.map(task => ({
-          ...task,
-          estimatedDuration,
-          collectionTaskField: {
-            collection: collectionData,
-            pagesInRange: task.pagesInRange,
-            completedPages: task.completedPages,
-            remainingPages: task.pagesInRange?.filter(page => task.completedPages?.includes(page)) || []
-          }
-        } as TaskData));
-      });
-
-      return [...individualTasks, ...collectionTasksWithDuration];
+      const [individualTasks, collectionTaskMappings] = await Promise.all([
+        this.individualTaskService.getAllTasks(docId, ...queryConstraints),
+        this.getCollectionsWithCollectionTasks(docId, collectionQueryConstraints, queryConstraints)
+      ]);
+      const collectionTasks = this.processCollectionTasks(collectionTaskMappings);
+      return [...individualTasks, ...collectionTasks];
     } catch (error) {
-      console.error("Error getting all tasks:", error);
-      throw new Error("Failed to get all tasks");
+      this.logErrorAndThrow(`getting all tasks for document ID: ${docId}`, error);
     }
+  }
+
+  private processCollectionTasks(collectionTaskMappings: CollectionWithCollectionTasks[]): TaskData[] {
+    return collectionTaskMappings.flatMap(({ collectionData, tasksInCollection }) =>
+      tasksInCollection.map(task => this.buildTaskWithCollectionData(task, collectionData))
+    );
+  }
+
+  private buildTaskWithCollectionData(task: TaskCollectionTaskData, collectionData: TaskCollectionData): TaskData {
+    const targetPages = this.getTargetPages(task.pagesInRange);
+    const completedPages = this.getCompletedPages(targetPages, collectionData.completedPageIndices);
+    const remainingPages = this.getRemainingPages(targetPages, collectionData.completedPageIndices);
+    const progress = this.calculateProgress(targetPages.length, completedPages.length);
+    const estimatedDuration = collectionData.timePerPage * remainingPages.length;
+
+    return {
+      ...task,
+      estimatedDuration,
+      progress,
+      completed: progress === 1,
+      collectionTaskField: {
+        collection: collectionData,
+        pagesInRange: task.pagesInRange,
+        completedPages,
+        remainingPages,
+      },
+    };
+  }
+
+  private getTargetPages(pagesInRange: { min: number; max: number }[]): number[] {
+    return removeDuplicates(rangesToArray(pagesInRange));
+  }
+
+  private getRemainingPages(targetPages: number[], completedPageIndices: number[]): number[] {
+    return targetPages.filter(page => !completedPageIndices.includes(page));
+  }
+
+  private getCompletedPages(targetPages: number[], completedPageIndices: number[]): number[] {
+    return completedPageIndices.filter(pageIndex => targetPages.includes(pageIndex));
+  }
+
+  private calculateProgress(totalPages: number, completedPages: number): number {
+    return totalPages === 0 ? 0 : completedPages / totalPages;
+  }
+
+  private logErrorAndThrow(action: string, error: unknown): never {
+    console.error(`Error ${action}:`, error);
+    throw new Error(`Failed to ${action}`);
   }
 }

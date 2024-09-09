@@ -4,6 +4,8 @@ import { TaskCollectionTaskData } from "../../../../types/firebase/db/common/tas
 import { getInitialBaseDocumentData } from "../../../../functions/db/dbUtils";
 import { TaskCollectionService } from "./taskCollectionService";
 import { TaskPriority } from "../../../../types/firebase/db/common/task/taskSupplementTypes";
+import { Range } from "../../../../types/util/componentsTypes";
+import { mergeRanges } from "../../../../functions/objectUtils";
 
 export class TaskCollectionTaskService {
   constructor(private firestore: Firestore, private path: string, private taskCollectionService: TaskCollectionService) {}
@@ -15,32 +17,21 @@ export class TaskCollectionTaskService {
   async createTask(
     docId: string,
     taskCollectionId: string,
-    createdById: string,
     title: string,
     dueDateTime: Timestamp | null,
     taskNote: string,
     priority: TaskPriority,
-    pagesInRange: number[],
+    pagesInRange: Range[],
   ): Promise<void> {
     try {
-      const collection  = await this.taskCollectionService.getCollection(docId, taskCollectionId);
-      if (!collection) {
-        throw new Error("タスクコレクションが見つかりませんでした。");
-      }
-      const completedPages = pagesInRange.filter(page => collection.completedPageIndices.includes(page));
-      const progress = pagesInRange.length > 0 ? completedPages.length / pagesInRange.length : 0;
-      const completed = progress === 1;
       const data: TaskCollectionTaskData = {
-        ...getInitialBaseDocumentData(createdById),
+        ...getInitialBaseDocumentData(docId),
         collectionId: taskCollectionId,
         title,
         dueDateTime,
         taskNote,
         priority,
-        pagesInRange,
-        completedPages,
-        progress,
-        completed,
+        pagesInRange: mergeRanges(pagesInRange),
       }
       await this.createBaseDB(taskCollectionId, docId).create(data);
     } catch (error) {

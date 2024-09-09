@@ -10,6 +10,9 @@ import { UserData, UserWithSupplementary } from "../../../../types/firebase/db/u
 import { StorageManager } from "../../../storage/storageManager";
 import { UserLearningSessionService } from "./subCollection/userLearningSessionService";
 import { UserWithNotExistUsersId } from "../../../../types/module/redux/slice/userSliceTypes";
+import { differenceInDays } from "date-fns";
+import { convertToDate } from "../../../../functions/dateTimeUtils";
+import { safeNumber } from "../../../../functions/utils";
 
 export class UserService {
   private baseDB: BaseDB<UserData>;
@@ -42,7 +45,8 @@ export class UserService {
         birthTimestamp,
         isLearning: false,
         lastLearningTimestamp: Timestamp.now(),
-        consecutiveLearningNumber: 0,
+        consecutiveLearningNumber: 1,
+        maxConsecutiveLearningNumber: 1,
         currentTargetGoalId: null,
         totalLearningTime: 0,
       };
@@ -132,6 +136,66 @@ export class UserService {
       this.handleError("Failed to fetch users data by UIDs.", error);
     }
   }
+
+  async addTotalLearningTime(userId: string, addingTimeMs: number) {
+    try {
+      const user = await this.baseDB.read(userId);
+      if (!user) return;
+      const total = safeNumber(addingTimeMs) + safeNumber(user.totalLearningTime);
+      await this.baseDB.update(userId, { totalLearningTime: total });
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
+  async updateConsecutiveLearningNumber(userId: string) {
+    try {
+      const user = await this.baseDB.read(userId);
+      if (!user) return;
+  
+      const now = Timestamp.now();
+      const lastLearningDate = convertToDate(user.lastLearningTimestamp);
+
+      const diffInDays = differenceInDays(new Date(), lastLearningDate);
+  
+      if (diffInDays === 0) {
+        await this.updateLastLearningTimestamp(userId, now);
+      } else if (this.isConsecutiveLearning(diffInDays)) {
+        await this.incrementConsecutiveLearning(userId, user, now);
+      } else {
+        await this.resetConsecutiveLearning(userId, now);
+      }
+    } catch (error) {
+      console.error('Error updating consecutive learning number:', error);
+    }
+  }
+  
+  private async updateLastLearningTimestamp(userId: string, timestamp: Timestamp) {
+    await this.baseDB.update(userId, { lastLearningTimestamp: timestamp });
+  }
+  
+  private isConsecutiveLearning(diffInDays: number): boolean {
+    return diffInDays <= 2;
+  }
+  
+  private async incrementConsecutiveLearning(userId: string, user: UserData, timestamp: Timestamp) {
+    const newConsecutiveNumber = safeNumber(user.consecutiveLearningNumber) + 1;
+    const maxConsecutiveLearningNumber = Math.max(newConsecutiveNumber, safeNumber(user.maxConsecutiveLearningNumber));
+
+    await this.baseDB.update(userId, {
+      lastLearningTimestamp: timestamp,
+      consecutiveLearningNumber: newConsecutiveNumber,
+      maxConsecutiveLearningNumber: maxConsecutiveLearningNumber,
+    });
+  }
+
+  private async resetConsecutiveLearning(userId: string, timestamp: Timestamp) {
+    await this.baseDB.update(userId, {
+      lastLearningTimestamp: timestamp,
+      consecutiveLearningNumber: 1,
+    });
+  }  
 
   /**
    * ドキュメントデータからUIDをキーとするデータの辞書を取得します。

@@ -1,13 +1,13 @@
 import React, { FC } from 'react'
 import { Divider, Typography } from '@mui/material';
-import CollectionTaskView from '../taskList/CollectionTaskView';
+import CollectionTaskView from './CollectionTaskView';
 import { cn } from '../../../../functions/utils';
-import { TaskCollectionData, TaskCollectionTaskData } from '../../../../types/firebase/db/common/task/taskStructure';
+import { TaskCollectionData, TaskData } from '../../../../types/firebase/db/common/task/taskStructure';
 import { MINUTES_IN_MILLISECOND } from '../../../../constants/utils/dateTimeConstants';
 
 interface CollectionContainerProps {
   taskCollection: TaskCollectionData;
-  collectionTasks: TaskCollectionTaskData[];
+  collectionTasks: TaskData[];
   onClickCollection: (taskCollection: TaskCollectionData) => void;
 }
 
@@ -16,7 +16,7 @@ const CollectionContainer: FC<CollectionContainerProps> = ({ taskCollection, col
     <div className='w-full h-full p-2 border-gray-400 border-2 rounded-lg flex flex-col' onClick={() => onClickCollection(taskCollection)}>
       <div className={cn('flex-grow overflow-y-auto min-h-10', taskCollection.description ? "max-h-16" : "max-h-10")}>
         <Typography variant='h6'>
-          {taskCollection.name}
+          {taskCollection.collectionName}
         </Typography>
         <Typography>
           {taskCollection.description}

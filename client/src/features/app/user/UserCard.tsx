@@ -52,8 +52,8 @@ const UserCard: FC<UserCardProps> = ({ user }) => {
   ];
 
   return (
-    <div className='flex my-4'>
-      <div className='flex flex-col max-w-lg w-full shadow-lg p-4 pb-2 bg-white rounded-lg'>
+    <div className='flex my-4 w-full'>
+      <div className='flex flex-col w-full shadow-lg p-4 pb-2 bg-white rounded-lg'>
         <UserProfileCard userData={user} />
         <div>
           {currentIndex !== null && (

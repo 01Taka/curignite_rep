@@ -28,7 +28,7 @@ const HelpView: FC<HelpViewProps> = ({ helpAndAnswerInfo, loading }) => {
 
   return (
     <>
-      <div className='flex flex-col space-y-4 max-h-96 overflow-y-auto pt-2'>
+      <div className='flex flex-col space-y-4 max-h-96 overflow-y-auto pt-2 w-full'>
         {showFull && isMultipleQuestions && (
           <ToggleShowButton 
             showFull={showFull} 

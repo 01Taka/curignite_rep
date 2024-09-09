@@ -161,7 +161,7 @@ class BaseDB<T extends BaseDocumentData> {
    */
   async getAll(...queryConstraints: QueryConstraint[]): Promise<T[]> {
     console.log("Called get All"); // 開発用
-  
+
     const querySnapshot = await this.getAllAsQuerySnapshot(...queryConstraints);
     return querySnapshot.docs.map(doc => {
       const data = doc.data();

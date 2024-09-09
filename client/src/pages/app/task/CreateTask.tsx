@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import TaskCollections from './TaskCollections'
+import TaskCollections from '../../../features/app/task/taskCollection/TaskCollections'
 import CreateNavigate from '../../../features/app/task/createTask/CreateNavigate'
 import Popup from '../../../components/util/Popup';
 import { useNavigate } from 'react-router-dom';

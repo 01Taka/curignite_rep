@@ -1,5 +1,5 @@
-import { ComponentColor } from "../../../../../types/module/tailwindTypes";
-import { StringNumber } from "../../../../../types/util/utilTypes";
+import { ComponentColor } from "../../types/module/tailwindTypes";
+import { StringNumber } from "../../types/util/utilTypes";
 
 
 // グラデーションカラーの定義

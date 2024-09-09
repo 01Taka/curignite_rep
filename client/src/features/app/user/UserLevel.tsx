@@ -42,7 +42,7 @@ const UserLevel: FC<UserLevelProps> = ({ username, small = false }) => {
         </Box>
         {!small && (
           <Typography variant="caption" className="text-gray-600">
-            あと{levelInfo.xpToNextLevel}分
+            あと{Math.floor(levelInfo.xpToNextLevel)}分
           </Typography>
         )}
       </Box>

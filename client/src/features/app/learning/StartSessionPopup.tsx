@@ -9,12 +9,13 @@ import DateTimeField from '../../../components/input/field/DateTimeField';
 import { handleFormStateChange } from '../../../functions/utils';
 import { FormStateChangeEvent } from '../../../types/util/componentsTypes';
 import SelectField from '../../../components/input/field/SelectField';
-import { useAppSelector } from '../../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { toTimestamp } from '../../../functions/dateTimeUtils';
 import { Box, Typography, Alert } from '@mui/material';
 import { subjectSelectItems } from '../../../constants/selectItems/subjectSelectItems';
 import CircularButton from '../../../components/input/button/CircularButton';
 import { IndexedLearningSessionService } from '../../../functions/browserStorage/indexedDB/services/indexedLearningSessionService';
+import { setCurrentSession } from '../../../redux/slices/learning/sessionSlice';
 
 interface StartSessionPopupProps {
   open: boolean;
@@ -28,6 +29,7 @@ interface CreateGoalFormState {
 }
 
 const StartSessionPopup: FC<StartSessionPopupProps> = ({ open, handleClose }) => {
+  const dispatch = useAppDispatch();
   const uid = useAppSelector(state => state.userSlice.uid);
 
   const [formState, setFormState] = useState<CreateGoalFormState>({
@@ -49,6 +51,7 @@ const StartSessionPopup: FC<StartSessionPopupProps> = ({ open, handleClose }) =>
         const goalService = serviceFactory.createUserGoalService();
         const goalRef = await goalService.createUserGoal(uid, formState.objectives, formState.subject, toTimestamp(formState.deadline));
         await userService.setCurrentTargetGoalId(uid, goalRef.id);
+        await userService.updateConsecutiveLearningNumber(uid);
       } catch (error) {
         console.error("Error creating goal:", error);
         setErrorMessage("目標の作成中にエラーが発生しました。もう一度試してください。");
@@ -70,6 +73,8 @@ const StartSessionPopup: FC<StartSessionPopupProps> = ({ open, handleClose }) =>
     await handleCreateGoal();
     await handleSetLearning();
     await IndexedLearningSessionService.startSession(uid);
+    const currentSession = await IndexedLearningSessionService.getCurrentSession(uid);
+    dispatch(setCurrentSession(currentSession));
     handleClose(); // 成功時にポップアップを閉じる 
   }
 

@@ -7,13 +7,14 @@ import MultilineField from '../../../../../components/input/field/MultilineField
 import SelectField from '../../../../../components/input/field/SelectField';
 import { cn } from '../../../../../functions/utils';
 import CircularButton, { CircularButtonSize } from '../../../../../components/input/button/CircularButton';
-import { Typography } from '@mui/material';
+import { CircularProgress, Typography } from '@mui/material';
 import DateTimeField from '../../../../../components/input/field/DateTimeField';
 import RangeField from '../../../../../components/input/field/RangeField';
 
 interface CreateCollectionTaskViewProps {
   formState: CreateCollectionTaskViewFormState;
   rangeMax: number;
+  loading: boolean;
   onFormStateChange: FormStateChangeFunc;
   onCreate: () => void;
   enterButtonSize?: CircularButtonSize,
@@ -23,6 +24,7 @@ interface CreateCollectionTaskViewProps {
 const CreateCollectionTaskView: FC<CreateCollectionTaskViewProps> = ({
   formState,
   rangeMax,
+  loading,
   onFormStateChange,
   onCreate,
   enterButtonSize = "lg",
@@ -72,8 +74,8 @@ const CreateCollectionTaskView: FC<CreateCollectionTaskViewProps> = ({
         value={formState.priority}
         onChange={onFormStateChange}
       />
-      <CircularButton onClick={onCreate} bgColor="main" size={enterButtonSize}>
-        作成する
+      <CircularButton onClick={onCreate} bgColor="main" size={enterButtonSize} invalidation={loading}>
+        {loading ? <CircularProgress /> : "作成する"}
       </CircularButton>
     </div>
   );

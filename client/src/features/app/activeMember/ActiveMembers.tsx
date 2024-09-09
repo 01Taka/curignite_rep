@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { FC, useEffect } from 'react';
 import { Typography } from '@mui/material';
 import useActiveMembers from './hooks/useActiveMembers';
 import UserCard from '../user/UserCard';
 
-const ActiveMembers = () => {
+const ActiveMembers: FC = () => {
   const { activeMemberMap, loading, error, updateSameTeamMembersId } = useActiveMembers();
 
   useEffect(() => {
@@ -14,17 +14,17 @@ const ActiveMembers = () => {
   if (error) return <Typography>エラーが発生しました: {error}</Typography>;
 
   return (
-    <div>
-      <Typography variant="h6">アクティブメンバー</Typography>
+    <div className='flex flex-col items-center mt-8 w-full'>
+      <Typography variant="h4">現在学習中のメンバーたち</Typography>
       {Object.keys(activeMemberMap).length === 0 ? (
         <Typography>現在アクティブなメンバーはいません。</Typography>
       ) : (
-        <ul>
+        <ul className='w-full max-w-xl'>
           {Object.keys(activeMemberMap).map((key) => {
             const user = activeMemberMap[key];
             if (!user) return null;
             return (
-              <div key={key}>
+              <div key={key} className='w-full'>
                 <UserCard user={user}/>
               </div>
             )
