@@ -9,12 +9,12 @@ export const navigationItems: NavigationItem<TeamHomePages>[] = [
 		path: "participants",
 		icon: <GroupsIcon />,
 	},
-	{
-		path: "chat",
-		icon: <ChatIcon />,
-	},
-	{
-		path: "whiteboard",
-		icon: <PictureInPictureIcon />,
-	},
+	// {
+	// 	path: "chat",
+	// 	icon: <ChatIcon />,
+	// },
+	// {
+	// 	path: "whiteboard",
+	// 	icon: <PictureInPictureIcon />,
+	// },
 ]
