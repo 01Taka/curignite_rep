@@ -8,11 +8,10 @@ import { BaseDocumentData } from "../../../../types/firebase/db/baseTypes";
 import { TeamMemberService } from "../team/subCollection/teamMemberService";
 import { UserData, UserWithSupplementary } from "../../../../types/firebase/db/user/userStructure";
 import { StorageManager } from "../../../storage/storageManager";
-import { UserLearningSessionService } from "./subCollection/userLearningSessionService";
 import { UserWithNotExistUsersId } from "../../../../types/module/redux/slice/userSliceTypes";
 import { differenceInDays } from "date-fns";
 import { convertToDate } from "../../../../functions/dateTimeUtils";
-import { safeNumber } from "../../../../functions/utils";
+import { validateNumber } from "../../../../functions/utils";
 
 export class UserService {
   private baseDB: BaseDB<UserData>;
@@ -20,7 +19,6 @@ export class UserService {
   constructor(
     firestore: Firestore,
     private storageManager: StorageManager,
-    private learningService: UserLearningSessionService,
     private teamMemberService: TeamMemberService,
   ) {
     this.baseDB = new BaseDB(firestore, "users");
@@ -43,16 +41,15 @@ export class UserService {
         username,
         avatarIconId: fileId,
         birthTimestamp,
-        isLearning: false,
+        status: "active",
         lastLearningTimestamp: Timestamp.now(),
         consecutiveLearningNumber: 1,
         maxConsecutiveLearningNumber: 1,
-        currentTargetGoalId: null,
+        currentTargetLearningGoalId: null,
         totalLearningTime: 0,
       };
       
       await this.baseDB.createWithId(userId, data);
-      await this.learningService.createOrUpdateDailySession(userId);
     } catch (error) {
       this.handleError("Failed to create user.", error);
     }
@@ -141,7 +138,7 @@ export class UserService {
     try {
       const user = await this.baseDB.read(userId);
       if (!user) return;
-      const total = safeNumber(addingTimeMs) + safeNumber(user.totalLearningTime);
+      const total = validateNumber(addingTimeMs) + validateNumber(user.totalLearningTime);
       await this.baseDB.update(userId, { totalLearningTime: total });
     } catch (error) {
       console.log(error);
@@ -180,8 +177,8 @@ export class UserService {
   }
   
   private async incrementConsecutiveLearning(userId: string, user: UserData, timestamp: Timestamp) {
-    const newConsecutiveNumber = safeNumber(user.consecutiveLearningNumber) + 1;
-    const maxConsecutiveLearningNumber = Math.max(newConsecutiveNumber, safeNumber(user.maxConsecutiveLearningNumber));
+    const newConsecutiveNumber = validateNumber(user.consecutiveLearningNumber) + 1;
+    const maxConsecutiveLearningNumber = Math.max(newConsecutiveNumber, validateNumber(user.maxConsecutiveLearningNumber));
 
     await this.baseDB.update(userId, {
       lastLearningTimestamp: timestamp,
@@ -263,16 +260,12 @@ export class UserService {
     }
   }
 
-  async setCurrentTargetGoalId(userId: string, goalId: string): Promise<void> {
+  async setCurrentTargetLearningGoalId(userId: string, goalId: string | null): Promise<void> {
     try {
-      await this.baseDB.update(userId, { currentTargetGoalId: goalId});
+      await this.baseDB.update(userId, { currentTargetLearningGoalId: goalId});
     } catch (error) {
-      this.handleError(`Failed to update currentTargetGoalId ${userId}`, error);
+      this.handleError(`Failed to update currentTargetLearningGoalId ${userId}`, error);
     }
-  }
-
-  async setIsLearning(userId: string, status: boolean): Promise<void> {
-    await this.baseDB.update(userId, { isLearning: status });
   }
 
   // ヘルパーメソッド群

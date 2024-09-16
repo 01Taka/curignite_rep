@@ -349,3 +349,10 @@ export const dateTimeToString = (
         : formatDateAsRelative(date, defaultFormat)}`
     );
 };
+
+export const msToTime = (ms: number, hideSeconds: boolean = true, hideZeroHour: boolean = true): string => {
+    const hours = Math.floor(ms / 3600000);
+    const minutes = Math.floor((ms % 3600000) / 60000);
+    const seconds = Math.floor((ms % 60000) / 1000);
+    return `${hideZeroHour && hours === 0 ? "" : `${hours}時間`}${minutes}分${hideSeconds ? "" : `${seconds}秒`}`;
+}

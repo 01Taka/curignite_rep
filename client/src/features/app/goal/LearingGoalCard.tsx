@@ -1,18 +1,18 @@
 import { FC } from "react";
-import { UserGoalData } from "../../../types/firebase/db/user/userStructure";
 import { TimeTypes } from "../../../types/util/dateTimeTypes";
 import { differenceInMinutes, format, isToday } from "date-fns";
 import { convertToDate } from "../../../functions/dateTimeUtils";
 import { Typography } from "@mui/material";
 import SubjectIcon from "../../../components/util/SubjectIcon";
 import { cn } from "../../../functions/utils";
+import { UserLearningGoalData } from "../../../types/firebase/db/user/userStructure";
 
-interface GoalCardProps {
-  goal: UserGoalData;
+interface LearningGoalCardProps {
+  learningGoal: UserLearningGoalData;
   shadow?: boolean;
 }
 
-const GoalCard: FC<GoalCardProps> = ({ goal, shadow }) => {
+const LearningGoalCard: FC<LearningGoalCardProps> = ({ learningGoal, shadow }) => {
   const formatTimeDifference = (time: TimeTypes) => {
     const remainingTime = Math.abs(differenceInMinutes(convertToDate(time), new Date()));
     const hours = Math.floor(remainingTime / 60);
@@ -43,11 +43,11 @@ const GoalCard: FC<GoalCardProps> = ({ goal, shadow }) => {
 
   return (
     <div className={cn('relative', shadow && "bg-white p-4 rounded-lg shadow-md")} >
-      <Typography variant='h6'>{goal.objectives}</Typography>
-      <Typography>{getFormattedDeadline(goal.deadline)}</Typography>
-      <SubjectIcon subject={goal.subject} />
+      <Typography variant='h6'>{learningGoal.objectives}</Typography>
+      <Typography>{getFormattedDeadline(learningGoal.deadline)}</Typography>
+      <SubjectIcon subject={learningGoal.subject} />
     </div>
   );
 };
 
-export default GoalCard;
+export default LearningGoalCard;

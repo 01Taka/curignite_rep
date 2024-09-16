@@ -68,3 +68,13 @@ export const safeNumber = (value: number) => {
   const num = Number(value);
   return Number.isNaN(num) ? 0 : num;
 }
+
+export const validateNumber = (value: any): number => {
+  if (typeof value !== "number") {
+    throw new Error(`Expected a number but received: ${value}`);
+  }
+  if (isNaN(value)) {
+    throw new Error("The value is NaN (Not a Number).");
+  }
+  return value;
+}

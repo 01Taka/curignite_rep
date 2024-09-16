@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useEffect, useState } from 'react';
-import { HelpAndAnswersWithFileUrls, UserGoalData, UserWithSupplementary } from '../../../types/firebase/db/user/userStructure';
+import { HelpAndAnswersWithFileUrls, UserLearningGoalData, UserWithSupplementary } from '../../../types/firebase/db/user/userStructure';
 import UserProfileCard from './UserProfileCard';
 import serviceFactory from '../../../firebase/db/factory';
 import { Divider } from '@mui/material';
@@ -13,7 +13,7 @@ interface UserCardProps {
 
 const UserCard: FC<UserCardProps> = ({ user }) => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const [goal, setGoal] = useState<UserGoalData | null>(null);
+  const [goal, setGoal] = useState<UserLearningGoalData | null>(null);
   const [helpAndAnswerInfo, setHelpAndAnswerInfo] = useState<HelpAndAnswersWithFileUrls[] | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -23,11 +23,11 @@ const UserCard: FC<UserCardProps> = ({ user }) => {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      if (!goal && user.currentTargetGoalId) {
-        const goalService = serviceFactory.createUserGoalService();
-        const fetchedGoal = await goalService.getGoal(user.docId, user.currentTargetGoalId);
-        setGoal(fetchedGoal);
-      }
+      // if (!goal && user.currentTargetLearningGoalId) {
+      //   const goalService = serviceFactory.createUserGoalService();
+      //   const fetchedGoal = await goalService.getGoal(user.docId, user.currentTargetLearningGoalId);
+      //   setGoal(fetchedGoal);
+      // }
 
       if (!helpAndAnswerInfo) {
         const helpService = serviceFactory.createUserHelpService();

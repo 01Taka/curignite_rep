@@ -1,9 +1,9 @@
 import { FC } from "react";
-import { UserGoalData } from "../../../types/firebase/db/user/userStructure";
-import GoalCard from "../goal/GoalCard";
+import GoalCard from "../goal/LearingGoalCard";
+import { UserLearningGoalData } from "../../../types/firebase/db/user/userStructure";
 
 interface GoalViewProps {
-  goal: UserGoalData | null;
+  goal: UserLearningGoalData | null;
   loading: boolean;
 }
 
@@ -12,7 +12,7 @@ const GoalView: FC<GoalViewProps> = ({ goal, loading }) => {
   if (!goal) return null;
   return (
     <div className='p-2 w-full'>
-      <GoalCard goal={goal}/>
+      <GoalCard learningGoal={goal}/>
     </div>
   );
 }

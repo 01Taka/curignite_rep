@@ -2,7 +2,7 @@ import React, { FC, useRef, useState, useEffect } from 'react';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import FocusLearningTimer from './FocusLearningTimer';
-import { IconButton } from '@mui/material';
+import { Box, IconButton, keyframes } from '@mui/material';
 import { exitFullScreen, requestFullScreen } from '../../../functions/screen/fullScreen';
 import { Home } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
@@ -45,8 +45,22 @@ const FocusLearning: FC<FocusLearningProps> = () => {
     };
   }, []);
 
+  const gradientAnimation = keyframes`
+    0% { background-position: 0% 0%; }
+    50% { background-position: 100% 100%; }
+    100% { background-position: 0% 0%; }
+  `;
+
   return (
-    <div ref={ref} className='relative flex justify-center items-center w-screen h-screen bg-blue-300'>
+    <Box
+    ref={ref}
+    sx={{
+      background: "linear-gradient(45deg, #7b6dfc, #8a99ff)",
+      backgroundSize: '200% 200%',
+      animation: `${gradientAnimation} 8s ease infinite`,
+    }}
+    className="relative flex justify-center items-center w-screen h-screen"
+    >
       <FocusLearningTimer />
 
       <div className='absolute top-4 right-4'>
@@ -59,7 +73,7 @@ const FocusLearning: FC<FocusLearningProps> = () => {
           <Home />
         </IconButton>
       </div>
-    </div>
+    </Box>
   );
 };
 

@@ -1,17 +1,17 @@
 import React, { FC, useEffect, useState } from 'react';
 import { useAppSelector } from '../../../redux/hooks';
-import { UserLearningSessionData } from '../../../types/firebase/db/user/userStructure';
 import serviceFactory from '../../../firebase/db/factory';
 import { startOfWeek } from 'date-fns';
 import { convertToDate } from '../../../functions/dateTimeUtils';
-import { UserLearningSessionService } from '../../../firebase/db/app/user/subCollection/userLearningSessionService';
 import { Card, CardContent, Tooltip, Typography } from '@mui/material';
 import { MINUTES_IN_MILLISECOND } from '../../../constants/utils/dateTimeConstants';
+import { UserDailyLearningSummaryData } from '../../../types/firebase/db/user/userStructure';
+import { UserDailyLearningSummaryService } from '../../../firebase/db/app/user/subCollection/userDailyLearningSummary';
 
 const LearningOverview: FC = () => {
   const { uid, userData } = useAppSelector(state => state.userSlice);
 
-  const [todaySession, setTodaySession] = useState<UserLearningSessionData | null>(null);
+  const [todaySession, setTodaySession] = useState<UserDailyLearningSummaryData | null>(null);
   const [avgTime, setAvgTime] = useState<number>(0);
   const [weekTotalTime, setWeekTotalTime] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
@@ -20,18 +20,18 @@ const LearningOverview: FC = () => {
     const updateLearningSessions = async () => {
       try {
         if (uid) {
-          const learningSession = serviceFactory.createUserLearningSessionService();
+          const learningSession = serviceFactory.createUserDailyLearningSummary();
 
-          const monthSessions = await learningSession.fetchRecentSessionsByDaysAgo(uid, 30);
+          const monthSessions = await learningSession.fetchRecentSummariesByDaysAgo(uid, 30);
           const weekStartDate = startOfWeek(new Date());
           const weekSessions = monthSessions.filter(session => convertToDate(session.date) >= weekStartDate);
 
           const today = new Date();
           const todaySessionData = monthSessions.find(session => convertToDate(session.date).getTime() === today.getTime()) || 
-                                   await learningSession.fetchDailySession(uid, today);
+                                   await learningSession.getSummaryByDate(uid, today);
 
-          const averageLearningTime = UserLearningSessionService.calculateAverageLearningTime(monthSessions, "length");
-          const weeklyTotalLearningTime = UserLearningSessionService.calculateTotalLearningTime(weekSessions);
+          const averageLearningTime = UserDailyLearningSummaryService.calculateAverageLearningTime(monthSessions, "length");
+          const weeklyTotalLearningTime = UserDailyLearningSummaryService.calculateTotalLearningTime(weekSessions);
 
           setTodaySession(todaySessionData);
           setAvgTime(averageLearningTime);

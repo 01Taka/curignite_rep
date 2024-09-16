@@ -1,18 +1,18 @@
-import { CurrentSession, Session } from "../../../../types/browserStorage/indexedDB/learningSessionsTypes";
+import { CurrentSession, IndexedDBSession } from "../../../../types/browserStorage/indexedDB/learningSessionsTypes";
 import { TimeTypes } from "../../../../types/util/dateTimeTypes";
 import { convertToDate } from "../../../dateTimeUtils";
 import { IndexedDBHandler } from "../indexedDBHandler";
 
 export class IndexedLearningSessionService {
   private static DB_NAME = "learningSessions";
-  private static version = 14;
+  private static version = 15;
   private static timeout = 5000;
   private static indexedDB = new IndexedDBHandler(
     this.DB_NAME, ["currentSession", "session"], this.version, this.timeout
   );
 
   private static getSessionDB() {
-    return this.indexedDB.getStoreHandler<Session>("session");
+    return this.indexedDB.getStoreHandler<IndexedDBSession>("session");
   }
 
   private static getCurrentSessionDB() {
@@ -20,34 +20,34 @@ export class IndexedLearningSessionService {
   }
 
   // セッションを保存してストアをクリアする共通メソッド
-  private static async finalizePreviousSession(userId: string, endTime: TimeTypes) {
+  private static async finalizePreviousSession(userId: string, learningGoalId: string, endTime: TimeTypes) {
     const prevSession = await this.getCurrentSessionDB().getData(userId, 0);
     if (prevSession) {
-      await this.saveSession(userId, prevSession.startTime, endTime);
+      await this.saveSession(userId, learningGoalId, prevSession.startTime, endTime);
       await this.getCurrentSessionDB().clearStore(userId);
     }
   }
 
-  private static async saveSession(userId: string, startTime: TimeTypes, endTime: TimeTypes) {
-    await this.getSessionDB().addData({ uid: userId, startTime: convertToDate(startTime), endTime: convertToDate(endTime) });
+  private static async saveSession(userId: string, learningGoalId: string, startTime: TimeTypes, endTime: TimeTypes) {
+    await this.getSessionDB().addData({ uid: userId, learningGoalId, startTime: convertToDate(startTime), endTime: convertToDate(endTime) });
   }
 
-  public static async startSession(userId: string, startTime: TimeTypes = new Date()) {
+  public static async startSession(userId: string, learningGoalId: string, startTime: TimeTypes = new Date()) {
     try {
       startTime = convertToDate(startTime);
-      await this.finalizePreviousSession(userId, startTime);
-      await this.getCurrentSessionDB().putData({ id: 0, uid: userId, startTime });
-      console.log("Session started successfully");
+      await this.finalizePreviousSession(userId, learningGoalId, startTime);
+      await this.getCurrentSessionDB().putData({ id: 0, learningGoalId, uid: userId, startTime });
+      console.log("IndexedDBSession started successfully");
     } catch (error) {
       console.error("Error starting session:", error);
     }
   }
   
-  public static async endSession(userId: string, endTime: TimeTypes = new Date()) {
+  public static async endCurrentSession(userId: string, learningGoalId: string, endTime: TimeTypes = new Date()) {
     try {
       endTime = convertToDate(endTime);
-      await this.finalizePreviousSession(userId, endTime);
-      console.log("Session ended successfully");
+      await this.finalizePreviousSession(userId, learningGoalId, endTime);
+      console.log("IndexedDBSession ended successfully");
     } catch (error) {
       console.error("Error ending session:", error);
     }
@@ -62,9 +62,10 @@ export class IndexedLearningSessionService {
     }
   }
 
-  public static async getAllSessions(userId: string): Promise<Session[]> {
+  public static async getAllSessions(userId: string, learningGoalId: string): Promise<IndexedDBSession[]> {
     try {
-      return await this.getSessionDB().getAllData(userId);
+      const sessions =  await this.getSessionDB().getAllData(userId);
+      return sessions.filter(session => session.learningGoalId === learningGoalId);
     } catch (error) {
       console.error("Error getting all sessions:", error);
       return [];
@@ -75,11 +76,26 @@ export class IndexedLearningSessionService {
     try {
       await this.getCurrentSessionDB().deleteData(userId, 0);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 
-  public static async clearSessions(userId: string): Promise<void> {
+  public static async clearSessions(userId: string, learningGoalId: string) {
+    try {
+      const sessions = await this.getAllSessions(userId, learningGoalId);
+      const deletePromise = sessions.map(async session => {
+        if (session.learningGoalId === learningGoalId && session.id) {
+          await this.getSessionDB().deleteData(userId, session.id)
+        }
+      })
+
+      await Promise.all(deletePromise);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  public static async clearAllSessions(userId: string): Promise<void> {
     try {
       await this.getSessionDB().clearStore(userId);
     } catch (error) {

@@ -5,9 +5,9 @@ import { StorageManager, storageManager } from '../storage/storageManager';
 import { UserService } from './app/user/userService';
 import { UserTeamService } from './app/user/subCollection/userTeamService';
 import { UserTaskManagementService } from './app/user/subCollection/userTaskManagementService';
-import { UserLearningSessionService } from './app/user/subCollection/userLearningSessionService';
 import { UserPartnerService } from './app/user/subCollection/userPartnerService';
-import { UserGoalService } from './app/user/subCollection/userGoalService';
+import { UserLearningGoalService } from './app/user/subCollection/userLearningGoalService';
+import { UserDailyLearningSummaryService } from './app/user/subCollection/userDailyLearningSummary';
 import { UserHelpService } from './app/user/subCollection/userHelpService';
 import { HelpAnswerService } from './app/user/subCollection/helpAnswerService';
 
@@ -53,17 +53,12 @@ class ServiceFactory {
       UserService,
       this.firestore,
       this.storageManager,
-      this.createUserLearningSessionService(),
       this.createTeamMemberService()
     );
   }
 
   createUserTeamService() {
     return this.getInstance('userTeamService', UserTeamService, this.firestore);
-  }
-
-  createUserLearningSessionService() {
-    return this.getInstance('userLearningSessionService', UserLearningSessionService, this.firestore);
   }
 
   createUserTaskManagementService() {
@@ -74,8 +69,12 @@ class ServiceFactory {
     return this.getInstance('userPartnerService', UserPartnerService, this.firestore);
   }
 
-  createUserGoalService() {
-    return this.getInstance('userGoalService', UserGoalService, this.firestore);
+  createUserLearningGoalService() {
+    return this.getInstance('userGoalService', UserLearningGoalService, this.firestore);
+  }
+
+  createUserDailyLearningSummary() {
+    return this.getInstance('userDailyLearningSummary', UserDailyLearningSummaryService, this.firestore)
   }
 
   createUserHelpService() {

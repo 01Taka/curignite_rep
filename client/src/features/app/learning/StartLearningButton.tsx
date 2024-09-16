@@ -9,13 +9,8 @@ interface StartLearningButtonProps {
 }
 
 const StartLearningButton: FC<StartLearningButtonProps> = ({ onClickAtLearning, onClickAtNotLearning }) => {
-  const currentSession = useAppSelector(state => state.sessionSlice.currentSession);
   const [isLearning, setIsLearning] = useState(false);
   const [buttonText, setButtonText] = useState("学習中");
-
-  useEffect(() => {
-    setIsLearning(!!currentSession);
-  }, [currentSession]);
 
   const handleMouseEnter = () => setButtonText("集中モード");
   const handleMouseLeave = () => setButtonText("学習中");

@@ -2,18 +2,19 @@ import { SelectChangeEvent } from "@mui/material";
 import { ReactNode } from "react";
 import { BGColorClass } from "../module/tailwindTypes";
 
-export type HTMLElement<T, K extends string> = {
+export type BaseHTMLElement<T, K extends string> = {
     name: string;
     value: T,
     type: K;
 }
 
-export type HTMLDateElement = HTMLElement<Date | null, "date">;
-export type HTMLRangeElement = HTMLElement<Range[], "range">;
-export type HTMLFileElement = HTMLElement<File, "file">;
-export type HTMLFilesElement = HTMLElement<File[], "files">;
+export type HTMLDateElement = BaseHTMLElement<Date | null, "date">;
+export type HTMLRangeElement = BaseHTMLElement<Range[], "range">;
+export type HTMLFileElement = BaseHTMLElement<File, "file">;
+export type HTMLFilesElement = BaseHTMLElement<File[], "files">;
+export type HTMLAnyTypeElement = BaseHTMLElement<any, "unknown">
 
-type CustomHTMLElement = HTMLDateElement | HTMLRangeElement | HTMLFileElement | HTMLFilesElement;
+type CustomHTMLElement = HTMLDateElement | HTMLRangeElement | HTMLFileElement | HTMLFilesElement | HTMLAnyTypeElement;
 
 export type FormStateChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | CustomHTMLElement>;
 

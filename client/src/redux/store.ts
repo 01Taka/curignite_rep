@@ -4,7 +4,7 @@ import spaceSlice from './slices/space/spaceSlice';
 import chatRoomSlice from './slices/chat/chatRoomSlice';
 import userSlice from './slices/user/userSlice';
 import fetchedUserSlice from './slices/user/fetchedUserSlice';
-import sessionSlice from './slices/learning/sessionSlice';
+import learningGoalSlice from './slices/learning/learningGoalSlice';
 
 const store = configureStore({
   reducer: {
@@ -13,7 +13,7 @@ const store = configureStore({
     teamSlice,
     spaceSlice,
     chatRoomSlice,
-    sessionSlice,
+    learningGoalSlice,
   },
 });
 

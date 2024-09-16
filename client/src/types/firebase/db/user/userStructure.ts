@@ -1,8 +1,9 @@
 import { Timestamp } from "firebase/firestore";
 import { BaseDocumentData } from "../baseTypes";
 import { Subject } from "../common/commonTypes";
-import { GoalStatus, PartnerStatus } from "./userSupplementTypes";
+import { LearningGoalStatus, PartnerStatus, UserStatus } from "./userSupplementTypes";
 import { JoinRequestStatus } from "../common/joinRequest/joinRequestSupplementTypes";
+import { ISODate } from "../../../util/dateTimeTypes";
 
 /**
  * docId - userId
@@ -12,8 +13,8 @@ export interface UserData extends BaseDocumentData {
   avatarIconId: string;
   birthTimestamp: Timestamp;
 
-  isLearning: boolean;
-  currentTargetGoalId: string | null;
+  status: UserStatus;
+  currentTargetLearningGoalId: string | null;
 
   lastLearningTimestamp: Timestamp;
   consecutiveLearningNumber: number;
@@ -25,19 +26,28 @@ export interface UserWithSupplementary extends UserData {
   avatarIconUrl: string;
 }
 
-export interface SessionData {
+export interface Session {
   startTime: Timestamp;
   endTime: Timestamp;
 }
 
+export interface UserLearningGoalData extends BaseDocumentData {
+  objective: string
+  subject: Subject;
+  sessions: Session[];
+  targetDuration: number;
+  durationSpent: number | null;
+  status: LearningGoalStatus;
+}
+
 /**
- * date - 00:00:00に設定
+ * date - YYYY-MM-DDの形式で保存
  */
-export interface UserLearningSessionData extends BaseDocumentData {
-  date: Timestamp;
-  sessions: SessionData[];
-  totalLearningTime: number;
-  sessionCount: number;
+export interface UserDailyLearningSummaryData extends BaseDocumentData {
+  date: ISODate; 
+  totalDurationSpent: number;
+  learningGoalIds: string[];
+  learningGoalCount: number;
 }
 
 /**
@@ -55,13 +65,6 @@ export interface UserTeamData extends BaseDocumentData {
 export interface UserPartnerData extends BaseDocumentData {
   since: Timestamp;
   status: PartnerStatus;
-}
-
-export interface UserGoalData extends BaseDocumentData {
-  objectives: string;
-  subject: Subject;
-  deadline: Timestamp;
-  status: GoalStatus;
 }
 
 export interface UserHelpData extends BaseDocumentData {

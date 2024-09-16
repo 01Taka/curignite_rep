@@ -3,9 +3,6 @@ import LearningOverview from '../../../features/app/learning/LearningOverview';
 import LearningTimeHeatmap from '../../../features/app/learning/LearningTimeHeatmap';
 import ImageButton from '../../../components/input/button/ImageButton';
 import UserProfileCard from '../../../features/app/user/UserProfileCard';
-import StartSessionPopup from '../../../features/app/learning/StartSessionPopup';
-import LearningSessions from '../../../features/app/learning/LearningSessions';
-import Goals from '../../../features/app/goal/Goals';
 import { useNavigate } from 'react-router-dom';
 import { mainPaths } from '../../../types/path/mainPaths';
 import { useAppSelector } from '../../../redux/hooks';
@@ -13,6 +10,9 @@ import { revertTimestampConversion } from '../../../functions/db/dataFormatUtils
 import Helps from '../../../features/app/help/Helps';
 import StartLearningButton from '../../../features/app/learning/StartLearningButton';
 import TaskPageLink from '../../../features/app/task/tasks/TaskPageLink';
+import Popup from '../../../components/util/Popup';
+import CreateLearningGoalForm from '../../../features/app/learningGoal/CreateLearningGoalForm';
+import LearningGoalCard from '../../../features/app/learningGoal/learningGoalWork/LearningGoalWorkDisplay';
 
 interface HomeViewProps {}
 
@@ -53,24 +53,43 @@ const NavigateButton: FC<NavigateButtonProps> = ({ src, label, navigatePath }) =
 const FixedInfo: FC = () => {
   return (
     <div className='fixed top-40 left-6 max-w-sm'>
-      <LearningSessions />
-      <Goals />
+      {/* <LearningSessions />
+      <Goals /> */}
       <Helps />
     </div>
   )
 }
 
-const HomeView: FC<HomeViewProps> = () => {
+const StartLearning: FC = () => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
   return (
-    <div>
+    <>
       <StartLearningButton onClickAtNotLearning={() => setOpen(true)} onClickAtLearning={() => navigate(mainPaths.focusLearning)}/>
+      <Popup open={open} handleClose={() => setOpen(false)} >
+        <CreateLearningGoalForm onCreated={() => setOpen(false)} />
+      </Popup>
+    </>
+  )
+}
+
+const HomeView: FC<HomeViewProps> = () => {
+
+  return (
+    <div>
+
       <FixedSideContent />
       <FixedNavigateButtons />
       <FixedInfo />
-      <StartSessionPopup open={open} handleClose={() => setOpen(false)} />
+      <StartLearning />
+      {/* <StartSessionPopup open={open} handleClose={() => setOpen(false)} /> */}
+      <div className='fixed flex w-full justify-center top-16'>
+        <div className='w-96 h-64 bg-slate-200 p-2 rounded'>
+          <LearningGoalCard />
+        </div>
+      </div>
+
     </div>
   );
 };
