@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 import CircularButton from '../../../../../components/input/button/CircularButton';
-import Popup from '../../../../../components/util/Popup';
+import Popup from '../../../../../components/display/popup/Popup';
 import SpaceFinishDialog from './SpaceFinishDialog';
 import SpaceMoveDialog from './SpaceMoveDialog';
 

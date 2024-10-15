@@ -4,6 +4,7 @@ import { PathParam, rootPaths } from "./paths";
 export const relativeMainPaths = {
   task: 'task',
   team: 'team',
+  learning: 'learning',
   focusLearning: "focusLearning",
   activeMember: 'activeMember',
   partner: 'partner',
@@ -55,6 +56,10 @@ export const mainPaths: MainPathsType = Object.fromEntries(
 //   base: mainPaths.calendar,
 //   index: `${mainPaths.calendar}/index`,
 // };
+
+export const learningPaths = {
+  base: mainPaths.learning,
+}
 
 export const activeMemberPaths = {
   base: mainPaths.activeMember,

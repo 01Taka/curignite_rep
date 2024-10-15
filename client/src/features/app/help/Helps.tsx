@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from 'react';
 import serviceFactory from '../../../firebase/db/factory';
 import { useAppSelector } from '../../../redux/hooks';
-import Popup from '../../../components/util/Popup';
+import Popup from '../../../components/display/popup/Popup';
 import CreateHelpForm from './CreateHelpForm';
 import { HelpAndAnswersWithFileUrls } from '../../../types/firebase/db/user/userStructure';
 import HelpsView from './HelpsView';

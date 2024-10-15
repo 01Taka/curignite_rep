@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { HelpAndAnswersWithFileUrls } from '../../../../types/firebase/db/user/userStructure';
-import Popup from '../../../../components/util/Popup';
+import Popup from '../../../../components/display/popup/Popup';
 import AnswersView from '../AnswersView';
 
 const useAnswerDisplayPopup = () => {

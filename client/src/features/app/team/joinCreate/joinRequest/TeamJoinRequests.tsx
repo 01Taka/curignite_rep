@@ -9,7 +9,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 import { format } from 'date-fns';
 import { JoinRequestStatusColors, JoinRequestStatusLabels } from '../../../../../constants/label/JoinRequestLabels';
-import Popup from '../../../../../components/util/Popup';
+import Popup from '../../../../../components/display/popup/Popup';
 import { UserWithSupplementary } from '../../../../../types/firebase/db/user/userStructure';
 import ChangeJoinRequestStatusForm from './ChangeJoinRequestStateForm';
 import { useTeamMembers } from '../../hooks/useTeamMembers';

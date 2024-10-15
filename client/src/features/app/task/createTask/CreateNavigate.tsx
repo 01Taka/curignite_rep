@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import CircularButton from '../../../../components/input/button/CircularButton';
 import { Typography } from '@mui/material';
-import Popup from '../../../../components/util/Popup';
+import Popup from '../../../../components/display/popup/Popup';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { getLastSegment } from '../../../../functions/path/pathUtils';
 import { taskPaths } from '../../../../types/path/mainPaths';

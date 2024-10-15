@@ -12,6 +12,7 @@ import { setApprovedTeams } from '../../../redux/actions/team/teamActions';
 import ActiveMemberRoutes from '../activeMember/ActiveMemberRoutes';
 import FocusLearning from '../../../features/app/focusLearning/FocusLearning';
 import { updateCurrentGoal } from '../../../redux/actions/learning/learningGoalActions';
+import LearningRoot from '../learning/LearningRoot';
 
 const MainRoutes: FC = () => {
   const dispatch = useAppDispatch();
@@ -31,6 +32,7 @@ const MainRoutes: FC = () => {
         {userFetchState.state !== "success" && <Route path="/*" element={<CircularProgress />} />}
         <Route path="/" element={<Home />} />
         <Route path='*' element={<NotFound />} />
+        <Route path={mainRootPaths.learning} element={<LearningRoot />} />
         <Route path={mainRootPaths.focusLearning} element={<FocusLearning />} />
         <Route path={mainRootPaths.task} element={<TaskRoutes />} />
         <Route path={mainRootPaths.team} element={<TeamRoutes />} />

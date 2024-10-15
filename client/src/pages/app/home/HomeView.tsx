@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
-import LearningOverview from '../../../features/app/learning/LearningOverview';
-import LearningTimeHeatmap from '../../../features/app/learning/LearningTimeHeatmap';
+import LearningOverview from '../../../features/app/learningInfo/LearningOverview';
+import LearningTimeHeatmap from '../../../features/app/learningInfo/LearningTimeHeatmap';
 import ImageButton from '../../../components/input/button/ImageButton';
 import UserProfileCard from '../../../features/app/user/UserProfileCard';
 import { useNavigate } from 'react-router-dom';
@@ -8,9 +8,9 @@ import { mainPaths } from '../../../types/path/mainPaths';
 import { useAppSelector } from '../../../redux/hooks';
 import { revertTimestampConversion } from '../../../functions/db/dataFormatUtils';
 import Helps from '../../../features/app/help/Helps';
-import StartLearningButton from '../../../features/app/learning/StartLearningButton';
+import StartLearningButton from '../../../features/app/learningInfo/StartLearningButton';
 import TaskPageLink from '../../../features/app/task/tasks/TaskPageLink';
-import Popup from '../../../components/util/Popup';
+import Popup from '../../../components/display/popup/Popup';
 import CreateLearningGoalForm from '../../../features/app/learningGoal/CreateLearningGoalForm';
 import LearningGoalCard from '../../../features/app/learningGoal/learningGoalWork/LearningGoalWorkDisplay';
 

@@ -22,5 +22,5 @@
   },
   "include": [
     "src"
-, "src/features/app/learning/StartLearningButton.tsx" ]
+, "src/features/app/learningInfo/StartLearningButton.tsx" ]
 }

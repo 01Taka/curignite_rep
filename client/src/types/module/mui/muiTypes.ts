@@ -1,0 +1,1 @@
+export type AvatarVariant = "circular" | "rounded" | "square";

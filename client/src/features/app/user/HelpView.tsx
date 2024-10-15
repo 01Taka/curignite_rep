@@ -3,7 +3,7 @@ import { HelpAndAnswersWithFileUrls, UserHelpData } from "../../../types/firebas
 import useAnswerDisplayPopup from "../help/hooks/useAnswerDisplayPopup";
 import HelpCard from "../help/HelpCard";
 import { Button, Divider, Typography } from "@mui/material";
-import Popup from "../../../components/util/Popup";
+import Popup from "../../../components/display/popup/Popup";
 import CreateAnswerForm from "../help/CreateAnswerForm";
 
 interface HelpViewProps {

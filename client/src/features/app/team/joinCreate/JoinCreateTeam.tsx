@@ -8,7 +8,7 @@ import { replaceParams } from '../../../../functions/path/pathUtils';
 import { teamPaths } from '../../../../types/path/mainPaths';
 import { PathParam } from '../../../../types/path/paths';
 import JoinCreateTeamView from './JoinCreateTeamView';
-import Popup from '../../../../components/util/Popup';
+import Popup from '../../../../components/display/popup/Popup';
 import JoiningTeam from './join/JoiningTeam';
 import NotFoundJoiningTeam from './join/NotFoundJoiningTeam';
 

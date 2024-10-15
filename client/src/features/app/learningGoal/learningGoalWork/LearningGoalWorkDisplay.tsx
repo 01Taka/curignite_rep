@@ -7,7 +7,7 @@ import { convertToMilliseconds, msToTime } from '../../../../functions/dateTimeU
 import { revertTimestampConversion } from '../../../../functions/db/dataFormatUtils';
 import LearningGoalWorkTimer from './LearningGoalWorkTimer';
 import { useLearningTimer } from './LearningTimerProvider';
-import Popup from '../../../../components/util/Popup';
+import Popup from '../../../../components/display/popup/Popup';
 import ContinueLearningGoalWorkForm from './ContinueLearningGoalWorkForm';
 import FinishLearningGoalForm from './FinishLearningGoalForm';
 
