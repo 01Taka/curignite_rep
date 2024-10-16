@@ -4,18 +4,21 @@ export function chooseTextColor(hexColor: HexColorCode): 'black' | 'white' {
   // HexコードをRGB値に変換
   const rgb = hexToRgb(hexColor);
   if (!rgb) {
-    throw new Error('Invalid hex color');
+    console.error('Invalid hex color');
+    return 'black';
   }
 
   // WCAG 2.0の最小コントラスト比 (7:1) を超えるか判定
   const luminance = rgbToLuminance(rgb);
-  const contrastRatio = luminance > 0.05 ? (1 + luminance) / luminance : luminance + 1;
-
-  return contrastRatio >= 7 ? 'black' : 'white';
+  return luminance > 0.5 ? 'black' : 'white';
 }
 
 // HexコードをRGBオブジェクトに変換する関数
 function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
+  // 省略形のHexコード（#fff）に対応
+  const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+  hex = hex.replace(shorthandRegex, (m, r, g, b) => `${r}${r}${g}${g}${b}${b}`);
+
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   return result ? {
     r: parseInt(result[1], 16),

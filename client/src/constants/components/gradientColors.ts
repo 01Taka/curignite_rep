@@ -1,5 +1,5 @@
 import { ComponentColor } from "../../types/module/tailwindTypes";
-import { StringNumber } from "../../types/util/utilTypes";
+import { HexColorCode, StringNumber } from "../../types/util/utilTypes";
 
 
 // グラデーションカラーの定義
@@ -22,4 +22,27 @@ export const progressColors: Record<number, ComponentColor> = {
   0.75: { bgColor: 'bg-purple-300', textColor: 'text-black' }, // 75%
   0.5: { bgColor: 'bg-orange-300', textColor: 'text-black' }, // 50%
   0.25: { bgColor: 'bg-orange-400', textColor: 'text-black' }, // 25%
+};
+
+// グラデーションカラーのHexコード
+export const dueDateColorsGradient: Record<number | "~over", HexColorCode> = {
+  "~over": '#6B46C1',
+  0: '#C53030',
+  1: '#F56565',
+  2: '#ED8936',
+  5: '#FBD38D',
+  8: '#B794F4',
+  11: '#D6BCFA',
+  15: '#63B3ED',
+  22: '#90CDF4',
+  29: '#EBF8FF',
+};
+
+// プログレスカラーのHexコード
+export const progressColorsGradient: Record<number, HexColorCode> = {
+  1: '#48BB78', 
+  0.99: '#4299E1', // 100%
+  0.75: '#B794F4', // 75%
+  0.5: '#F6AD55', // 50%
+  0.25: '#F6E05E', // 25%
 };
