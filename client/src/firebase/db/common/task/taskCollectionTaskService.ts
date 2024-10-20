@@ -5,7 +5,7 @@ import { getInitialBaseDocumentData } from "../../../../functions/db/dbUtils";
 import { TaskCollectionService } from "./taskCollectionService";
 import { TaskPriority } from "../../../../types/firebase/db/common/task/taskSupplementTypes";
 import { Range } from "../../../../types/util/componentsTypes";
-import { mergeRanges } from "../../../../functions/objectUtils";
+import { mergeRanges } from "../../../../functions/rangeUtils";
 
 export class TaskCollectionTaskService {
   constructor(private firestore: Firestore, private path: string, private taskCollectionService: TaskCollectionService) {}

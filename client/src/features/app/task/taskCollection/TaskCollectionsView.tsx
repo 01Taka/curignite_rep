@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import CollectionContainer from './CollectionContainer';
 import { CollectionWithTasksData, TaskCollectionData } from '../../../../types/firebase/db/common/task/taskStructure';
 import { Typography } from '@mui/material';
+import FixedTasksContainer from '../fixedTasks/FixedTasksContainer';
 
 interface TaskCollectionsViewProps {
   collectionWithTasks: CollectionWithTasksData[];
@@ -15,11 +16,12 @@ const TaskCollectionsView: FC<TaskCollectionsViewProps> = ({ collectionWithTasks
       <div className="flex flex-wrap justify-center gap-4">
         {collectionWithTasks.map(({ collectionData, tasksData }) => (
           <div key={collectionData.docId} className="w-44 h-64">
-            <CollectionContainer
+            {/* <FixedTasksContainer
+            isOpen
               taskCollection={collectionData}
               collectionTasks={tasksData}
               onClickCollection={onClickCollection}
-            />
+            /> */}
           </div>
         ))}
       </div>

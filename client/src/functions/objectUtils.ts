@@ -1,4 +1,3 @@
-import { Range } from "../types/util/componentsTypes";
 import { StringNumber } from "../types/util/utilTypes";
 import { performComparison } from "./utils";
 
@@ -27,20 +26,51 @@ export const dictToArray = <T>(dict: Record<string, T>): T[] => {
 /**
  * 配列を指定されたキーに基づいてソートする関数
  * @param arr - ソート対象の配列
- * @param key - ソートするためのキー
  * @param ascending - 昇順かどうか
  * @returns ソートされた配列
  */
-export const sortArray = <T>(arr: T[], key?: keyof T, ascending: boolean = true): T[] => {
+export const sortArray = <T>(arr: T[], ascending: boolean = true): T[] => {
   return arr.sort((a, b) => {
-    const order = ascending ? 1 : -1;
-    if (key) {
-      return a[key] > b[key] ? order : a[key] < b[key] ? -order : 0;
-    } else {
-      return a > b ? order : a < b ? -order : 0;
+    if (a < b) return ascending ? -1 : 1;
+    if (a > b) return ascending ? 1 : -1;
+    return 0;
+  });
+}
+
+
+export const sortObjectArray = <T extends Record<string, any>>(
+  arr: T[],
+  key: keyof T,
+  ascending: boolean = true,
+  nullsLast: boolean = true
+): T[] => {
+  return arr.sort((a, b) => {
+    const valueA = a[key];
+    const valueB = b[key];
+
+    // 無効な値を扱う
+    const isInvalidA = valueA === null || valueA === undefined;
+    const isInvalidB = valueB === null || valueB === undefined;
+
+    // 無効な値を先にするか後にするかの処理
+    if (isInvalidA && isInvalidB) return 0;
+    if (isInvalidA) return nullsLast ? 1 : -1;
+    if (isInvalidB) return nullsLast ? -1 : 1;
+
+    // 型が異なる場合の処理（stringとnumberの比較などを防ぐ）
+    if (typeof valueA !== typeof valueB) {
+      throw new Error('Inconsistent types in the array elements');
     }
+
+    // ソートの処理
+    const order = ascending ? 1 : -1;
+    if (valueA > valueB) return order;
+    if (valueA < valueB) return -order;
+
+    return 0;
   });
 };
+
 
 /**
  * 辞書をキーまたは値に基づいてソートする関数
@@ -117,17 +147,31 @@ export const sortByOrder = <T>(array: T[], order: T[keyof T][], orderKey?: keyof
  * @param key - 最小値と最大値を取得するためのキー
  * @returns 最小値と最大値のオブジェクト
  */
-export const getMinAndMaxFromObjectArray = <T>(array: T[], key: keyof T): { min: T[keyof T], max: T[keyof T] } => {
-  let min = array[0][key];
-  let max = array[0][key];
+export const getMinAndMaxFromObjectArray = <T, K extends number | string | Date>(
+  array: T[],
+  key: keyof T,
+  conversionFunctions?: (value: T[keyof T]) => K
+): { min: T; max: T } | null=> {
+  array = array.filter(data => !!data[key]);
 
-  array.forEach((item) => {
-    if (item[key] < min) min = item[key];
-    if (item[key] > max) max = item[key];
-  });
+  if (array.length === 0) {
+    console.log("Array must not be empty");
+    return null;
+  }
 
-  return { min, max };
+  const getValue = (item: T) => {
+    return conversionFunctions ? conversionFunctions(item[key]) : item[key];
+  }
+
+  return array.reduce<{ min: T; max: T }>((acc, item) => {
+    const currentValue = getValue(item);
+    return {
+      min: currentValue < getValue(acc.min) ? item : acc.min,
+      max: currentValue > getValue(acc.max) ? item : acc.max,
+    };
+  }, { min: array[0], max: array[0] });
 };
+
 
 /**
  * 与えられた `valueMap` から、指定された `value` に最も近いキーに対応する値を返します。
@@ -166,49 +210,6 @@ export const getValueBetween = <T extends number | string | StringNumber, K>(
 
   return valueMap[closestKey];
 };
-
-export const getRangeWithValues = (start: number, end: number): number[] => {
-  return Array.from({ length: end - start + 1 }, (_, i) => start + i);
-}
-
-export const rangesToArray = (ranges: Range[]): number[] => {
-  const setRanges = new Set<number>();
-  const mergedRanges = mergeRanges(ranges);
-  mergedRanges.forEach(range => {
-    const numbers = getRangeWithValues(range.min, range.max);
-    numbers.forEach(number => setRanges.add(number));
-  })
-  return Array.from(setRanges);
-}
-
-export const mergeRanges = (ranges: Range[]): Range[] => {
-  if (ranges.length === 0) return [];
-
-  // minの昇順にソートする
-  ranges.sort((a, b) => a.min - b.min);
-
-  const result: Range[] = [];
-  let currentRange = ranges[0];
-
-  for (let i = 1; i < ranges.length; i++) {
-      const nextRange = ranges[i];
-
-      // currentRangeとnextRangeが重なっている、または連続している場合
-      if (currentRange.max >= nextRange.min - 1) {
-          // 結合して currentRange を更新
-          currentRange.max = Math.max(currentRange.max, nextRange.max);
-      } else {
-          // 結合できない場合、currentRangeを結果に追加し、nextRangeを新しいcurrentRangeにする
-          result.push(currentRange);
-          currentRange = nextRange;
-      }
-  }
-
-  // 最後のcurrentRangeを結果に追加
-  result.push(currentRange);
-
-  return result;
-}
 
 /**
  * 配列から重複する要素を取り除く
@@ -278,4 +279,14 @@ export const removeNullAndUndefined = <T>(array: (T | null | undefined)[]): T[] 
 export const uniqueByProperty = <T, K extends keyof T>(array: T[], key: K): T[] => {
   const uniqueMap = new Map<T[K], T>(array.map(item => [item[key], item]));
   return Array.from(uniqueMap.values());
+};
+
+export const sequentialNumber = (start: number, end?: number): number[] => {
+  const actualStart = end !== undefined ? start : 0;
+  const actualEnd = end !== undefined ? end : start;
+
+  const length = Math.abs(actualEnd - actualStart) + 1;
+  const step = actualStart <= actualEnd ? 1 : -1;
+
+  return Array.from({ length }, (_, i) => actualStart + i * step);
 };

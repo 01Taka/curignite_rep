@@ -356,3 +356,30 @@ export const msToTime = (ms: number, hideSeconds: boolean = true, hideZeroHour: 
     const seconds = Math.floor((ms % 60000) / 1000);
     return `${hideZeroHour && hours === 0 ? "" : `${hours}時間`}${minutes}分${hideSeconds ? "" : `${seconds}秒`}`;
 }
+
+export const timeOmissionFormat = (timeMs: number): string => {
+    const minutes = Math.floor(timeMs / MINUTES_IN_MILLISECOND);
+    const hours = (minutes / 60).toFixed(1);
+    const unit = minutes >= 60 ? 'h' : 'min';
+    const value = minutes >= 60 ? hours : String(minutes);
+    return `${value}${unit}`;
+}
+
+/**
+ * 日付の差をフォーマットする関数
+ * @param date - 比較対象の日付
+ * @param format - 残りの日数が含まれるフォーマット
+ * @param overFormat - 残りの日数がマイナスの場合のフォーマット
+ * @param baseDate - 基準の日付（省略可能）
+ * @returns フォーマットされた日付の差
+ */
+export const formatDateDifference = (
+    date: TimeTypes,
+    format: string = 'd日後',
+    overFormat: string = 'd日前',
+    baseDate: TimeTypes = new Date()
+  ): string => {
+    const remainingDays = differenceInDays(getMidnightDate(date), getMidnightDate(baseDate));
+    const fom = remainingDays < 0 ? overFormat : format;
+    return fom.replace(/d/g, String(Math.abs(remainingDays)))
+};

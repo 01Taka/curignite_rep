@@ -4,7 +4,7 @@ import CreateNavigate from '../../../features/app/task/createTask/CreateNavigate
 import Popup from '../../../components/display/popup/Popup';
 import { useNavigate } from 'react-router-dom';
 import { taskPaths } from '../../../types/path/mainPaths';
-import { Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 
 const CreateTask: FC = () => {
   const navigate = useNavigate();
@@ -14,14 +14,14 @@ const CreateTask: FC = () => {
   }
   
   return (
-    <Popup open handleClose={handleClose} props={{ maxWidth: 896 }} >
+    <Popup open handleClose={handleClose} props={{ maxWidth: 896, bgcolor: '#ddd' }} >
       <CreateNavigate />
-      <div className='flex flex-col p-4 m-4 border-2 border-main rounded-lg h-auto'>
+      <Box>
         <Typography variant='h4' className='p-2'>
           問題集一覧
         </Typography>
         <TaskCollections />
-      </div>
+      </Box>
     </Popup>
   )
 }

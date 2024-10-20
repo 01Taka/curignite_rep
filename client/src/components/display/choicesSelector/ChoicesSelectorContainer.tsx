@@ -46,11 +46,11 @@ const ChoicesSelectorContainer: React.FC<ChoicesSelectorContainerProps> = ({ ite
           },
         }}
       >
-      <HideEmpty requiredContent={[item.imageSetting, item.imageSetting?.src]}>
+      <HideEmpty requiredContent={[item.image, item.image?.src]}>
         <Avatar
             variant={imageShape}
-            src={item.imageSetting?.src}
-            alt={item.imageSetting?.alt}
+            src={item.image?.src}
+            alt={item.image?.alt}
             sx={{
               width: 'auto', // 自動的に幅を調整
               height: '95%', // コンテナの高さに合わせる

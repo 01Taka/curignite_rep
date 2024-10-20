@@ -4,72 +4,76 @@ import { CreateIndividualTaskViewFormState } from '../../../../../types/app/task
 import { keyMirror } from '../../../../../functions/objectUtils';
 import { NumberField, StringField } from '../../../../../components/input/inputIndex';
 import MultilineField from '../../../../../components/input/field/MultilineField';
-import SelectField from '../../../../../components/input/field/SelectField';
-import CircularButton, { CircularButtonSize } from '../../../../../components/input/button/CircularButton';
-import { taskPrioritySelectItem } from '../../../../../types/app/task/taskForm';
-import { cn } from '../../../../../functions/utils';
-import { Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import DateTimeField from '../../../../../components/input/field/DateTimeField';
 
 interface CreateIndividualTaskViewProps {
   formState: CreateIndividualTaskViewFormState;
   onFormStateChange: FormStateChangeFunc;
   onCreate: () => void;
-  enterButtonSize?: CircularButtonSize;
-  className?: string;
 }
 
 const CreateIndividualTaskView: FC<CreateIndividualTaskViewProps> = ({
   formState,
   onFormStateChange,
   onCreate,
-  enterButtonSize = "lg",
-  className = "",
 }) => {
   const names = useMemo(() => keyMirror(formState), [formState]);
 
   return (
-    <div className={cn('flex flex-col items-end space-y-4 max-w-lg', className)}>
-      <Typography className='w-full p-2' variant='h4'>
+    <Box sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      bgcolor: 'white',
+      padding: 1,
+      borderRadius: 2,
+    }}>
+      <Typography sx={{ paddingY: 1 }} variant='h5'>
         タスクを追加
       </Typography>
-      <DateTimeField
-        label='提出日時'
-        name={names.dueDateTime}
-        value={formState.dueDateTime}
-        onChange={onFormStateChange}
-      />
-      <StringField
-        label='タイトル'
-        name={names.title}
-        value={formState.title}
-        onChange={onFormStateChange}
-      />
-      <MultilineField
-        label='補足説明'
-        rows={3}
-        name={names.taskNote}
-        value={formState.taskNote}
-        onChange={onFormStateChange}
-      />
-      <NumberField
-        label='推定所要時間 (分)'
-        name={names.estimatedDuration}
-        value={formState.estimatedDuration}
-        min={0}
-        onChange={onFormStateChange}
-      />
-      <SelectField
-        label='優先度'
-        name={names.priority}
-        selectItems={taskPrioritySelectItem}
-        value={formState.priority}
-        onChange={onFormStateChange}
-      />
-      <CircularButton onClick={onCreate} bgColor="main" size={enterButtonSize}>
+      <Box sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '1rem'
+      }}>
+        <DateTimeField
+          label='提出日時'
+          name={names.dueDateTime}
+          value={formState.dueDateTime}
+          onChange={onFormStateChange}
+        />
+        <StringField
+          label='タイトル'
+          name={names.title}
+          value={formState.title}
+          onChange={onFormStateChange}
+        />
+        <NumberField
+          label='推定所要時間 (分)'
+          name={names.estimatedDuration}
+          value={formState.estimatedDuration}
+          min={0}
+          onChange={onFormStateChange}
+        />
+        <MultilineField
+          label='補足説明'
+          rows={3}
+          name={names.taskNote}
+          value={formState.taskNote}
+          onChange={onFormStateChange}
+        />
+        {/* <SelectField
+          label='優先度'
+          name={names.priority}
+          selectItems={taskPrioritySelectItem}
+          value={formState.priority}
+          onChange={onFormStateChange}
+        /> */}
+      </Box>
+      <Button onClick={onCreate} variant='contained' sx={{ marginTop: 2 }}>
         作成する
-      </CircularButton>
-    </div>
+      </Button>
+    </Box>
   );
 };
 

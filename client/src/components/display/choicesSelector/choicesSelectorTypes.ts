@@ -1,16 +1,12 @@
 import { AvatarVariant } from "../../../types/module/mui/muiTypes";
+import { Image } from "../../../types/util/componentsTypes";
 import { HexColorCode } from "../../../types/util/utilTypes";
-
-export interface ChoicesImageSetting {
-  src: string;
-  alt?: string;
-}
 
 export interface ChoicesItem<T = number> {
   id: T;
   title: string;
   contents?: string;
-  imageSetting?: ChoicesImageSetting;
+  image?: Image;
 }
 
 export interface ChoicesSelectorProps<T = number> {

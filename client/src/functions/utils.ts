@@ -1,6 +1,6 @@
 import clsx, { ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { FormStateChangeEvent } from "../types/util/componentsTypes";
+import { FormStateChangeEvent, FormStateChangeFunc, CustomHTMLElement } from "../types/util/componentsTypes";
 import { ComparisonOperator } from "../types/util/utilTypes";
 
 export function cn(...inputs: ClassValue[]) {
@@ -19,6 +19,18 @@ export const handleFormStateChange = <T>(
     [name]: fieldValue,
   }));
 };
+
+export const handleCallOnChange = <T, K extends CustomHTMLElement>(value: T, name: string, onChange: FormStateChangeFunc) => {
+  const event: FormStateChangeEvent = {
+    target: {
+      name,
+      value,
+      type: typeof value
+    },
+  } as unknown as React.ChangeEvent<K>;
+  onChange(event);
+}
+
 
 export const performComparison = (
   a: number | string, 

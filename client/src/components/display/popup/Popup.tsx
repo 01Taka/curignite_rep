@@ -1,12 +1,11 @@
-import { Box, Button, IconButton, Modal, SxProps } from "@mui/material";
+import { Box, IconButton, Modal, SxProps } from "@mui/material";
 import { FC, ReactNode } from "react";
-import CircularButton from "../../input/button/CircularButton";
 import { Close } from "@mui/icons-material";
 
 interface PopupProps {
   open: boolean;
   children: ReactNode;
-  height?: 'fit-content' | number | `${number}%`;
+  height?: string | number;
   props?: SxProps;
   centeredItem?: boolean;
   fixationCloseButton?: boolean;
@@ -34,8 +33,7 @@ const Popup: FC<PopupProps> = ({ open, children, height = 'fit-content', centere
           width: '95%',
           maxWidth: 'lg', // MUIのテーマに基づくサイズ
           height,
-          maxHeight: '90vh', // 最大の高さを設定
-          overflowY: 'auto',
+          overflow: 'auto',
           justifyContent: centeredItem ? 'center' : 'start',
           alignItems: centeredItem ? 'center' : 'start',
           ...props

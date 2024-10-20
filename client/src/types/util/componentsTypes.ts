@@ -14,11 +14,12 @@ export type HTMLFileElement = BaseHTMLElement<File, "file">;
 export type HTMLFilesElement = BaseHTMLElement<File[], "files">;
 export type HTMLAnyTypeElement = BaseHTMLElement<any, "unknown">
 
-type CustomHTMLElement = HTMLDateElement | HTMLRangeElement | HTMLFileElement | HTMLFilesElement | HTMLAnyTypeElement;
+export type CustomHTMLElement = HTMLDateElement | HTMLRangeElement | HTMLFileElement | HTMLFilesElement | HTMLAnyTypeElement;
 
 export type FormStateChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | CustomHTMLElement>;
 
 export type FormStateChangeFunc = (e: FormStateChangeEvent) => void;
+export type UpdateFieldFunc<T extends string> = (fieldName: T, value: any) => void;
 
 export type SelectFieldChange = (event: SelectChangeEvent<string | number>, child: ReactNode) => void;
 
@@ -62,4 +63,11 @@ export interface HeatmapCellColor {
 export interface Range {
     min: number;
     max: number;
+}
+
+export type IconProp = Image | ReactNode;
+
+export interface Image {
+    src: string;
+    alt?: string;
 }

@@ -11,19 +11,19 @@ interface ButtonConfig {
 }
 
 export const buttonConfigs: ButtonConfig[] = [
-  {
-    label: <>タスク<br/>を追加</>,
-    path: taskPaths.createChildren.individual,
-    content: <CreateIndividualTask />,
-  },
-  {
-    label: <>ページ<br/>を追加</>,
-    path: taskPaths.createChildren.batch,
-    content: <CreateBatchTask />,
-  },
-  {
-    label: <>問題集<br/>を作成</>,
-    path: taskPaths.createChildren.collection,
-    content: <CreateTaskCollection />,
-  },
+  // {
+  //   label: <>タスク<br/>を追加</>,
+  //   path: taskPaths.createChildren.individual,
+  //   content: <CreateIndividualTask />,
+  // },
+  // {
+  //   label: <>ページ<br/>を追加</>,
+  //   path: taskPaths.createChildren.batch,
+  //   content: <CreateBatchTask />,
+  // },
+  // {
+  //   label: <>問題集<br/>を作成</>,
+  //   path: taskPaths.createChildren.collection,
+  //   content: <CreateTaskCollection />,
+  // },
 ];

@@ -17,6 +17,7 @@ interface MiniIconProps {
   color: HexColorCode | ComponentColor;
   titleVariant?: Variant;
   avatarVariant?: AvatarVariant;
+  size?: number;
 }
 
 const MiniIcon: React.FC<MiniIconProps> = ({
@@ -25,6 +26,7 @@ const MiniIcon: React.FC<MiniIconProps> = ({
   color,
   titleVariant = 'body2',
   avatarVariant,
+  size = 52
 }) => {
   const isComponentColor = (color: any): color is ComponentColor => typeof color === 'object' && 'bgcolor' in color;
   const backgroundColor = isComponentColor(color) ? color.bgcolor : color;
@@ -35,7 +37,8 @@ const MiniIcon: React.FC<MiniIconProps> = ({
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        alignItems: 'center'
       }}
     >
       {title && (
@@ -48,6 +51,8 @@ const MiniIcon: React.FC<MiniIconProps> = ({
         sx={{
           bgcolor: backgroundColor,
           color: textColor,
+          width: size,
+          height: size
         }}
       >
         {children}

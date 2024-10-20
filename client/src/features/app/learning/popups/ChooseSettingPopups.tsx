@@ -25,8 +25,8 @@ const ChooseSettingPopups: React.FC<ChooseSettingPopupsProps> = () => {
   const settingChoices: Record<SettingType, SettingChoices> = {
     'mission': {
       choices: [
-        { id: 0, title: '既存ミッションから選ぶ', imageSetting: { src: 'https://cdn-icons-png.flaticon.com/512/654/654116.png' }},
-        { id: 1, title: '新しいミッションに挑戦', imageSetting: { src: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7CqtNLAt00tg9UPApKXijlTLUktjzdvuwfQ&s' } },
+        { id: 0, title: '既存ミッションから選ぶ', image: { src: 'https://cdn-icons-png.flaticon.com/512/654/654116.png' }},
+        { id: 1, title: '新しいミッションに挑戦', image: { src: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7CqtNLAt00tg9UPApKXijlTLUktjzdvuwfQ&s' } },
         { id: 2, title: '目標なしで始める' }
       ],
       onClickChoices(id) {

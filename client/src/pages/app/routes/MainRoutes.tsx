@@ -13,6 +13,7 @@ import ActiveMemberRoutes from '../activeMember/ActiveMemberRoutes';
 import FocusLearning from '../../../features/app/focusLearning/FocusLearning';
 import { updateCurrentGoal } from '../../../redux/actions/learning/learningGoalActions';
 import LearningRoot from '../learning/LearningRoot';
+import TaskRoot from '../task/TaskRoot';
 
 const MainRoutes: FC = () => {
   const dispatch = useAppDispatch();
@@ -34,7 +35,7 @@ const MainRoutes: FC = () => {
         <Route path='*' element={<NotFound />} />
         <Route path={mainRootPaths.learning} element={<LearningRoot />} />
         <Route path={mainRootPaths.focusLearning} element={<FocusLearning />} />
-        <Route path={mainRootPaths.task} element={<TaskRoutes />} />
+        <Route path={mainRootPaths.task} element={<TaskRoot />} />
         <Route path={mainRootPaths.team} element={<TeamRoutes />} />
         <Route path={mainRootPaths.activeMember} element={<ActiveMemberRoutes />} />
       </Routes>

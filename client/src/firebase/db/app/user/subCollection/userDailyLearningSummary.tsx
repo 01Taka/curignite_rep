@@ -1,4 +1,4 @@
-import { DocumentData, DocumentReference, Firestore, Timestamp, where } from "firebase/firestore";
+import { DocumentReference, Firestore, where } from "firebase/firestore";
 import BaseDB from "../../../base";
 import { UserDailyLearningSummaryData, UserLearningGoalData } from "../../../../../types/firebase/db/user/userStructure";
 import { ISODate, TimeTypes } from "../../../../../types/util/dateTimeTypes";
@@ -134,9 +134,14 @@ export class UserDailyLearningSummaryService {
         denominator = summaries.length;
         break;
       case "dateDiff":
-        const { min, max } = getMinAndMaxFromObjectArray(summaries, "date");
-        const dateDiff = convertToMilliseconds(max as Timestamp) - convertToMilliseconds(min as Timestamp);
-        denominator = Math.floor(dateDiff / DAYS_IN_MILLISECOND);
+        const value = getMinAndMaxFromObjectArray(summaries, "date");
+        if (value) {
+          const { min, max } = value;
+          const dateDiff = convertToMilliseconds(max.date) - convertToMilliseconds(min.date);
+          denominator = Math.floor(dateDiff / DAYS_IN_MILLISECOND);
+        } else {
+          denominator = 0;
+        }
         break;
       default:
         denominator = denoType >= 1 ? denoType : 1;

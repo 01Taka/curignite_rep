@@ -3,7 +3,8 @@ import { CollectionWithCollectionTasks, CollectionWithTasksData, TaskCollectionD
 import { TaskCollectionService } from "./taskCollectionService";
 import { IndividualTaskService } from "./individualTaskService";
 import { TaskCollectionTaskService } from "./taskCollectionTaskService";
-import { rangesToArray, removeDuplicates } from "../../../../functions/objectUtils";
+import { removeDuplicates } from "../../../../functions/objectUtils";
+import { rangesToArray, sumRanges } from "../../../../functions/rangeUtils";
 
 export class TaskManagementService {
   private individualTaskService: IndividualTaskService;
@@ -42,6 +43,22 @@ export class TaskManagementService {
     } catch (error) {
       this.logErrorAndThrow("getting collections with tasks", error);
     }
+  }
+
+  static taskDataToCollectionTaskData(tasks: TaskData[]): TaskCollectionTaskData[] {
+    const data = tasks.map(task => {
+      if (!task.collectionTaskField) {
+        return null;
+      }
+      const data: TaskCollectionTaskData = {
+        ...task,
+        collectionId: task.collectionTaskField.collection.docId,
+        pagesInRange: task.collectionTaskField.pagesInRange
+      };
+      return data;
+    })
+    
+    return data.filter(item => item !== null) as TaskCollectionTaskData[];
   }
 
   async getCollectionsWithCollectionTasks(
@@ -87,6 +104,7 @@ export class TaskManagementService {
     const remainingPages = this.getRemainingPages(targetPages, collectionData.completedPageIndices);
     const progress = this.calculateProgress(targetPages.length, completedPages.length);
     const estimatedDuration = collectionData.timePerPage * remainingPages.length;
+    const completionRate = `${completedPages.length}/${sumRanges(task.pagesInRange)}`
 
     return {
       ...task,
@@ -98,6 +116,7 @@ export class TaskManagementService {
         pagesInRange: task.pagesInRange,
         completedPages,
         remainingPages,
+        completionRate
       },
     };
   }

@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, FC } from 'react';
+import React, { useState, FC } from 'react';
 import { Box, CircularProgress, Typography } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../../../redux/hooks';
 import { MINUTES_IN_MILLISECOND } from '../../../../constants/utils/dateTimeConstants';

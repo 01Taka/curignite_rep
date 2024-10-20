@@ -3,7 +3,7 @@ import { JoinRequestData } from "../../../types/firebase/db/common/joinRequest/j
 import BaseDB from "../base";
 import { getInitialBaseDocumentData } from "../../../functions/db/dbUtils";
 import { convertTimestampsToNumbers, revertTimestampConversion } from "../../../functions/db/dataFormatUtils";
-import { sortArray } from "../../../functions/objectUtils";
+import { sortObjectArray } from "../../../functions/objectUtils";
 import { JoinRequestStatus } from "../../../types/firebase/db/common/joinRequest/joinRequestSupplementTypes";
 
 class JoinRequestService {
@@ -86,7 +86,7 @@ class JoinRequestService {
   }
 
   static sortJoinRequestsByRequestedAt(joinRequests: JoinRequestData[]): JoinRequestData[] {
-    return revertTimestampConversion(sortArray(convertTimestampsToNumbers(joinRequests), "requestedAt"));
+    return revertTimestampConversion(sortObjectArray(convertTimestampsToNumbers(joinRequests), "requestedAt"));
   }
 }
 
