@@ -1,5 +1,4 @@
 import { MINUTES_IN_MILLISECOND } from "../../constants/utils/dateTimeConstants";
-import { useLearningTimer } from "../../features/app/learningGoal/learningGoalWork/LearningTimerProvider";
 import serviceFactory from "../../firebase/db/factory";
 import { IndexedLearningGoalService } from "../../functions/browserStorage/indexedDB/services/indexedLearningGoalService";
 import { convertTimestampsToNumbers } from "../../functions/db/dataFormatUtils";

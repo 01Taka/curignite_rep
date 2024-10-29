@@ -1,7 +1,7 @@
 // import React, { FC, useEffect, useState } from 'react';
 // import Popup from '../../../../components/util/Popup';
 // import { NumberField, StringField } from '../../../../components/input/inputIndex';
-// import { Subject } from '../../../../types/firebase/db/common/commonTypes';
+// import { Subject } from '../../../../types/firebase/db/commonTypes';
 // import { keyMirror } from '../../../../functions/objectUtils';
 // import { handleFormStateChange } from '../../../../functions/utils';
 // import { FormStateChangeEvent } from '../../../../types/util/componentsTypes';

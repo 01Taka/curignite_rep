@@ -1,6 +1,6 @@
 import { DocumentData, DocumentReference, Firestore, QueryConstraint, Timestamp } from "firebase/firestore";
 import BaseDB from "../../../../base";
-import { IndividualTaskData } from "../../../../../../types/firebase/db/common/task/taskStructure";
+import { IndividualTaskData } from "../../../../../../types/firebase/db/task/taskStructure";
 import { getInitialBaseDocumentData } from "../../../../../../functions/db/dbUtils";
 
 export class IndividualTaskService {

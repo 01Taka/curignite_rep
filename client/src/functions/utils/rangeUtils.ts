@@ -54,11 +54,11 @@ export const rangesToString = (ranges: Range[], delimiter: string = ', ', connec
     .join(delimiter);
 };
 
-export const rangesToArray = (ranges: Range[]): number[] => {
+export const rangesToArray = (ranges: Range[], includeMax: boolean = false): number[] => {
   const setRanges = new Set<number>();
   const mergedRanges = mergeRanges(ranges);
   mergedRanges.forEach(range => {
-    const numbers = seq(range.min, range.max);
+    const numbers = seq(range.min, range.max + Number(includeMax));
     numbers.forEach(number => setRanges.add(number));
   })
   return Array.from(setRanges);

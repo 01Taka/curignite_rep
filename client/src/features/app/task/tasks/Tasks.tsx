@@ -3,7 +3,7 @@ import { useAppSelector } from '../../../../redux/hooks';
 import serviceFactory from '../../../../firebase/db/factory';
 import TaskContainer from './TaskContainer';
 import { Box } from '@mui/material';
-import { TaskData } from '../../../../types/firebase/db/common/task/taskExpansionTypes';
+import { TaskData } from '../../../../types/firebase/db/task/taskExpansionTypes';
 import { TaskManagementService } from '../../../../firebase/db/util/taskManagementService';
 
 interface TasksProps {

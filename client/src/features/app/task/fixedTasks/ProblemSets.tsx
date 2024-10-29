@@ -8,10 +8,10 @@ import Popup from '../../../../components/display/popup/Popup';
 import { getMinAndMaxFromObjectArray, sortObjectArray } from '../../../../functions/utils/objectUtils';
 import { convertToDate } from '../../../../functions/utils/dateTimeUtils';
 import useProblemSet from '../hooks/useProblemSet';
-import { ProblemSetData } from '../../../../types/firebase/db/common/task/taskStructure';
+import { ProblemSetData } from '../../../../types/firebase/db/task/taskStructure';
 import ProblemSetSubmissions from './submissions/ProblemSetSubmissions';
 import CreateActivity from '../createTask/createActivity/CreateActivity';
-import { FullProblemSetData } from '../../../../types/firebase/db/common/task/taskExpansionTypes';
+import { FullProblemSetData } from '../../../../types/firebase/db/task/taskExpansionTypes';
 
 interface ProblemSetsProps { }
 

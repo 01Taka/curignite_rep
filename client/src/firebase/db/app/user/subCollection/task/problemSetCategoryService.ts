@@ -1,6 +1,6 @@
 import { DocumentData, DocumentReference, Firestore } from "firebase/firestore";
 import BaseDB from "../../../../base";
-import { ProblemSetCategoryData } from "../../../../../../types/firebase/db/common/task/taskStructure";
+import { ProblemSetCategoryData } from "../../../../../../types/firebase/db/task/taskStructure";
 import { getInitialBaseDocumentData } from "../../../../../../functions/db/dbUtils";
 import { Range } from "../../../../../../types/util/componentsTypes";
 

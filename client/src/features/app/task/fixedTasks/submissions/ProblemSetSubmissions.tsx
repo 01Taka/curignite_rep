@@ -3,7 +3,7 @@ import { Box, Fab, Zoom } from '@mui/material';
 import ProblemSetSubmissionContainer from './ProblemSetSubmissionContainer';
 import useEventListener from '../../../../hooks/useEventListener';
 import { Add } from '@mui/icons-material';
-import { TaskData } from '../../../../../types/firebase/db/common/task/taskExpansionTypes';
+import { TaskData } from '../../../../../types/firebase/db/task/taskExpansionTypes';
 
 interface ProblemSetSubmissionsProps {
   activities: TaskData[];

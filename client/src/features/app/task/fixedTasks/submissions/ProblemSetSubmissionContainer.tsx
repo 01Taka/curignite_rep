@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Button, Grid, Typography } from '@mui/material';
 import { convertToDate, timeOmissionFormat } from '../../../../../functions/utils/dateTimeUtils';
 import { format } from 'date-fns';
-import { TaskData } from '../../../../../types/firebase/db/common/task/taskExpansionTypes';
+import { TaskData } from '../../../../../types/firebase/db/task/taskExpansionTypes';
 import ActivityRangesDisplay from './ActivityRangesDisplay';
 
 interface ProblemSetSubmissionContainerProps {

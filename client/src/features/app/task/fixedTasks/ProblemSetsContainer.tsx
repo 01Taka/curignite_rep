@@ -4,7 +4,7 @@ import MiniValueIcon from '../../../../components/display/container/MiniValueIco
 import { AccessTime, Add, FormatListBulleted } from '@mui/icons-material';
 import { convertToDate, formatDateDifference, timeOmissionFormat } from '../../../../functions/utils/dateTimeUtils';
 import MultiLineText from '../../../../components/display/text/MultiLineText';
-import { ExpansionProblemSetData, TaskData } from '../../../../types/firebase/db/common/task/taskExpansionTypes';
+import { ExpansionProblemSetData, TaskData } from '../../../../types/firebase/db/task/taskExpansionTypes';
 import ActivityRangesDisplay from './submissions/ActivityRangesDisplay';
 
 interface ProblemSetsContainerProps {

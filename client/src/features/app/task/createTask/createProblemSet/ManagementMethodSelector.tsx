@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ProblemSetActivityManagementMethod } from '../../../../../types/firebase/db/common/task/taskStructure';
+import { ProblemSetActivityManagementMethod } from '../../../../../types/firebase/db/task/taskStructure';
 import { CreateProblemSetViewFormState, ProblemSetCategoryForm } from './createProblemSetTypes';
 import useArrayState from '../../../../hooks/form/useArrayState';
 import { Box, Button, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';

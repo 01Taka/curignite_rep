@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import { Card, Tabs, Tab } from "@mui/material";
 import Members from "./Members";
 import JoinRequests from "./JoinRequests";

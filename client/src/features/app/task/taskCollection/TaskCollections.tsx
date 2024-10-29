@@ -2,7 +2,7 @@
 // import TaskCollectionsView from './TaskCollectionsView';
 // import serviceFactory from '../../../../firebase/db/factory';
 // import { useAppSelector } from '../../../../redux/hooks';
-// import { CollectionWithTasksData, TaskCollectionData } from '../../../../types/firebase/db/common/task/taskStructure';
+// import { CollectionWithTasksData, TaskCollectionData } from '../../../../types/firebase/db/task/taskStructure';
 // import FixedTasks from '../fixedTasks/FixedTasks';
 
 // interface TaskCollectionsProps {

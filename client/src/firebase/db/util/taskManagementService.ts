@@ -1,7 +1,7 @@
 import { Timestamp } from "firebase/firestore";
 import { objectArrayToDict } from "../../../functions/utils/objectUtils";
-import { ProblemSetCategoryData, IndividualTaskData, ProblemSetActivityData, ProblemSetData, CategoryActivity } from "../../../types/firebase/db/common/task/taskStructure";
-import { CategoryActivityStatus, ExpansionProblemSetData, ProblemSetActivityField, FullProblemSetData, TaskData } from "../../../types/firebase/db/common/task/taskExpansionTypes";
+import { ProblemSetCategoryData, IndividualTaskData, ProblemSetActivityData, ProblemSetData, CategoryActivity } from "../../../types/firebase/db/task/taskStructure";
+import { CategoryActivityStatus, ExpansionProblemSetData, ProblemSetActivityField, FullProblemSetData, TaskData } from "../../../types/firebase/db/task/taskExpansionTypes";
 import { getInitialBaseDocumentData } from "../../../functions/db/dbUtils";
 import { ServiceFactory } from "../factory";
 import { validateNumber } from "../../../functions/utils/formUtils";
@@ -165,7 +165,7 @@ export class TaskManagementService {
     categoryMap: { [docId: string]: ProblemSetCategoryData }
   ) {
     const category = categoryMap[act.categoryId];
-    const problemIds = rangesToArray(act.problemIdsRange);
+    const problemIds = rangesToArray(act.problemIdsRange, true);
     const problemCount = problemIds.length;
 
     if (!category) {

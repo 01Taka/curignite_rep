@@ -1,5 +1,5 @@
 import { DocumentData, DocumentReference, Firestore, Timestamp } from "firebase/firestore";
-import { CategoryActivity, ProblemSetActivityData } from "../../../../../../types/firebase/db/common/task/taskStructure";
+import { CategoryActivity, ProblemSetActivityData } from "../../../../../../types/firebase/db/task/taskStructure";
 import BaseDB from "../../../../base";
 import { getInitialBaseDocumentData } from "../../../../../../functions/db/dbUtils";
 

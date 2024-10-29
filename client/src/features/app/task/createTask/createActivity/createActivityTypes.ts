@@ -1,4 +1,4 @@
-import { ProblemSetCategoryData } from "../../../../../types/firebase/db/common/task/taskStructure";
+import { ProblemSetCategoryData } from "../../../../../types/firebase/db/task/taskStructure";
 import { Range } from "../../../../../types/util/componentsTypes";
 
 export interface CategoryActivityFormState {

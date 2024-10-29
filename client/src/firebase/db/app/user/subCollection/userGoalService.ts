@@ -3,7 +3,7 @@
 // import { getInitialBaseDocumentData } from "../../../../../functions/db/dbUtils";
 // import { UserGoalData } from "../../../../../types/firebase/db/user/userStructure";
 // import { GoalStatus } from "../../../../../types/firebase/db/user/userSupplementTypes";
-// import { Subject } from "../../../../../types/firebase/db/common/commonTypes";
+// import { Subject } from "../../../../../types/firebase/db/commonTypes";
 // import { toTimestamp } from "../../../../../functions/dateTimeUtils";
 // import { endOfDay, startOfDay } from "date-fns";
 // import { removeDuplicatesByKey } from "../../../../../functions/objectUtils";

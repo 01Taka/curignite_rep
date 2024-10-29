@@ -1,7 +1,7 @@
 // import React, { FC } from 'react';
 // import OverViewInfo from '../tasks/OverViewInfo';
 // import { MINUTES_IN_MILLISECOND } from '../../../../constants/utils/dateTimeConstants';
-// import { ExpansionProblemSetData, TaskData } from '../../../../types/firebase/db/common/task/taskExpansionTypes';
+// import { ExpansionProblemSetData, TaskData } from '../../../../types/firebase/db/task/taskExpansionTypes';
 
 // interface CollectionTaskViewProps {
 //   problemSet: ExpansionProblemSetData;

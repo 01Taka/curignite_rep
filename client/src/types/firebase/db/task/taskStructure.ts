@@ -1,6 +1,6 @@
 import { Timestamp } from "firebase/firestore";
-import { BaseDocumentData } from "../../baseTypes";
-import { Range } from "../../../../util/componentsTypes";
+import { BaseDocumentData } from "../baseTypes";
+import { Range } from "../../../util/componentsTypes";
 
 export interface IndividualTaskData extends BaseDocumentData {
   title: string; // タスクのタイトル

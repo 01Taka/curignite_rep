@@ -1,6 +1,6 @@
 import serviceFactory from "../../../../firebase/db/factory";
 import { TaskManagementService } from "../../../../firebase/db/util/taskManagementService";
-import { FullProblemSetData } from "../../../../types/firebase/db/common/task/taskExpansionTypes";
+import { FullProblemSetData } from "../../../../types/firebase/db/task/taskExpansionTypes";
 import { useAppSelector } from "../../../../redux/hooks";
 import { useEffect, useState } from "react";
 

@@ -1,10 +1,9 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 import serviceFactory from '../../../firebase/db/factory';
 import { Subject } from '../../../types/firebase/db/common/commonTypes';
 import { useAppSelector } from '../../../redux/hooks';
 import { keyMirror } from '../../../functions/utils/objectUtils';
 import SelectField from '../../../components/input/field/SelectField';
-import { FormStateChangeEvent } from '../../../types/util/componentsTypes';
 import { subjectSelectItems } from '../../../constants/selectItems/subjectSelectItems';
 import FileUploadField from '../../../components/input/field/FileUploadField';
 import CircularButton from '../../../components/input/button/CircularButton';

@@ -5,7 +5,7 @@
 // import { differenceInDays } from 'date-fns'
 // import { GradientCircleSize } from '../../../../types/app/task/taskTypes'
 // import { cn } from '../../../../functions/utils'
-// import { BaseTaskData } from '../../../../types/firebase/db/common/task/taskStructure'
+// import { BaseTaskData } from '../../../../types/firebase/db/task/taskStructure'
 
 // interface OverViewInfoProps {
 //   task: BaseTaskData;

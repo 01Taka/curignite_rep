@@ -1,6 +1,6 @@
 // import React, { FC } from 'react';
 // import CollectionContainer from './CollectionContainer';
-// import { CollectionWithTasksData, TaskCollectionData } from '../../../../types/firebase/db/common/task/taskStructure';
+// import { CollectionWithTasksData, TaskCollectionData } from '../../../../types/firebase/db/task/taskStructure';
 // import { Typography } from '@mui/material';
 // import FixedTasksContainer from '../fixedTasks/FixedTasksContainer';
 

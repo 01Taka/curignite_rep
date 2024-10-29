@@ -9,7 +9,7 @@ import { MINUTES_IN_MILLISECOND } from '../../../../../constants/utils/dateTimeC
 import useFormState from '../../../../hooks/form/useFormState';
 import useAsyncHandler from '../../../../hooks/form/useAsyncHandler';
 import { DocumentData, DocumentReference } from 'firebase/firestore';
-import { IndividualTaskData } from '../../../../../types/firebase/db/common/task/taskStructure';
+import { IndividualTaskData } from '../../../../../types/firebase/db/task/taskStructure';
 
 const CreateIndividualTask: FC = () => {
   const navigate = useNavigate();

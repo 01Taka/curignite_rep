@@ -3,7 +3,7 @@
 // import CollectionTaskView from './CollectionTaskView';
 // import { cn } from '../../../../functions/utils';
 // import { MINUTES_IN_MILLISECOND } from '../../../../constants/utils/dateTimeConstants';
-// import { ExpansionProblemSetData, TaskData } from '../../../../types/firebase/db/common/task/taskExpansionTypes';
+// import { ExpansionProblemSetData, TaskData } from '../../../../types/firebase/db/task/taskExpansionTypes';
 
 // interface CollectionContainerProps {
 //   problemSet: ExpansionProblemSetData;

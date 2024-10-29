@@ -1,6 +1,6 @@
 import React from 'react';
 import GoalDetails from './GoalDetails';
-import { TaskData } from '../../../../types/firebase/db/common/task/taskExpansionTypes';
+import { TaskData } from '../../../../types/firebase/db/task/taskExpansionTypes';
 
 interface GoalSettingFormProps {
   task: TaskData;

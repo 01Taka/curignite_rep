@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { FormStateChangeFunc } from '../../../../../types/util/componentsTypes';
 import { Box, Button, CircularProgress, Typography } from '@mui/material';
 import { CreateActivityFormState } from './createActivityTypes';
-import { ProblemSetActivityManagementMethod, ProblemSetCategoryData } from '../../../../../types/firebase/db/common/task/taskStructure';
+import { ProblemSetActivityManagementMethod, ProblemSetCategoryData } from '../../../../../types/firebase/db/task/taskStructure';
 import ActivityRangeForm from './ActivityRangeForm';
 import { UpdateArrayFieldArgs } from '../../../../hooks/form/AsyncHandlerTypes';
 import DateField from '../../../../../components/input/field/DateField';

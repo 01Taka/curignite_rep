@@ -4,7 +4,7 @@ import { MINUTES_IN_MILLISECOND } from '../../../../constants/utils/dateTimeCons
 import { convertToDate, formatDateDifference } from '../../../../functions/utils/dateTimeUtils';
 import MiniValueIcon from '../../../../components/display/container/MiniValueIcon';
 import { AccessTime } from '@mui/icons-material';
-import { ProblemSetActivityField, TaskData } from '../../../../types/firebase/db/common/task/taskExpansionTypes';
+import { ProblemSetActivityField, TaskData } from '../../../../types/firebase/db/task/taskExpansionTypes';
 
 export interface TaskContainerProps {
   task: TaskData;
@@ -94,7 +94,7 @@ const ProgressSection: FC<{ task: TaskData; formatEstimatedDuration: string, pro
   formatEstimatedDuration,
   problemSetActivityField
 }) => {
-  const completionRate = problemSetActivityField?.totalProblemCount ?? `${task.completed ? 1 : 0}/1`;
+  const completionRate = problemSetActivityField?.completionRate ?? `${task.completed ? 1 : 0}/1`;
 
   return (
     <Box sx={{

@@ -1,5 +1,5 @@
 import React from 'react';
-import { CategoryActivityStatus } from '../../../../../types/firebase/db/common/task/taskExpansionTypes';
+import { CategoryActivityStatus } from '../../../../../types/firebase/db/task/taskExpansionTypes';
 import { Box, Typography } from '@mui/material';
 import { rangesToString } from '../../../../../functions/utils/rangeUtils';
 
