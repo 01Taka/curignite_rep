@@ -4,12 +4,14 @@ import { StorageManager, storageManager } from '../storage/storageManager';
 // ユーザー関連サービス
 import { UserService } from './app/user/userService';
 import { UserTeamService } from './app/user/subCollection/userTeamService';
-import { UserTaskManagementService } from './app/user/subCollection/userTaskManagementService';
 import { UserPartnerService } from './app/user/subCollection/userPartnerService';
 import { UserLearningGoalService } from './app/user/subCollection/userLearningGoalService';
 import { UserDailyLearningSummaryService } from './app/user/subCollection/userDailyLearningSummary';
 import { UserHelpService } from './app/user/subCollection/userHelpService';
 import { HelpAnswerService } from './app/user/subCollection/helpAnswerService';
+
+// ユーザータスク関連サービス
+
 
 // チーム関連サービス
 import { TeamService } from './app/team/teamService';
@@ -25,10 +27,14 @@ import { SpaceMemberService } from './app/space/subCollection/spaceMemberService
 // チャット関連サービス
 import { ChatRoomService } from './app/chat/chatRoomService';
 import { ChatRoomChatService } from './app/chat/subCollection/chatRoomChatService';
+import { IndividualTaskService } from './app/user/subCollection/task/individualTaskService';
+import { ProblemSetService } from './app/user/subCollection/task/problemSetService';
+import { ProblemSetActivityService } from './app/user/subCollection/task/problemSetActivityService';
+import { ProblemSetCategoryService } from './app/user/subCollection/task/problemSetCategoryService';
 
-type Constructor<T> = new (...args: any[]) => T;
+type ConstructorWithArgs<T, Args extends any[]> = new (...args: Args) => T;
 
-class ServiceFactory {
+export class ServiceFactory {
   private instances: Map<string, any> = new Map();
 
   constructor(
@@ -36,20 +42,20 @@ class ServiceFactory {
     private storageManager: StorageManager
   ) {}
 
-  private getInstance<T>(
+  private getInstance<T, Args extends any[]>(
     key: string,
-    InstanceClass: Constructor<T>,
-    ...args: ConstructorParameters<Constructor<T>>
+    classConstructor: ConstructorWithArgs<T, Args>,
+    ...args: Args
   ): T {
     if (!this.instances.get(key)) {
-      this.instances.set(key, new InstanceClass(...args));
+      this.instances.set(key, new classConstructor(...args));
     }
     return this.instances.get(key) as T;
   }
 
   createUserService() {
     return this.getInstance(
-      'userService',
+      'user',
       UserService,
       this.firestore,
       this.storageManager,
@@ -58,19 +64,15 @@ class ServiceFactory {
   }
 
   createUserTeamService() {
-    return this.getInstance('userTeamService', UserTeamService, this.firestore);
-  }
-
-  createUserTaskManagementService() {
-    return this.getInstance('userTaskManagementService', UserTaskManagementService, this.firestore);
+    return this.getInstance('userTeam', UserTeamService, this.firestore);
   }
 
   createUserPartnerService() {
-    return this.getInstance('userPartnerService', UserPartnerService, this.firestore);
+    return this.getInstance('userPartner', UserPartnerService, this.firestore);
   }
 
   createUserLearningGoalService() {
-    return this.getInstance('userGoalService', UserLearningGoalService, this.firestore);
+    return this.getInstance('userGoal', UserLearningGoalService, this.firestore);
   }
 
   createUserDailyLearningSummary() {
@@ -78,16 +80,32 @@ class ServiceFactory {
   }
 
   createUserHelpService() {
-    return this.getInstance('userHelpService', UserHelpService, this.firestore, this.storageManager, this.createHelpAnswerService());
+    return this.getInstance('userHelp', UserHelpService, this.firestore, this.storageManager, this.createHelpAnswerService());
   }
 
   createHelpAnswerService() {
-    return this.getInstance('helpAnswerService', HelpAnswerService, this.firestore, this.storageManager);
+    return this.getInstance('helpAnswer', HelpAnswerService, this.firestore, this.storageManager);
+  }
+
+  createIndividualTaskService() {
+    return this.getInstance('individualTask', IndividualTaskService, this.firestore)
+  }
+
+  createProblemSetService() {
+    return this.getInstance('problemSet', ProblemSetService, this.firestore)
+  }
+
+  createProblemSetActivityService() {
+    return this.getInstance('problemSetActivity', ProblemSetActivityService, this.firestore)
+  }
+
+  createProblemSetCategoryService() {
+    return this.getInstance('problemSetCategory', ProblemSetCategoryService, this.firestore)
   }
 
   createTeamService() {
     return this.getInstance(
-      'teamService',
+      'team',
       TeamService,
       this.firestore,
       this.storageManager,
@@ -100,20 +118,20 @@ class ServiceFactory {
   }
 
   createTeamJoinRequestService() {
-    return this.getInstance('teamJoinRequestService', TeamJoinRequestService, this.firestore, this.createUserTeamService());
+    return this.getInstance('teamJoinRequest', TeamJoinRequestService, this.firestore, this.createUserTeamService());
   }
 
   createTeamMemberService() {
-    return this.getInstance('teamMemberService', TeamMemberService, this.firestore, this.createUserTeamService());
+    return this.getInstance('teamMember', TeamMemberService, this.firestore, this.createUserTeamService());
   }
 
   createTeamCodeService() {
-    return this.getInstance('teamCodeService', TeamCodeService, this.firestore);
+    return this.getInstance('teamCode', TeamCodeService, this.firestore);
   }
 
   createSpaceService() {
     return this.getInstance(
-      'spaceService',
+      'space',
       SpaceService,
       this.firestore,
       this.createSpaceMemberService(),
@@ -124,19 +142,19 @@ class ServiceFactory {
   }
 
   createSpaceJoinRequestService() {
-    return this.getInstance('spaceJoinRequestService', SpaceJoinRequestService, this.firestore);
+    return this.getInstance('spaceJoinRequest', SpaceJoinRequestService, this.firestore);
   }
 
   createSpaceMemberService() {
-    return this.getInstance('spaceMemberService', SpaceMemberService, this.firestore);
+    return this.getInstance('spaceMember', SpaceMemberService, this.firestore);
   }
 
   createChatRoomService() {
-    return this.getInstance('chatRoomService', ChatRoomService, this.firestore);
+    return this.getInstance('chatRoom', ChatRoomService, this.firestore);
   }
 
   createChatRoomChatService() {
-    return this.getInstance('chatRoomChatService', ChatRoomChatService, this.firestore, this.storageManager);
+    return this.getInstance('chatRoomChat', ChatRoomChatService, this.firestore, this.storageManager);
   }
 }
 

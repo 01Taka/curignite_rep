@@ -1,27 +1,28 @@
 import React from 'react';
-import { TaskData } from '../../../../../types/firebase/db/common/task/taskStructure';
 import { Box, Button, Grid, Typography } from '@mui/material';
-import { convertToDate, timeOmissionFormat } from '../../../../../functions/dateTimeUtils';
-import { rangeToString } from '../../../../../functions/rangeUtils';
+import { convertToDate, timeOmissionFormat } from '../../../../../functions/utils/dateTimeUtils';
 import { format } from 'date-fns';
+import { TaskData } from '../../../../../types/firebase/db/common/task/taskExpansionTypes';
+import ActivityRangesDisplay from './ActivityRangesDisplay';
 
-interface FixedTaskSubmissionContainerProps {
-  submission: TaskData;
+interface ProblemSetSubmissionContainerProps {
+  activity: TaskData;
   onClickWorkOn: () => void;
 }
 
-const FixedTaskSubmissionContainer: React.FC<FixedTaskSubmissionContainerProps> = ({ submission, onClickWorkOn }) => {
+const ProblemSetSubmissionContainer: React.FC<ProblemSetSubmissionContainerProps> = ({ activity, onClickWorkOn }) => {
   // collectionTaskFieldが存在しない場合はnullを返す
-  if (!submission.collectionTaskField) return null;
+  const problemSetActivityField = activity.problemSetActivityField
+  if (!problemSetActivityField) return null;
 
   // dueDateTimeのフォーマット
-  const formattedDueDate = submission.dueDateTime
-    ? format(convertToDate(submission.dueDateTime), 'M/dd')
+  const formattedDueDate = activity.dueDateTime
+    ? format(convertToDate(activity.dueDateTime), 'M/dd')
     : "未定";
 
   // 各情報を取得
-  const completionRateText = `完了率: ${submission.collectionTaskField.completionRate}`;
-  const estimatedDurationText = `推定: ${timeOmissionFormat(submission.estimatedDuration)}`;
+  const completionRateText = `完了率: ${problemSetActivityField.completionRate}`;
+  const estimatedDurationText = `推定: ${timeOmissionFormat(activity.remainingEstimatedDuration)}`;
 
   return (
     <Box sx={{ border: 1, p: 2, borderRadius: 2 }}>
@@ -50,17 +51,13 @@ const FixedTaskSubmissionContainer: React.FC<FixedTaskSubmissionContainerProps> 
                 display: 'flex',
                 flexDirection: 'column'
               }}>
-                {submission.collectionTaskField.pagesInRange.map(range => (
-                  <Typography>
-                    {rangeToString(range)}
-                  </Typography>
-                ))}
+                <ActivityRangesDisplay activityStatuses={problemSetActivityField.activityStatus} />
               </Box>
             </Box>
             <Typography variant="body1">{completionRateText}</Typography>
             <Typography variant="body1">{estimatedDurationText}</Typography>
-            {submission.taskNote && (
-              <Typography variant="body1">メモ: {submission.taskNote}</Typography>
+            {activity.taskNote && (
+              <Typography variant="body1">メモ: {activity.taskNote}</Typography>
             )}
           </Box>
         </Grid>
@@ -69,4 +66,4 @@ const FixedTaskSubmissionContainer: React.FC<FixedTaskSubmissionContainerProps> 
   );
 };
 
-export default FixedTaskSubmissionContainer;
+export default ProblemSetSubmissionContainer;

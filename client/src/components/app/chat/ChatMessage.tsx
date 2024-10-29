@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Box } from '@mui/material';
-import { cn } from '../../../functions/utils';
+import { cn } from '../../../functions/utils/utils';
 
 interface ChatMessageProps {
     content: string;

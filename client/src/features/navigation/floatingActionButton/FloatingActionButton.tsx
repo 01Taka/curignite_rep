@@ -1,6 +1,6 @@
 import { useState } from "react";
 import CircularButton from "../../../components/input/button/CircularButton";
-import { cn } from "../../../functions/utils";
+import { cn } from "../../../functions/utils/utils";
 import { FloatingActionButtonProps } from "../../../types/app/navigationTypes";
 
 const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({ icon, elements, action }) => {

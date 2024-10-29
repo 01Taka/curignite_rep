@@ -1,17 +1,16 @@
 import React from 'react';
-import { TaskCollectionData, TaskData } from '../../../../types/firebase/db/common/task/taskStructure';
 import { Box, Button, Divider, IconButton, Typography } from '@mui/material';
 import MiniValueIcon from '../../../../components/display/container/MiniValueIcon';
 import { AccessTime, Add, FormatListBulleted } from '@mui/icons-material';
-import { format } from 'date-fns';
-import { convertToDate, formatDateDifference, timeOmissionFormat } from '../../../../functions/dateTimeUtils';
-import { rangesToString } from '../../../../functions/rangeUtils';
+import { convertToDate, formatDateDifference, timeOmissionFormat } from '../../../../functions/utils/dateTimeUtils';
 import MultiLineText from '../../../../components/display/text/MultiLineText';
+import { ExpansionProblemSetData, TaskData } from '../../../../types/firebase/db/common/task/taskExpansionTypes';
+import ActivityRangesDisplay from './submissions/ActivityRangesDisplay';
 
-interface FixedTasksContainerProps {
-  taskCollection: TaskCollectionData;
-  nextSubmission: TaskData | null;
-  submissionNumber: number;
+interface ProblemSetsContainerProps {
+  problemSet: ExpansionProblemSetData;
+  nextActivity: TaskData | null;
+  activityNumber: number;
   isOpen: boolean;
   onCreateSubmission: () => void;
   onClickEditTask: () => void;
@@ -20,14 +19,14 @@ interface FixedTasksContainerProps {
 }
 
 interface HeaderProps {
-  collectionName: string;
+  problemSetName: string;
   completedCount: number;
   totalPages: number;
   isOpen: boolean;
   onToggle: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ collectionName, completedCount, totalPages, isOpen, onToggle }) => (
+const Header: React.FC<HeaderProps> = ({ problemSetName, completedCount, totalPages, isOpen, onToggle }) => (
   <Box
     sx={{
       display: 'flex',
@@ -41,26 +40,23 @@ const Header: React.FC<HeaderProps> = ({ collectionName, completedCount, totalPa
     }}
     onClick={onToggle} // クリックで開閉をトグル
   >
-    <Typography>{collectionName}</Typography>
+    <Typography>{problemSetName}</Typography>
     <Typography>{completedCount}/{totalPages}</Typography>
   </Box>
 );
 
 interface NextTaskDisplayProps {
-  nextSubmission: TaskData | null;
-  submissionNumber: number;
+  nextActivity: TaskData | null;
 }
 
-const NextTaskDisplay: React.FC<NextTaskDisplayProps> = ({ nextSubmission, submissionNumber }) => {
+const NextTaskDisplay: React.FC<NextTaskDisplayProps> = ({ nextActivity }) => {
   // 必要なデータが存在しない場合は null を返す
-  if (!nextSubmission?.collectionTaskField?.pagesInRange || !nextSubmission.dueDateTime) {
+  if (!nextActivity?.problemSetActivityField || !nextActivity.dueDateTime) {
     return null;
   }
 
-  const { collectionTaskField } = nextSubmission;
-  const { pagesInRange, completionRate } = collectionTaskField;
-  const formatRemainingDays = formatDateDifference(convertToDate(nextSubmission.dueDateTime), '残りd日');
-
+  const completionRate = nextActivity.problemSetActivityField.completionRate;
+  const formatRemainingDays = formatDateDifference(convertToDate(nextActivity.dueDateTime), '残りd日');
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', px: 1 }}>
@@ -70,7 +66,7 @@ const NextTaskDisplay: React.FC<NextTaskDisplayProps> = ({ nextSubmission, submi
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <MultiLineText maxLines={3}>
-          範囲: {rangesToString(pagesInRange)}
+          範囲: <ActivityRangesDisplay activityStatuses={nextActivity.problemSetActivityField.activityStatus}/>
         </MultiLineText>
         <Typography>
           {completionRate}
@@ -81,17 +77,17 @@ const NextTaskDisplay: React.FC<NextTaskDisplayProps> = ({ nextSubmission, submi
   );
 };
 
-const FixedTasksContainer: React.FC<FixedTasksContainerProps> = ({
-  taskCollection,
-  nextSubmission,
-  submissionNumber,
+const ProblemSetsContainer: React.FC<ProblemSetsContainerProps> = ({
+  problemSet,
+  nextActivity,
+  activityNumber,
   isOpen,
   onCreateSubmission,
   onClickEditTask,
   onClickWorkOn,
   onToggle,
 }) => {
-  const formatEstimatedDuration = timeOmissionFormat(taskCollection.timePerPage);
+  const formatEstimatedDuration = timeOmissionFormat(problemSet.averageEstimatedDuration);
   return (
     <Box
       sx={{
@@ -104,13 +100,13 @@ const FixedTasksContainer: React.FC<FixedTasksContainerProps> = ({
       }}
     >
       <Header
-        collectionName={taskCollection.collectionName}
-        completedCount={taskCollection.completedPageIndices.length}
-        totalPages={taskCollection.totalPages}
+        problemSetName={problemSet.name}
+        completedCount={problemSet.completedProblemNumber}
+        totalPages={problemSet.totalProblemNumber}
         isOpen={isOpen}
         onToggle={onToggle}
       />
-      <NextTaskDisplay nextSubmission={nextSubmission} submissionNumber={submissionNumber} />
+      <NextTaskDisplay nextActivity={nextActivity}/>
       {isOpen && (
         <Box sx={{ padding: 1 }}>
           <Box>
@@ -120,7 +116,7 @@ const FixedTasksContainer: React.FC<FixedTasksContainerProps> = ({
                 gap: 1
               }}>
                 <MiniValueIcon icon={<AccessTime />} value={formatEstimatedDuration} tooltipText='所要時間' />
-                <MiniValueIcon icon={<FormatListBulleted />} value={submissionNumber} tooltipText='ミッションの数' hide={!submissionNumber} />
+                <MiniValueIcon icon={<FormatListBulleted />} value={activityNumber} tooltipText='ミッションの数' hide={!activityNumber} />
               </Box>
             )}
           </Box>
@@ -137,4 +133,4 @@ const FixedTasksContainer: React.FC<FixedTasksContainerProps> = ({
   );
 };
 
-export default FixedTasksContainer;
+export default ProblemSetsContainer;

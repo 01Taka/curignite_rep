@@ -1,4 +1,4 @@
-import { Firestore, DocumentReference, DocumentSnapshot, QuerySnapshot, addDoc, collection, deleteDoc, doc, getDoc, getDocs, updateDoc, CollectionReference, QueryConstraint, query, where, limit, setDoc, startAfter, orderBy, onSnapshot, Unsubscribe, DocumentData, Transaction, runTransaction } from "firebase/firestore";
+import { Firestore, DocumentReference, DocumentSnapshot, QuerySnapshot, addDoc, collection, deleteDoc, doc, getDoc, getDocs, updateDoc, CollectionReference, QueryConstraint, query, where, limit, setDoc, startAfter, orderBy, Unsubscribe, DocumentData, Transaction, runTransaction } from "firebase/firestore";
 import { BaseDocumentData } from "../../types/firebase/db/baseTypes";
 import FirestoreCallbacks from "./callbacks";
 
@@ -39,6 +39,17 @@ class BaseDB<T extends BaseDocumentData> {
     return this.collectionRef.path;
   }
 
+
+  /**
+   * 指定したフィールドを除外するユーティリティメソッド
+   * @param data オブジェクトからフィールドを除外
+   * @returns 除外後のオブジェクト
+   */
+  private omitDocIdField(data: T): Omit<T, 'docId'> {
+    const { docId, ...rest } = data; // 'docId' を取り除き、残りのプロパティを rest に格納
+    return rest; // 除外後のオブジェクトを返す
+  }
+
   /**
    * Firestore操作をハンドリングするユーティリティメソッド
    * @param operation 実行するFirestore操作のPromise
@@ -61,7 +72,8 @@ class BaseDB<T extends BaseDocumentData> {
    */
   async create(data: T): Promise<DocumentReference<T>> {
     data.isActive = true;
-    return this.handleFirestoreOperation(addDoc(this.collectionRef, data), "Failed to create document");
+    const result = await this.handleFirestoreOperation(addDoc(this.collectionRef, this.omitDocIdField(data)), "Failed to create document");
+    return result as DocumentReference<T>;
   }
 
   /**
@@ -73,7 +85,7 @@ class BaseDB<T extends BaseDocumentData> {
   async createWithId(documentId: string, data: T, merge: boolean = false): Promise<void> {
     data.isActive = true;
     const docRef = doc(this.collectionRef, documentId);
-    return this.handleFirestoreOperation(setDoc(docRef, data, { merge }), "Failed to create document with ID");
+    return this.handleFirestoreOperation(setDoc(docRef, this.omitDocIdField(data), { merge }), "Failed to create document with ID");
   }
 
   /**

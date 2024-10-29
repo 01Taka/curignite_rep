@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react';
 import { Typography, Box, IconButton } from '@mui/material';
 import { FormStateChangeEvent, FormStateChangeFunc, HTMLFileElement } from '../../../types/util/componentsTypes';
 import { cva } from 'class-variance-authority';
-import { cn } from '../../../functions/utils';
+import { cn } from '../../../functions/utils/utils';
 import { Edit } from '@mui/icons-material';
 
 interface ImageUploadFieldProps {

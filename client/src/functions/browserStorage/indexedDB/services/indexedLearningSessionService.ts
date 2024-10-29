@@ -1,6 +1,6 @@
 import { CurrentSession, IndexedDBSession } from "../../../../types/browserStorage/indexedDB/learningSessionsTypes";
 import { TimeTypes } from "../../../../types/util/dateTimeTypes";
-import { convertToDate } from "../../../dateTimeUtils";
+import { convertToDate } from "../../../utils/dateTimeUtils";
 import { IndexedDBHandler } from "../indexedDBHandler";
 
 export class IndexedLearningSessionService {

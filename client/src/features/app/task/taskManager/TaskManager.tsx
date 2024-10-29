@@ -1,13 +1,13 @@
 import React, { useState, useRef } from 'react';
 import { Box, Tabs, Tab, Fab, Zoom } from '@mui/material';
 import Tasks from '../tasks/Tasks';
-import FixedTasks from '../fixedTasks/FixedTasks';
+import FixedTasks from '../fixedTasks/ProblemSets';
 import { Add } from '@mui/icons-material';
 import usePulseOnChange from '../../../hooks/usePulseOnChange';
 import Popup from '../../../../components/display/popup/Popup';
 import CreateIndividualTask from '../createTask/createForm/CreateIndividualTask';
-import CreateTaskCollection from '../createTask/createForm/CreateTaskCollection';
 import useEventListener from '../../../hooks/useEventListener';
+import CreateProblemSet from '../createTask/createProblemSet/CreateProblemSet';
 
 interface TaskManagerProps {}
 
@@ -80,7 +80,7 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
       </Box>
       <Popup open={selectedForm !== null} handleClose={() => setSelectedForm(null)} >
         {selectedForm === 0 && <CreateIndividualTask />}
-        {selectedForm === 1 && <CreateTaskCollection />}
+        {selectedForm === 1 && <CreateProblemSet />}
       </Popup>
     </>
   );

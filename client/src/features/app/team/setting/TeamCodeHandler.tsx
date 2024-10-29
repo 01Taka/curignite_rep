@@ -7,7 +7,7 @@ import CircularButton from '../../../../components/input/button/CircularButton';
 import DateField from '../../../../components/input/field/DateField';
 import { FormStateChangeEvent } from '../../../../types/util/componentsTypes';
 import CopyButton from '../../../../components/input/button/CopyButton';
-import { dateTimeToString } from '../../../../functions/dateTimeUtils';
+import { dateTimeToString } from '../../../../functions/utils/dateTimeUtils';
 import { TeamCodeData } from '../../../../types/firebase/db/team/teamCodeStructure';
 import { TeamData } from '../../../../types/firebase/db/team/teamStructure';
 

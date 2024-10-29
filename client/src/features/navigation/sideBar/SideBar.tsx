@@ -4,7 +4,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Tooltip from '@mui/material/Tooltip';
 import { SideBarProps } from '../../../types/app/navigationTypes';
-import { cn } from '../../../functions/utils';
+import { cn } from '../../../functions/utils/utils';
 
 const SideBar: React.FC<SideBarProps> = ({ elements, width = "w-16" }) => {
   return (

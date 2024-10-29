@@ -4,8 +4,8 @@ import { FormStateChangeFunc } from '../../../types/util/componentsTypes';
 
 interface NumberFieldProps {
   value: number | string;
-  label: string;
-  name?: string;
+  name: string;
+  label?: string;
   initialValue?: number;
   min?: number;
   max?: number;
@@ -14,8 +14,8 @@ interface NumberFieldProps {
 
 const NumberField: React.FC<NumberFieldProps> = ({
   value,
-  label,
-  name = label,
+  name,
+  label = name,
   initialValue,
   min = -Infinity,
   max = Infinity,

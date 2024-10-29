@@ -1,10 +1,10 @@
 import React, { FC } from 'react';
 import { useAppSelector } from '../../../../redux/hooks';
-import { dictToArray } from '../../../../functions/objectUtils';
+import { dictToArray } from '../../../../functions/utils/objectUtils';
 import { Avatar, Box, Typography } from '@mui/material';
 import { TeamData } from '../../../../types/firebase/db/team/teamStructure';
 import { ConvertTimestampToNumber } from '../../../../types/firebase/db/formatTypes';
-import { cn } from '../../../../functions/utils';
+import { cn } from '../../../../functions/utils/utils';
 
 interface TeamIconsProps {
   onClickTeam: (team:  ConvertTimestampToNumber<TeamData>) => void;

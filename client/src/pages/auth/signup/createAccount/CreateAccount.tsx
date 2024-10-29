@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import CreateAccountView, { CreateAccountFormState } from './CreateAccountView';
 import { useNavigate } from 'react-router-dom';
 import { signUpWithEmail } from '../../../../firebase/auth/signUp';
-import { handleFormStateChange } from '../../../../functions/utils';
 import { authStorage } from '../../../../functions/browserStorage/localStorage/storages';
 import { authPaths } from '../../../../types/path/authPaths';
+import useFormState from '../../../../features/hooks/form/useFormState';
 
 const CreateAccount: React.FC = () => {
   const navigate = useNavigate();
 
-  const [formState, setFormState] = useState<CreateAccountFormState>({
+  const { formState, onChangeFormState } = useFormState<CreateAccountFormState>({
     username: "",
     email: "",
     password: "",
@@ -39,7 +39,7 @@ const CreateAccount: React.FC = () => {
       formState={formState}
       error={error}
       submitDisabled={submitDisabled}
-      onFormStateChange={e => handleFormStateChange(e, setFormState)}
+      onFormStateChange={onChangeFormState}
       onEmailSignUp={handleEmailSignUp}
     />
   );

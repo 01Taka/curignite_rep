@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { HexColorCode } from "../../../types/util/utilTypes";
-import { cn } from "../../../functions/utils";
+import { cn } from "../../../functions/utils/utils";
 
 interface TagProps {
   label: string;

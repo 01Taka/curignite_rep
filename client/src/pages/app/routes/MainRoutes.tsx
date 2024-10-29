@@ -7,7 +7,6 @@ import NotFound from '../../error/NotFound';
 import { CircularProgress } from '@mui/material';
 import { mainRootPaths } from '../../../types/path/mainPaths';
 import { autoUpdateSpaces } from '../../../redux/actions/space/spaceActions';
-import TaskRoutes from '../task/TaskRoutes';
 import { setApprovedTeams } from '../../../redux/actions/team/teamActions';
 import ActiveMemberRoutes from '../activeMember/ActiveMemberRoutes';
 import FocusLearning from '../../../features/app/focusLearning/FocusLearning';

@@ -3,7 +3,7 @@ import { HelpAndAnswersWithFileUrls } from '../../../types/firebase/db/user/user
 import SubjectIcon from '../../../components/util/SubjectIcon';
 import FilePreview from '../../../components/util/FilePreview';
 import { Typography } from '@mui/material';
-import { cn } from '../../../functions/utils';
+import { cn } from '../../../functions/utils/utils';
 
 interface HelpCardProps {
   helpAndAnswersInfo: HelpAndAnswersWithFileUrls;

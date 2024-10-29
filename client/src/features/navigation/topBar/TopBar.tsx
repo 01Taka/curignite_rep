@@ -1,5 +1,5 @@
 import { TopBarProps } from "../../../types/app/navigationTypes";
-import { cn } from "../../../functions/utils";
+import { cn } from "../../../functions/utils/utils";
 
 const TopBar: React.FC<TopBarProps> = ({ children, height = "h-16" }) => {
   return (

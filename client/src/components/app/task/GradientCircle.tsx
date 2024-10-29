@@ -1,7 +1,7 @@
 import React, { FC, ReactNode } from 'react';
 import { ComponentColor } from '../../../types/module/tailwindTypes';
-import { cn } from '../../../functions/utils';
-import { getValueBetween } from '../../../functions/objectUtils';
+import { cn } from '../../../functions/utils/utils';
+import { getValueBetween } from '../../../functions/utils/objectUtils';
 import { StringNumber } from '../../../types/util/utilTypes';
 import { cva } from 'class-variance-authority';
 import { GradientCircleSize } from '../../../types/app/task/taskTypes';

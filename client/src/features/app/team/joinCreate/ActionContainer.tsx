@@ -1,6 +1,6 @@
 import { Typography } from '@mui/material';
 import React, { FC, ReactNode } from 'react';
-import { cn } from '../../../../functions/utils';
+import { cn } from '../../../../functions/utils/utils';
 import { StringField } from '../../../../components/input/inputIndex';
 import CircularButton from '../../../../components/input/button/CircularButton';
 

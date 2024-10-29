@@ -1,5 +1,5 @@
 import { IndexedDBCurrentLearningGoal } from "../../../../types/browserStorage/indexedDB/learningGoalTypes";
-import { validateNumber } from "../../../utils";
+import { validateNumber } from "../../../utils/formUtils";
 import { IndexedDBHandler } from "../indexedDBHandler";
 
 export class IndexedLearningGoalService {

@@ -1,30 +1,38 @@
-import { IndividualTaskData, MainQuestionActivity, MainQuestionData, ProblemSetData } from "./taskStructure";
+import { CategoryActivity, ProblemSetCategoryData, IndividualTaskData, ProblemSetData } from "./taskStructure";
 
-export interface Task_Data extends IndividualTaskData {
+export interface TaskData extends IndividualTaskData {
+  remainingEstimatedDuration: number;
   problemSetActivityField?: ProblemSetActivityField; // 問題集の活動フィールド
+}
+
+export interface ExpansionProblemSetData extends ProblemSetData {
+  averageEstimatedDuration: number;
+  totalProblemNumber: number;
+  completedProblemNumber: number;
 }
 
 export interface ProblemSetActivityField {
   totalProblemCount: number; // 総問題数
-  totalEstimatedDurationMs: number; // 合計の推定所要時間
-  activityStatuses: MainQuestionActivityStatus[];
+  activityStatus: CategoryActivityStatus[];
+  completionRate: `${number}/${number}`;
 }
 
-export interface MainQuestionActivityStatus extends MainQuestionActivity {
-  completedTaskIds: string[];
-  remainingTaskIds: string[];
-  completionRate: `${number}/${number}`; // 完了率
+export interface CategoryActivityStatus extends CategoryActivity  {
+  category: ProblemSetCategoryData;
+  completedProblemIds: number[];
+  remainingProblemIds: number[];
 }
 
-export interface ProblemSetWithQuestions {
-  problemSet: ProblemSetData;
-  mainQuestions: MainQuestionData[];
-  mainQuestionNumber: number;
-  totalProblemNumber: number;
-}
+// export interface ProblemSetWithQuestions {
+//   problemSet: ProblemSetData;
+//   mainQuestions: MainQuestionData[];
+//   mainQuestionNumber: number;
+//   totalProblemNumber: number;
+// }
 
-export interface ProblemSetWithTaskData {
-  problemSet: ProblemSetData;
-  tasks: Task_Data[]
+export interface FullProblemSetData {
+  problemSet: ExpansionProblemSetData;
+  activities: TaskData[];
+  categories: ProblemSetCategoryData[];
 }
 

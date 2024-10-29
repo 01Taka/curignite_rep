@@ -1,7 +1,7 @@
 import React from "react";
 import { Typography, Link, TypographyProps } from "@mui/material";
 import { Variant } from "@mui/material/styles/createTypography";
-import { convertToString } from "../../functions/stringUtils";
+import { convertToString } from "../../functions/utils/stringUtils";
 
 interface ClickableTextProps extends TypographyProps {
   children: string | number | (string | number)[];

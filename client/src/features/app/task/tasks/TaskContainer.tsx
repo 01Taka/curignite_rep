@@ -1,19 +1,17 @@
 import React, { FC, useMemo } from 'react';
 import { Typography, Box, Divider, LinearProgress, Button } from '@mui/material';
 import { MINUTES_IN_MILLISECOND } from '../../../../constants/utils/dateTimeConstants';
-import { differenceInDays } from 'date-fns';
-import { convertToDate, formatDateDifference, getMidnightDate } from '../../../../functions/dateTimeUtils';
-import { CollectionTaskField, TaskData } from '../../../../types/firebase/db/common/task/taskStructure';
+import { convertToDate, formatDateDifference } from '../../../../functions/utils/dateTimeUtils';
 import MiniValueIcon from '../../../../components/display/container/MiniValueIcon';
 import { AccessTime } from '@mui/icons-material';
-import { rangesToString } from '../../../../functions/rangeUtils';
+import { ProblemSetActivityField, TaskData } from '../../../../types/firebase/db/common/task/taskExpansionTypes';
 
 export interface TaskContainerProps {
   task: TaskData;
 }
 
 const TaskContainer: FC<TaskContainerProps> = ({ task }) => {
-  const { estimatedDuration, title, collectionTaskField } = task;
+  const { estimatedDuration, title, problemSetActivityField } = task;
 
   // 所要時間のフォーマット
   const formatEstimatedDuration = useMemo(() => {
@@ -26,7 +24,8 @@ const TaskContainer: FC<TaskContainerProps> = ({ task }) => {
 
   const formatRemainingDays = task.dueDateTime ? formatDateDifference(convertToDate(task.dueDateTime), '残りd日') : ''
 
-  const fullTitle = collectionTaskField ? `${title} (${rangesToString(collectionTaskField.pagesInRange)})` : title; 
+  // タイトルをタスクの種類によって変える
+  const fullTitle = title; 
 
   return (
     <Box
@@ -48,9 +47,9 @@ const TaskContainer: FC<TaskContainerProps> = ({ task }) => {
         width: '100%',
         paddingX: 1,
         marginTop: 0.5 ,
-        marginBottom: collectionTaskField ? 0 : 0.5
+        marginBottom: problemSetActivityField ? 0 : 0.5
       }}>
-        <ProgressSection task={task} formatEstimatedDuration={formatEstimatedDuration} collectionTaskField={collectionTaskField} />
+        <ProgressSection task={task} formatEstimatedDuration={formatEstimatedDuration} problemSetActivityField={problemSetActivityField} />
         <Button
           variant='outlined'
           size='small'
@@ -90,12 +89,12 @@ const Header: FC<{ title: string; remainingDays: string }> = ({ title, remaining
 );
 
 // プログレスセクションコンポーネント
-const ProgressSection: FC<{ task: TaskData; formatEstimatedDuration: string, collectionTaskField?: CollectionTaskField }> = ({
+const ProgressSection: FC<{ task: TaskData; formatEstimatedDuration: string, problemSetActivityField?: ProblemSetActivityField }> = ({
   task,
   formatEstimatedDuration,
-  collectionTaskField
+  problemSetActivityField
 }) => {
-  const completionRate = collectionTaskField?.completionRate ?? `${task.completed ? 1 : 0}/1`;
+  const completionRate = problemSetActivityField?.totalProblemCount ?? `${task.completed ? 1 : 0}/1`;
 
   return (
     <Box sx={{

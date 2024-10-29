@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { useAppSelector } from '../../../redux/hooks';
 import serviceFactory from '../../../firebase/db/factory';
 import { startOfWeek } from 'date-fns';
-import { convertToDate } from '../../../functions/dateTimeUtils';
+import { convertToDate } from '../../../functions/utils/dateTimeUtils';
 import { Card, CardContent, Tooltip, Typography } from '@mui/material';
 import { MINUTES_IN_MILLISECOND } from '../../../constants/utils/dateTimeConstants';
 import { UserDailyLearningSummaryData } from '../../../types/firebase/db/user/userStructure';

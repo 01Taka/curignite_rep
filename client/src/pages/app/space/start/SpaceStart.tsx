@@ -11,7 +11,7 @@ import { SpaceData } from '../../../../types/firebase/db/space/spaceStructure';
 // import { spacePaths } from '../../../../types/path/mainPaths';
 import { getLastSegment, replaceParams } from '../../../../functions/path/pathUtils';
 import { PathParam } from '../../../../types/path/paths';
-import { handleFormStateChange } from '../../../../functions/utils';
+
 import { useSpaces } from '../../../../features/app/space/hooks/useSpaceInfo';
 import { getSpaceInfo } from '../../../../redux/actions/space/spaceActions';
 import { BaseParticipationStatus } from '../../../../types/firebase/db/baseTypes';

@@ -1,35 +1,12 @@
 import clsx, { ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { FormStateChangeEvent, FormStateChangeFunc, CustomHTMLElement } from "../types/util/componentsTypes";
-import { ComparisonOperator } from "../types/util/utilTypes";
+import { FormStateChangeEvent, FormStateChangeFunc, CustomHTMLElement } from "../../types/util/componentsTypes";
+import { ComparisonOperator } from "../../types/util/utilTypes";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
-export const handleFormStateChange = <T>(
-  event: FormStateChangeEvent,
-  setFormState: React.Dispatch<React.SetStateAction<T>>,
-) => {
-  const { name, value, type } = event.target;
-  const fieldValue = type === 'checkbox' ? (event.target as HTMLInputElement).checked : value;
-
-  setFormState((prevState) => ({
-    ...prevState,
-    [name]: fieldValue,
-  }));
-};
-
-export const handleCallOnChange = <T, K extends CustomHTMLElement>(value: T, name: string, onChange: FormStateChangeFunc) => {
-  const event: FormStateChangeEvent = {
-    target: {
-      name,
-      value,
-      type: typeof value
-    },
-  } as unknown as React.ChangeEvent<K>;
-  onChange(event);
-}
 
 
 export const performComparison = (
@@ -79,14 +56,4 @@ export const isNumeric = (value: string | number): boolean => {
 export const safeNumber = (value: number) => {
   const num = Number(value);
   return Number.isNaN(num) ? 0 : num;
-}
-
-export const validateNumber = (value: any): number => {
-  if (typeof value !== "number") {
-    throw new Error(`Expected a number but received: ${value}`);
-  }
-  if (isNaN(value)) {
-    throw new Error("The value is NaN (Not a Number).");
-  }
-  return value;
 }

@@ -33,6 +33,7 @@ const Popup: FC<PopupProps> = ({ open, children, height = 'fit-content', centere
           width: '95%',
           maxWidth: 'lg', // MUIのテーマに基づくサイズ
           height,
+          maxHeight: '95vh',
           overflow: 'auto',
           justifyContent: centeredItem ? 'center' : 'start',
           alignItems: centeredItem ? 'center' : 'start',

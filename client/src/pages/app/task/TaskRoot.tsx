@@ -7,7 +7,7 @@ interface TaskRootProps { }
 const TaskRoot: React.FC<TaskRootProps> = () => {
   return (
     <div>
-      <GoalSettingForm />
+      {/* <GoalSettingForm /> */}
       <TaskManager />
     </div>
   );

@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { Typography } from '@mui/material';
 import SpaceContainer from './SpaceContainer';
 import SpacesEmptyMessage from './SpacesEmptyMessage';
-import { dateTimeToString } from '../../../../functions/dateTimeUtils';
+import { dateTimeToString } from '../../../../functions/utils/dateTimeUtils';
 import { SpacesProps } from '../../../../types/app/space/spaceTypes';
 import { DocumentIdMap } from '../../../../types/firebase/db/formatTypes';
 import serviceFactory from '../../../../firebase/db/factory';

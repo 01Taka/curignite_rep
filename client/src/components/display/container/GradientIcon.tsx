@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { getValueBetween } from '../../../functions/objectUtils';
+import { getValueBetween } from '../../../functions/utils/objectUtils';
 import { HexColorCode, StringNumber } from '../../../types/util/utilTypes';
 import { AvatarVariant } from '../../../types/module/mui/muiTypes';
 import { Variant } from '@mui/material/styles/createTypography';

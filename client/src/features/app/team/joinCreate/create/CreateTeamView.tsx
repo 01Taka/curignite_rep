@@ -6,7 +6,7 @@ import CheckBoxField from '../../../../../components/input/field/CheckBoxField';
 import MultilineField from '../../../../../components/input/field/MultilineField';
 import CircularButton from '../../../../../components/input/button/CircularButton';
 import { FormStateChangeFunc } from '../../../../../types/util/componentsTypes';
-import { keyMirror } from '../../../../../functions/objectUtils';
+import { keyMirror } from '../../../../../functions/utils/objectUtils';
 import ImageUploadField from '../../../../../components/input/field/ImageUploadField';
 
 export type CreateTeamFormState = {

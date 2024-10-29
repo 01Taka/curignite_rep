@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 import { HexColorCode } from '../../../types/util/utilTypes';
 import { Avatar, Box } from '@mui/material';
-import { chooseTextColor } from '../../../functions/colorUtils';
+import { chooseTextColor } from '../../../functions/utils/colorUtils';
 import { AvatarVariant } from '../../../types/module/mui/muiTypes';
 import HideEmptyTypography from '../wrap/HideEmptyTypography';
 import { Variant } from '@mui/material/styles/createTypography';

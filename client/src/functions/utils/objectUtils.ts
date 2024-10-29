@@ -1,4 +1,4 @@
-import { StringNumber } from "../types/util/utilTypes";
+import { StringNumber } from "../../types/util/utilTypes";
 import { performComparison } from "./utils";
 
 /**
@@ -6,13 +6,29 @@ import { performComparison } from "./utils";
  * @param array - 配列データ
  * @returns ドキュメントIDをキーとする辞書
  */
-export const objectArrayToDict = <T extends Object>(array: T[], key: keyof T): Record<string, T> => {
+export const objectArrayToDict = <T extends Record<string, any>>(array: T[], key: keyof T): Record<string, T> => {
   return array.reduce((acc, item) => {
     acc[String(item[key])] = item;
     return acc;
   }, {} as Record<string, T>);
 };
 
+export const mapObjectArrayToKeyValue = <T extends Record<string, any>>(
+  array: T[],
+  keyField: keyof T,
+  valueField: keyof T,
+  transformKeyFunc: (key: T[keyof T]) => string = (key) => String(key)
+): Record<string, T[keyof T]> => {
+  return array.reduce((acc, item) => {
+    acc[transformKeyFunc(item[keyField])] = item[valueField];
+    return acc;
+  }, {} as Record<string, T[keyof T]>);
+};
+
+export const omitField = <T extends Record<string, any>>(object: T, key: keyof T): Omit<T, typeof key> => {
+  const { [key]: _, ...rest } = object;
+  return rest;
+}
 
 /**
  * 辞書を配列に変換する関数
@@ -281,12 +297,15 @@ export const uniqueByProperty = <T, K extends keyof T>(array: T[], key: K): T[] 
   return Array.from(uniqueMap.values());
 };
 
-export const sequentialNumber = (start: number, end?: number): number[] => {
-  const actualStart = end !== undefined ? start : 0;
-  const actualEnd = end !== undefined ? end : start;
+export const seq = (start: number, stop?: number, step: number = 1): number[] => {
+  const actualStart = stop !== undefined ? start : 0;
+  const actualEnd = stop !== undefined ? stop : start;
 
-  const length = Math.abs(actualEnd - actualStart) + 1;
-  const step = actualStart <= actualEnd ? 1 : -1;
+  if (step === 0) {
+    throw new Error("step must not be zero");
+  }
+
+  const length = Math.floor(Math.abs(actualEnd - actualStart - 1) / step) + 1;
 
   return Array.from({ length }, (_, i) => actualStart + i * step);
 };

@@ -4,7 +4,7 @@ import { DocumentIdMap } from '../../../../types/firebase/db/formatTypes';
 import { revertTimestampConversion } from '../../../../functions/db/dataFormatUtils';
 import serviceFactory from '../../../../firebase/db/factory';
 import JoinRequestService from '../../../../firebase/db/common/joinRequestService';
-import { sortObjectArray } from '../../../../functions/objectUtils';
+import { sortObjectArray } from '../../../../functions/utils/objectUtils';
 import { UserData } from '../../../../types/firebase/db/user/userStructure';
 
 const useSpaceData = () => {

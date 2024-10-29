@@ -1,5 +1,5 @@
-import { Range } from "../types/util/componentsTypes";
-import { sequentialNumber } from "./objectUtils";
+import { Range } from "../../types/util/componentsTypes";
+import { seq } from "./objectUtils";
 
 export const sumRanges = (ranges: Range[]): number => {
   return ranges.reduce((sum, { min, max }) => {
@@ -10,6 +10,39 @@ export const sumRanges = (ranges: Range[]): number => {
     return sum;
   }, 0);
 };
+
+export const arrayToRanges = (arr: number[]): Range[] => {
+  // 重複を削除し、昇順にソート
+  const sortedArray = [...new Set(arr)].sort((a, b) => a - b);
+
+  // 範囲を格納する配列
+  const ranges: Range[] = [];
+
+  let start = sortedArray[0];
+  let end = start;
+
+  sortedArray.forEach((num) => {
+    if (num === end + 1) {
+      // 連続している場合、end を更新
+      end = num;
+    } else {
+      // 連続していない場合、新しい範囲を追加
+      ranges.push({ min: start, max: end });
+      start = num;
+      end = num;
+    }
+  });
+
+  // 最後の範囲を追加
+  ranges.push({ min: start, max: end });
+
+  return ranges;
+};
+
+export const arrayToRangeString = (arr: number[]) => {
+  const ranges = arrayToRanges(arr);
+  return rangesToString(ranges);
+}
 
 export const rangeToString = (range: Range, connection: string = '~'): string => {
   return range.min === range.max ? String(range.min) : `${range.min ?? ''}${connection}${range.max ?? ''}`
@@ -25,7 +58,7 @@ export const rangesToArray = (ranges: Range[]): number[] => {
   const setRanges = new Set<number>();
   const mergedRanges = mergeRanges(ranges);
   mergedRanges.forEach(range => {
-    const numbers = sequentialNumber(range.min, range.max);
+    const numbers = seq(range.min, range.max);
     numbers.forEach(number => setRanges.add(number));
   })
   return Array.from(setRanges);

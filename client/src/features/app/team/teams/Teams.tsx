@@ -1,4 +1,4 @@
-import { dictToArray } from '../../../../functions/objectUtils';
+import { dictToArray } from '../../../../functions/utils/objectUtils';
 import { useAppSelector } from '../../../../redux/hooks'
 
 const Teams = () => { // TODO 1 チームのメンバーなども含めて表示するためのコンポーネントを作成

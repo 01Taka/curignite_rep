@@ -2,7 +2,7 @@ import { GROWTH_RATE, MAX_XP } from "../../constants/components/userConstants";
 import { MINUTES_IN_MILLISECOND } from "../../constants/utils/dateTimeConstants";
 import { LevelInfo } from "../../types/user/userLevelTypes";
 import { TimeTypes } from "../../types/util/dateTimeTypes";
-import { convertToMilliseconds } from "../dateTimeUtils";
+import { convertToMilliseconds } from "../utils/dateTimeUtils";
 
 // レベルに必要なXPを計算する関数
 const getRequiredXP = (level: number): number => {

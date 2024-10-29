@@ -6,14 +6,14 @@ import { sortChatIdMap } from "../../../functions/app/chat/chatUtils";
 import serviceFactory from "../../../firebase/db/factory";
 import { ChatFormState } from "../../input/message/ChatInput";
 import { ChatData } from "../../../types/firebase/db/chat/chatRoomStructure";
-import { handleFormStateChange } from "../../../functions/utils";
+import useFormState from "../../../features/hooks/form/useFormState";
 
 interface ChatProps {
     chatRoomId: string;
 }
 
 const ChatRoom: React.FC<ChatProps> = ({ chatRoomId }) => {
-    const [chatState, setChatState] = useState<ChatFormState>({ content: "", files: [] });
+    const { formState, onChangeFormState, resetFormState } = useFormState<ChatFormState>({ content: "", files: [] });
     const [chats, setChats] = useState<ChatData[]>([]);
     const chatEndRef = useRef<HTMLDivElement>(null);
     const dispatch = useAppDispatch();
@@ -33,9 +33,9 @@ const ChatRoom: React.FC<ChatProps> = ({ chatRoomId }) => {
 
     const handleSendChat = async () => {
         if (uid) {
-            setChatState({ content: "", files: [] });
+            resetFormState();
             const chatService = serviceFactory.createChatRoomChatService();
-            await chatService.sendChat(chatRoomId, uid, chatState.content, chatState.files, chatState.replyTo);
+            await chatService.sendChat(chatRoomId, uid, formState.content, formState.files, formState.replyTo);
         }
     };
 
@@ -49,9 +49,9 @@ const ChatRoom: React.FC<ChatProps> = ({ chatRoomId }) => {
 
     return (
         <ChatRoomView
-            chatState={chatState}
+            chatState={formState}
             chats={chats}
-            onChatStateChange={(e) => handleFormStateChange(e, setChatState)}
+            onChatStateChange={onChangeFormState}
             onSendChat={handleSendChat}
             onScrollToEnd={getAdditionalChat}
         />

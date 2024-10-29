@@ -1,7 +1,8 @@
 import { useState } from "react";
+import { AsyncState, AsyncStatus } from "./AsyncHandlerTypes";
 
 const useAsyncHandler = <T = void>() => {
-  const [asyncStatus, setAsyncStatus] = useState<"idle" | "loading" | "error" | "success">("idle");
+  const [asyncStatus, setAsyncStatus] = useState<AsyncStatus>("idle");
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<Error | null>(null);
   const [errorMessage, setErrorMessage] = useState<string>("");
@@ -36,15 +37,27 @@ const useAsyncHandler = <T = void>() => {
     args: A,
     func: (...args: A) => Promise<T>,
     onFailedMessage?: string
-  ): Promise<boolean> => {
+  ): Promise<AsyncState<T>> => {
     startLoading();
     try {
       const result = await func(...args);
       setDataOnSuccess(result);
-      return true;
+      const state: AsyncState<T> = {
+        status: 'success',
+        data: result,
+        error: null,
+        errorMessage: ''
+      }
+      return state;
     } catch (error) {
       logError(error, onFailedMessage);
-      return false;
+      const state: AsyncState<T> = {
+        status: 'error',
+        data: null,
+        error: error instanceof Error ? error : null,
+        errorMessage: onFailedMessage ?? '' 
+      }
+      return state;
     }
   };
 

@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { cva, VariantProps } from 'class-variance-authority';
-import { cn } from '../../../functions/utils';
-import { millisToTime } from '../../../functions/dateTimeUtils';
+import { cn } from '../../../functions/utils/utils';
+import { millisToTime } from '../../../functions/utils/dateTimeUtils';
 import { DecimalDigits } from '../../../types/util/componentsTypes';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import StopIcon from '@mui/icons-material/Stop';

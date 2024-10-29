@@ -2,8 +2,8 @@ import React from 'react';
 import { format, addDays, startOfWeek } from 'date-fns';
 import { ISODate } from '../../../types/util/dateTimeTypes';
 import { BGColorClass } from '../../../types/module/tailwindTypes';
-import { cn } from '../../../functions/utils';
-import { isEqualDate, isMatchDay, toISODate } from '../../../functions/dateTimeUtils';
+import { cn } from '../../../functions/utils/utils';
+import { isEqualDate, isMatchDay, toISODate } from '../../../functions/utils/dateTimeUtils';
 
 interface HeatmapProps {
   baseDate: Date;

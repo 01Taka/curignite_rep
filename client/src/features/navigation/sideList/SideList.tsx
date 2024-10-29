@@ -1,4 +1,4 @@
-import { cn } from "../../../functions/utils";
+import { cn } from "../../../functions/utils/utils";
 import { SideListProps } from "../../../types/app/navigationTypes";
   
 const SideList: React.FC<SideListProps> = ({ children, width = "w-80" }) => {

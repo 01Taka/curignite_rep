@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { cva, VariantProps } from 'class-variance-authority';
-import { cn } from '../../../functions/utils';
+import { cn } from '../../../functions/utils/utils';
 
 interface ImageButtonProps extends VariantProps<typeof imageButtonVariants> {
   label: string;

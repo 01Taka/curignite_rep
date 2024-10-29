@@ -1,5 +1,5 @@
 import { ContentsBottomBarProps } from "../../../types/app/navigationTypes";
-import { cn } from "../../../functions/utils";
+import { cn } from "../../../functions/utils/utils";
 
 const ContentsBottomBar: React.FC<ContentsBottomBarProps> = ({ children, height = "h-16" }) => {
   return (

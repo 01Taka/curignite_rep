@@ -1,7 +1,7 @@
 import { Avatar, ListItemAvatar } from '@mui/material'
 import React, { FC } from 'react'
 import { DocumentIdMap } from '../../../../../../types/firebase/db/formatTypes';
-import { cn } from '../../../../../../functions/utils';
+import { cn } from '../../../../../../functions/utils/utils';
 import { BaseMemberRole } from '../../../../../../types/firebase/db/baseTypes';
 import { SpaceMemberData } from '../../../../../../types/firebase/db/space/spaceStructure';
 import { UserWithSupplementary } from '../../../../../../types/firebase/db/user/userStructure';

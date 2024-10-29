@@ -1,6 +1,6 @@
 import { Avatar, CardHeader } from '@mui/material';
 import React, { FC } from 'react';
-import { cn } from '../../../../../functions/utils';
+import { cn } from '../../../../../functions/utils/utils';
 
 interface TeamContainerProps {
   teamName: string;

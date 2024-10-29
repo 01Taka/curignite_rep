@@ -1,14 +1,13 @@
 import { Firestore, QueryConstraint, Timestamp } from "firebase/firestore";
-import BaseDB from "../../base";
-import { IndividualTaskData } from "../../../../types/firebase/db/common/task/taskStructure";
-import { getInitialBaseDocumentData } from "../../../../functions/db/dbUtils";
-import { TaskPriority } from "../../../../types/firebase/db/common/task/taskSupplementTypes";
+import BaseDB from "../../../../base";
+import { IndividualTaskData } from "../../../../../../types/firebase/db/common/task/taskStructure";
+import { getInitialBaseDocumentData } from "../../../../../../functions/db/dbUtils";
 
 export class IndividualTaskService {
-  constructor(private firestore: Firestore, private path: string) {}
+  constructor(private firestore: Firestore) {}
 
-  createBaseDB(docId: string): BaseDB<IndividualTaskData> {
-    return new BaseDB(this.firestore, `${this.path}/${docId}/individualTasks`);
+  createBaseDB(userId: string): BaseDB<IndividualTaskData> {
+    return new BaseDB(this.firestore, `users/${userId}/individualTasks`);
   }
 
   async createTask(
@@ -17,7 +16,6 @@ export class IndividualTaskService {
     title: string,
     dueDateTime: Timestamp | null,
     taskNote: string,
-    priority: TaskPriority,
     estimatedDuration: number,
     progress: number = 0,
     completed: boolean = false,
@@ -28,7 +26,6 @@ export class IndividualTaskService {
         title,
         dueDateTime,
         taskNote,
-        priority,
         progress,
         completed,
         estimatedDuration,
@@ -49,9 +46,9 @@ export class IndividualTaskService {
     }
   }
 
-  async getAllTasks(docId: string, ...queryConstraints: QueryConstraint[]): Promise<IndividualTaskData[]> {
+  async getAllTasks(userId: string, ...queryConstraints: QueryConstraint[]): Promise<IndividualTaskData[]> {
     try {
-      return await this.createBaseDB(docId).getAll(...queryConstraints);
+      return await this.createBaseDB(userId).getAll(...queryConstraints);
     } catch (error) {
       console.error("Error getting all tasks: ", error);
       throw new Error("Failed to get all tasks");

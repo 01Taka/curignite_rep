@@ -2,16 +2,15 @@ import React, { FC, useEffect, useState } from 'react';
 import serviceFactory from '../../../firebase/db/factory';
 import { Subject } from '../../../types/firebase/db/common/commonTypes';
 import { useAppSelector } from '../../../redux/hooks';
-import { StringField } from '../../../components/input/inputIndex';
-import { keyMirror } from '../../../functions/objectUtils';
+import { keyMirror } from '../../../functions/utils/objectUtils';
 import SelectField from '../../../components/input/field/SelectField';
-import { handleFormStateChange } from '../../../functions/utils';
 import { FormStateChangeEvent } from '../../../types/util/componentsTypes';
 import { subjectSelectItems } from '../../../constants/selectItems/subjectSelectItems';
 import FileUploadField from '../../../components/input/field/FileUploadField';
 import CircularButton from '../../../components/input/button/CircularButton';
 import { Typography, Alert, CircularProgress, Box } from '@mui/material';
 import MultilineField from '../../../components/input/field/MultilineField';
+import useFormState from '../../hooks/form/useFormState';
 
 interface HelpFromState {
   question: string;
@@ -26,7 +25,7 @@ interface CreateHelpFormProps {
 const CreateHelpForm: FC<CreateHelpFormProps> = ({ onSentHelp }) => {
   const uid = useAppSelector(state => state.userSlice.uid);
 
-  const [formState, setFormState] = useState<HelpFromState>({
+  const { formState, onChangeFormState, resetFormState } = useFormState<HelpFromState>({
     question: "",
     subject: Subject.NotSelected,
     files: [],
@@ -54,11 +53,7 @@ const CreateHelpForm: FC<CreateHelpFormProps> = ({ onSentHelp }) => {
         const helpService = serviceFactory.createUserHelpService();
         await helpService.createUserHelp(uid, formState.subject, formState.question, formState.files);
         setSuccess(true);
-        setFormState({
-          question: "",
-          subject: Subject.NotSelected,
-          files: [],
-        });
+        resetFormState();
         if (onSentHelp) onSentHelp();
       }
     } catch (err) {
@@ -67,10 +62,6 @@ const CreateHelpForm: FC<CreateHelpFormProps> = ({ onSentHelp }) => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const onFormStateChange = (event: FormStateChangeEvent) => {
-    handleFormStateChange(event, setFormState);
   };
 
   return (
@@ -86,21 +77,21 @@ const CreateHelpForm: FC<CreateHelpFormProps> = ({ onSentHelp }) => {
         label='質問内容' 
         value={formState.question} 
         name={names.question} 
-        onChange={onFormStateChange} 
+        onChange={onChangeFormState} 
         required 
       />
       <SelectField 
         label='教科' 
         value={formState.subject} 
         name={names.subject} 
-        onChange={onFormStateChange} 
+        onChange={onChangeFormState} 
         selectItems={subjectSelectItems} 
       />
       <FileUploadField 
         label='添付ファイル' 
         value={formState.files} 
         name={names.files} 
-        onChange={onFormStateChange} 
+        onChange={onChangeFormState} 
         maxHeight={200} 
         maxFiles={3}
       />

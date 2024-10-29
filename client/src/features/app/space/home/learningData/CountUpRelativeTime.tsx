@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { dateTimeToString } from '../../../../../functions/dateTimeUtils'
+import { dateTimeToString } from '../../../../../functions/utils/dateTimeUtils'
 import { TimeTypes } from '../../../../../types/util/dateTimeTypes'
 
 interface CountUpRelativeTimeProps {

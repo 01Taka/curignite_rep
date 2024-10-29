@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../../types/module/redux/reduxTypes';
 import { getSpaceInfo } from '../../../../redux/actions/space/spaceActions';
 import { revertTimestampConversion } from '../../../../functions/db/dataFormatUtils';
-import { dictToArray } from '../../../../functions/objectUtils';
+import { dictToArray } from '../../../../functions/utils/objectUtils';
 import { SpaceData } from '../../../../types/firebase/db/space/spaceStructure';
 
 export const useCurrentSpaceInfo = () => {

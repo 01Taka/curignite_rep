@@ -1,13 +1,13 @@
 import React from 'react';
-import { SelectItem, UpdateFieldFunc } from '../../../types/util/componentsTypes';
+import { SelectItem } from '../../../types/util/componentsTypes';
 import { Menu, MenuItem } from '@mui/material';
 
 interface PopupSelectFieldProps<T extends string | number, K extends string> {
   open: boolean;
   name: K;
   selectItems: SelectItem<T>[];
-  updateField: UpdateFieldFunc<K>;
-  onClose: () => void;
+  updateField?: (fieldName: K, value: T) => void;
+  onSelected: (value: T | null) => void;
 }
 
 const PopupSelectField = <T extends string | number, K extends string>({
@@ -15,13 +15,13 @@ const PopupSelectField = <T extends string | number, K extends string>({
   name,
   selectItems,
   updateField,
-  onClose,
+  onSelected,
 }: PopupSelectFieldProps<T, K>) => {
   return (
     <div>
       <Menu
         open={open}
-        onClose={onClose}
+        onClose={() => onSelected(null)}
         anchorOrigin={{
           vertical: 'top',
           horizontal: 'center',
@@ -36,8 +36,8 @@ const PopupSelectField = <T extends string | number, K extends string>({
             key={index}
             value={item.value}
             onClick={() => {
-              updateField(name, item.value);
-              onClose(); // 項目がクリックされたら閉じる
+              if (updateField) updateField(name, item.value);
+              onSelected(item.value); // 項目がクリックされたら閉じる
             }}
           >
             {item.label}

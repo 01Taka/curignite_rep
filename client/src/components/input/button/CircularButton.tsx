@@ -1,6 +1,6 @@
 import { VariantProps, cva } from 'class-variance-authority';
 import { ButtonHTMLAttributes, FC, ReactNode } from 'react';
-import { cn } from '../../../functions/utils';
+import { cn } from '../../../functions/utils/utils';
 import { useAppSelector } from '../../../redux/hooks';
 
 // CircularButtonProps インターフェースを定義

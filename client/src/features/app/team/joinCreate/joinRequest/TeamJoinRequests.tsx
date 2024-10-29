@@ -13,7 +13,7 @@ import Popup from '../../../../../components/display/popup/Popup';
 import { UserWithSupplementary } from '../../../../../types/firebase/db/user/userStructure';
 import ChangeJoinRequestStatusForm from './ChangeJoinRequestStateForm';
 import { useTeamMembers } from '../../hooks/useTeamMembers';
-import { cn } from '../../../../../functions/utils';
+import { cn } from '../../../../../functions/utils/utils';
 
 const TeamJoinRequests: FC = () => {
   const teamId = useAppSelector(state => state.teamSlice.currentTeamId);

@@ -4,13 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import { getUniqueName, handleCreateUser } from './handleUserInitialSetup';
 import { rootPaths } from '../../../../types/path/paths';
 import { getAuth } from 'firebase/auth';
-import { handleFormStateChange } from '../../../../functions/utils';
+import useFormState from '../../../../features/hooks/form/useFormState';
 
 const InitialSetup: React.FC = () => {
   const navigate = useNavigate();
   const [uid, setUid] = useState<string | null>(null);
   const [isLoadingName, setIsLoadingName] = useState(true);
-  const [formState, setFormState] = useState<InitialSetupFormState>({ username: "", birthday: null, iconFile: null });
+  const { formState, updateField, onChangeFormState } = useFormState<InitialSetupFormState>({ username: "", birthday: null, iconFile: null });
   const [submitDisabled, setSubmitDisabled] = useState(false);
   const [error, setError] = useState("");
 
@@ -29,7 +29,7 @@ const InitialSetup: React.FC = () => {
     const initializeUser = async () => {
       setIsLoadingName(true);
       const uniqueName = await getUniqueName(null);
-      setFormState(prev => ({ ...prev, username: uniqueName }));
+      updateField('username', uniqueName);
       setIsLoadingName(false);
     };
 
@@ -64,7 +64,7 @@ const InitialSetup: React.FC = () => {
       formState={formState}
       submitDisabled={submitDisabled}
       error={error}
-      onFormStateChange={(e) => handleFormStateChange(e, setFormState)}
+      onFormStateChange={onChangeFormState}
       onSubmit={handleSubmit}
     />
   );

@@ -1,7 +1,7 @@
 import React, { FC, useMemo } from 'react';
 import { FormStateChangeFunc } from '../../../../../types/util/componentsTypes';
 import { CreateIndividualTaskViewFormState } from '../../../../../types/app/task/taskForm';
-import { keyMirror } from '../../../../../functions/objectUtils';
+import { keyMirror } from '../../../../../functions/utils/objectUtils';
 import { NumberField, StringField } from '../../../../../components/input/inputIndex';
 import MultilineField from '../../../../../components/input/field/MultilineField';
 import { Box, Button, Typography } from '@mui/material';

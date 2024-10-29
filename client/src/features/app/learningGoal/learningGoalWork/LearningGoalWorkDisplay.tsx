@@ -3,7 +3,7 @@ import { Typography } from '@mui/material';
 import SubjectIcon from '../../../../components/util/SubjectIcon';
 import CircularButton from '../../../../components/input/button/CircularButton';
 import { useAppSelector } from '../../../../redux/hooks';
-import { convertToMilliseconds, msToTime } from '../../../../functions/dateTimeUtils';
+import { convertToMilliseconds, msToTime } from '../../../../functions/utils/dateTimeUtils';
 import { revertTimestampConversion } from '../../../../functions/db/dataFormatUtils';
 import LearningGoalWorkTimer from './LearningGoalWorkTimer';
 import { useLearningTimer } from './LearningTimerProvider';

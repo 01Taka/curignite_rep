@@ -1,16 +1,15 @@
 import React, { FC, useState } from 'react';
-import { HelpAndAnswersWithFileUrls, UserHelpData } from '../../../types/firebase/db/user/userStructure';
+import { HelpAndAnswersWithFileUrls } from '../../../types/firebase/db/user/userStructure';
 import serviceFactory from '../../../firebase/db/factory';
 import { useAppSelector } from '../../../redux/hooks';
-import { StringField } from '../../../components/input/inputIndex';
-import { keyMirror } from '../../../functions/objectUtils';
-import { handleFormStateChange } from '../../../functions/utils';
+import { keyMirror } from '../../../functions/utils/objectUtils';
 import { FormStateChangeEvent } from '../../../types/util/componentsTypes';
 import FileUploadField from '../../../components/input/field/FileUploadField';
 import HelpCard from './HelpCard';
 import { Alert, CircularProgress, Typography } from '@mui/material';
 import MultilineField from '../../../components/input/field/MultilineField';
 import CircularButton from '../../../components/input/button/CircularButton';
+import useFormState from '../../hooks/form/useFormState';
 
 interface CreateAnswerFormProps {
   targetHelpAndAnswersInfo: HelpAndAnswersWithFileUrls;
@@ -24,7 +23,7 @@ interface AnswerFormState {
 
 const CreateAnswerForm: FC<CreateAnswerFormProps> = ({ targetHelpAndAnswersInfo, onCreated }) => {
   const uid = useAppSelector(state => state.userSlice.uid);
-  const [formState, setFormState] = useState<AnswerFormState>({ answer: "", files: [] });
+  const { formState, onChangeFormState, resetFormState } = useFormState<AnswerFormState>({ answer: "", files: [] });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -57,7 +56,7 @@ const CreateAnswerForm: FC<CreateAnswerFormProps> = ({ targetHelpAndAnswersInfo,
         formState.files,
         uid
       );
-      setFormState({ answer: "", files: [] }); // フォームをリセット
+      resetFormState();
       if (onCreated) onCreated();
     } catch (error) {
       console.error(error);
@@ -65,10 +64,6 @@ const CreateAnswerForm: FC<CreateAnswerFormProps> = ({ targetHelpAndAnswersInfo,
     } finally {
       setLoading(false);
     }
-  };
-
-  const onFormStateChange = (event: FormStateChangeEvent) => {
-    handleFormStateChange(event, setFormState);
   };
 
   return (
@@ -85,14 +80,14 @@ const CreateAnswerForm: FC<CreateAnswerFormProps> = ({ targetHelpAndAnswersInfo,
           label='回答'
           value={formState.answer}
           name={names.answer}
-          onChange={onFormStateChange}
+          onChange={onChangeFormState}
         />
         
         <FileUploadField
           label='添付ファイル'
           value={formState.files}
           name={names.files}
-          onChange={onFormStateChange}
+          onChange={onChangeFormState}
           maxFiles={3}
         />
 

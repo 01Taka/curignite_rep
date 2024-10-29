@@ -1,5 +1,5 @@
 import { ContentsTopBarProps } from "../../../types/app/navigationTypes";
-import { cn } from "../../../functions/utils";
+import { cn } from "../../../functions/utils/utils";
 import { useEffect, useState } from "react";
 
 const ContentsTopBar: React.FC<ContentsTopBarProps> = ({ children, height = "h-16", bgTransparent = true }) => {

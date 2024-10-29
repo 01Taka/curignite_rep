@@ -1,15 +1,14 @@
 import { DocumentData, DocumentReference, Firestore } from "firebase/firestore";
-import { isBeforeDateTime, toTimestamp } from "../../../../functions/dateTimeUtils";
+import { isBeforeDateTime, toTimestamp } from "../../../../functions/utils/dateTimeUtils";
 import { TimeTypes } from "../../../../types/util/dateTimeTypes";
 import BaseDB from "../../base";
 import { getInitialBaseDocumentData } from "../../../../functions/db/dbUtils";
 import { TeamCodeData } from "../../../../types/firebase/db/team/teamCodeStructure";
-import { TeamService } from "./teamService";
 
 export class TeamCodeService {
     baseDB: BaseDB<TeamCodeData>;
 
-    constructor(firestore: Firestore, private teamService: TeamService) {
+    constructor(firestore: Firestore) {
         this.baseDB = new BaseDB(firestore, "teamCodes");
      }
 

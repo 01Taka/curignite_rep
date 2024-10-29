@@ -1,12 +1,12 @@
 import { Box, Typography } from '@mui/material';
 import React, { useEffect } from 'react';
-import { msToTime } from '../../../../functions/dateTimeUtils';
+import { msToTime } from '../../../../functions/utils/dateTimeUtils';
 import PopupSelectField from '../../../../components/input/popupField/PopupSelectField';
-import useFormState from '../../../hooks/useFormState';
+import useFormState from '../../../hooks/form/useFormState';
 import useToggle from '../../../hooks/useToggle';
 import ClickableText from '../../../../components/navigation/ClickableText';
 import { MINUTES_IN_MILLISECOND } from '../../../../constants/utils/dateTimeConstants';
-import { sequentialNumber } from '../../../../functions/objectUtils';
+import { seq } from '../../../../functions/utils/objectUtils';
 
 interface GoalDetailsProps {
   target: string;
@@ -16,7 +16,7 @@ interface GoalDetailsProps {
 }
 
 const GoalDetails: React.FC<GoalDetailsProps> = ({ target, timeMs, extent, extentUnit }) => {
-  const times = [...sequentialNumber(1, 11).map(i => i * 5), ...sequentialNumber(6, 18).map(i => i * 10)];
+  const times = [...seq(1, 11).map(i => i * 5), ...seq(6, 18).map(i => i * 10)];
   const additionalSelectItem = times.map(i => ({ label: `${String(i)}分`, value: i * MINUTES_IN_MILLISECOND }));
   const selectItem = [
     { label: `${String(Math.floor(timeMs / MINUTES_IN_MILLISECOND))}分`, value: timeMs },
@@ -52,7 +52,7 @@ const GoalDetails: React.FC<GoalDetailsProps> = ({ target, timeMs, extent, exten
         name={names.time}
         selectItems={selectItem}
         updateField={updateField}
-        onClose={toClose}
+        onSelected={toClose}
       />
     </Box>
   );

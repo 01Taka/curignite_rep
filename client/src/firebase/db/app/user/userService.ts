@@ -10,8 +10,8 @@ import { UserData, UserWithSupplementary } from "../../../../types/firebase/db/u
 import { StorageManager } from "../../../storage/storageManager";
 import { UserWithNotExistUsersId } from "../../../../types/module/redux/slice/userSliceTypes";
 import { differenceInDays } from "date-fns";
-import { convertToDate } from "../../../../functions/dateTimeUtils";
-import { validateNumber } from "../../../../functions/utils";
+import { convertToDate } from "../../../../functions/utils/dateTimeUtils";
+import { validateNumber } from "../../../../functions/utils/formUtils";
 
 export class UserService {
   private baseDB: BaseDB<UserData>;

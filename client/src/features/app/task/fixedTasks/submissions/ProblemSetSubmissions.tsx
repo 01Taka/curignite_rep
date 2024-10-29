@@ -1,16 +1,16 @@
 import React, { useRef, useState } from 'react';
-import { TaskData } from '../../../../../types/firebase/db/common/task/taskStructure';
 import { Box, Fab, Zoom } from '@mui/material';
-import FixedTaskSubmissionContainer from './FixedTaskSubmissionContainer';
+import ProblemSetSubmissionContainer from './ProblemSetSubmissionContainer';
 import useEventListener from '../../../../hooks/useEventListener';
 import { Add } from '@mui/icons-material';
+import { TaskData } from '../../../../../types/firebase/db/common/task/taskExpansionTypes';
 
-interface FixedTaskSubmissionsProps {
-  submissions: TaskData[];
+interface ProblemSetSubmissionsProps {
+  activities: TaskData[];
   onCreateSubmission: () => void;
 }
 
-const FixedTaskSubmissions: React.FC<FixedTaskSubmissionsProps> = ({ submissions, onCreateSubmission }) => {
+const ProblemSetSubmissions: React.FC<ProblemSetSubmissionsProps> = ({ activities, onCreateSubmission }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [isFabVisible, setIsFabVisible] = useState(true);
 
@@ -41,9 +41,9 @@ const FixedTaskSubmissions: React.FC<FixedTaskSubmissionsProps> = ({ submissions
         padding: 1,
         height: '90vh'
       }}>
-        {submissions.map((submission, index) => (
+        {activities.map((activity, index) => (
           <Box key={index}>
-            <FixedTaskSubmissionContainer submission={submission} onClickWorkOn={() => onWorkOn(submission)}/>
+            <ProblemSetSubmissionContainer activity={activity} onClickWorkOn={() => onWorkOn(activity)}/>
           </Box>
         ))}
         <Box minHeight={200}/>
@@ -66,4 +66,4 @@ const FixedTaskSubmissions: React.FC<FixedTaskSubmissionsProps> = ({ submissions
   );
 };
 
-export default FixedTaskSubmissions;
+export default ProblemSetSubmissions;

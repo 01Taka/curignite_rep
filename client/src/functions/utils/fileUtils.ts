@@ -1,4 +1,4 @@
-import { FileExtension } from "../types/util/utilTypes";
+import { FileExtension } from "../../types/util/utilTypes";
 
 /**
  * ファイルパスまたは URL から拡張子を取得する関数

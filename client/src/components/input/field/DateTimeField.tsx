@@ -1,7 +1,7 @@
 import React from 'react';
 import { DateTimePicker, DateTimePickerProps, PickerValidDate } from '@mui/x-date-pickers';
 import { FormStateChangeFunc } from '../../../types/util/componentsTypes';
-import { handleCallOnChange } from '../../../functions/utils';
+import { handleCallOnChange } from '../../../functions/utils/formUtils';
 
 interface DateTimeFieldProps extends Omit<DateTimePickerProps<PickerValidDate>, 'onChange'> {
     label: string;

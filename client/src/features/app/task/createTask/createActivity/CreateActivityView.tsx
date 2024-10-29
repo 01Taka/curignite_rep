@@ -1,32 +1,35 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC } from 'react';
 import { FormStateChangeFunc } from '../../../../../types/util/componentsTypes';
-import { CreateCollectionTaskViewFormState } from '../../../../../types/app/task/taskForm';
-import { keyMirror } from '../../../../../functions/objectUtils';
-import { StringField } from '../../../../../components/input/inputIndex';
-import MultilineField from '../../../../../components/input/field/MultilineField';
 import { Box, Button, CircularProgress, Typography } from '@mui/material';
 import DateTimeField from '../../../../../components/input/field/DateTimeField';
-import RangeField from '../../../../../components/input/field/RangeField';
+import { CreateActivityFormState } from './createActivityTypes';
+import { ProblemSetActivityManagementMethod, ProblemSetCategoryData } from '../../../../../types/firebase/db/common/task/taskStructure';
+import ActivityRangeForm from './ActivityRangeForm';
+import { UpdateArrayFieldArgs } from '../../../../hooks/form/AsyncHandlerTypes';
 
-interface CreateCollectionTaskViewProps {
-  collectionName: string;
-  formState: CreateCollectionTaskViewFormState;
-  rangeMax: number;
+interface CreateActivityViewProps {
+  problemSetName: string;
+  managementMethod: ProblemSetActivityManagementMethod;
+  formState: CreateActivityFormState;
+  categories: ProblemSetCategoryData[]
+  names: Record<string, string>;
   loading: boolean;
   onFormStateChange: FormStateChangeFunc;
+  updateArrayField: (args: UpdateArrayFieldArgs<CreateActivityFormState, any>) => void
   onCreate: () => void;
 }
 
-const CreateCollectionTaskView: FC<CreateCollectionTaskViewProps> = ({
-  collectionName,
+const CreateActivityView: FC<CreateActivityViewProps> = ({
+  problemSetName,
+  managementMethod,
   formState,
-  rangeMax,
+  categories,
+  names,
   loading,
   onFormStateChange,
+  updateArrayField,
   onCreate
 }) => {
-  const names = useMemo(() => keyMirror(formState), [formState]);
-
   return (
     <Box sx={{
       display: 'flex',
@@ -38,7 +41,7 @@ const CreateCollectionTaskView: FC<CreateCollectionTaskViewProps> = ({
       overflow: 'auto'
     }}>
       <Typography marginY={1} variant='h5'>
-        {`${collectionName}のミッション`}
+        {`${problemSetName}のミッション`}
       </Typography>
       <Box sx={{
         display: 'flex',
@@ -51,31 +54,26 @@ const CreateCollectionTaskView: FC<CreateCollectionTaskViewProps> = ({
           value={formState.dueDateTime}
           onChange={onFormStateChange}
         />
-        <RangeField 
-          label='範囲'
-          name={names.pagesInRange}
-          value={formState.pagesInRange}
-          onChange={onFormStateChange}
-          min={1}
-          max={rangeMax}
-          minLabel='開始'
-          maxLabel='終了'
-          fullWidth
+        <ActivityRangeForm
+          managementMethod={managementMethod}
+          formState={formState.categoryActivities}
+          categories={categories}
+          updateArrayField={updateArrayField}
         />
         {/* <StringField
           label='タイトル'
           name={names.title}
           value={formState.title}
           onChange={onFormStateChange}
-        /> */}
+        /> 
         <MultilineField
           label='補足説明'
           rows={3}
           name={names.taskNote}
           value={formState.taskNote}
           onChange={onFormStateChange}
-        />
-        {/* <SelectField
+        /> 
+        <SelectField
           label='優先度'
           name={names.priority}
           selectItems={taskPrioritySelectItem}
@@ -90,4 +88,4 @@ const CreateCollectionTaskView: FC<CreateCollectionTaskViewProps> = ({
   );
 };
 
-export default CreateCollectionTaskView;
+export default CreateActivityView;

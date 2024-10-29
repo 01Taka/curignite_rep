@@ -1,6 +1,6 @@
 import { FC } from "react";
 import TeamContainer from "./TeamContainer";
-import { cn } from "../../../../../functions/utils";
+import { cn } from "../../../../../functions/utils/utils";
 import { TeamWithSupplementary } from "../../../../../types/firebase/db/team/teamStructure";
 
 export interface TeamsListProps {

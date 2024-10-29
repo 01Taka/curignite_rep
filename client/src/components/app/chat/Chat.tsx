@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
-import { dateTimeToString } from '../../../functions/dateTimeUtils';
+import { dateTimeToString } from '../../../functions/utils/dateTimeUtils';
 import { Avatar } from '@mui/material';
-import { cn } from '../../../functions/utils';
+import { cn } from '../../../functions/utils/utils';
 import { useAppSelector } from '../../../redux/hooks';
 import ChatMessage from './ChatMessage';
 import { FormatChange } from '../../../types/util/dateTimeTypes';

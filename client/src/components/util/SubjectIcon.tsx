@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { Subject } from '../../types/firebase/db/common/commonTypes'
 import { subjectColors, subjectLabels } from '../../constants/label/subjectLabels';
-import { cn } from '../../functions/utils';
+import { cn } from '../../functions/utils/utils';
 interface SubjectIconProps {
   subject: Subject;
   className?: string;

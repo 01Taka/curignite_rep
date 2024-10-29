@@ -5,7 +5,7 @@ import { getInitialBaseDocumentData } from "../../../../../functions/db/dbUtils"
 import { Subject } from "../../../../../types/firebase/db/common/commonTypes";
 import { LearningGoalStatus } from "../../../../../types/firebase/db/user/userSupplementTypes";
 import { TimeTypes } from "../../../../../types/util/dateTimeTypes";
-import { toTimestamp } from "../../../../../functions/dateTimeUtils";
+import { toTimestamp } from "../../../../../functions/utils/dateTimeUtils";
 
 export class UserLearningGoalService {
   constructor(private firestore: Firestore) {}

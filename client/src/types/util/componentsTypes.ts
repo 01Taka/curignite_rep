@@ -19,7 +19,6 @@ export type CustomHTMLElement = HTMLDateElement | HTMLRangeElement | HTMLFileEle
 export type FormStateChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | CustomHTMLElement>;
 
 export type FormStateChangeFunc = (e: FormStateChangeEvent) => void;
-export type UpdateFieldFunc<T extends string> = (fieldName: T, value: any) => void;
 
 export type SelectFieldChange = (event: SelectChangeEvent<string | number>, child: ReactNode) => void;
 

@@ -1,8 +1,8 @@
 import { Avatar, List, ListItem, ListItemAvatar, ListItemText, Typography } from '@mui/material';
 import React, { FC, useMemo } from 'react';
 import { DocumentIdMap } from '../../../../../../types/firebase/db/formatTypes';
-import { cn } from '../../../../../../functions/utils';
-import { dateTimeToString } from '../../../../../../functions/dateTimeUtils';
+import { cn } from '../../../../../../functions/utils/utils';
+import { dateTimeToString } from '../../../../../../functions/utils/dateTimeUtils';
 import { UserData, UserWithSupplementary } from '../../../../../../types/firebase/db/user/userStructure';
 import { JoinRequestStatus } from '../../../../../../types/firebase/db/common/joinRequest/joinRequestSupplementTypes';
 import { JoinRequestData } from '../../../../../../types/firebase/db/common/joinRequest/joinRequestStructure';

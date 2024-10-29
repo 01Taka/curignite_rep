@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { cn } from '../../functions/utils';
+import { cn } from '../../functions/utils/utils';
 import { useAppSelector } from '../../redux/hooks';
 
 interface FormContainerProps {

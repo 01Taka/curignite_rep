@@ -1,4 +1,4 @@
-import { HexColorCode } from "../types/util/utilTypes";
+import { HexColorCode } from "../../types/util/utilTypes";
 
 export function chooseTextColor(hexColor: HexColorCode): 'black' | 'white' {
   // HexコードをRGB値に変換

@@ -3,11 +3,11 @@ import BaseDB from "../../../base";
 import { UserDailyLearningSummaryData, UserLearningGoalData } from "../../../../../types/firebase/db/user/userStructure";
 import { ISODate, TimeTypes } from "../../../../../types/util/dateTimeTypes";
 import { getInitialBaseDocumentData } from "../../../../../functions/db/dbUtils";
-import { convertToDate, convertToMilliseconds, getMidnightTimestamp, toISODate } from "../../../../../functions/dateTimeUtils";
-import { validateNumber } from "../../../../../functions/utils";
-import { getMinAndMaxFromObjectArray } from "../../../../../functions/objectUtils";
+import { convertToDate, convertToMilliseconds, getMidnightTimestamp, toISODate } from "../../../../../functions/utils/dateTimeUtils";
+import { getMinAndMaxFromObjectArray } from "../../../../../functions/utils/objectUtils";
 import { DAYS_IN_MILLISECOND } from "../../../../../constants/utils/dateTimeConstants";
 import { startOfWeek } from "date-fns";
+import { validateNumber } from "../../../../../functions/utils/formUtils";
 
 export class UserDailyLearningSummaryService {
   constructor(private firestore: Firestore) {}

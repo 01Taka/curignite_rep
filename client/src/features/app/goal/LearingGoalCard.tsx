@@ -1,10 +1,10 @@
 import { FC } from "react";
 import { TimeTypes } from "../../../types/util/dateTimeTypes";
 import { differenceInMinutes, format, isToday } from "date-fns";
-import { convertToDate } from "../../../functions/dateTimeUtils";
+import { convertToDate } from "../../../functions/utils/dateTimeUtils";
 import { Typography } from "@mui/material";
 import SubjectIcon from "../../../components/util/SubjectIcon";
-import { cn } from "../../../functions/utils";
+import { cn } from "../../../functions/utils/utils";
 import { UserLearningGoalData } from "../../../types/firebase/db/user/userStructure";
 
 interface LearningGoalCardProps {

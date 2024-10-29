@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useAppSelector } from '../../../../redux/hooks';
-import { TaskData } from '../../../../types/firebase/db/common/task/taskStructure';
 import serviceFactory from '../../../../firebase/db/factory';
 import TaskContainer from './TaskContainer';
 import { Box } from '@mui/material';
+import { TaskData } from '../../../../types/firebase/db/common/task/taskExpansionTypes';
+import { TaskManagementService } from '../../../../firebase/db/util/taskManagementService';
 
 interface TasksProps {
   maxLength?: number;
@@ -16,9 +17,8 @@ const Tasks: React.FC<TasksProps> = ({ maxLength = Infinity }) => {
   useEffect(() => {
     const updateTasks = async () => {
       if (uid) {
-        const taskService = serviceFactory.createUserTaskManagementService();
-        const tasksData = await taskService.getAllTasks(uid);
-        setTasksData(truncateArray(tasksData, maxLength));
+        const data = await TaskManagementService.fetchAllData(serviceFactory, uid);
+        setTasksData(truncateArray(data.tasks, maxLength));
       }
     };
     updateTasks();

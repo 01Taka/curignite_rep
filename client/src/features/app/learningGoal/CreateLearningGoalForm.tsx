@@ -1,17 +1,17 @@
 import React, { FC, useEffect, useState } from 'react'
 import { Subject } from '../../../types/firebase/db/common/commonTypes';
-import useAsyncHandler from '../../hooks/useAsyncHandler';
+import useAsyncHandler from '../../hooks/form/useAsyncHandler';
 import { startLearningGoal } from '../../../services/learning/learningGoalActionService';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { Alert, Box, Typography } from '@mui/material';
 import { NumberField, StringField } from '../../../components/input/inputIndex';
 import SelectField from '../../../components/input/field/SelectField';
-import { keyMirror } from '../../../functions/objectUtils';
-import { handleFormStateChange } from '../../../functions/utils';
+import { keyMirror } from '../../../functions/utils/objectUtils';
 import { FormStateChangeEvent } from '../../../types/util/componentsTypes';
 import { subjectSelectItems } from '../../../constants/selectItems/subjectSelectItems';
 import CircularButton from '../../../components/input/button/CircularButton';
 import { MINUTES_IN_MILLISECOND } from '../../../constants/utils/dateTimeConstants';
+import useFormState from '../../hooks/form/useFormState';
 
 
 interface CreateLearningGoalFormState {
@@ -28,7 +28,7 @@ const CreateLearningGoalForm: FC<CreateLearningGoalFormProps> = ({ onCreated }) 
   const dispatch = useAppDispatch();
   const uid = useAppSelector(state => state.userSlice.uid);
 
-  const [formState, setFormState] = useState<CreateLearningGoalFormState>({
+  const { formState, onChangeFormState } = useFormState<CreateLearningGoalFormState>({
     objectives: "",
     subject: Subject.NotSelected,
     targetDurationMin: 25,
@@ -56,7 +56,7 @@ const CreateLearningGoalForm: FC<CreateLearningGoalFormProps> = ({ onCreated }) 
   }
 
   const formStateChangeHandler = (e: FormStateChangeEvent) => {
-    handleFormStateChange(e, setFormState);
+    onChangeFormState(e);
     reset();
   };
 

@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { JoinRequestData } from '../../../../../types/firebase/db/common/joinRequest/joinRequestStructure';
 import { useUserMap } from '../../../../hooks/useUserMap';
 import { Avatar, List, ListItem, ListItemAvatar, ListItemText, CircularProgress, Typography } from '@mui/material';
-import { cn } from '../../../../../functions/utils';
+import { cn } from '../../../../../functions/utils/utils';
 
 interface TeamJoinRequestsProps {
   joinRequests: JoinRequestData[];

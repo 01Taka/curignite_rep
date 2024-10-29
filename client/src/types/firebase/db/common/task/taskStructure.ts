@@ -1,5 +1,6 @@
 import { Timestamp } from "firebase/firestore";
 import { BaseDocumentData } from "../../baseTypes";
+import { Range } from "../../../../util/componentsTypes";
 
 export interface IndividualTaskData extends BaseDocumentData {
   title: string; // タスクのタイトル
@@ -10,30 +11,31 @@ export interface IndividualTaskData extends BaseDocumentData {
   completed: boolean; // 完了状態
 }
 
+export type ProblemSetActivityManagementMethod = 'page' | 'mainQuestion';
+
 export interface ProblemSetData extends BaseDocumentData {
   name: string; // 問題集の名前
   description: string; // 問題集の説明
+  activityManagementMethod: ProblemSetActivityManagementMethod;
 }
 
-export interface MainQuestionData extends BaseDocumentData {
-  name: string; // 大問の名前
-  totalProblemNumber: number; // 大問内のの問題の総数
-  completedProblemIds: number[]; // 完了した問題番号
+export interface ProblemSetCategoryData extends BaseDocumentData {
+  name: string | 'page'; // カテゴリの名前
+  timePerProblem: number;
+  totalProblemNumber: number | null; // カテゴリ内の問題の総数
+  completedProblemIdsRange: Range[]; // 完了した問題番号
 }
 
 export interface ProblemSetActivityData extends BaseDocumentData {
   dueDateTime: Timestamp | null; // 課題の期限
   completed: boolean; // 課題の完了状態
-  mainQuestionActivities: MainQuestionActivity[]; // 大問の活動
+  categoryActivities: CategoryActivity[]; // カテゴリの活動
 }
 
-export interface MainQuestionActivity {
-  mainQuestionId: string; // 大問のID
-  problemIds: number[]; // 大問内の問題番号
+export interface CategoryActivity {
+  categoryId: string; // カテゴリのID
+  problemIdsRange: Range[]; // カテゴリ内の問題番号
 }
-
-
-
 
 
 
