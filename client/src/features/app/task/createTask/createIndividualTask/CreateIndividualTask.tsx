@@ -1,17 +1,19 @@
-import React, { FC, useState } from 'react'
+import React, { FC } from 'react'
 import CreateIndividualTaskView from './CreateIndividualTaskView'
 import { CreateIndividualTaskViewFormState } from '../../../../../types/app/task/taskForm';
 import serviceFactory from '../../../../../firebase/db/factory';
 import { useAppSelector } from '../../../../../redux/hooks';
 import { toTimestamp } from '../../../../../functions/utils/dateTimeUtils';
 import { useNavigate } from 'react-router-dom';
-import { taskPaths } from '../../../../../types/path/mainPaths';
 import { MINUTES_IN_MILLISECOND } from '../../../../../constants/utils/dateTimeConstants';
 import useFormState from '../../../../hooks/form/useFormState';
+import useAsyncHandler from '../../../../hooks/form/useAsyncHandler';
+import { DocumentData, DocumentReference } from 'firebase/firestore';
+import { IndividualTaskData } from '../../../../../types/firebase/db/common/task/taskStructure';
 
 const CreateIndividualTask: FC = () => {
   const navigate = useNavigate();
-  const { uid, userData } = useAppSelector(state => state.userSlice);
+  const { uid } = useAppSelector(state => state.userSlice);
   const { formState, onChangeFormState } = useFormState<CreateIndividualTaskViewFormState>({
     title: "",
     dueDateTime: null,
@@ -19,24 +21,18 @@ const CreateIndividualTask: FC = () => {
     priority: "medium",
     estimatedDuration: 10,
   });
+  const { callAsyncFunction } = useAsyncHandler<DocumentReference<IndividualTaskData, DocumentData>>();
 
   const handleCreateIndividualTask = async () => {
-    if (uid && userData) {
-      try {
-        const individualTaskService = serviceFactory.createIndividualTaskService();
-        await individualTaskService.createTask(
-          uid,
+    if (uid) {
+      const individualTaskService = serviceFactory.createIndividualTaskService();
+        callAsyncFunction([
           uid,
           formState.title,
           formState.dueDateTime ? toTimestamp(formState.dueDateTime) : formState.dueDateTime,
           formState.taskNote,
           formState.estimatedDuration * MINUTES_IN_MILLISECOND
-        );
-        navigate(taskPaths.home);
-        console.log('Individual task created successfully!'); // 成功メッセージ
-      } catch (error) {
-        console.error('Failed to create individual task:', error);
-      }
+        ], individualTaskService.createTask.bind(individualTaskService))
     } else {
       console.error('User is not authenticated or user data is missing.'); // 認証エラー
     }

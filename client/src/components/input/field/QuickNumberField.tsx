@@ -7,21 +7,27 @@ import { handleCallOnChange } from '../../../functions/utils/formUtils';
 import NumberField from './NumberField';
 import Popup from '../../display/popup/Popup';
 
-interface QuickNumberFieldProps<T> {
+interface QuickNumberFieldProps {
   name: string;
   value: number;
   label: string;
   selectItems: SelectItem<number>[];
+  initialValue?: number;
+  min?: number;
+  max?: number;
   onChange: FormStateChangeFunc;
 }
 
-const QuickNumberField = <T extends Record<string, any>>({
+const QuickNumberField: React.FC<QuickNumberFieldProps> = ({
   name,
   value,
   label,
   selectItems,
+  initialValue,
+  min,
+  max,
   onChange,
-}: QuickNumberFieldProps<T>) => {
+}) => {
   const { tabIndex, changeTab, resetTab } = useTabIndex(2, null);
 
   const items = useMemo(() => {
@@ -83,7 +89,15 @@ const QuickNumberField = <T extends Record<string, any>>({
             borderRadius: 2,
           }}
         >
-          <NumberField name={name} label={label} value={value} onChange={onChange} />
+        <NumberField
+          name={name}
+          label={label}
+          value={value}
+          min={min}
+          max={max}
+          initialValue={initialValue}
+          onChange={onChange}
+        />
         </Box>
       </Popup>
 

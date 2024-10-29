@@ -1,11 +1,11 @@
 import React, { FC } from 'react';
 import { FormStateChangeFunc } from '../../../../../types/util/componentsTypes';
 import { Box, Button, CircularProgress, Typography } from '@mui/material';
-import DateTimeField from '../../../../../components/input/field/DateTimeField';
 import { CreateActivityFormState } from './createActivityTypes';
 import { ProblemSetActivityManagementMethod, ProblemSetCategoryData } from '../../../../../types/firebase/db/common/task/taskStructure';
 import ActivityRangeForm from './ActivityRangeForm';
 import { UpdateArrayFieldArgs } from '../../../../hooks/form/AsyncHandlerTypes';
+import DateField from '../../../../../components/input/field/DateField';
 
 interface CreateActivityViewProps {
   problemSetName: string;
@@ -48,7 +48,7 @@ const CreateActivityView: FC<CreateActivityViewProps> = ({
         flexDirection: 'column',
         gap: '1rem'
       }}>
-        <DateTimeField
+        <DateField
           label='提出日時'
           name={names.dueDateTime}
           value={formState.dueDateTime}

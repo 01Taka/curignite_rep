@@ -5,7 +5,7 @@ import { CategoryActivityStatus, ExpansionProblemSetData, ProblemSetActivityFiel
 import { getInitialBaseDocumentData } from "../../../functions/db/dbUtils";
 import { ServiceFactory } from "../factory";
 import { validateNumber } from "../../../functions/utils/formUtils";
-import { rangesToArray } from "../../../functions/utils/rangeUtils";
+import { isNumberInRange, rangesToArray, sumRanges } from "../../../functions/utils/rangeUtils";
 
 interface FetchAllResults {
   tasks: TaskData[];
@@ -61,8 +61,8 @@ export class TaskManagementService {
           const expansionProblemSetData: ExpansionProblemSetData = {
             ...problemSet,
             averageEstimatedDuration: categories.reduce((total, category) => total + category.timePerProblem, 0) / categories.length,
-            totalProblemNumber: categories.reduce((total, category) => total + (category.totalProblemNumber ?? category.completedProblemIds.length), 0),
-            completedProblemNumber: categories.reduce((total, category) => total + category.completedProblemIds.length, 0),
+            totalProblemNumber: categories.reduce((total, category) => total + (category.totalProblemNumber ?? sumRanges(category.completedProblemIdsRange)), 0),
+            completedProblemNumber: categories.reduce((total, category) => total + sumRanges(category.completedProblemIdsRange), 0),
           }
 
           const problemSetWithTaskData: FullProblemSetData = {
@@ -165,7 +165,7 @@ export class TaskManagementService {
     categoryMap: { [docId: string]: ProblemSetCategoryData }
   ) {
     const category = categoryMap[act.categoryId];
-    const problemIds = rangesToArray(act.problemIdsRange)
+    const problemIds = rangesToArray(act.problemIdsRange);
     const problemCount = problemIds.length;
 
     if (!category) {
@@ -175,7 +175,7 @@ export class TaskManagementService {
 
     const { completedIds, remainingIds } = problemIds.reduce(
       (status, id) => {
-        if (category.completedProblemIds.includes(id)) {
+        if (isNumberInRange(category.completedProblemIdsRange, id)) {
           status.completedIds.push(id);
         } else {
           status.remainingIds.push(id);

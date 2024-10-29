@@ -2,10 +2,12 @@ import React, { FC, useMemo } from 'react';
 import { FormStateChangeFunc } from '../../../../../types/util/componentsTypes';
 import { CreateIndividualTaskViewFormState } from '../../../../../types/app/task/taskForm';
 import { keyMirror } from '../../../../../functions/utils/objectUtils';
-import { NumberField, StringField } from '../../../../../components/input/inputIndex';
+import { StringField } from '../../../../../components/input/inputIndex';
 import MultilineField from '../../../../../components/input/field/MultilineField';
 import { Box, Button, Typography } from '@mui/material';
-import DateTimeField from '../../../../../components/input/field/DateTimeField';
+import DateField from '../../../../../components/input/field/DateField';
+import QuickNumberField from '../../../../../components/input/field/QuickNumberField';
+import { createNumberSelectItems } from '../../../../../functions/utils/formUtils';
 
 interface CreateIndividualTaskViewProps {
   formState: CreateIndividualTaskViewFormState;
@@ -36,7 +38,7 @@ const CreateIndividualTaskView: FC<CreateIndividualTaskViewProps> = ({
         flexDirection: 'column',
         gap: '1rem'
       }}>
-        <DateTimeField
+        <DateField
           label='提出日時'
           name={names.dueDateTime}
           value={formState.dueDateTime}
@@ -48,10 +50,11 @@ const CreateIndividualTaskView: FC<CreateIndividualTaskViewProps> = ({
           value={formState.title}
           onChange={onFormStateChange}
         />
-        <NumberField
+        <QuickNumberField
           label='推定所要時間 (分)'
           name={names.estimatedDuration}
           value={formState.estimatedDuration}
+          selectItems={createNumberSelectItems(5, 181, 5, 1, '分')}
           min={0}
           onChange={onFormStateChange}
         />

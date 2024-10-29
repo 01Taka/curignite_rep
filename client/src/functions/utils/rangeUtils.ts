@@ -64,6 +64,10 @@ export const rangesToArray = (ranges: Range[]): number[] => {
   return Array.from(setRanges);
 }
 
+export const isNumberInRange = (ranges: Range[], numberToCheck: number): boolean => {
+  return ranges.some(range => numberToCheck >= range.min && numberToCheck <= range.max);
+}
+
 export const mergeRanges = (ranges: Range[]): Range[] => {
   if (ranges.length === 0) return [];
 

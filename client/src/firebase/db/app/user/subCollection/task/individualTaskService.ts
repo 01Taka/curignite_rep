@@ -1,4 +1,4 @@
-import { Firestore, QueryConstraint, Timestamp } from "firebase/firestore";
+import { DocumentData, DocumentReference, Firestore, QueryConstraint, Timestamp } from "firebase/firestore";
 import BaseDB from "../../../../base";
 import { IndividualTaskData } from "../../../../../../types/firebase/db/common/task/taskStructure";
 import { getInitialBaseDocumentData } from "../../../../../../functions/db/dbUtils";
@@ -11,18 +11,17 @@ export class IndividualTaskService {
   }
 
   async createTask(
-    docId: string,
-    createdById: string,
+    creatorId: string,
     title: string,
     dueDateTime: Timestamp | null,
     taskNote: string,
     estimatedDuration: number,
     progress: number = 0,
     completed: boolean = false,
-  ): Promise<void> {
+  ): Promise<DocumentReference<IndividualTaskData, DocumentData>> {
     try {
       const data: IndividualTaskData = {
-        ...getInitialBaseDocumentData(createdById),
+        ...getInitialBaseDocumentData(creatorId),
         title,
         dueDateTime,
         taskNote,
@@ -30,7 +29,7 @@ export class IndividualTaskService {
         completed,
         estimatedDuration,
       }
-      await this.createBaseDB(docId).create(data);
+      return await this.createBaseDB(creatorId).create(data);
     } catch (error) {
       console.error("Error creating task: ", error);
       throw new Error("Failed to create task");

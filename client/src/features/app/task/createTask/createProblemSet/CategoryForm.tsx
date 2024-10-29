@@ -26,6 +26,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
       flexDirection: 'column',
       gap: '0.2rem',
       padding: 1,
+      marginY: 1,
       border: 1,
       borderColor: 'gray',
       borderRadius: 2

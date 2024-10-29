@@ -37,7 +37,7 @@ const useAsyncHandler = <T = void>() => {
     args: A,
     func: (...args: A) => Promise<T>,
     onFailedMessage?: string
-  ): Promise<AsyncState<T>> => {
+  ): Promise<AsyncState<T> & { isSuccess: boolean }> => {
     startLoading();
     try {
       const result = await func(...args);
@@ -48,7 +48,7 @@ const useAsyncHandler = <T = void>() => {
         error: null,
         errorMessage: ''
       }
-      return state;
+      return { ...state, isSuccess: true };
     } catch (error) {
       logError(error, onFailedMessage);
       const state: AsyncState<T> = {
@@ -57,7 +57,7 @@ const useAsyncHandler = <T = void>() => {
         error: error instanceof Error ? error : null,
         errorMessage: onFailedMessage ?? '' 
       }
-      return state;
+      return { ...state, isSuccess: false };
     }
   };
 

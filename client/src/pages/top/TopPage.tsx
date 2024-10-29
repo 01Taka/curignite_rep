@@ -16,22 +16,26 @@ const TopPage: React.FC = () => {
             navigate(rootPaths.auth);
         }
 
-        const userService = serviceFactory.createUserService();
-        const state = await userService.getUserAuthState(uid);
-
-        switch (state) {
-            case "new":
-                navigate(rootPaths.auth);
-                break;
-            case "noUserData":
-                navigate(authPaths.initialSetup);
-                break;
-            case "verified":
-                navigate(rootPaths.main);
-                break;
-            default:
-                console.error("一致する認証状態がありません。");
-                break;
+        try {
+            const userService = serviceFactory.createUserService();
+            const state = await userService.getUserAuthState(uid);
+            switch (state) {
+                case "new":
+                    navigate(rootPaths.auth);
+                    break;
+                case "noUserData":
+                    navigate(authPaths.initialSetup);
+                    break;
+                case "verified":
+                    navigate(rootPaths.main);
+                    break;
+                default:
+                    console.error("一致する認証状態がありません。");
+                    break;
+            }
+        } catch (error) {
+            console.error(error);
+            navigate(rootPaths.auth);
         }
     }
 

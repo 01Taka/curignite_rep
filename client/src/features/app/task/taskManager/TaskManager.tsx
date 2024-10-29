@@ -5,7 +5,7 @@ import FixedTasks from '../fixedTasks/ProblemSets';
 import { Add } from '@mui/icons-material';
 import usePulseOnChange from '../../../hooks/usePulseOnChange';
 import Popup from '../../../../components/display/popup/Popup';
-import CreateIndividualTask from '../createTask/createForm/CreateIndividualTask';
+import CreateIndividualTask from '../createTask/createIndividualTask/CreateIndividualTask';
 import useEventListener from '../../../hooks/useEventListener';
 import CreateProblemSet from '../createTask/createProblemSet/CreateProblemSet';
 

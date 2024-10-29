@@ -24,13 +24,16 @@ const ManagementMethodSelector: React.FC<{
 
   useEffect(() => {
     updateField("categories", managementMethod === 'page' ? [pageSettings] : mainQuestions);
-  }, [managementMethod, pageSettings, mainQuestions]);
+  }, [managementMethod, pageSettings, mainQuestions, updateField]);
 
   return (
     <Box>
       <Typography>管理方法</Typography>
       <ToggleButtonGroup
         value={managementMethod}
+        sx={{
+          marginY: 1,
+        }}
         exclusive
         onChange={(_, newValue) => newValue && setManagementMethod(newValue)}
       >
@@ -38,7 +41,11 @@ const ManagementMethodSelector: React.FC<{
         <ToggleButton value="mainQuestion">問題番号</ToggleButton>
       </ToggleButtonGroup>
       {managementMethod === 'page' ? (
-        <Box>
+        <Box sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.2rem'
+        }}>
           <QuickNumberField
             name="timePerProblem"
             label="1ページ当たりの時間(分)"
