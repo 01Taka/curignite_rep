@@ -1,6 +1,7 @@
 import { Firestore, DocumentReference, DocumentSnapshot, QuerySnapshot, addDoc, collection, deleteDoc, doc, getDoc, getDocs, updateDoc, CollectionReference, QueryConstraint, query, where, limit, setDoc, startAfter, orderBy, Unsubscribe, DocumentData, Transaction, runTransaction } from "firebase/firestore";
 import { BaseDocumentData } from "../../types/firebase/db/baseTypes";
 import FirestoreCallbacks from "./callbacks";
+import { FieldValueSupported } from "../../types/firebase/db/formatTypes";
 
 export interface Callback<T extends BaseDocumentData> {
   unsubscribe?: Unsubscribe;
@@ -122,7 +123,7 @@ class BaseDB<T extends BaseDocumentData> {
    * @param documentId 更新するドキュメントのID
    * @param data 更新するドキュメントのデータ（部分的）
    */
-  async update(documentId: string, data: Partial<T>): Promise<void> {
+  async update(documentId: string, data: FieldValueSupported<Partial<T>>): Promise<void> {
     console.log("Called update"); // 開発用
 
     const docRef = doc(this.collectionRef, documentId) as DocumentReference<T>;
@@ -147,7 +148,7 @@ class BaseDB<T extends BaseDocumentData> {
     if (deleteData) {
       deleteData.isActive = false;
       return this.handleFirestoreOperation(
-        this.update(documentId, { isActive: false } as Partial<T>),
+        this.update(documentId, { isActive: false } as FieldValueSupported<Partial<T>>),
         "Failed to soft delete document"
       );
     } else {

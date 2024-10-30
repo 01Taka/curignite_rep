@@ -4,10 +4,19 @@ import { IndividualTaskData } from "../../../../../../types/firebase/db/task/tas
 import { getInitialBaseDocumentData } from "../../../../../../functions/db/dbUtils";
 
 export class IndividualTaskService {
+  private baseDB: BaseDB<IndividualTaskData> | undefined;
+  
   constructor(private firestore: Firestore) {}
 
-  createBaseDB(userId: string): BaseDB<IndividualTaskData> {
-    return new BaseDB(this.firestore, `users/${userId}/individualTasks`);
+  private getBaseDB(userId: string): BaseDB<IndividualTaskData> {
+    if (!this.baseDB || this.baseDB.getCollectionPath() !== this.getPath(userId)) {
+      this.baseDB = new BaseDB(this.firestore, this.getPath(userId));
+    }
+    return this.baseDB;
+  }
+
+  private getPath(userId: string) {
+    return `users/${userId}/individualTasks`;
   }
 
   async createTask(
@@ -29,7 +38,7 @@ export class IndividualTaskService {
         completed,
         estimatedDuration,
       }
-      return await this.createBaseDB(creatorId).create(data);
+      return await this.getBaseDB(creatorId).create(data);
     } catch (error) {
       console.error("Error creating task: ", error);
       throw new Error("Failed to create task");
@@ -38,7 +47,7 @@ export class IndividualTaskService {
 
   async getTask(docId: string, taskId: string): Promise<IndividualTaskData | null> {
     try {
-      return await this.createBaseDB(docId).read(taskId);
+      return await this.getBaseDB(docId).read(taskId);
     } catch (error) {
       console.error("Error retrieving task: ", error);
       return null;
@@ -47,7 +56,7 @@ export class IndividualTaskService {
 
   async getAllTasks(userId: string, ...queryConstraints: QueryConstraint[]): Promise<IndividualTaskData[]> {
     try {
-      return await this.createBaseDB(userId).getAll(...queryConstraints);
+      return await this.getBaseDB(userId).getAll(...queryConstraints);
     } catch (error) {
       console.error("Error getting all tasks: ", error);
       throw new Error("Failed to get all tasks");
@@ -56,7 +65,7 @@ export class IndividualTaskService {
 
   async updateTask(docId: string, taskId: string, data: Partial<IndividualTaskData>): Promise<void> {
     try {
-      await this.createBaseDB(docId).update(taskId, data);
+      await this.getBaseDB(docId).update(taskId, data);
     } catch (error) {
       console.error("Error updating task: ", error);
       throw new Error("Failed to update task");
@@ -65,7 +74,7 @@ export class IndividualTaskService {
 
   async softDeleteTask(docId: string, taskId: string): Promise<void> {
     try {
-      await this.createBaseDB(docId).softDelete(taskId);
+      await this.getBaseDB(docId).softDelete(taskId);
     } catch (error) {
       console.error("Error soft deleting task: ", error);
       throw new Error("Failed to soft delete task");
@@ -74,7 +83,7 @@ export class IndividualTaskService {
 
   async hardDeleteTask(docId: string, taskId: string): Promise<void> {
     try {
-      await this.createBaseDB(docId).hardDelete(taskId);
+      await this.getBaseDB(docId).hardDelete(taskId);
     } catch (error) {
       console.error("Error hard deleting task: ", error);
       throw new Error("Failed to hard delete task");

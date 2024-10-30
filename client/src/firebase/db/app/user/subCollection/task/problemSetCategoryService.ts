@@ -5,14 +5,19 @@ import { getInitialBaseDocumentData } from "../../../../../../functions/db/dbUti
 import { Range } from "../../../../../../types/util/componentsTypes";
 
 export class ProblemSetCategoryService {
+  private baseDB: BaseDB<ProblemSetCategoryData> | undefined;
+  
   constructor(private firestore: Firestore) {}
+
+  private getBaseDB(userId: string, problemSetId: string): BaseDB<ProblemSetCategoryData> {
+    if (!this.baseDB || this.baseDB.getCollectionPath() !== this.getPath(userId, problemSetId)) {
+      this.baseDB = new BaseDB(this.firestore, this.getPath(userId, problemSetId));
+    }
+    return this.baseDB;
+  }
 
   getPath(userId: string, problemSetId: string) {
     return `users/${userId}/problemSets/${problemSetId}/categories`;
-  }
-
-  createBaseDB(userId: string, problemSetId: string): BaseDB<ProblemSetCategoryData> {
-    return new BaseDB(this.firestore, this.getPath(userId, problemSetId));
   }
 
   async createCategory(
@@ -31,14 +36,14 @@ export class ProblemSetCategoryService {
       completedProblemIdsRange
     }
 
-    return await this.createBaseDB(creatorId, problemSetId).create(data);
+    return await this.getBaseDB(creatorId, problemSetId).create(data);
   }
 
   async getCategory(userId: string, problemSetId: string, categoryId: string) {
-    return await this.createBaseDB(userId, problemSetId).read(categoryId);
+    return await this.getBaseDB(userId, problemSetId).read(categoryId);
   }
 
   async getAllCategory(userId: string, problemSetId: string) {
-    return await this.createBaseDB(userId, problemSetId).getAll();
+    return await this.getBaseDB(userId, problemSetId).getAll();
   }
 }

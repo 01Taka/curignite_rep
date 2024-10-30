@@ -1,4 +1,4 @@
-import { TaskPriority } from "../../firebase/db/common/task/taskSupplementTypes";
+import { TaskPriority } from "../../firebase/db/task/taskSupplementTypes";
 import { Range, SelectItem } from "../../util/componentsTypes";
 
 interface BaseTaskFormState {

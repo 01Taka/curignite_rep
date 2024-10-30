@@ -4,14 +4,19 @@ import BaseDB from "../../../../base";
 import { getInitialBaseDocumentData } from "../../../../../../functions/db/dbUtils";
 
 export class ProblemSetActivityService {
+  private baseDB: BaseDB<ProblemSetActivityData> | undefined;
+  
   constructor(private firestore: Firestore) {}
+
+  private getBaseDB(userId: string, problemSetId: string): BaseDB<ProblemSetActivityData> {
+    if (!this.baseDB || this.baseDB.getCollectionPath() !== this.getPath(userId, problemSetId)) {
+      this.baseDB = new BaseDB(this.firestore, this.getPath(userId, problemSetId));
+    }
+    return this.baseDB;
+  }
 
   getPath(userId: string, problemSetId: string) {
     return `users/${userId}/problemSets/${problemSetId}/activities`;
-  }
-
-  createBaseDB(userId: string, problemSetId: string): BaseDB<ProblemSetActivityData> {
-    return new BaseDB(this.firestore, this.getPath(userId, problemSetId));
   }
 
   async createActivity(
@@ -28,14 +33,14 @@ export class ProblemSetActivityService {
       completed
     }
 
-    return await this.createBaseDB(creatorId, problemSetId).create(data);
+    return await this.getBaseDB(creatorId, problemSetId).create(data);
   }
 
   async getActivity(userId: string, problemSetId: string, activityId: string) {
-    return await this.createBaseDB(userId, problemSetId).read(activityId);
+    return await this.getBaseDB(userId, problemSetId).read(activityId);
   }
 
   async getAllActivities(userId: string, problemSetId: string) {
-    return await this.createBaseDB(userId, problemSetId).getAll();
+    return await this.getBaseDB(userId, problemSetId).getAll();
   }
 }

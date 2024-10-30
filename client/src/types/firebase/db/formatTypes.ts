@@ -1,4 +1,4 @@
-import { Timestamp } from "firebase/firestore";
+import { FieldValue, Timestamp } from "firebase/firestore";
 
 export type ConvertTimestampToNumber<T> = {
   [K in keyof T]: T[K] extends Timestamp ? number :
@@ -18,3 +18,15 @@ export type RevertTimestampToOriginal<T> = {
 export type DocumentIdMap<T> = Record<string, T>;
 
 export type TimestampConvertedDocumentMap<T> = DocumentIdMap<ConvertTimestampToNumber<T>>;
+
+export type FieldValueSupported<T extends Record<string, any>> = {
+  [K in keyof T]: T[K] extends infer U
+    ? U extends number
+      ? number | FieldValue
+      : U extends any[]
+      ? U | FieldValue
+      : U extends Timestamp
+      ? Timestamp | FieldValue
+      : U
+    : never;
+};
