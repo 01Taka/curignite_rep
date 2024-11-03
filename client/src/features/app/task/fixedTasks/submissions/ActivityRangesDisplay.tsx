@@ -8,15 +8,15 @@ interface ActivityRangesDisplayProps {
 }
 
 const ActivityRangesDisplay: React.FC<ActivityRangesDisplayProps> = ({ activityStatuses }) => {
+  console.log(activityStatuses);
+  
   return (
     <Box>
       {activityStatuses.map(status => (
-          <Box display={'flex'}>
-            {activityStatuses.length > 1 &&
-              <Typography>
-                {status.category.name}
-              </Typography>
-            }
+          <Box sx={{ display: 'flex' }}>
+            <Typography sx={{ mr: 1 }}>
+              {status.category.name}:
+            </Typography>
             <Typography>
               {rangesToString(status.problemIdsRange)}
             </Typography>

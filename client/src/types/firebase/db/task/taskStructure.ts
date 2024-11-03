@@ -1,6 +1,7 @@
 import { Timestamp } from "firebase/firestore";
 import { BaseDocumentData } from "../baseTypes";
 import { Range } from "../../../util/componentsTypes";
+import { CategoryActivity, ProblemSetActivityManagementMethod } from "./taskSupplementTypes";
 
 export interface IndividualTaskData extends BaseDocumentData {
   title: string; // タスクのタイトル
@@ -10,8 +11,6 @@ export interface IndividualTaskData extends BaseDocumentData {
   taskNote: string; // タスクのノート
   completed: boolean; // 完了状態
 }
-
-export type ProblemSetActivityManagementMethod = 'page' | 'mainQuestion';
 
 export interface ProblemSetData extends BaseDocumentData {
   name: string; // 問題集の名前
@@ -32,63 +31,3 @@ export interface ProblemSetActivityData extends BaseDocumentData {
   categoryActivities: CategoryActivity[]; // カテゴリの活動
 }
 
-export interface CategoryActivity {
-  categoryId: string; // カテゴリのID
-  problemIdsRange: Range[]; // カテゴリ内の問題番号
-}
-
-
-
-
-
-
-
-
-
-
-
-
-// export interface TaskCollectionData extends BaseDocumentData {
-//   collectionName: string;
-//   totalPages: number;
-//   timePerPage: number;
-//   completedPageIndices: number[]; 
-//   description: string;
-// }
-
-// export interface TaskCollectionTaskData extends BaseTaskData {
-//   collectionId: string;
-//   pagesInRange: Range[];
-// }
-
-
-// // データベース外インターフェース
-
-// /**
-//  * remainingPages = pagesInRange - completedPages
-//  */
-// export interface CollectionTaskField {
-//   collection: TaskCollectionData;
-//   pagesInRange: Range[];
-//   completedPages: number[];
-//   remainingPages: number[];
-//   completionRate: string;
-// }
-
-
-
-// export interface TaskCategoryProgress extends TaskCategory {
-
-// }
-
-
-
-// export interface CollectionWithCollectionTasks {
-//   collectionData: TaskCollectionData;
-//   tasksInCollection: TaskCollectionTaskData[];
-// }
-
-// export interface CollectionWithTasksData {
-//   collectionData: TaskCollectionData;
-//   tasksData: TaskData[];
-// }

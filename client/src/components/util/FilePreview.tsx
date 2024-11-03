@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Dialog, IconButton } from '@mui/material';
-import { ArrowBackIos, ArrowForwardIos, Close } from '@mui/icons-material';
+import { Box } from '@mui/material';
 import FilePreviewPopup from './FilePreviewPopup';
 
 interface FilePreviewProps {

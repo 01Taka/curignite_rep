@@ -16,7 +16,7 @@ export class TeamCodeService {
         try {
             const prevCode = await this.baseDB.getFirstMatch("teamId", teamId);
             if (prevCode) {
-                await this.baseDB.update(prevCode.docId, { valid: false, isActive: false });
+                await this.baseDB.softDelete(prevCode.docId, { valid: false });
             }
 
             const data: TeamCodeData = {

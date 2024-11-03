@@ -1,11 +1,12 @@
 import { Timestamp } from "firebase/firestore";
 import { objectArrayToDict } from "../../../functions/utils/objectUtils";
-import { ProblemSetCategoryData, IndividualTaskData, ProblemSetActivityData, ProblemSetData, CategoryActivity } from "../../../types/firebase/db/task/taskStructure";
+import { ProblemSetCategoryData, IndividualTaskData, ProblemSetActivityData, ProblemSetData } from "../../../types/firebase/db/task/taskStructure";
 import { CategoryActivityStatus, ExpansionProblemSetData, ProblemSetActivityField, FullProblemSetData, TaskData } from "../../../types/firebase/db/task/taskExpansionTypes";
 import { getInitialBaseDocumentData } from "../../../functions/db/dbUtils";
 import { ServiceFactory } from "../factory";
 import { validateNumber } from "../../../functions/utils/formUtils";
 import { isNumberInRange, rangesToArray, sumRanges } from "../../../functions/utils/rangeUtils";
+import { CategoryActivity } from "../../../types/firebase/db/task/taskSupplementTypes";
 
 interface FetchAllResults {
   tasks: TaskData[];
@@ -21,6 +22,7 @@ export class TaskManagementService {
   static individualTasksToTasksData(individualTasks: IndividualTaskData[]): TaskData[] {
     return individualTasks.map(task => ({
       ...task,
+      isIndividual: true,
       remainingEstimatedDuration: task.progress * task.estimatedDuration,
     }));
   }
@@ -138,6 +140,7 @@ export class TaskManagementService {
 
       const activityField: ProblemSetActivityField = {
         totalProblemCount,
+        activityManagementMethod: problemSet.activityManagementMethod,
         completionRate: `${completedCount}/${totalProblemCount}`,
         activityStatus,
       };
@@ -147,9 +150,10 @@ export class TaskManagementService {
         estimatedDuration: totalEstimatedDuration,
         remainingEstimatedDuration,
         progress,
+        isIndividual: false,
         completed: progress === 1,
         problemSetActivityField: activityField,
-      };
+      } as TaskData;
     }).filter(data => data !== null) as TaskData[];
   }
 

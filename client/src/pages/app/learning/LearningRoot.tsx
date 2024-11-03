@@ -1,6 +1,5 @@
 import React from 'react';
 import ChooseSettingPopups from '../../../features/app/learning/popups/ChooseSettingPopups';
-import GradientIcon from '../../../components/display/container/GradientIcon';
 import LearningStateManager from '../../../features/app/learning/learningState/LearningStateManager';
 import { Box } from '@mui/material';
 import WorkOnTasksManager from '../../../features/app/learning/workOnTasks/WorkOnTasksManager';

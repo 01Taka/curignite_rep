@@ -3,6 +3,8 @@ import BaseDB from "../../../base";
 import { getInitialBaseDocumentData } from "../../../../../functions/db/dbUtils";
 import { UserTeamData } from "../../../../../types/firebase/db/user/userStructure";
 import { JoinRequestStatus } from "../../../../../types/firebase/db/common/joinRequest/joinRequestSupplementTypes";
+import { autoFields } from "../../../../../constants/firebase/firestoreConstants";
+import { AutoFieldToUndefined } from "../../../../../types/firebase/db/formatTypes";
 
 export class UserTeamService {
     constructor(private firestore: Firestore) {}
@@ -18,8 +20,9 @@ export class UserTeamService {
         isMember: boolean,
         merge: boolean = false,
       ): Promise<void> {
-        const data: UserTeamData = {
-          ...getInitialBaseDocumentData(userId),
+        const data: AutoFieldToUndefined<UserTeamData> = {
+          ...autoFields,
+          createdById: userId,
           requestedAt: Timestamp.now(),
           status,
           isMember,

@@ -1,0 +1,1 @@
+export const autoFields = { docId: undefined, createdAt: undefined, isActive: undefined };

@@ -5,6 +5,8 @@ import { getInitialBaseDocumentData } from "../../../functions/db/dbUtils";
 import { convertTimestampsToNumbers, revertTimestampConversion } from "../../../functions/db/dataFormatUtils";
 import { sortObjectArray } from "../../../functions/utils/objectUtils";
 import { JoinRequestStatus } from "../../../types/firebase/db/common/joinRequest/joinRequestSupplementTypes";
+import { AutoFieldToUndefined } from "../../../types/firebase/db/formatTypes";
+import { autoFields } from "../../../constants/firebase/firestoreConstants";
 
 class JoinRequestService {
   constructor(private firestore: Firestore, private path: string) {}
@@ -23,8 +25,9 @@ class JoinRequestService {
     try {
       if (isStopExist && await this.isExist(docId, requesterId)) return;
 
-      const data: JoinRequestData = {
-        ...getInitialBaseDocumentData(requesterId),
+      const data: AutoFieldToUndefined<JoinRequestData> = {
+        ...autoFields,
+        createdById: requesterId,
         status,
         requestedAt,
       };

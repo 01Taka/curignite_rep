@@ -3,6 +3,8 @@ import BaseDB from '../../../base';
 import { getInitialBaseDocumentData } from '../../../../../functions/db/dbUtils';
 import { UserPartnerData } from '../../../../../types/firebase/db/user/userStructure';
 import { PartnerStatus } from '../../../../../types/firebase/db/user/userSupplementTypes';
+import { AutoFieldToUndefined } from '../../../../../types/firebase/db/formatTypes';
+import { autoFields } from '../../../../../constants/firebase/firestoreConstants';
 
 export class UserPartnerService {
   constructor(private firestore: Firestore) {}
@@ -18,8 +20,9 @@ export class UserPartnerService {
     since: Timestamp = Timestamp.now(),
     merge: boolean = false
   ): Promise<void> {
-    const data: UserPartnerData = {
-      ...getInitialBaseDocumentData(userId),
+    const data: AutoFieldToUndefined<UserPartnerData> = {
+      ...autoFields,
+      createdById: userId,
       since,
       status,
     };

@@ -1,7 +1,7 @@
-import { Firestore, DocumentReference, DocumentSnapshot, QuerySnapshot, addDoc, collection, deleteDoc, doc, getDoc, getDocs, updateDoc, CollectionReference, QueryConstraint, query, where, limit, setDoc, startAfter, orderBy, Unsubscribe, DocumentData, Transaction, runTransaction } from "firebase/firestore";
+import { Firestore, DocumentReference, DocumentSnapshot, QuerySnapshot, addDoc, collection, deleteDoc, doc, getDoc, getDocs, updateDoc, CollectionReference, QueryConstraint, query, where, limit, setDoc, startAfter, orderBy, Unsubscribe, DocumentData, Transaction, runTransaction, Timestamp, serverTimestamp, writeBatch, WriteBatch } from "firebase/firestore";
 import { BaseDocumentData } from "../../types/firebase/db/baseTypes";
 import FirestoreCallbacks from "./callbacks";
-import { FieldValueSupported } from "../../types/firebase/db/formatTypes";
+import { AutoFieldToUndefined, FieldValueSupported } from "../../types/firebase/db/formatTypes";
 
 export interface Callback<T extends BaseDocumentData> {
   unsubscribe?: Unsubscribe;
@@ -18,10 +18,12 @@ export interface CollectionCallback<T extends BaseDocumentData> {
 class BaseDB<T extends BaseDocumentData> {
   private collectionRef: CollectionReference<T>;
   private callbacksManager?: FirestoreCallbacks<T>;
+  private batch: WriteBatch | null;
   
   constructor(private firestore: Firestore, collectionPath: string) {
     this.collectionRef = collection(this.firestore, collectionPath) as CollectionReference<T>;
     this.callbacksManager = new FirestoreCallbacks<T>(this.collectionRef);
+    this.batch = null;
   }
 
   /**
@@ -40,30 +42,48 @@ class BaseDB<T extends BaseDocumentData> {
     return this.collectionRef.path;
   }
 
-
-  /**
-   * 指定したフィールドを除外するユーティリティメソッド
-   * @param data オブジェクトからフィールドを除外
-   * @returns 除外後のオブジェクト
-   */
-  private omitDocIdField(data: T): Omit<T, 'docId'> {
-    const { docId, ...rest } = data; // 'docId' を取り除き、残りのプロパティを rest に格納
-    return rest; // 除外後のオブジェクトを返す
-  }
-
   /**
    * Firestore操作をハンドリングするユーティリティメソッド
    * @param operation 実行するFirestore操作のPromise
    * @param errorMessage エラーメッセージ
    * @returns Firestore操作の結果
    */
-  private async handleFirestoreOperation<T>(operation: Promise<T>, errorMessage: string): Promise<T> {
+  private async handleFirestoreOperation<T>(operation: Promise<T>, errorMessage: string, context: string = ''): Promise<T> {
     try {
         return await operation;
     } catch (error) {
-        console.error(`${errorMessage}: `, error);
-        throw new Error(errorMessage);
+      console.error(`${errorMessage} ${context}:`, error);
+      throw new Error(`${errorMessage} ${context}`);
     }
+  }
+
+  /**
+   * 作成前の前処理を行う
+   * @param data 作成するデータ
+   * @returns 前処理がされたデータ
+   */
+  private createPreprocessing<T extends BaseDocumentData>(data: AutoFieldToUndefined<T>, options: { setActive?: boolean, keepCreatedAt?: boolean } = {}): Omit<T, 'docId'> {
+    return {
+        ...data,
+        createdAt: options.keepCreatedAt ? undefined : serverTimestamp(),
+        isActive: options.setActive ?? true
+    };
+  }
+
+  startBatch() {
+    if (this.batch) {
+        throw new Error("Batch already in progress. Commit or cancel the current batch first.");
+    }
+    this.batch = writeBatch(this.firestore);
+  }
+
+  cancelBatch() {
+      this.batch = null;
+  }
+
+  async commitBatch() {
+    if (this.batch) await this.batch.commit();
+    this.batch = null;
   }
 
   /**
@@ -71,9 +91,8 @@ class BaseDB<T extends BaseDocumentData> {
    * @param data 作成するドキュメントのデータ
    * @returns 作成されたドキュメントの参照
    */
-  async create(data: T): Promise<DocumentReference<T>> {
-    data.isActive = true;
-    const result = await this.handleFirestoreOperation(addDoc(this.collectionRef, this.omitDocIdField(data)), "Failed to create document");
+  async create(data: AutoFieldToUndefined<T> | T): Promise<DocumentReference<T>> {
+    const result = await this.handleFirestoreOperation(addDoc(this.collectionRef, this.createPreprocessing(data)), "Failed to create document");
     return result as DocumentReference<T>;
   }
 
@@ -82,11 +101,22 @@ class BaseDB<T extends BaseDocumentData> {
    * @param documentId 作成するドキュメントのID
    * @param data 作成するドキュメントのデータ
    * @param merge 既存のドキュメントにデータをマージするかどうか
+   * @param batchOff バッチ使用時にバッチ操作を行わないようにするかどうか
    */
-  async createWithId(documentId: string, data: T, merge: boolean = false): Promise<void> {
-    data.isActive = true;
+  async createWithId(documentId: string, data: AutoFieldToUndefined<T>, merge: boolean = false, batchOff: boolean = false): Promise<void> {
     const docRef = doc(this.collectionRef, documentId);
-    return this.handleFirestoreOperation(setDoc(docRef, this.omitDocIdField(data), { merge }), "Failed to create document with ID");
+    if (this.batch && !batchOff) {
+      this.batch.set(docRef, this.createPreprocessing(data));
+      return;
+    }
+    let keepCreatedAt: boolean = false;
+    if (merge) {
+      const snapshot = await this.readAsDocumentSnapshot(documentId);
+      if (snapshot.exists() && snapshot.data().createdAt) {
+        keepCreatedAt = true;
+      }
+    }
+    return this.handleFirestoreOperation(setDoc(docRef, this.createPreprocessing(data, { keepCreatedAt }), { merge }), "Failed to create document with ID", documentId);
   }
 
   /**
@@ -96,7 +126,7 @@ class BaseDB<T extends BaseDocumentData> {
    */
   async readAsDocumentSnapshot(documentId: string): Promise<DocumentSnapshot<T>> {
     const docRef = doc(this.collectionRef, documentId);
-    return this.handleFirestoreOperation(getDoc(docRef), "Failed to read document snapshot");
+    return this.handleFirestoreOperation(getDoc(docRef), "Failed to read document snapshot", documentId);
   }
 
   /**
@@ -123,38 +153,44 @@ class BaseDB<T extends BaseDocumentData> {
    * @param documentId 更新するドキュメントのID
    * @param data 更新するドキュメントのデータ（部分的）
    */
-  async update(documentId: string, data: FieldValueSupported<Partial<T>>): Promise<void> {
+  async update(documentId: string, data: FieldValueSupported<Partial<AutoFieldToUndefined<T>>>, batchOff = false): Promise<void> {
     console.log("Called update"); // 開発用
+    const docRef = doc(this.collectionRef, documentId);
+    
+    if (this.batch && !batchOff) {
+      this.batch.update(docRef, data as T);
+      return;
+    }
 
-    const docRef = doc(this.collectionRef, documentId) as DocumentReference<T>;
-    return this.handleFirestoreOperation(updateDoc(docRef, data as T), "Failed to update document");
+    data.createdAt = undefined;
+    return this.handleFirestoreOperation(updateDoc(docRef, {...data, updatedAt: serverTimestamp()} as T), "Failed to update document", documentId);
   }
 
   /**
    * ドキュメントを物理削除するメソッド
    * @param documentId 削除するドキュメントのID
    */
-  async hardDelete(documentId: string): Promise<void> {
+  async hardDelete(documentId: string, batchOff = false): Promise<void> {
+    console.log("Called hard delete"); // 開発用
     const docRef = doc(this.collectionRef, documentId);
-    return this.handleFirestoreOperation(deleteDoc(docRef), "Failed to hard delete document");
+    if (this.batch && !batchOff) {
+      this.batch.delete(docRef);
+      return;
+    }
+    return this.handleFirestoreOperation(deleteDoc(docRef), "Failed to hard delete document", documentId);
   }  
 
   /**
    * ドキュメントを論理削除するメソッド
    * @param documentId 削除するドキュメントのID
    */
-  async softDelete(documentId: string): Promise<void> {
-    const deleteData = await this.read(documentId);
-    if (deleteData) {
-      deleteData.isActive = false;
-      return this.handleFirestoreOperation(
-        this.update(documentId, { isActive: false } as FieldValueSupported<Partial<T>>),
-        "Failed to soft delete document"
-      );
-    } else {
-      console.warn(`Document with ID ${documentId} does not exist or is already deleted.`);
-      return Promise.resolve();
-    }
+  async softDelete(documentId: string, updateFields?: Partial<AutoFieldToUndefined<T>>, batchOff = false): Promise<void> {
+    console.log("soft deleted: ", documentId);
+    return this.update(
+      documentId,
+      { ...updateFields, isActive: false, deletedAt: serverTimestamp() } as FieldValueSupported<Partial<T>>,
+      batchOff
+    )
   }
 
   /**

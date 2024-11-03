@@ -2,6 +2,7 @@ import { DocumentData, DocumentReference, Firestore, QueryConstraint, Timestamp 
 import BaseDB from "../../../../base";
 import { IndividualTaskData } from "../../../../../../types/firebase/db/task/taskStructure";
 import { getInitialBaseDocumentData } from "../../../../../../functions/db/dbUtils";
+import { AutoFieldToUndefined } from "../../../../../../types/firebase/db/formatTypes";
 
 export class IndividualTaskService {
   private baseDB: BaseDB<IndividualTaskData> | undefined;
@@ -63,7 +64,7 @@ export class IndividualTaskService {
     }
   }
 
-  async updateTask(docId: string, taskId: string, data: Partial<IndividualTaskData>): Promise<void> {
+  async updateTask(docId: string, taskId: string, data: Partial<AutoFieldToUndefined<IndividualTaskData>>): Promise<void> {
     try {
       await this.getBaseDB(docId).update(taskId, data);
     } catch (error) {

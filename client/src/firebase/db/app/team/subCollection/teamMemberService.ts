@@ -1,10 +1,11 @@
 import { Firestore, Timestamp } from "firebase/firestore";
 import BaseDB from "../../../base";
-import { DocumentIdMap } from "../../../../../types/firebase/db/formatTypes";
+import { AutoFieldToUndefined, DocumentIdMap } from "../../../../../types/firebase/db/formatTypes";
 import { getInitialBaseDocumentData } from "../../../../../functions/db/dbUtils";
 import { UserTeamService } from "../../user/subCollection/userTeamService";
 import { BaseMemberRole } from "../../../../../types/firebase/db/baseTypes";
 import { TeamData, TeamMemberData } from "../../../../../types/firebase/db/team/teamStructure";
+import { autoFields } from "../../../../../constants/firebase/firestoreConstants";
 
 export class TeamMemberService {
   constructor(private firestore: Firestore, private userTeamService: UserTeamService) { }
@@ -20,8 +21,9 @@ export class TeamMemberService {
     joinedAt: Timestamp = Timestamp.now()
   ): Promise<void> {
     try {
-      const data: TeamMemberData = {
-        ...getInitialBaseDocumentData(userId),
+      const data: AutoFieldToUndefined<TeamMemberData> = {
+        ...autoFields,
+        createdById: userId,
         joinedAt,
         role,
       };

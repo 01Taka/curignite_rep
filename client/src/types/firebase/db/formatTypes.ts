@@ -1,4 +1,5 @@
 import { FieldValue, Timestamp } from "firebase/firestore";
+import { BaseDocumentData } from "./baseTypes";
 
 export type ConvertTimestampToNumber<T> = {
   [K in keyof T]: T[K] extends Timestamp ? number :
@@ -30,3 +31,9 @@ export type FieldValueSupported<T extends Record<string, any>> = {
       : U
     : never;
 };
+
+type SetFieldToUndefined<T, K extends keyof T> = {
+  [P in keyof T]: P extends K ? undefined : T[P];
+};
+
+export type AutoFieldToUndefined<T extends BaseDocumentData> = SetFieldToUndefined<T, 'docId' | 'createdAt' | 'isActive'>;

@@ -4,7 +4,7 @@ import { DocumentData, Timestamp } from "firebase/firestore";
 export interface BaseDocumentData extends DocumentData {
     docId: string; // ドキュメントId
     createdAt: Timestamp; // 作成日時
-    updatedAt: Timestamp; // 更新日時
+    updatedAt?: Timestamp; // 更新日時
     deletedAt?: Timestamp // 削除日時
     isActive: boolean; // 論理的削除の状態
     createdById: string; // 作成者のUserId

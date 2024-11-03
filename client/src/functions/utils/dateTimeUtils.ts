@@ -1,4 +1,4 @@
-import { format, differenceInSeconds, differenceInMinutes, differenceInHours, differenceInDays, differenceInYears, subSeconds, subMinutes, subHours, subDays, subYears, startOfMinute, startOfHour, startOfDay, startOfYear, isSameMinute } from 'date-fns';
+import { format, differenceInSeconds, differenceInMinutes, differenceInHours, differenceInDays, differenceInYears, subSeconds, subMinutes, subHours, subDays, subYears, startOfMinute, startOfHour, startOfDay, startOfYear, isSameMinute, isBefore } from 'date-fns';
 import { Timestamp } from 'firebase/firestore';
 import { DecimalDigits } from '../../types/util/componentsTypes';
 import { AbsoluteFormat, absoluteFormatItems, Days, DIGIT_SIZE, Format, FormatChange, ISODate, ISODateTime, RelativeFormat, TimeSizeUnit, TimeTypes } from '../../types/util/dateTimeTypes';
@@ -29,10 +29,11 @@ export const isEqualDate = (...days: TimeTypes[]): boolean => {
  * @param includesEqual - 基準日付と等しい場合も含めるかどうか
  * @returns 比較結果（ターゲット日付が基準日付よりも過去の場合はtrue、そうでない場合はfalse）
  */
-export const isBeforeDateTime = (baseDateTime: TimeTypes, targetDateTime: TimeTypes, includesEqual: boolean = false) => {
-    const baseMillis = convertToMilliseconds(baseDateTime);
-    const targetMillis = convertToMilliseconds(targetDateTime);
-    return includesEqual ? baseMillis >= targetMillis : baseMillis > targetMillis;
+export const isBeforeDateTime = (baseDateTime: TimeTypes, dateTimeToCompare: TimeTypes = new Date(), includesEqual: boolean = false, convertToMidnight = false) => {
+    const baseDate = convertToMidnight ? getMidnightDate(baseDateTime) : convertToDate(baseDateTime);
+    const dateToCompare = convertToMidnight ? getMidnightDate(dateTimeToCompare) : convertToDate(dateTimeToCompare);
+    if (includesEqual && baseDate === dateToCompare) return true;
+    return isBefore(baseDate, dateToCompare);
 }
 
 export const toISODate = (dateTime: TimeTypes): ISODate => {

@@ -36,7 +36,7 @@ const InitialSetup: React.FC = () => {
     if (uid) {
       initializeUser();
     }
-  }, [uid]);
+  }, [uid, updateField]);
 
   const handleSubmit = async () => {
     if (!uid) return;

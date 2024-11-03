@@ -1,7 +1,7 @@
 import { AuthStates } from "../../../../types/util/stateTypes";
 import { DocumentData, DocumentReference, Firestore, Timestamp } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import { DocumentIdMap } from "../../../../types/firebase/db/formatTypes";
+import { AutoFieldToUndefined, DocumentIdMap } from "../../../../types/firebase/db/formatTypes";
 import { getInitialBaseDocumentData } from "../../../../functions/db/dbUtils";
 import BaseDB from "../../base";
 import { BaseDocumentData } from "../../../../types/firebase/db/baseTypes";
@@ -12,6 +12,7 @@ import { UserWithNotExistUsersId } from "../../../../types/module/redux/slice/us
 import { differenceInDays } from "date-fns";
 import { convertToDate } from "../../../../functions/utils/dateTimeUtils";
 import { validateNumber } from "../../../../functions/utils/formUtils";
+import { autoFields } from "../../../../constants/firebase/firestoreConstants";
 
 export class UserService {
   private baseDB: BaseDB<UserData>;
@@ -36,8 +37,9 @@ export class UserService {
     try {
       const fileId = await this.storageManager.uploadFile(this.baseDB.getCollectionPath(), userId, iconFile);
 
-      const data: UserData = {
-        ...getInitialBaseDocumentData(userId),
+      const data: AutoFieldToUndefined<UserData> = {
+        ...autoFields,
+        createdById: userId,
         username,
         avatarIconId: fileId,
         birthTimestamp,

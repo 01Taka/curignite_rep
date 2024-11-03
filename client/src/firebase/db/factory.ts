@@ -11,7 +11,11 @@ import { UserHelpService } from './app/user/subCollection/userHelpService';
 import { HelpAnswerService } from './app/user/subCollection/helpAnswerService';
 
 // ユーザータスク関連サービス
-
+import { IndividualTaskService } from './app/user/subCollection/task/individualTaskService';
+import { ProblemSetService } from './app/user/subCollection/task/problemSetService';
+import { ProblemSetActivityService } from './app/user/subCollection/task/problemSetActivityService';
+import { ProblemSetCategoryService } from './app/user/subCollection/task/problemSetCategoryService';
+import { problemSetStepPlanService } from './app/user/subCollection/task/taskStep/problemSetStepPlanService';
 
 // チーム関連サービス
 import { TeamService } from './app/team/teamService';
@@ -27,10 +31,7 @@ import { SpaceMemberService } from './app/space/subCollection/spaceMemberService
 // チャット関連サービス
 import { ChatRoomService } from './app/chat/chatRoomService';
 import { ChatRoomChatService } from './app/chat/subCollection/chatRoomChatService';
-import { IndividualTaskService } from './app/user/subCollection/task/individualTaskService';
-import { ProblemSetService } from './app/user/subCollection/task/problemSetService';
-import { ProblemSetActivityService } from './app/user/subCollection/task/problemSetActivityService';
-import { ProblemSetCategoryService } from './app/user/subCollection/task/problemSetCategoryService';
+
 
 type ConstructorWithArgs<T, Args extends any[]> = new (...args: Args) => T;
 
@@ -76,7 +77,7 @@ export class ServiceFactory {
   }
 
   createUserDailyLearningSummary() {
-    return this.getInstance('userDailyLearningSummary', UserDailyLearningSummaryService, this.firestore)
+    return this.getInstance('userDailyLearningSummary', UserDailyLearningSummaryService, this.firestore);
   }
 
   createUserHelpService() {
@@ -88,11 +89,15 @@ export class ServiceFactory {
   }
 
   createIndividualTaskService() {
-    return this.getInstance('individualTask', IndividualTaskService, this.firestore)
+    return this.getInstance('individualTask', IndividualTaskService, this.firestore);
   }
 
   createProblemSetService() {
-    return this.getInstance('problemSet', ProblemSetService, this.firestore)
+    return this.getInstance('problemSet', ProblemSetService, this.firestore);
+  }
+
+  createProblemSetStepPlanService() {
+    return this.getInstance('problemSetStepPlan', problemSetStepPlanService, this.firestore);
   }
 
   createProblemSetActivityService() {

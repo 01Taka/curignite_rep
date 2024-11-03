@@ -1,5 +1,6 @@
 import { DocumentData, DocumentReference } from "firebase/firestore";
-import { ProblemSetActivityManagementMethod, ProblemSetCategoryData, ProblemSetData } from "../../../../../types/firebase/db/task/taskStructure";
+import { ProblemSetCategoryData, ProblemSetData } from "../../../../../types/firebase/db/task/taskStructure";
+import { ProblemSetActivityManagementMethod } from "../../../../../types/firebase/db/task/taskSupplementTypes";
 
 export interface ProblemSetCategoryForm {
   name: string;

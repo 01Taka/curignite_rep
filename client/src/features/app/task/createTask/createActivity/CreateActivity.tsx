@@ -3,12 +3,13 @@ import serviceFactory from '../../../../../firebase/db/factory';
 import { useAppSelector } from '../../../../../redux/hooks';
 import { toTimestamp } from '../../../../../functions/utils/dateTimeUtils';
 import useFormState from '../../../../hooks/form/useFormState';
-import { CategoryActivity, ProblemSetActivityData, ProblemSetCategoryData, ProblemSetData } from '../../../../../types/firebase/db/task/taskStructure';
+import { ProblemSetActivityData, ProblemSetCategoryData, ProblemSetData } from '../../../../../types/firebase/db/task/taskStructure';
 import useAsyncHandler from '../../../../hooks/form/useAsyncHandler';
 import { DocumentData, DocumentReference } from 'firebase/firestore';
 import CreateActivityView from './CreateActivityView';
 import { CreateActivityFormState } from './createActivityTypes';
 import { mergeRanges } from '../../../../../functions/utils/rangeUtils';
+import { CategoryActivity } from '../../../../../types/firebase/db/task/taskSupplementTypes';
 
 interface CreateActivityProps {
   problemSet: ProblemSetData | null;

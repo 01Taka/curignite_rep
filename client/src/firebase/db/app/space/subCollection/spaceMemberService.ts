@@ -3,6 +3,8 @@ import BaseDB from "../../../base";
 import { getInitialBaseDocumentData, isDocumentExist } from "../../../../../functions/db/dbUtils";
 import { BaseMemberRole } from "../../../../../types/firebase/db/baseTypes";
 import { SpaceData, SpaceMemberData } from "../../../../../types/firebase/db/space/spaceStructure";
+import { AutoFieldToUndefined } from "../../../../../types/firebase/db/formatTypes";
+import { autoFields } from "../../../../../constants/firebase/firestoreConstants";
 
 export class SpaceMemberService {
   constructor(private firestore: Firestore) {}
@@ -19,8 +21,9 @@ export class SpaceMemberService {
     joinedAt: Timestamp = Timestamp.now(),
   ): Promise<void> {
     try {
-      const data: SpaceMemberData = {
-        ...getInitialBaseDocumentData(userId),
+      const data: AutoFieldToUndefined<SpaceMemberData> = {
+        ...autoFields,
+        createdById: userId,
         role,
         isAway,
         joinedAt,

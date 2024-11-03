@@ -1,7 +1,8 @@
 import { DocumentData, DocumentReference, Firestore, Timestamp } from "firebase/firestore";
-import { CategoryActivity, ProblemSetActivityData } from "../../../../../../types/firebase/db/task/taskStructure";
+import { ProblemSetActivityData } from "../../../../../../types/firebase/db/task/taskStructure";
 import BaseDB from "../../../../base";
 import { getInitialBaseDocumentData } from "../../../../../../functions/db/dbUtils";
+import { CategoryActivity } from "../../../../../../types/firebase/db/task/taskSupplementTypes";
 
 export class ProblemSetActivityService {
   private baseDB: BaseDB<ProblemSetActivityData> | undefined;

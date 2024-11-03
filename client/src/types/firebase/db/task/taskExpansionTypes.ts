@@ -1,6 +1,8 @@
-import { CategoryActivity, ProblemSetCategoryData, IndividualTaskData, ProblemSetData } from "./taskStructure";
+import { ProblemSetCategoryData, IndividualTaskData, ProblemSetData } from "./taskStructure";
+import { CategoryActivity, ProblemSetActivityManagementMethod } from "./taskSupplementTypes";
 
 export interface TaskData extends IndividualTaskData {
+  isIndividual: boolean;
   remainingEstimatedDuration: number;
   problemSetActivityField?: ProblemSetActivityField; // 問題集の活動フィールド
 }
@@ -13,6 +15,7 @@ export interface ExpansionProblemSetData extends ProblemSetData {
 
 export interface ProblemSetActivityField {
   totalProblemCount: number; // 総問題数
+  activityManagementMethod: ProblemSetActivityManagementMethod;
   activityStatus: CategoryActivityStatus[];
   completionRate: `${number}/${number}`;
 }

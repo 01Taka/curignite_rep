@@ -2,13 +2,12 @@ import { Timestamp } from "firebase/firestore";
 import { BaseDocumentData } from "../../types/firebase/db/baseTypes";
 
 // 動的ドキュメント作成時の初期値を取得する
-export const getInitialBaseDocumentData = (createdById: string, docId: string = ""): BaseDocumentData => {
+export const getInitialBaseDocumentData = (createdById: string): BaseDocumentData => {
     return {
-        docId,
-        createdAt: Timestamp.now(),
-        updatedAt: Timestamp.now(),
-        isActive: true,
         createdById,
+        docId: '',
+        createdAt: undefined as unknown as Timestamp,
+        isActive: true
     }
 }
 
