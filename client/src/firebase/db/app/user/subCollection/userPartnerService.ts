@@ -1,6 +1,5 @@
 import { Firestore, Timestamp } from 'firebase/firestore';
 import BaseDB from '../../../base';
-import { getInitialBaseDocumentData } from '../../../../../functions/db/dbUtils';
 import { UserPartnerData } from '../../../../../types/firebase/db/user/userStructure';
 import { PartnerStatus } from '../../../../../types/firebase/db/user/userSupplementTypes';
 import { AutoFieldToUndefined } from '../../../../../types/firebase/db/formatTypes';

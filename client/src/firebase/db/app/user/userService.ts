@@ -2,7 +2,6 @@ import { AuthStates } from "../../../../types/util/stateTypes";
 import { DocumentData, DocumentReference, Firestore, Timestamp } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { AutoFieldToUndefined, DocumentIdMap } from "../../../../types/firebase/db/formatTypes";
-import { getInitialBaseDocumentData } from "../../../../functions/db/dbUtils";
 import BaseDB from "../../base";
 import { BaseDocumentData } from "../../../../types/firebase/db/baseTypes";
 import { TeamMemberService } from "../team/subCollection/teamMemberService";

@@ -179,7 +179,7 @@ export class TaskManagementService {
 
     const { completedIds, remainingIds } = problemIds.reduce(
       (status, id) => {
-        if (isNumberInRange(category.completedProblemIdsRange, id)) {
+        if (isNumberInRange(category.completedProblemIdsRange, id, true)) {
           status.completedIds.push(id);
         } else {
           status.remainingIds.push(id);

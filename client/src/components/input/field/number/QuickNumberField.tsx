@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react';
-import { FormStateChangeFunc, SelectItem } from '../../../types/util/componentsTypes';
-import PopupSelectField from '../popupField/PopupSelectField';
+import { FormStateChangeFunc, SelectItem } from '../../../../types/util/componentsTypes';
+import PopupSelectField from '../../popupField/PopupSelectField';
 import { Box, Button, Typography } from '@mui/material';
-import useTabIndex from '../../../features/hooks/useTabIndex';
-import { handleCallOnChange } from '../../../functions/utils/formUtils';
-import NumberField from './NumberField';
-import Popup from '../../display/popup/Popup';
+import useTabIndex from '../../../../features/hooks/useTabIndex';
+import { handleCallOnChange } from '../../../../functions/utils/formUtils';
+import NumberField from './../number/NumberField';
+import Popup from '../../../display/popup/Popup';
 
 interface QuickNumberFieldProps {
   name: string;

@@ -57,3 +57,11 @@ export const safeNumber = (value: number) => {
   const num = Number(value);
   return Number.isNaN(num) ? 0 : num;
 }
+
+export const applyFunctionToArray = <T, K, P extends unknown[]>(
+  transformer: (item: T, ...params: P) => K,
+  items: T[],
+  ...params: P
+): K[] => {
+  return items.map(item => transformer(item, ...params));
+};

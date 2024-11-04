@@ -23,14 +23,16 @@ export class ProblemSetCategoryService {
   async createCategory(
     creatorId: string,
     problemSetId: string,
-    name: string | 'page', // カテゴリの名前
+    name: string | '', // カテゴリの名前
+    isPage: boolean,
     timePerProblem: number,
     totalProblemNumber: number | null, // カテゴリ内の問題の総数
     completedProblemIdsRange: Range[] = [] // 完了した問題番号
   ): Promise<DocumentReference<ProblemSetCategoryData, DocumentData> >{
     const data: ProblemSetCategoryData = {
       ...getInitialBaseDocumentData(creatorId),
-      name,
+      name: isPage ? 'page' : name,
+      isPage,
       timePerProblem,
       totalProblemNumber,
       completedProblemIdsRange

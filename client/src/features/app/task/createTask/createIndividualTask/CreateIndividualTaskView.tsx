@@ -6,7 +6,7 @@ import { StringField } from '../../../../../components/input/inputIndex';
 import MultilineField from '../../../../../components/input/field/MultilineField';
 import { Box, Button, Typography } from '@mui/material';
 import DateField from '../../../../../components/input/field/DateField';
-import QuickNumberField from '../../../../../components/input/field/QuickNumberField';
+import QuickNumberField from '../../../../../components/input/field/number/QuickNumberField';
 import { createNumberSelectItems } from '../../../../../functions/utils/formUtils';
 
 interface CreateIndividualTaskViewProps {

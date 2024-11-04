@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { CreateProblemSetViewFormState, ProblemSetCategoryForm } from './createProblemSetTypes';
 import useArrayState from '../../../../hooks/form/useArrayState';
 import { Box, Button, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
-import QuickNumberField from '../../../../../components/input/field/QuickNumberField';
+import QuickNumberField from '../../../../../components/input/field/number/QuickNumberField';
 import { createNumberSelectItems, updateFiledByEvent } from '../../../../../functions/utils/formUtils';
 import CategoryForm from './CategoryForm';
 import { ProblemSetActivityManagementMethod } from '../../../../../types/firebase/db/task/taskSupplementTypes';

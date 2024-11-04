@@ -18,6 +18,19 @@ export type TimeTypes = number | Timestamp | Date | ISODate | ISODateTime;
 
 export type TimeSizeUnit = "millis" | "seconds" | "minutes" | "hours" | "days" | "years";
 
+export type DateElements = {
+    object: Date;
+    milliseconds: number;
+    seconds: number;
+    minutes: number;
+    hours: number;
+    date: number;
+    day: number;
+    months: number;
+    fullYears: number;
+    time: number;
+};
+
 export interface FormatBase {
     truncateNotReachDigit?: boolean;
     endingUnit?: string;

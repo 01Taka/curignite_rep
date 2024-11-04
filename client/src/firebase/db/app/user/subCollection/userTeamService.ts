@@ -1,6 +1,5 @@
 import { Firestore, Timestamp } from "firebase/firestore";
 import BaseDB from "../../../base";
-import { getInitialBaseDocumentData } from "../../../../../functions/db/dbUtils";
 import { UserTeamData } from "../../../../../types/firebase/db/user/userStructure";
 import { JoinRequestStatus } from "../../../../../types/firebase/db/common/joinRequest/joinRequestSupplementTypes";
 import { autoFields } from "../../../../../constants/firebase/firestoreConstants";

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { TextField } from '@mui/material';
-import { FormStateChangeFunc } from '../../../types/util/componentsTypes';
+import { SxProps, TextField } from '@mui/material';
+import { FormStateChangeFunc } from '../../../../types/util/componentsTypes';
 
 interface NumberFieldProps {
   value: number | string;
@@ -10,6 +10,8 @@ interface NumberFieldProps {
   min?: number;
   max?: number;
   onChange: FormStateChangeFunc;
+  fullWidth?: boolean;
+  sx?: SxProps;
 }
 
 const NumberField: React.FC<NumberFieldProps> = ({
@@ -20,6 +22,8 @@ const NumberField: React.FC<NumberFieldProps> = ({
   min = -Infinity,
   max = Infinity,
   onChange,
+  fullWidth = true,
+  sx
 }) => {
   useEffect(() => {
     if (initialValue !== undefined && value === '') {
@@ -72,7 +76,8 @@ const NumberField: React.FC<NumberFieldProps> = ({
       onChange={handleValueChange}
       onBlur={handleBlur}
       inputProps={{ min, max }}
-      fullWidth
+      fullWidth={fullWidth}
+      sx={sx}
     />
   );
 };

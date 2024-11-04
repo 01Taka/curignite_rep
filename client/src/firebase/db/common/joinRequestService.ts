@@ -1,7 +1,6 @@
 import { Firestore, QueryConstraint, Timestamp } from "firebase/firestore";
 import { JoinRequestData } from "../../../types/firebase/db/common/joinRequest/joinRequestStructure";
 import BaseDB from "../base";
-import { getInitialBaseDocumentData } from "../../../functions/db/dbUtils";
 import { convertTimestampsToNumbers, revertTimestampConversion } from "../../../functions/db/dataFormatUtils";
 import { sortObjectArray } from "../../../functions/utils/objectUtils";
 import { JoinRequestStatus } from "../../../types/firebase/db/common/joinRequest/joinRequestSupplementTypes";

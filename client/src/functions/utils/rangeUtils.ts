@@ -1,5 +1,20 @@
 import { Range } from "../../types/util/componentsTypes";
 import { seq } from "./objectUtils";
+import { RangeOptions } from "./rangeUtilsTypes";
+
+
+export const getRange = (start: number, end: number): Range => {
+  const [min, max] = end > start ? [start, end] : [end, start];
+  return { min, max }
+}
+
+export const isSameRange = (...ranges: Range[]): boolean => {
+  if (ranges.length < 2) {
+    return true;
+  }
+  const [baseMin, baseMax] = [ranges[0].min, ranges[0].max];
+  return ranges.every(range => range.min === baseMin && range.max === baseMax);
+}
 
 export const sumRanges = (ranges: Range[]): number => {
   return ranges.reduce((sum, { min, max }) => {
@@ -19,10 +34,10 @@ export const arrayToRanges = (arr: number[]): Range[] => {
   const ranges: Range[] = [];
 
   let start = sortedArray[0];
-  let end = start;
+  let end: number | null = null;
 
   sortedArray.forEach((num) => {
-    if (num === end + 1) {
+    if (end === null || num === end + 1) {
       // 連続している場合、end を更新
       end = num;
     } else {
@@ -34,23 +49,32 @@ export const arrayToRanges = (arr: number[]): Range[] => {
   });
 
   // 最後の範囲を追加
-  ranges.push({ min: start, max: end });
+  if (end) {
+    ranges.push({ min: start, max: end });
+  }
 
   return ranges;
 };
 
-export const arrayToRangeString = (arr: number[]) => {
+export const arrayToRangeString = (arr: number[], options: RangeOptions = {}): string => {
+  if (arr.length === 0) return "";
+  const { delimiter = ', ', unit = "", connection = '~' } = options;
   const ranges = arrayToRanges(arr);
-  return rangesToString(ranges);
-}
+  return rangesToString(ranges, { delimiter, unit, connection });
+};
 
-export const rangeToString = (range: Range, connection: string = '~'): string => {
-  return range.min === range.max ? String(range.min) : `${range.min ?? ''}${connection}${range.max ?? ''}`
-}
+export const rangeToString = (range: Range, options: RangeOptions = {}): string => {
+  const { unit = "", connection = '~' } = options;
+  return range.min === range.max
+    ? `${String(range.min)}${unit}`
+    : `${range.min ?? ''}${connection}${range.max ?? ''}${unit}`;
+};
 
-export const rangesToString = (ranges: Range[], delimiter: string = ', ', connection: string = '~'): string => {
+export const rangesToString = (ranges: Range[], options: RangeOptions = {}): string => {
+  if (ranges.length === 0) return "";
+  const { delimiter = ', ', unit = "", connection = '~' } = options;
   return ranges
-    .map(range => rangeToString(range, connection))
+    .map(range => rangeToString(range, { unit, connection }))
     .join(delimiter);
 };
 
@@ -64,8 +88,13 @@ export const rangesToArray = (ranges: Range[], includeMax: boolean = false): num
   return Array.from(setRanges);
 }
 
-export const isNumberInRange = (ranges: Range[], numberToCheck: number): boolean => {
-  return ranges.some(range => numberToCheck >= range.min && numberToCheck <= range.max);
+export const isNumberInRange = (ranges: Range[] | Range, numberToCheck: number, includeMax: boolean = true): boolean => {
+  const inRange = (min: number, max: number, value: number) => {
+    return value >= min && (value < max || (includeMax && value === max));
+  }
+  return Array.isArray(ranges)
+   ? ranges.some(range => inRange(range.min, range.max, numberToCheck))
+   : inRange(ranges.min, ranges.max, numberToCheck);
 }
 
 export const mergeRanges = (ranges: Range[]): Range[] => {

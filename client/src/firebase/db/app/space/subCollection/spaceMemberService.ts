@@ -1,6 +1,6 @@
 import { doc, Firestore, Timestamp, Transaction } from "firebase/firestore";
 import BaseDB from "../../../base";
-import { getInitialBaseDocumentData, isDocumentExist } from "../../../../../functions/db/dbUtils";
+import { isDocumentExist } from "../../../../../functions/db/dbUtils";
 import { BaseMemberRole } from "../../../../../types/firebase/db/baseTypes";
 import { SpaceData, SpaceMemberData } from "../../../../../types/firebase/db/space/spaceStructure";
 import { AutoFieldToUndefined } from "../../../../../types/firebase/db/formatTypes";

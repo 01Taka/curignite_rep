@@ -1,9 +1,9 @@
 import React, { FC, useCallback, useEffect, useState, memo } from "react";
 import { TextField, Slider, Box, Button, Typography, Divider, IconButton } from "@mui/material";
 import { Delete as DeleteIcon } from "@mui/icons-material";
-import { FormStateChangeFunc, Range } from "../../../types/util/componentsTypes";
-import { mergeRanges } from "../../../functions/utils/rangeUtils";
-import { sortObjectArray } from "../../../functions/utils/objectUtils";
+import { FormStateChangeFunc, Range } from "../../../../types/util/componentsTypes";
+import { mergeRanges } from "../../../../functions/utils/rangeUtils";
+import { sortObjectArray } from "../../../../functions/utils/objectUtils";
 
 interface RangeFieldProps {
   label: string;

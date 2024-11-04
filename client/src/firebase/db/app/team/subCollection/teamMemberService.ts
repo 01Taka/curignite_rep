@@ -1,7 +1,6 @@
 import { Firestore, Timestamp } from "firebase/firestore";
 import BaseDB from "../../../base";
 import { AutoFieldToUndefined, DocumentIdMap } from "../../../../../types/firebase/db/formatTypes";
-import { getInitialBaseDocumentData } from "../../../../../functions/db/dbUtils";
 import { UserTeamService } from "../../user/subCollection/userTeamService";
 import { BaseMemberRole } from "../../../../../types/firebase/db/baseTypes";
 import { TeamData, TeamMemberData } from "../../../../../types/firebase/db/team/teamStructure";

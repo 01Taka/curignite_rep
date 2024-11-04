@@ -27,7 +27,7 @@ const useTabIndex = (
 
   useEffect(() => {
     changeTab(initialState);
-  }, [initialState]);
+  }, [initialState, changeTab]);
 
   return { tabIndex, changeTab, resetTab };
 };

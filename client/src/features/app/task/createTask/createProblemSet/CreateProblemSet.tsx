@@ -36,6 +36,7 @@ const CreateProblemSet: FC = () => {
             uid,
             problemSetData.id,
             category.name,
+            formState.activityManagementMethod === 'page',
             category.timePerProblem * MINUTES_IN_MILLISECOND,
             category.totalProblemNumber
           ], categoryService.createCategory.bind(categoryService))

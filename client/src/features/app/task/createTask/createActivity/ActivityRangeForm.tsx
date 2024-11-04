@@ -2,7 +2,7 @@ import React, { useMemo, useCallback } from 'react';
 import { CategoryActivityFormState, CreateActivityFormState } from './createActivityTypes';
 import { ProblemSetCategoryData } from '../../../../../types/firebase/db/task/taskStructure';
 import { Box, Button } from '@mui/material';
-import RangeField from '../../../../../components/input/field/RangeField';
+import RangeField from '../../../../../components/input/field/number/RangeField';
 import SelectField from '../../../../../components/input/field/SelectField';
 import { Range, SelectItem } from '../../../../../types/util/componentsTypes';
 import { UpdateArrayFieldArgs } from '../../../../hooks/form/AsyncHandlerTypes';

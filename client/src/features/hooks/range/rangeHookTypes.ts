@@ -1,0 +1,1 @@
+export type RangeSelectionState = 'idle' | 'selecting' | 'edit';

@@ -1,10 +1,7 @@
-import React, { FC, useEffect, useState, useCallback } from 'react';
+import { FC } from 'react';
 import { useParams } from 'react-router-dom';
 import { PathParam } from '../../../../types/path/paths';
-import serviceFactory from '../../../../firebase/db/factory';
 import TeamSettingView from './TeamSettingView';
-import { CircularProgress } from '@mui/material';
-import { TeamData } from '../../../../types/firebase/db/team/teamStructure';
 import { useAppSelector } from '../../../../redux/hooks';
 import { revertTimestampConversion } from '../../../../functions/db/dataFormatUtils';
 

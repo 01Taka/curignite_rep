@@ -3,10 +3,15 @@ import ChooseSettingPopups from '../../../features/app/learning/popups/ChooseSet
 import LearningStateManager from '../../../features/app/learning/learningState/LearningStateManager';
 import { Box } from '@mui/material';
 import WorkOnTasksManager from '../../../features/app/learning/workOnTasks/WorkOnTasksManager';
+import ProblemSetStep from '../../../features/app/task/step/problemSetStep/ProblemSetStep';
+import QuickPlanEntry from '../../../features/app/task/step/problemSetStep/quickPlanEntry/QuickPlanEntry';
+import useProblemSet from '../../../features/app/task/hooks/useProblemSet';
+import Prob from '../../../features/app/task/step/problemSetStep/quickPlanEntry/SelectDateCalendar';
 
 interface LearningRootProps { }
 
 const LearningRoot: React.FC<LearningRootProps> = () => {
+  return <ProblemSetStep />
   return (
     <div>
       <Box sx={{
@@ -14,6 +19,7 @@ const LearningRoot: React.FC<LearningRootProps> = () => {
       }}>
         <LearningStateManager />
       </Box>
+      
       <WorkOnTasksManager />
       <ChooseSettingPopups />
     </div>

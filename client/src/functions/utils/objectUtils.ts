@@ -1,4 +1,5 @@
 import { StringNumber } from "../../types/util/utilTypes";
+import { convertToStringOrJson } from "./stringUtils";
 import { performComparison } from "./utils";
 
 /**
@@ -257,6 +258,45 @@ export const removeDuplicatesByKey = <T extends Record<string, any>>(objects: T[
     return true;
   });
 }
+
+/**
+ * 指定されたキーでオブジェクトの配列をグループ化します。
+ *
+ * @param objectArray - グループ化するオブジェクトの配列。
+ * @param key - グループ化に使用するキー。
+ * @returns グループ化されたオブジェクト。キーは指定されたキーの値、値はそのキーに関連するオブジェクトの配列。
+ */
+export const groupingByKey = <T extends Record<string, any>>(objectArray: T[], key: keyof T): Record<string, T[]> => {
+  return objectArray.reduce((acc, obj) => {
+      const groupKey = obj[key];
+
+      // groupKeyがstringまたはJSON形式の文字列の場合を確認
+      const validKey: string = convertToStringOrJson(groupKey);
+
+      // validKeyが存在しない場合は新しい配列を作成
+      if (!acc[validKey]) {
+          acc[validKey] = [];
+      }
+
+      // 現在のオブジェクトをグループに追加
+      acc[validKey].push(obj);
+      return acc;
+  }, {} as Record<string, T[]>);
+};
+
+
+/**
+ * オブジェクトのキーと値を持つオブジェクトの配列を返します。
+ *
+ * @param dict - キーと値のペアを持つオブジェクト。
+ * @returns キーとその値を含むオブジェクトの配列。
+ */
+export const convertDictToKeyValuePairs = <T extends Record<string, any>>(dict: T): { key: string; value: T[keyof T] }[] => {
+  return Object.entries(dict).map(([key, value]) => ({
+    key,
+    value,
+  }));
+};
 
 export const union = <T>(...setsOrArrays: (Set<T> | T[])[]): Set<T> => {
   const sets = setsOrArrays.map(value => new Set(value));

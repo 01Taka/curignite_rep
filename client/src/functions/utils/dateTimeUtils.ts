@@ -1,8 +1,9 @@
-import { format, differenceInSeconds, differenceInMinutes, differenceInHours, differenceInDays, differenceInYears, subSeconds, subMinutes, subHours, subDays, subYears, startOfMinute, startOfHour, startOfDay, startOfYear, isSameMinute, isBefore } from 'date-fns';
+import { format, differenceInSeconds, differenceInMinutes, differenceInHours, differenceInDays, differenceInYears, subSeconds, subMinutes, subHours, subDays, subYears, startOfMinute, startOfHour, startOfDay, startOfYear, isSameMinute, isBefore, milliseconds } from 'date-fns';
 import { Timestamp } from 'firebase/firestore';
 import { DecimalDigits } from '../../types/util/componentsTypes';
-import { AbsoluteFormat, absoluteFormatItems, Days, DIGIT_SIZE, Format, FormatChange, ISODate, ISODateTime, RelativeFormat, TimeSizeUnit, TimeTypes } from '../../types/util/dateTimeTypes';
+import { AbsoluteFormat, absoluteFormatItems, DateElements, Days, DIGIT_SIZE, Format, FormatChange, ISODate, ISODateTime, RelativeFormat, TimeSizeUnit, TimeTypes } from '../../types/util/dateTimeTypes';
 import { DAYS_IN_MILLISECOND, HOURS_IN_MILLISECOND, MINUTES_IN_MILLISECOND, SECONDS_IN_MILLISECOND, YEARS_IN_MILLISECOND } from '../../constants/utils/dateTimeConstants';
+import { applyFunctionToArray } from './utils';
 
 export const isMidnight = (dateTime: TimeTypes) => {
     const date = convertToDate(dateTime);
@@ -384,3 +385,38 @@ export const formatDateDifference = (
     const fom = remainingDays < 0 ? overFormat : format;
     return fom.replace(/d/g, String(Math.abs(remainingDays)))
 };
+
+const getDateElements = (date: Date, useUTC: boolean = false): DateElements => {
+    if (useUTC) {
+        return {
+            object: date,
+            milliseconds: date.getUTCMilliseconds(),
+            seconds: date.getUTCSeconds(),
+            minutes: date.getUTCMinutes(),
+            hours: date.getUTCHours(),
+            date: date.getUTCDate(),
+            day: date.getUTCDay(),
+            months: date.getUTCMonth() + 1,
+            fullYears: date.getUTCFullYear(),
+            time: date.getTime(),
+        };
+    } else {
+        return {
+            object: date,
+            milliseconds: date.getMilliseconds(),
+            seconds: date.getSeconds(),
+            minutes: date.getMinutes(),
+            hours: date.getHours(),
+            date: date.getDate(),
+            day: date.getDay(),
+            months: date.getMonth() + 1,
+            fullYears: date.getFullYear(),
+            time: date.getTime(),
+        };
+    }
+};
+
+export const getDatesElements = (dates: Date[], useUTC: boolean = false) => {
+    return applyFunctionToArray(getDateElements, dates, useUTC);
+}
+    

@@ -20,6 +20,7 @@ export interface ProblemSetData extends BaseDocumentData {
 
 export interface ProblemSetCategoryData extends BaseDocumentData {
   name: string | 'page'; // カテゴリの名前
+  isPage: boolean;
   timePerProblem: number;
   totalProblemNumber: number | null; // カテゴリ内の問題の総数
   completedProblemIdsRange: Range[]; // 完了した問題番号

@@ -1,6 +1,6 @@
 import React from 'react';
 import TaskManager from '../../../features/app/task/taskManager/TaskManager';
-import GoalSettingForm from '../../../features/app/task/goalSetting/GoalSettingForm';
+// import GoalSettingForm from '../../../features/app/task/goalSetting/GoalSettingForm';
 
 interface TaskRootProps { }
 
