@@ -1,60 +1,75 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import { CategoryActivityStatus, ProblemSetActivityField, TaskData } from '../../../../../../types/firebase/db/task/taskExpansionTypes';
-import { groupingByKey, objectArrayToDict, removeDuplicates, removeNullAndUndefined } from '../../../../../../functions/utils/objectUtils';
+import React, { useRef, useState } from 'react';
+import { TaskData } from '../../../../../../types/firebase/db/task/taskExpansionTypes';
 import { Box, Button, FormControlLabel, Switch } from '@mui/material';
-import { rangesToArray } from '../../../../../../functions/utils/rangeUtils';
-import { ProblemGroup } from '../problemSetStepTypes';
+import { ProblemContainerRef, SelectDateCalendarRef } from '../problemSetStepTypes';
 import QuickPlanEntryContainer from './QuickPlanEntryContainer';
 import SelectDateCalendar from './SelectDateCalendar';
-import { Range } from '../../../../../../types/util/componentsTypes';
-import { DAYS_IN_MILLISECOND } from '../../../../../../constants/utils/dateTimeConstants';
-import { convertToDate } from '../../../../../../functions/utils/dateTimeUtils';
 import MultipleNumberCounterField from '../../../../../../components/input/field/number/MultipleNumberCounterField';
 import { MotionBox } from '../../../../../../components/animation/MotionComponents';
 import SettingStateDisplay from './SettingStateDisplay';
+import { usePlanEntry } from '../hooks/usePlanEntry';
+import useLog from '../../../../../hooks/useLog';
+import useMultipleRefs from '../../../../../hooks/useMultipleRefs';
 
 interface QuickPlanEntryProps {
-  taskData: TaskData | null;
+  taskData: TaskData;
 }
 
 const QuickPlanEntry: React.FC<QuickPlanEntryProps> = ({ taskData }) => {
-  const [activeTarget, setActiveTarget] = useState<`task-${string}` | 'calender' | null>(null);
-  const [currentProblems, setCurrentProblems] = useState<Record<string, number[]>>({});
-  const [currentDates, setCurrentDates] = useState<Date[]>([]);
-  const [distributionRatio, setDistributionRatio] = useState<number[]>([]);
-  const [useAutoSettingRatio, setUseAutoSettingRatio] = useState<boolean>(true);
-
-  const categoryMap = useMemo(() => {
-    if (taskData && taskData.problemSetActivityField) {
-      const categories = taskData.problemSetActivityField.activityStatus.map(state => state.category);
-      return objectArrayToDict(categories, 'docId');
-    }
-    return {};
-  }, [taskData])
-
-  const handleSelectProblems = useCallback((id: string, numbers: number[]) => {
-    setCurrentProblems(prev => ({
-      ...prev,
-      [id]: numbers
-    }));
-  }, []);
-
-  const handleSelectDates = useCallback((ranges: Range[]) => {
-    const dateNumber = rangesToArray(ranges, true);
-    const dates = dateNumber.map(num => convertToDate((num + 1) * DAYS_IN_MILLISECOND));
-    setCurrentDates(dates);
-  }, []);
+  const {
+    categoryMap,
+    problemsWithDate,
+    currentProblems,
+    currentDates,
+    useAutoSettingRatio,
+    distributionRatio,
+    entries,
+    handleSelectProblems,
+    handleSelectDates,
+    setDistributionRatio,
+    setUseAutoSettingRatio,
+    getGroupedProblems,
+    handleEntryCurrent
+  } = usePlanEntry(taskData);
 
   const activityField = taskData?.problemSetActivityField;
-  if (!activityField) {
-    console.error("problemSetActivityFieldは必須です");
-    return null;
+  const groupedProblems = activityField ? getGroupedProblems(activityField) : [];
+
+  const planEntryRefs = useMultipleRefs<ProblemContainerRef>(groupedProblems.length);
+  const calenderRef = useRef<SelectDateCalendarRef>(null);
+
+  const handleCancelSelection = (exceptIndex: number) => {
+    planEntryRefs.map((ref, i) => {
+      if (ref && ref.current && i !== exceptIndex) {
+        ref.current.onCancelSelection();
+      }
+    })
+    if (calenderRef && calenderRef.current && exceptIndex !== -1) {
+      calenderRef.current.onCancelSelection();
+    }
+  };
+
+  const handleDeleteAllSelection = () => {
+    planEntryRefs.map(ref => {
+      if (ref && ref.current) {
+        ref.current.deleteAllSelection();
+      }
+    })
+    if (calenderRef && calenderRef.current) {
+      calenderRef.current.deleteAllSelection();
+    }
+  };
+
+  useLog(entries);
+
+  const handleEnter = () => {
+    handleEntryCurrent();
+    handleDeleteAllSelection();
   }
-  const groupedProblems = getGroupedProblems(activityField);
-  
+
   return (
     <Box>
-      <Button variant='contained'>
+      <Button variant='contained' onClick={handleEnter}>
         決定
       </Button>
       <SettingStateDisplay
@@ -66,10 +81,10 @@ const QuickPlanEntry: React.FC<QuickPlanEntryProps> = ({ taskData }) => {
       <Box>
         {groupedProblems.map((data, index) => (
           <QuickPlanEntryContainer
+            ref={planEntryRefs[index]}
             key={index}
             problemGroup={data}
-            active={activeTarget === `task-${data.categoryName}`}
-            toActivate={() => setActiveTarget(`task-${data.categoryName}`)}
+            onSelectProblemNumber={() => handleCancelSelection(index)}
             onSelectProblems={handleSelectProblems}
           />
         ))}
@@ -91,7 +106,7 @@ const QuickPlanEntry: React.FC<QuickPlanEntryProps> = ({ taskData }) => {
         <MultipleNumberCounterField
           value={distributionRatio}
           name='distributionRatio'
-          initialValue={1}
+          initialValue={5}
           emptyValue={0}
           min={0}
           max={30}
@@ -100,44 +115,13 @@ const QuickPlanEntry: React.FC<QuickPlanEntryProps> = ({ taskData }) => {
         />
       </MotionBox>
       <SelectDateCalendar
-        active={activeTarget === 'calender'}
-        toActive={() => setActiveTarget('calender')}
+        ref={calenderRef}
+        problemsWithDate={problemsWithDate}
         onSelectDate={handleSelectDates}
+        onSelectDateNumber={() => handleCancelSelection(-1)}
       />
       <Box height={200} />
     </Box>
-  );
-};
-
-// Helper function to group problems by category and remove duplicates/nulls
-const getGroupedProblems = (activityField: ProblemSetActivityField): ProblemGroup[] => {
-  const getProblemNumbersFromStatus = (status: CategoryActivityStatus[]) => {
-    return removeDuplicates(
-      status.flatMap((data) => rangesToArray(data.problemIdsRange, true))
-    );
-  }
-
-  if (activityField.activityManagementMethod === 'page') {
-    return [{
-      id: activityField.activityStatus[0].categoryId,
-      categoryName: 'ページ',
-      problemNumbers: getProblemNumbersFromStatus(activityField.activityStatus)
-    }]
-  }
-
-  const statusGroupedByCategory = Object.values(groupingByKey(activityField.activityStatus, 'categoryId'));
-
-  return removeNullAndUndefined(
-    statusGroupedByCategory.map((status) => {
-      if (status.length === 0) return null;
-
-      const problemNumbers = getProblemNumbersFromStatus(status);
-      return {
-        id: status[0].categoryId,
-        categoryName: status[0].category.name,
-        problemNumbers,
-      };
-    })
   );
 };
 

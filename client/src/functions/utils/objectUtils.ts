@@ -349,3 +349,76 @@ export const seq = (start: number, stop?: number, step: number = 1): number[] =>
 
   return Array.from({ length }, (_, i) => actualStart + i * step);
 };
+
+export const splitArray = <T>(array: T[], m: number): T[][] => {
+  if (!Array.isArray(array)) {
+    console.error("配列ではない値が渡されました: ", array);
+    return[]; 
+  }
+
+  if (m <= 0) {
+    console.error('mには正の整数を指定してください: ', m);
+    return[];
+  }
+  
+  const result: T[][] = [];
+  const len = array.length;
+  const quotient = Math.floor(len / m); // 各部分配列の基本サイズ
+  const remainder = len % m; // 余り
+
+  let start = 0;
+  for (let i = 0; i < m; i++) {
+      // 余りがある場合、最初の remainder 個の部分配列に1つ多く配分
+      const size = quotient + (i < remainder ? 1 : 0);
+      result.push(array.slice(start, start + size));
+      start += size;
+  }
+
+  return result;
+}
+
+export const distributeTargetByRatio = <T>(start: number, distr: number, ratios: number[], element: T[]): T[][] => {
+  const distribute = distributeByRatios(start, distr, ratios, element.length);
+  
+  if (element.length === 0) return []; // エラーチェック
+  
+  const result: T[][] = [];
+  let count = 0;
+
+  distribute.forEach((countForSegment) => {
+      result.push(element.slice(count, count + countForSegment));
+      count += countForSegment;
+  });
+
+  return result;
+};
+
+export const distributeByRatios = (start: number, distr: number, ratios: number[], element: number): number[] => {
+  // 結果リストを初期化
+  const result: number[] = Array(distr).fill(0);
+
+  // `ratios`を繰り返して、`distr`の長さの比率リストを作成
+  const def_ratios: number[] = Array.from({ length: distr }, (_, i) => ratios[(start + i) % ratios.length]);
+
+  // 合計比率を計算
+  const total_ratio = def_ratios.reduce((sum, ratio) => sum + ratio, 0);
+
+  // 各要素に基本的な割り当てを計算
+  for (let i = 0; i < distr; i++) {
+    result[i] = Math.floor((element * def_ratios[i]) / total_ratio);
+  }
+
+  // 余りの計算
+  const remaining = element - result.reduce((sum, value) => sum + value, 0);
+
+  // 余りを def_ratios の比率に基づいて分配
+  const indices = Array.from({ length: distr }, (_, i) => i)
+    .sort((a, b) => def_ratios[b] - def_ratios[a]);
+
+  // 残りの余りを比率の大きい順に1ずつ追加
+  for (let i = 0; i < remaining; i++) {
+    result[indices[i % distr]] += 1;
+  }
+
+  return result;
+}

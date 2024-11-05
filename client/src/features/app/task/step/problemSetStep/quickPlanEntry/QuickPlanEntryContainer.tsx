@@ -1,19 +1,23 @@
 import { Box, Typography } from "@mui/material";
-import { useEffect, useMemo } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useMemo } from "react";
 import { isNumberInRange } from "../../../../../../functions/utils/rangeUtils";
 import useRangeSelection from "../../../../../hooks/range/useRangeSelection";
-import { ProblemGroup } from "../problemSetStepTypes";
+import { ProblemContainerRef, ProblemGroup } from "../problemSetStepTypes";
 import SnackbarForRangeSelection from "./SnackbarForRangeSelection";
 
 interface ProblemContainerProps {
   problemGroup: ProblemGroup;
   removeNumbers?: number[];
-  active: boolean;
-  toActivate: () => void;
+  onSelectProblemNumber: (num: number) => void;
   onSelectProblems: (categoryName: string, numbers: number[]) => void;
 }
 
-const QuickPlanEntryContainer: React.FC<ProblemContainerProps> = ({ problemGroup, removeNumbers = [], active, toActivate, onSelectProblems }) => {
+const QuickPlanEntryContainer = forwardRef<ProblemContainerRef, ProblemContainerProps>(({
+  problemGroup,
+  removeNumbers = [],
+  onSelectProblemNumber,
+  onSelectProblems
+}, ref) => {
   const {
     state,
     selectedRanges,
@@ -21,8 +25,18 @@ const QuickPlanEntryContainer: React.FC<ProblemContainerProps> = ({ problemGroup
     onSelectNumber,
     setRange,
     onCancelSelection,
-    onDeleteOperatingRange
+    onDeleteOperatingRange,
+    deleteAllSelection
   } = useRangeSelection();
+
+  useImperativeHandle(ref, () => ({
+    onCancelSelection() {
+      onCancelSelection();
+    },
+    deleteAllSelection() {
+      deleteAllSelection();
+    }
+  }));
 
   const validNumber = useMemo(() => {
     return problemGroup.problemNumbers.filter(num => !removeNumbers.includes(num));
@@ -36,15 +50,9 @@ const QuickPlanEntryContainer: React.FC<ProblemContainerProps> = ({ problemGroup
     onSelectProblems(problemGroup.id, selectedProblems)
   }, [selectedRanges, problemGroup.id, onSelectProblems]);
 
-  useEffect(() => {
-    if (!active && state !== 'idle') {
-      onCancelSelection();
-    }
-  }, [active]);
-
   const handleSelectNumber = (num: number) => {
     onSelectNumber(num);
-    toActivate();
+    onSelectProblemNumber(num);
   }
 
   return (
@@ -60,7 +68,7 @@ const QuickPlanEntryContainer: React.FC<ProblemContainerProps> = ({ problemGroup
       />
     </Box>
   );
-};
+});
 
 interface ProblemNumbersProps {
   problemNumbers: number[];

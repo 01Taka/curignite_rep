@@ -1,56 +1,68 @@
 import FullCalendar from '@fullcalendar/react';
 import { Box, Typography } from '@mui/material';
-import React, { useEffect } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useMemo } from 'react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import useRangeSelection from '../../../../../hooks/range/useRangeSelection';
 import jaLocale from '@fullcalendar/core/locales/ja';
-import { DayCellContentArg } from '@fullcalendar/core';
+import { DayCellContentArg, EventContentArg } from '@fullcalendar/core';
 import { convertToMilliseconds } from '../../../../../../functions/utils/dateTimeUtils';
 import { DAYS_IN_MILLISECOND } from '../../../../../../constants/utils/dateTimeConstants';
 import SnackbarForRangeSelection from './SnackbarForRangeSelection';
 import { Range } from '../../../../../../types/util/componentsTypes';
+import { ProblemsWithDate, SelectDateCalendarRef } from '../problemSetStepTypes';
 
 interface SelectDateCalendarProps {
-  active: boolean;
-  toActive: () => void;
+  problemsWithDate: ProblemsWithDate[];
   onSelectDate: (ranges: Range[]) => void;
+  onSelectDateNumber: (num: number) => void;
 }
 
-const SelectDateCalendar: React.FC<SelectDateCalendarProps> = ({ active, toActive, onSelectDate }) => {
-  const { state, selectedRanges, onSelectNumber, getNumberColor, onCancelSelection, onDeleteOperatingRange } = useRangeSelection();
+const SelectDateCalendar = forwardRef<SelectDateCalendarRef, SelectDateCalendarProps>(({ problemsWithDate, onSelectDate, onSelectDateNumber }, ref) => {
+  const {
+    state,
+    selectedRanges,
+    onSelectNumber,
+    getNumberColor,
+    onCancelSelection,
+    onDeleteOperatingRange,
+    deleteAllSelection
+  } = useRangeSelection();
+
+  useImperativeHandle(ref, () => ({
+    onCancelSelection() {
+      onCancelSelection();
+    },
+    deleteAllSelection() {
+      deleteAllSelection();
+    }
+  }));
 
   useEffect(() => {
     onSelectDate(selectedRanges);
   }, [selectedRanges])
 
-  const renderEventContent = (eventInfo: any) => {
+  const renderEventContent = (eventInfo: EventContentArg) => {
+    const problems = eventInfo.event.extendedProps['problems'];
+
     return (
-      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-        <Typography>
-          5p
-        </Typography>
-        <Typography className=' '>
-          5.4h
-        </Typography>
+      <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', mx: 'auto' }}>
+        <button>
+          <Typography sx={{ width: 24, height: 24, bgcolor: 'violet', borderRadius: 999, textAlign: 'center' }}>
+            {problems.length}
+          </Typography>
+        </button>
       </Box>
     );
   };
 
-  const events = [
-    { title: "会議", date: "2024-11-03", allDay: true },
-    { title: "プロジェクト締め切り", date: "2024-11-04" },
-  ];
+  const events = useMemo(() => {
+    return problemsWithDate.map(date => ({ date: date.date, problems: date.problems }));
+  }, [problemsWithDate])
 
   const handleSelectNumber = (num: number) => {
     onSelectNumber(num);
-    toActive();
+    onSelectDateNumber(num);
   }
-
-  useEffect(() => {
-    if (!active && state !== 'idle') {
-      onCancelSelection();
-    }
-  }, [active])
 
   const getDateNumber = (arg: DayCellContentArg) => {
     const date = arg.date;
@@ -88,7 +100,7 @@ const SelectDateCalendar: React.FC<SelectDateCalendarProps> = ({ active, toActiv
       />
     </Box>
   );
-};
+});
 
 
 export default SelectDateCalendar;

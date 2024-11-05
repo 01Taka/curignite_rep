@@ -419,4 +419,20 @@ const getDateElements = (date: Date, useUTC: boolean = false): DateElements => {
 export const getDatesElements = (dates: Date[], useUTC: boolean = false) => {
     return applyFunctionToArray(getDateElements, dates, useUTC);
 }
-    
+
+export const timeUnitToMilliseconds = (size: TimeSizeUnit): number => {
+    switch (size) {
+        case 'millis':
+            return 1
+        case 'seconds':
+            return SECONDS_IN_MILLISECOND
+        case 'minutes':
+            return MINUTES_IN_MILLISECOND
+        case 'hours':
+            return HOURS_IN_MILLISECOND
+        case 'days':
+            return DAYS_IN_MILLISECOND
+        case 'years':
+            return YEARS_IN_MILLISECOND
+    }
+};

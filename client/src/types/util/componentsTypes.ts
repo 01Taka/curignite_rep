@@ -64,6 +64,11 @@ export interface Range {
     max: number;
 }
 
+export interface DateRange {
+    start: Date;
+    end: Date;
+}
+
 export type IconProp = Image | ReactNode;
 
 export interface Image {

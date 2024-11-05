@@ -43,13 +43,12 @@ const MultipleNumberCounterField: React.FC<MultipleNumberCounterFieldProps> = ({
     }
   }, [value, counterNumber, initialValue, emptyValue, name, onChange]);
 
-  const handleOnChange = (event: FormStateChangeEvent) => {
+  const handleOnChange = (index: number, event: FormStateChangeEvent) => {
     const inputValue = event.target.value;
-    if (Array.isArray(inputValue)) {
-      const newValue = fillMissingValues(inputValue).map(data =>
-        typeof data === 'number' || typeof data === 'string' ? data : initialValue ?? emptyValue
-      );
-      handleCallOnChange(newValue, name, onChange);
+    const newData = fillMissingValues(value);
+    if (index >= 0 && index < newData.length) {
+      newData[index] = inputValue;
+      handleCallOnChange(newData, name, onChange);
     }
   };
 
@@ -64,7 +63,7 @@ const MultipleNumberCounterField: React.FC<MultipleNumberCounterFieldProps> = ({
             emptyValue={emptyValue}
             min={min}
             max={max}
-            onChange={handleOnChange}
+            onChange={(e) => handleOnChange(index, e)}
           />
         </Box>
       ))}

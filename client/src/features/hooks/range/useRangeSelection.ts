@@ -94,6 +94,11 @@ const useRangeSelection = (colorSetting: Partial<ColorSetting> = {}) => {
     setStartNumber(null);
   }, []);
 
+  const deleteAllSelection = useCallback(() => {
+    onCancelSelection();
+    setSelectedRanges([]);
+  }, [onCancelSelection])
+
   const setRange = useCallback((start: number, end: number) => {
     setOperateRange(null);
     setStartNumber(null);
@@ -116,7 +121,8 @@ const useRangeSelection = (colorSetting: Partial<ColorSetting> = {}) => {
     onSelectNumber,
     setRange,
     onDeleteOperatingRange,
-    onCancelSelection
+    onCancelSelection,
+    deleteAllSelection
   };
 };
 
