@@ -1,19 +1,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import { getRange, isNumberInRange, isSameRange, mergeRanges } from '../../../functions/utils/rangeUtils';
-import { RangeSelectionState } from './rangeHookTypes';
-
-interface Range {
-  min: number;
-  max: number;
-}
-
-interface ColorSetting {
-  defaultColor: string;
-  selectedColor: string;
-  startNumberColor: string;
-  selectableColor: string;
-  editingColor: string;
-}
+import { ColorSetting, RangeSelectionState } from './rangeHookTypes';
+import { Range } from '../../../types/util/componentsTypes';
 
 const defaultColorSetting: ColorSetting = {
   defaultColor: '#f0f0f0', // 薄いグレー (Light gray)

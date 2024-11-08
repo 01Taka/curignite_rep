@@ -23,7 +23,7 @@ export class TaskManagementService {
     return individualTasks.map(task => ({
       ...task,
       isIndividual: true,
-      remainingEstimatedDuration: task.progress * task.estimatedDuration,
+      remainingEstimatedDuration: (1 - task.progress) * task.estimatedDuration,
     }));
   }
 
@@ -115,6 +115,7 @@ export class TaskManagementService {
         (acc, act) => TaskManagementService.processCategoryActivity(acc, act, categoryMap),
         {
           totalProblemCount: 0,
+          totalRemainingProblemNumber: 0,
           totalEstimatedDuration: 0,
           completedCount: 0,
           remainingEstimatedDuration: 0,
@@ -130,6 +131,7 @@ export class TaskManagementService {
       const baseData = createBaseData(activity.dueDateTime);
       const {
         totalProblemCount,
+        totalRemainingProblemNumber,
         totalEstimatedDuration,
         completedCount,
         remainingEstimatedDuration,
@@ -139,7 +141,10 @@ export class TaskManagementService {
       const progress = validateNumber(completedCount / totalProblemCount);
 
       const activityField: ProblemSetActivityField = {
+        problemSet,
+        categoryMap,
         totalProblemCount,
+        totalRemainingProblemNumber,
         activityManagementMethod: problemSet.activityManagementMethod,
         completionRate: `${completedCount}/${totalProblemCount}`,
         activityStatus,
@@ -160,6 +165,7 @@ export class TaskManagementService {
   private static processCategoryActivity(
     acc: {
       totalProblemCount: number;
+      totalRemainingProblemNumber: number;
       totalEstimatedDuration: number;
       completedCount: number;
       remainingEstimatedDuration: number;
@@ -193,13 +199,14 @@ export class TaskManagementService {
     const timePerProblem = category.timePerProblem ?? 0;
 
     acc.totalProblemCount += problemCount;
+    acc.totalRemainingProblemNumber += remainingIds.length;
     acc.totalEstimatedDuration += problemCount * timePerProblem;
     acc.completedCount += completedProblems;
-    acc.remainingEstimatedDuration += completedProblems * timePerProblem;
+    acc.remainingEstimatedDuration += remainingIds.length * timePerProblem;
 
     acc.activityStatus.push({
-      category,
       categoryId: category.docId,
+      categoryName: category.name,
       problemIdsRange: act.problemIdsRange,
       completedProblemIds: completedIds,
       remainingProblemIds: remainingIds,

@@ -14,14 +14,17 @@ export interface ExpansionProblemSetData extends ProblemSetData {
 }
 
 export interface ProblemSetActivityField {
+  problemSet: ProblemSetData;
+  categoryMap: Record<string, ProblemSetCategoryData>;
   totalProblemCount: number; // 総問題数
+  totalRemainingProblemNumber: number;
   activityManagementMethod: ProblemSetActivityManagementMethod;
   activityStatus: CategoryActivityStatus[];
   completionRate: `${number}/${number}`;
 }
 
 export interface CategoryActivityStatus extends CategoryActivity  {
-  category: ProblemSetCategoryData;
+  categoryName: string;
   completedProblemIds: number[];
   remainingProblemIds: number[];
 }

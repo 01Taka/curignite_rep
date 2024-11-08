@@ -16,49 +16,57 @@ export const usePlanEntry = (taskData: TaskData) => {
   const [distributionRatio, setDistributionRatio] = useState<number[]>([]);
   const [useAutoSettingRatio, setUseAutoSettingRatio] = useState<boolean>(false);
 
+  // 状態リセット関数
+  const resetCurrentState = () => {
+    setCurrentProblems({});
+    setCurrentDates([]);
+  };
+
   const categoryMap = useMemo(() => (
-    taskData?.problemSetActivityField?.activityStatus.reduce((map, state) => {
-      map[state.category.docId] = state.category;
-      return map;
-    }, {} as Record<string, ProblemSetCategoryData>) || {}
+    taskData?.problemSetActivityField?.categoryMap ?? {}
   ), [taskData]);
 
-  const problemsWithDate = useMemo(() => {
-    if (currentDates.length === 0) return [];
-    const problemsWithKey = Object.entries(currentProblems).flatMap(([key, problems]) =>
+  const problemsWithKey = useMemo(() => {
+    return Object.entries(currentProblems).flatMap(([key, problems]) =>
       problems.map(problemId => ({ key, problemId }))
     );
+  }, [currentProblems]);
 
-    const splitProblems = useAutoSettingRatio
-      ? distributeTargetByRatio((currentDates[0].getDay() + 6) % 7, currentDates.length, distributionRatio, problemsWithKey)
-      : splitArray(problemsWithKey, currentDates.length);
+  const autoSplitProblems = useMemo(() => {
+    if (currentDates.length === 0) return [];
+
+    return distributeTargetByRatio((currentDates[0].getDay() + 6) % 7, currentDates.length, distributionRatio, problemsWithKey);
+  }, [problemsWithKey, currentDates, distributionRatio]);
+
+  // `problemsWithDate` の更新
+  const problemsWithDate = useMemo(() => {
+    if (currentDates.length === 0) return [];
+
+    const splitProblems = useAutoSettingRatio ? autoSplitProblems : splitArray(problemsWithKey, currentDates.length);
 
     return currentDates.map((date, index) => ({
       date,
       problems: splitProblems[index] || [],
     }));
-  }, [currentProblems, currentDates, useAutoSettingRatio, distributionRatio]);
+  }, [problemsWithKey, currentDates, useAutoSettingRatio, distributionRatio, autoSplitProblems]);
 
+  // エントリの現在状態管理
   const handleEntryCurrent = useCallback(() => {
     const dateRanges = dateArrayToRange(currentDates);
     const problems = removeNullAndUndefined(Object.keys(currentProblems).map(key => {
       const problemIds = currentProblems[key];
-      if (problemIds.length === 0) return null;
+      if (!problemIds || problemIds.length === 0) return null;
       const problemRanges = arrayToRanges(problemIds);
       return { categoryId: key, problemRanges } as EntryProblems;
     }));
+
     if (problems.length === 0) {
-      setCurrentProblems({});
-      setCurrentDates([]);
+      resetCurrentState();
       return;
     }
-    const data: PlanEntry = {
-      dateRanges,
-      problems
-    }
-    setEntries(prev => [...prev, data]);
-    setCurrentProblems({});
-    setCurrentDates([]);
+
+    setEntries(prev => [...prev, { dateRanges, problems }]);
+    resetCurrentState();
   }, [currentProblems, currentDates]);
 
   const handleSelectProblems = useCallback((id: string, numbers: number[]) => {
@@ -98,7 +106,7 @@ export const usePlanEntry = (taskData: TaskData) => {
         const problemNumbers = getProblemNumbersFromStatus(status);
         return {
           id: status[0].categoryId,
-          categoryName: status[0].category.name,
+          categoryName: status[0].categoryName,
           problemNumbers,
         };
       })

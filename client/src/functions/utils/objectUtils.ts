@@ -54,30 +54,28 @@ export const sortArray = <T>(arr: T[], ascending: boolean = true): T[] => {
   });
 }
 
-
 export const sortObjectArray = <T extends Record<string, any>>(
   arr: T[],
   key: keyof T,
   ascending: boolean = true,
-  nullsLast: boolean = true
+  nullsLast: boolean = true,
+  expectedType: "string" | "number" | "boolean" | null = null
 ): T[] => {
+  // 最初の要素の型を取得  
+  const realExpectedType = expectedType ?? typeof arr[0];
+
   return arr.sort((a, b) => {
     const valueA = a[key];
     const valueB = b[key];
 
-    // 無効な値を扱う
-    const isInvalidA = valueA === null || valueA === undefined;
-    const isInvalidB = valueB === null || valueB === undefined;
+    // 型が一致しない場合はnullとみなす
+    const isInvalidA = typeof valueA !== realExpectedType || valueA === null || valueA === undefined;
+    const isInvalidB = typeof valueB !== realExpectedType || valueB === null || valueB === undefined;
 
     // 無効な値を先にするか後にするかの処理
     if (isInvalidA && isInvalidB) return 0;
     if (isInvalidA) return nullsLast ? 1 : -1;
     if (isInvalidB) return nullsLast ? -1 : 1;
-
-    // 型が異なる場合の処理（stringとnumberの比較などを防ぐ）
-    if (typeof valueA !== typeof valueB) {
-      throw new Error('Inconsistent types in the array elements');
-    }
 
     // ソートの処理
     const order = ascending ? 1 : -1;
