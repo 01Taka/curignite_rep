@@ -1,7 +1,7 @@
 import React, {  } from 'react';
 import { TaskData } from '../../../../types/firebase/db/task/taskExpansionTypes';
 import { Box, Button, Typography } from '@mui/material';
-import usePlan from './hooks/usePlan';
+import usePlan from './shared/usePlan';
 import { MINUTES_IN_MILLISECOND } from '../../../../constants/utils/dateTimeConstants';
 import RecommendedPlan from './RecommendedPlan';
 import Popup from '../../../../components/display/popup/Popup';
@@ -14,7 +14,7 @@ interface PlanProps {
 
 const Plan: React.FC<PlanProps> = ({ tasks }) => {
   const { todayTasks, studyTimeNeededToday } = usePlan(tasks, false);
-  const { open, toOpen, toClose } = useToggle();
+  const { isOpen, toOpen, toClose } = useToggle();
 
   return (
     <>
@@ -27,17 +27,19 @@ const Plan: React.FC<PlanProps> = ({ tasks }) => {
             {Math.ceil(studyTimeNeededToday / MINUTES_IN_MILLISECOND)}分
           </Typography>
         </Box>
-        <Button variant='contained' size='large' onClick={toOpen} >
+        <Button variant='contained' size='large' onClick={() => toOpen('recommend')} >
           今日のおすすめ
         </Button>
-        <Button variant='outlined' size='large'>
+        <Button variant='outlined' size='large' onClick={() => toOpen('custom')} >
           自分で決める
         </Button>
       </Box>
-      <Popup open={open} handleClose={toClose} >
-        <RecommendedPlan todayTasks={todayTasks} />
+      <Popup open={isOpen('recommend')} handleClose={toClose} >
+        <RecommendedPlan todayTasks={todayTasks} studyTimeNeededToday={studyTimeNeededToday} />
       </Popup>
-      <CustomPlanMain studyTimeNeededToday={studyTimeNeededToday} tasks={tasks} />
+      <Popup open={isOpen('custom')} handleClose={toClose} >
+        <CustomPlanMain studyTimeNeededToday={studyTimeNeededToday} tasks={tasks} />
+      </Popup>
     </>
   );
 };

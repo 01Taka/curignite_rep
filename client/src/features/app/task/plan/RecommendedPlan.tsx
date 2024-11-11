@@ -1,28 +1,20 @@
 import React from 'react';
-import { TodayTasks } from './planTypes';
+import { TodayTasks } from './shared/planTypes';
 import { arrayToRangeString } from '../../../../functions/utils/rangeUtils';
 import { Box, Typography } from '@mui/material';
-import { MINUTES_IN_MILLISECOND } from '../../../../constants/utils/dateTimeConstants';
+import { millToMin } from './shared/planUtils';
 
 interface RecommendedPlanProps {
   todayTasks: TodayTasks;
+  studyTimeNeededToday: number;
 }
 
-const RecommendedPlan: React.FC<RecommendedPlanProps> = ({ todayTasks }) => {
-
-  const millToMin = (mill: number) => {
-    return Math.ceil(mill / MINUTES_IN_MILLISECOND);
-  }
-
+const RecommendedPlan: React.FC<RecommendedPlanProps> = ({ todayTasks, studyTimeNeededToday }) => {
   return (
     <Box sx={{ p: 2, maxWidth: '100%', width: '100%', mx: 'auto', bgcolor: 'ghostwhite' }}>
       <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-        <Typography variant='h6'>
-          合計
-        </Typography>
-        <Typography variant='h5'>
-          {millToMin(todayTasks.estimatedDuration)}分
-        </Typography>
+        <Typography variant='h6'>合計 / 目標</Typography>
+        <Typography variant='h5'>{millToMin(todayTasks.estimatedDuration)}分 / {millToMin(studyTimeNeededToday)}分</Typography>
       </Box>
       <Box>
         {todayTasks.individualTasks.map((task, index) => (

@@ -5,7 +5,7 @@ import TaskCheckbox from './TaskCheckbox';
 import TaskAccordion from './TaskAccordion';
 import { TaskData } from '../../../../../types/firebase/db/task/taskExpansionTypes';
 import useCustomPlan from './shared/useCustomPlan';
-import { millToMin } from './shared/customPlanUtils';
+import { millToMin } from '../shared/planUtils';
 
 interface CustomPlanProps {
   studyTimeNeededToday: number;
@@ -25,17 +25,17 @@ const CustomPlanMain: React.FC<CustomPlanProps> = ({ studyTimeNeededToday, tasks
   } = useCustomPlan(tasks);
 
   return (
-    <Box>
+    <Box sx={{ bgcolor: 'ghostwhite', pt: 2 }}>
       <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
         <Typography variant='h6'>合計 / 目標</Typography>
         <Typography variant='h5'>{millToMin(totalTime)}分 / {millToMin(studyTimeNeededToday)}分</Typography>
       </Box>
-      <Box>
+      <Box sx={{ padding: 2 }} >
         {tasks.map((task) => (
           <TaskCheckbox key={task.docId} task={task} setTaskTime={setTaskTime} removeTask={removeTask} />
         ))}
       </Box>
-      <Box>
+      <Box sx={{ padding: 1 }} >
         {tasks.map((task) => (
           <TaskAccordion
             key={task.docId}

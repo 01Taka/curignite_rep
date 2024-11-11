@@ -2,7 +2,7 @@
 import React from 'react';
 import { Checkbox, FormControlLabel, Typography, Box } from '@mui/material';
 import { TaskData } from '../../../../../types/firebase/db/task/taskExpansionTypes';
-import { formatDueDateTime } from './shared/customPlanUtils';
+import { formatDueDateTime } from '../shared/planUtils';
 
 interface TaskCheckboxProps {
   task: TaskData;

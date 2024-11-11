@@ -1,32 +1,77 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 
-const useToggle = (initialState: boolean = false, onChange?: (open: boolean) => void) => {
-  const [open, setOpen] = useState<boolean>(initialState);
+interface UseToggleOption {
+  initialState: boolean;
+  openOnlyOne: boolean;
+  onChange?: (open: boolean, id?: string) => void;
+}
 
-  const toOpen = useCallback(() => {
-    setOpen(true);
-    if (onChange) onChange(true);
-  }, [onChange]);
+const useToggle = (option: Partial<UseToggleOption> = {}) => {
+  const setting = useMemo(() => {
+    return {
+      initialState: false,
+      openOnlyOne: true,
+      ...option
+    } as UseToggleOption
+  }, [option]);
 
-  const toClose = useCallback(() => {
-    setOpen(false);
-    if (onChange) onChange(false);
-  }, [onChange]);
+  const [toggleMap, setToggleMap] = useState<Record<string, boolean>>({ default: setting.initialState });
 
-  const toggle = useCallback(() => {
-    setOpen((prev) => {
-      const newValue = !prev;
-      if (onChange) onChange(newValue);
-      return newValue;
+  const normalizeId = (id: any) => (typeof id === 'string' ? id : 'default');
+
+  const toggleOtherThan = useCallback((id: string, state: boolean) => {
+    setToggleMap(prev => {
+      const newMap = {} as Record<string, boolean>;
+      Object.keys(prev).forEach(key => newMap[key] = !state);
+      newMap[id] = state;
+      setting.onChange?.(state, id);
+      return newMap;
     });
-  }, [onChange]);
+  }, [setting]);
 
-  const setToggle = useCallback((value: boolean) => {
-    setOpen(value);
-    if (onChange) onChange(value);
-  }, [onChange]);
+  const setAll = useCallback((state: boolean) => {
+    setToggleMap(prev => {
+      const newMap = Object.keys(prev).reduce((acc, key) => {
+        acc[key] = state;
+        return acc;
+      }, {} as Record<string, boolean>);
+      setting.onChange?.(state);
+      return newMap;
+    });
+  }, [setting]);
 
-  return { open, setOpen, setToggle, toOpen, toClose, toggle };
+  const openAll = useCallback(() => setAll(true), [setAll]);
+
+  const closeAll = useCallback(() => setAll(false), [setAll]);
+
+  const setState = useCallback((id: string, state: boolean) => {
+    if (setting.openOnlyOne) {
+      state ? toggleOtherThan(id, true) : closeAll();
+    } else {
+      setToggleMap(prev => ({ ...prev, [id]: state }));
+    }
+    setting.onChange?.(state, id === 'default' ? undefined : id);
+  }, [setting, toggleOtherThan, closeAll]);
+
+  const isOpen = useCallback((id: any = 'default') => toggleMap[normalizeId(id)] ?? setting.initialState, [setting, toggleMap]);
+
+  const toOpen = useCallback((id: any = 'default') => setState(normalizeId(id), true), [setState]);
+
+  const toClose = useCallback((id: any = 'default') => setState(normalizeId(id), false), [setState]);
+
+  const toggle = useCallback((id: any = 'default') => {
+    const normalizedId = normalizeId(id);
+    const currentState = toggleMap[normalizedId] ?? setting.initialState;
+    setState(normalizedId, !currentState);
+  }, [setting, toggleMap, setState]);
+
+  const openAlone = useCallback((id: string) => toggleOtherThan(id, true), [toggleOtherThan]);
+
+  const closeAlone = useCallback((id: string) => toggleOtherThan(id, false), [toggleOtherThan]);
+
+  const open = useMemo(() => toggleMap['default'] ?? setting.initialState, [setting, toggleMap]);
+
+  return { open, isOpen, toOpen, toClose, toggle, openAll, closeAll, openAlone, closeAlone };
 };
 
 export default useToggle;

@@ -2,7 +2,7 @@ import { differenceInCalendarDays } from "date-fns";
 import { useMemo, useState } from "react";
 import { convertToDate } from "../../../../../functions/utils/dateTimeUtils";
 import { groupingByKey, removeDuplicates } from "../../../../../functions/utils/objectUtils";
-import { TodayIndividualTask, TodayTasks, TodayTaskStatus } from "../planTypes";
+import { TodayIndividualTask, TodayTasks, TodayTaskStatus } from "./planTypes";
 import { TaskData } from "../../../../../types/firebase/db/task/taskExpansionTypes";
 import { ProblemSetCategoryData, ProblemSetData } from "../../../../../types/firebase/db/task/taskStructure";
 
