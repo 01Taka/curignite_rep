@@ -110,7 +110,7 @@ const usePlan = (tasks: TaskData[], containExpired: boolean) => {
       });
     });
 
-    return Object.values(categoryStatusMap);
+    return Object.values(categoryStatusMap).filter(status => status.todayTaskProblemIds.length !== 0);
   }, [tasks, isContainExpired, categoryMap, today]);
 
   const todayTasks: TodayTasks = useMemo(() => {

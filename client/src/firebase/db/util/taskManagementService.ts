@@ -1,8 +1,6 @@
-import { Timestamp } from "firebase/firestore";
 import { objectArrayToDict } from "../../../functions/utils/objectUtils";
 import { ProblemSetCategoryData, IndividualTaskData, ProblemSetActivityData, ProblemSetData } from "../../../types/firebase/db/task/taskStructure";
 import { CategoryActivityStatus, ExpansionProblemSetData, ProblemSetActivityField, FullProblemSetData, TaskData } from "../../../types/firebase/db/task/taskExpansionTypes";
-import { getInitialBaseDocumentData } from "../../../functions/db/dbUtils";
 import { ServiceFactory } from "../factory";
 import { validateNumber } from "../../../functions/utils/formUtils";
 import { isNumberInRange, rangesToArray, sumRanges } from "../../../functions/utils/rangeUtils";
@@ -103,10 +101,9 @@ export class TaskManagementService {
   ): TaskData[] {
     const categoryMap = objectArrayToDict(categories, 'docId');
 
-    const createBaseData = (dueDateTime: Timestamp | null) => ({
-      ...getInitialBaseDocumentData(problemSet.createdById),
+    const createBaseData = (activity: ProblemSetActivityData) => ({
+      ...activity,
       title: problemSet.name,
-      dueDateTime,
       taskNote: '',
     });
 
@@ -128,7 +125,7 @@ export class TaskManagementService {
       if (activity.categoryActivities.length === 0) {
         return null; 
       }
-      const baseData = createBaseData(activity.dueDateTime);
+      const baseData = createBaseData(activity);
       const {
         totalProblemCount,
         totalRemainingProblemNumber,

@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import QuickPlanEntry from './quickPlanEntry/QuickPlanEntry';
-import useProblemSet from '../../hooks/useProblemSet';
 import Plan from '../../plan/Plan';
 import { useAppSelector } from '../../../../../redux/hooks';
 import { TaskData } from '../../../../../types/firebase/db/task/taskExpansionTypes';

@@ -1,62 +1,45 @@
-import React from 'react';
+import React, {  } from 'react';
 import { TaskData } from '../../../../types/firebase/db/task/taskExpansionTypes';
-import { Box, Typography } from '@mui/material';
-import { format } from 'date-fns';
-import useLog from '../../../hooks/useLog';
+import { Box, Button, Typography } from '@mui/material';
 import usePlan from './hooks/usePlan';
-import { convertToDate } from '../../../../functions/utils/dateTimeUtils';
-import { HOURS_IN_MILLISECOND } from '../../../../constants/utils/dateTimeConstants';
+import { MINUTES_IN_MILLISECOND } from '../../../../constants/utils/dateTimeConstants';
+import RecommendedPlan from './RecommendedPlan';
+import Popup from '../../../../components/display/popup/Popup';
+import useToggle from '../../../hooks/useToggle';
+import CustomPlanMain from './customPlan/CustomPlanMain';
 
 interface PlanProps {
   tasks: TaskData[];
 }
 
-
-
 const Plan: React.FC<PlanProps> = ({ tasks }) => {
   const { todayTasks, studyTimeNeededToday } = usePlan(tasks, false);
+  const { open, toOpen, toClose } = useToggle();
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-      {[].map((task, index) => ( //sortedTasks
-        <TaskItem key={index} task={task} />
-      ))}
-    </Box>
+    <>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, padding: 4 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }} >
+          <Typography variant='h6'>
+            今日の目標
+          </Typography>
+          <Typography variant='h5'>
+            {Math.ceil(studyTimeNeededToday / MINUTES_IN_MILLISECOND)}分
+          </Typography>
+        </Box>
+        <Button variant='contained' size='large' onClick={toOpen} >
+          今日のおすすめ
+        </Button>
+        <Button variant='outlined' size='large'>
+          自分で決める
+        </Button>
+      </Box>
+      <Popup open={open} handleClose={toClose} >
+        <RecommendedPlan todayTasks={todayTasks} />
+      </Popup>
+      <CustomPlanMain studyTimeNeededToday={studyTimeNeededToday} tasks={tasks} />
+    </>
   );
 };
-
-interface TaskItemProps {
-  task: TaskData;
-}
-
-const TaskItem: React.FC<TaskItemProps> = ({ task }) => (
-  <Box
-    sx={{
-      border: '1px solid #ddd',
-      borderRadius: 2,
-      padding: 2,
-      display: 'flex',
-      flexDirection: 'column',
-      gap: 1
-    }}
-  >
-    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-      <Typography variant="h6">{task.title}</Typography>
-      <Typography color="textSecondary">
-        {task.dueDateTime ? format(convertToDate(task.dueDateTime), 'MM/dd') : '未定'}
-      </Typography>
-    </Box>
-    {task.type === 'problemSet' && task.problems && (
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, marginTop: 1 }}>
-        {/* {task.problems.map(problem => (
-          <Box key={problem.categoryId} sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Typography color="textSecondary">{problem.categoryName}</Typography>
-            <Typography>{problem.remainingProblemIds.length} 問題</Typography>
-          </Box>
-        ))} */}
-      </Box>
-    )}
-  </Box>
-);
 
 export default Plan;
