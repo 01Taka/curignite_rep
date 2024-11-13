@@ -1,21 +1,21 @@
 // CustomPlanMain.tsx
 import React from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import TaskCheckbox from './TaskCheckbox';
 import TaskAccordion from './TaskAccordion';
 import { TaskData } from '../../../../../types/firebase/db/task/taskExpansionTypes';
 import useCustomPlan from './shared/useCustomPlan';
 import { millToMin } from '../shared/planUtils';
 import { TodayTasks } from '../shared/planTypes';
-import useLog from '../../../../hooks/useLog';
 
 interface CustomPlanProps {
   studyTimeNeededToday: number;
   recommendTask: TodayTasks | null;
   tasks: TaskData[];
+  createTaskPlan: (todayTasks: TodayTasks) => void;
 }
 
-const CustomPlanMain: React.FC<CustomPlanProps> = ({ studyTimeNeededToday, recommendTask, tasks }) => {
+const CustomPlanMain: React.FC<CustomPlanProps> = ({ studyTimeNeededToday, recommendTask, tasks, createTaskPlan }) => {
   const {
     todayPlanTasks,
     todayIndividualTasks,
@@ -27,8 +27,6 @@ const CustomPlanMain: React.FC<CustomPlanProps> = ({ studyTimeNeededToday, recom
     onCancelSelection,
     onDeleteOperatingRange,
   } = useCustomPlan(tasks, recommendTask);
-
-  useLog(todayPlanTasks)
 
   return (
     <Box sx={{ bgcolor: 'ghostwhite', pt: 2 }}>
@@ -59,6 +57,9 @@ const CustomPlanMain: React.FC<CustomPlanProps> = ({ studyTimeNeededToday, recom
           />
         ))}
       </Box>
+      <Button variant='contained' onClick={() => createTaskPlan(todayPlanTasks)} >
+        決定
+      </Button>
       <Box height={300} />
     </Box>
   );

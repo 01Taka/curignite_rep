@@ -21,11 +21,17 @@ export class UserTaskPlanManager {
     todayTasks: TodayTasks
   ): Promise<void> {
     const problemSetTasks = todayTasks.problemSetTasks.map(
-      task => task.categories.map(category => ({
-        ...category, todayTaskProblemIds: undefined, todayTaskProblemRanges: arrayToRanges(category.todayTaskProblemIds)
-      }))).flat();
+      task => task.categories.map(category => {
+        const { todayTaskProblemIds, ...rest } = category;
+        return {
+          ...rest,
+          todayTaskProblemRanges: arrayToRanges(todayTaskProblemIds)
+        };
+      })).flat();
+      
     const data: UserTaskPlanData = {
-      ...todayTasks,
+      estimatedDuration: todayTasks.estimatedDuration,
+      individualTasks: todayTasks.individualTasks,
       problemSetTasks
     }
 

@@ -7,6 +7,7 @@ import RecommendedPlan from './RecommendedPlan';
 import Popup from '../../../../components/display/popup/Popup';
 import useToggle from '../../../hooks/useToggle';
 import CustomPlanMain from './customPlan/CustomPlanMain';
+import { useTaskPlanManager } from './shared/useTaskPlanManager';
 
 interface PlanProps {
   tasks: TaskData[];
@@ -15,6 +16,7 @@ interface PlanProps {
 const Plan: React.FC<PlanProps> = ({ tasks }) => {
   const { todayTasks, studyTimeNeededToday } = usePlan(tasks, false);
   const { isOpen, toOpen, toClose } = useToggle();
+  const { createTaskPlan } = useTaskPlanManager();
 
   return (
     <>
@@ -35,10 +37,20 @@ const Plan: React.FC<PlanProps> = ({ tasks }) => {
         </Button>
       </Box>
       <Popup open={isOpen('recommend')} handleClose={toClose} >
-        <RecommendedPlan todayTasks={todayTasks} studyTimeNeededToday={studyTimeNeededToday} onEditPlan={() => toOpen('editRecommend')}/>
+        <RecommendedPlan
+          todayTasks={todayTasks}
+          studyTimeNeededToday={studyTimeNeededToday}
+          onEditPlan={() => toOpen('editRecommend')}
+          createTaskPlan={createTaskPlan}
+        />
       </Popup>
       <Popup open={isOpen('custom') || isOpen('editRecommend')} handleClose={toClose} >
-        <CustomPlanMain studyTimeNeededToday={studyTimeNeededToday} tasks={tasks} recommendTask={isOpen('editRecommend') ? todayTasks : null}/>
+        <CustomPlanMain
+          studyTimeNeededToday={studyTimeNeededToday}
+          tasks={tasks}
+          recommendTask={isOpen('editRecommend') ? todayTasks : null}
+          createTaskPlan={createTaskPlan}
+        />
       </Popup>
     </>
   );

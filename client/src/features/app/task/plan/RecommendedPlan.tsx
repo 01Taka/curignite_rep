@@ -8,9 +8,10 @@ interface RecommendedPlanProps {
   todayTasks: TodayTasks;
   studyTimeNeededToday: number;
   onEditPlan: () => void;
+  createTaskPlan: (todayTasks: TodayTasks) => void;
 }
 
-const RecommendedPlan: React.FC<RecommendedPlanProps> = ({ todayTasks, studyTimeNeededToday, onEditPlan }) => {
+const RecommendedPlan: React.FC<RecommendedPlanProps> = ({ todayTasks, studyTimeNeededToday, onEditPlan, createTaskPlan }) => {
   return (
     <Box sx={{ p: 2, maxWidth: '100%', width: '100%', mx: 'auto', bgcolor: 'ghostwhite' }}>
       <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
@@ -50,6 +51,9 @@ const RecommendedPlan: React.FC<RecommendedPlanProps> = ({ todayTasks, studyTime
       </Box>
       <Button variant='outlined' onClick={onEditPlan}>
         編集
+      </Button>
+      <Button variant='contained' onClick={() => createTaskPlan(todayTasks)} >
+        決定
       </Button>
     </Box>
   );

@@ -162,8 +162,8 @@ class BaseDB<T extends BaseDocumentData> {
       return;
     }
 
-    data.createdAt = undefined;
-    return this.handleFirestoreOperation(updateDoc(docRef, {...data, updatedAt: serverTimestamp()} as T), "Failed to update document", documentId);
+    const { createdAt, ...formatData } = data;
+    return this.handleFirestoreOperation(updateDoc(docRef, {...formatData, updatedAt: serverTimestamp()} as T), "Failed to update document", documentId);
   }
 
   /**
