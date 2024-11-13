@@ -172,7 +172,7 @@ export class TaskManagementService {
     categoryMap: { [docId: string]: ProblemSetCategoryData }
   ) {
     const category = categoryMap[act.categoryId];
-    const problemIds = rangesToArray(act.problemIdsRange, true);
+    const problemIds = rangesToArray(act.problemIdsRange);
     const problemCount = problemIds.length;
 
     if (!category) {

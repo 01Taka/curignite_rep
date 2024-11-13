@@ -5,7 +5,7 @@ export interface TodayIndividualTask {
   estimatedDuration: number;
 }
 
-export interface TodayTaskStatus {
+export interface TodayCategoryTask {
   taskId: string;
   categoryId: string;
   categoryName: string;
@@ -13,13 +13,15 @@ export interface TodayTaskStatus {
   estimatedDuration: number;
 }
 
+export interface TodayProblemSetTask {
+  problemSetId: string;
+  taskName: string;
+  estimatedDuration: number;
+  categories: TodayCategoryTask[];
+}
+
 export interface TodayTasks {
   estimatedDuration: number;
   individualTasks: TodayIndividualTask[];
-  problemSetTasks: {
-      taskId: string;
-      taskName: string;
-      estimatedDuration: number;
-      categories: TodayTaskStatus[];
-  }[];
+  problemSetTasks: TodayProblemSetTask[];
 }

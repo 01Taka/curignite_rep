@@ -2,7 +2,7 @@ import { differenceInCalendarDays } from "date-fns";
 import { useMemo, useState } from "react";
 import { convertToDate } from "../../../../../functions/utils/dateTimeUtils";
 import { groupingByKey, removeDuplicates } from "../../../../../functions/utils/objectUtils";
-import { TodayIndividualTask, TodayTasks, TodayTaskStatus } from "./planTypes";
+import { TodayIndividualTask, TodayTasks, TodayCategoryTask } from "./planTypes";
 import { TaskData } from "../../../../../types/firebase/db/task/taskExpansionTypes";
 import { ProblemSetCategoryData, ProblemSetData } from "../../../../../types/firebase/db/task/taskStructure";
 
@@ -78,7 +78,7 @@ const usePlan = (tasks: TaskData[], containExpired: boolean) => {
   }, [tasks, isContainExpired, today]);
 
   const todayTaskStatuses = useMemo(() => {
-    const categoryStatusMap: Record<string, TodayTaskStatus> = {};
+    const categoryStatusMap: Record<string, TodayCategoryTask> = {};
 
     tasks.forEach(task => {
       const activityField = task.problemSetActivityField;
@@ -116,7 +116,7 @@ const usePlan = (tasks: TaskData[], containExpired: boolean) => {
   const todayTasks: TodayTasks = useMemo(() => {
     const groupedStatuses = groupingByKey(todayTaskStatuses, 'taskId');
     const problemSetTasks = Object.entries(groupedStatuses).map(([key, categories]) => ({
-      taskId: key,
+      problemSetId: key,
       taskName: problemSetMap[key].name,
       estimatedDuration: categories.reduce((acc, category) => acc + category.estimatedDuration, 0),
       categories

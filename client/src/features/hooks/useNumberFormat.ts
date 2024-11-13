@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { clamp } from "../../functions/utils/numberUtils";
+import { mathClamp } from "../../functions/utils/numberUtils";
 
 interface UseNumberFormatOptions<T extends "" | number> {
   initialValue?: T | number;
@@ -19,11 +19,11 @@ const useNumberFormat = <T extends "" | number>({
   const onChangeValue = useCallback(
     (input: string | number) => {
       if (typeof input === 'number') {
-        setValue(clamp(input, min, max));
+        setValue(mathClamp(input, min, max));
         return;
       }
       const digits = input.replace(/[^0-9]/g, '');
-      setValue(digits.length === 0 ? emptyValue : clamp(Number(digits), min, max));
+      setValue(digits.length === 0 ? emptyValue : mathClamp(Number(digits), min, max));
     },
     [min, max, emptyValue]
   );

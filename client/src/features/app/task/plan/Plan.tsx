@@ -1,4 +1,4 @@
-import React, {  } from 'react';
+import React from 'react';
 import { TaskData } from '../../../../types/firebase/db/task/taskExpansionTypes';
 import { Box, Button, Typography } from '@mui/material';
 import usePlan from './shared/usePlan';
@@ -35,10 +35,10 @@ const Plan: React.FC<PlanProps> = ({ tasks }) => {
         </Button>
       </Box>
       <Popup open={isOpen('recommend')} handleClose={toClose} >
-        <RecommendedPlan todayTasks={todayTasks} studyTimeNeededToday={studyTimeNeededToday} />
+        <RecommendedPlan todayTasks={todayTasks} studyTimeNeededToday={studyTimeNeededToday} onEditPlan={() => toOpen('editRecommend')}/>
       </Popup>
-      <Popup open={isOpen('custom')} handleClose={toClose} >
-        <CustomPlanMain studyTimeNeededToday={studyTimeNeededToday} tasks={tasks} />
+      <Popup open={isOpen('custom') || isOpen('editRecommend')} handleClose={toClose} >
+        <CustomPlanMain studyTimeNeededToday={studyTimeNeededToday} tasks={tasks} recommendTask={isOpen('editRecommend') ? todayTasks : null}/>
       </Popup>
     </>
   );

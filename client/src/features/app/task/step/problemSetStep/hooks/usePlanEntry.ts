@@ -77,7 +77,7 @@ export const usePlanEntry = (taskData: TaskData) => {
   }, []);
 
   const handleSelectDates = useCallback((ranges: Range[]) => {
-    const dateNumber = rangesToArray(ranges, true);
+    const dateNumber = rangesToArray(ranges);
     const dates = dateNumber.map(num => convertToDate((num + 1) * DAYS_IN_MILLISECOND));
     setCurrentDates(dates);
   }, []);
@@ -85,7 +85,7 @@ export const usePlanEntry = (taskData: TaskData) => {
   const getGroupedProblems = (activityField: ProblemSetActivityField): ProblemGroup[] => {
     const getProblemNumbersFromStatus = (status: CategoryActivityStatus[]) => {
       return removeDuplicates(
-        status.flatMap((data) => rangesToArray(data.problemIdsRange, true))
+        status.flatMap((data) => rangesToArray(data.problemIdsRange))
       );
     }
   

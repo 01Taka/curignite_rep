@@ -78,7 +78,7 @@ export const rangesToString = (ranges: Range[], options: RangeOptions = {}): str
     .join(delimiter);
 };
 
-export const rangesToArray = (ranges: Range[], includeMax: boolean = false): number[] => {
+export const rangesToArray = (ranges: Range[], includeMax: boolean = true): number[] => {
   const setRanges = new Set<number>();
   const mergedRanges = mergeRanges(ranges);
   mergedRanges.forEach(range => {

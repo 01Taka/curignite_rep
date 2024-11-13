@@ -1,33 +1,68 @@
-// TaskCheckbox.tsx
-import React from 'react';
-import { Checkbox, FormControlLabel, Typography, Box } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Checkbox, FormControlLabel, Typography, Box, Slider } from '@mui/material';
 import { TaskData } from '../../../../../types/firebase/db/task/taskExpansionTypes';
-import { formatDueDateTime } from '../shared/planUtils';
+import { formatDueDateTime, millToMin } from '../shared/planUtils';
+import { TodayIndividualTask } from '../shared/planTypes';
 
 interface TaskCheckboxProps {
   task: TaskData;
-  setTaskTime: (id: string, estimatedDuration: number) => void;
-  removeTask: (id: string) => void;
+  todayTask: TodayIndividualTask | undefined;
+  onChangeState: (checked: boolean, percent: number) => void;
 }
 
-const TaskCheckbox: React.FC<TaskCheckboxProps> = ({ task, setTaskTime, removeTask }) => {
-  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    event.target.checked ? setTaskTime(task.docId, task.estimatedDuration) : removeTask(task.docId);
-  };
+const TaskCheckbox: React.FC<TaskCheckboxProps> = ({ task, todayTask, onChangeState }) => {
+  const [percent, setPercent] = useState(100);
+  const [checked, setChecked] = useState(false);
+
+  useEffect(() => {
+    if (todayTask) {
+      setPercent(todayTask.todayProgress * 100);
+      setChecked(true);
+    }
+  }, [todayTask])
 
   if (!task.isIndividual || task.completed) return null;
+
   const formatDeadline = formatDueDateTime(task.dueDateTime);
 
   return (
     <Box sx={{ mb: 2 }}>
       <FormControlLabel
-        control={<Checkbox onChange={handleCheckboxChange} />}
+        control={
+          <Checkbox
+            checked={checked}
+            onChange={(e) => {
+              const checked = e.target.checked;
+              onChangeState(checked, percent / 100);
+              setChecked(checked);
+            }}
+          />
+        }
         label={task.title}
       />
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Typography variant='body2' color="textSecondary" sx={{ mr: 1 }}>
+          {percent}%
+        </Typography>
+        <Slider
+          sx={{ width: '100%' }}
+          value={percent}
+          min={task.progress * 100}
+          max={100}
+          onChange={(_, value) => setPercent(Array.isArray(value) ? 100 : value as number)}
+          onChangeCommitted={() => onChangeState(checked, percent / 100)}
+          size="small"
+          aria-label="Progress Slider"
+          valueLabelDisplay="auto"
+          disabled={!checked}
+        />
+      </Box>
       {formatDeadline && (
         <Typography variant="body2" color="textSecondary">締切日: {formatDeadline}</Typography>
       )}
-      <Typography variant="body2" color="textSecondary">推定 {Math.ceil(task.estimatedDuration / 60000)} 分</Typography>
+      <Typography variant="body2" color="textSecondary">
+        推定 {millToMin(task.estimatedDuration)} 分
+      </Typography>
     </Box>
   );
 };

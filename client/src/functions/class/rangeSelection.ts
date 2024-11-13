@@ -48,13 +48,14 @@ export class RangeSelection {
     return this.startNumber === null ? this.colorSetting.defaultColor : this.colorSetting.selectableColor;
   }
 
-  onSelectNumber(num: number) {
+  onSelectNumber(num: number, onConfirmedRange?: (selectedRanges: Range[]) => void) {
     if (this.operateRange) {
       if (this.startNumber && isNumberInRange(this.operateRange, num)) {
         this.selectedRanges = [
           ...this.selectedRanges.filter(range => !isNumberInRange(range, num, true)),
           getRange(this.startNumber, num)
         ];
+        onConfirmedRange?.(this.selectedRanges);
       }
       this.startNumber = null;
       this.operateRange = null;
@@ -73,6 +74,7 @@ export class RangeSelection {
       const [min, max] = num > this.startNumber ? [this.startNumber, num] : [num, this.startNumber];
       this.selectedRanges = mergeRanges([...this.selectedRanges, { min, max }]);
       this.startNumber = null;
+      onConfirmedRange?.(this.selectedRanges);
       this.notifyChange();
       return;
     }

@@ -29,7 +29,7 @@ const TaskAccordion: React.FC<TaskAccordionProps> = ({
   if (task.completed || !task.problemSetActivityField) return null;
 
   return (
-    <Accordion>
+    <Accordion sx={{ my: 0.5 }}>
       <AccordionSummary><Typography>{task.title} {formatDeadline}</Typography></AccordionSummary>
       <AccordionDetails>
         {task.problemSetActivityField.activityStatus.map((status) => {

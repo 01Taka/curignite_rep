@@ -1,15 +1,16 @@
 import React from 'react';
 import { TodayTasks } from './shared/planTypes';
 import { arrayToRangeString } from '../../../../functions/utils/rangeUtils';
-import { Box, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import { millToMin } from './shared/planUtils';
 
 interface RecommendedPlanProps {
   todayTasks: TodayTasks;
   studyTimeNeededToday: number;
+  onEditPlan: () => void;
 }
 
-const RecommendedPlan: React.FC<RecommendedPlanProps> = ({ todayTasks, studyTimeNeededToday }) => {
+const RecommendedPlan: React.FC<RecommendedPlanProps> = ({ todayTasks, studyTimeNeededToday, onEditPlan }) => {
   return (
     <Box sx={{ p: 2, maxWidth: '100%', width: '100%', mx: 'auto', bgcolor: 'ghostwhite' }}>
       <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
@@ -47,6 +48,9 @@ const RecommendedPlan: React.FC<RecommendedPlanProps> = ({ todayTasks, studyTime
           </Box>
         ))}
       </Box>
+      <Button variant='outlined' onClick={onEditPlan}>
+        編集
+      </Button>
     </Box>
   );
 };
