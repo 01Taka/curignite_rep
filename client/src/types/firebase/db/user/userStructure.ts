@@ -1,7 +1,7 @@
 import { Timestamp } from "firebase/firestore";
 import { BaseDocumentData } from "../baseTypes";
 import { Subject } from "../common/commonTypes";
-import { LearningGoalStatus, PartnerStatus, UserStatus } from "./userSupplementTypes";
+import { LearningGoalStatus, PartnerStatus, UserStateData, UserTaskPlanData } from "./userSupplementTypes";
 import { JoinRequestStatus } from "../common/joinRequest/joinRequestSupplementTypes";
 import { ISODate } from "../../../util/dateTimeTypes";
 
@@ -13,13 +13,8 @@ export interface UserData extends BaseDocumentData {
   avatarIconId: string;
   birthTimestamp: Timestamp;
 
-  status: UserStatus;
-  currentTargetLearningGoalId: string | null;
-
-  lastLearningTimestamp: Timestamp;
-  consecutiveLearningNumber: number;
-  maxConsecutiveLearningNumber: number;
-  totalLearningTime: number;
+  taskPlan: UserTaskPlanData | null;
+  state: UserStateData;
 }
 
 export interface UserWithSupplementary extends UserData {

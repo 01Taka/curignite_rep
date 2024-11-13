@@ -31,6 +31,8 @@ import { SpaceMemberService } from './app/space/subCollection/spaceMemberService
 // チャット関連サービス
 import { ChatRoomService } from './app/chat/chatRoomService';
 import { ChatRoomChatService } from './app/chat/subCollection/chatRoomChatService';
+import { UserStateManager } from './app/user/userStateManager';
+import { UserTaskPlanManager } from './app/user/userTaskPlanManager';
 
 
 type ConstructorWithArgs<T, Args extends any[]> = new (...args: Args) => T;
@@ -62,6 +64,22 @@ export class ServiceFactory {
       this.storageManager,
       this.createTeamMemberService()
     );
+  }
+
+  createUserStateManager() {
+    return this.getInstance(
+      'userState',
+      UserStateManager,
+      this.createUserService()
+    )
+  }
+
+  createUserTaskPlanManager() {
+    return this.getInstance(
+      'userTaskPlan',
+      UserTaskPlanManager,
+      this.createUserService()
+    )
   }
 
   createUserTeamService() {
@@ -141,7 +159,7 @@ export class ServiceFactory {
       this.firestore,
       this.createSpaceMemberService(),
       this.createSpaceJoinRequestService(),
-      this.createUserService(),
+      this.createUserStateManager(),
       this.createChatRoomService()
     );
   }

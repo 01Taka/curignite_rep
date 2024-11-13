@@ -1,3 +1,5 @@
+import { Range } from "../../../../../types/util/componentsTypes";
+
 export interface TodayIndividualTask {
   id: string;
   title: string;
@@ -13,6 +15,14 @@ export interface TodayCategoryTask {
   estimatedDuration: number;
 }
 
+export interface TodayCategoryTaskWithRanges {
+  taskId: string;
+  categoryId: string;
+  categoryName: string;
+  todayTaskProblemRanges: Range[];
+  estimatedDuration: number;
+}
+
 export interface TodayProblemSetTask {
   problemSetId: string;
   taskName: string;
@@ -24,4 +34,10 @@ export interface TodayTasks {
   estimatedDuration: number;
   individualTasks: TodayIndividualTask[];
   problemSetTasks: TodayProblemSetTask[];
+}
+
+export interface TodayTasksWithRanges {
+  estimatedDuration: number;
+  individualTasks: TodayIndividualTask[];
+  problemSetTasks: TodayCategoryTaskWithRanges[];
 }

@@ -1,12 +1,12 @@
 import { DocumentData, DocumentReference, Firestore } from "firebase/firestore";
 import BaseDB from "../../base";
 import { getInitialBaseDocumentData } from "../../../../functions/db/dbUtils";
-import { UserService } from "../user/userService";
 import { ChatRoomService } from "../chat/chatRoomService";
 import { SpaceMemberService } from "./subCollection/spaceMemberService";
 import { SpaceJoinRequestService } from "./subCollection/spaceJoinRequestService";
 import { SpaceData } from "../../../../types/firebase/db/space/spaceStructure";
 import { BaseParticipationStatus } from "../../../../types/firebase/db/baseTypes";
+import { UserStateManager } from "../user/userStateManager";
 
 export class SpaceService {
   public baseDB: BaseDB<SpaceData>;
@@ -15,7 +15,7 @@ export class SpaceService {
     firestore: Firestore,
     private spaceMemberService: SpaceMemberService,
     private spaceJoinRequestService: SpaceJoinRequestService,
-    private userService: UserService,
+    private userStateManager: UserStateManager,
     private chatRoomService: ChatRoomService
   ) {
     this.baseDB = new BaseDB(firestore, "spaces");
@@ -45,7 +45,7 @@ export class SpaceService {
       );
 
       await this.baseDB.update(spaceRef.id, { chatRoomId: chatRoomRef.id });
-      await this.userService.appendSpaceId(createdById, spaceRef.id);
+      await this.userStateManager.appendSpaceId(createdById, spaceRef.id);
 
       return chatRoomRef;;
     } catch (error) {

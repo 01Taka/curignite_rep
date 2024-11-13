@@ -9,7 +9,7 @@ export class StorageManager {
   async uploadFiles(path: string, id: string, startIndex: number, files: File[]): Promise<string[]> {
     const uploadPromises = files.map(async (file, index) => {
       try {
-        const idWithIndex = `${id}-${startIndex + index}`;
+        const idWithIndex = `${id}_${startIndex + index}`;
         return await this.uploadFile(path, idWithIndex, file);
       } catch (error) {
         console.error(`ファイル${index}のアップロードに失敗しました: `, error);
@@ -20,8 +20,8 @@ export class StorageManager {
     return (await Promise.all(uploadPromises)).filter(url => url !== null) as string[];
   }
 
-  private getFileId(path: string, id: string, format: FileExtension | "") {
-    return `${path}/${id}.${format}`;
+  private getFileId(path: string, id: string) {
+    return `${path}_${id}`;
   }
   
   // ファイルのアップロード
@@ -69,7 +69,7 @@ export class StorageManager {
         );
       });
 
-      return this.getFileId(path, id, format)
+      return this.getFileId(path, id)
     } catch (error) {
       console.error('ファイルのアップロードに失敗しました: ', error);
       throw error;
@@ -80,15 +80,18 @@ export class StorageManager {
   async getFileUrl(fileId: string): Promise<string> {
     try {
       if (!fileId) return "";
-      
-      const fileRef = ref(this.storage, fileId);
+  
+      // `_` を `/` に置き換える
+      const adjustedFileId = fileId.replace(/_/g, '/');
+  
+      const fileRef = ref(this.storage, adjustedFileId);
       const url = await getDownloadURL(fileRef);
       return url;
     } catch (error) {
       console.error('ファイルの取得に失敗しました: ', error);
       throw error;
     }
-  }
+  }  
 
   async getFileUrls(fileIds: string[]): Promise<string[]> {
     try {
@@ -110,10 +113,6 @@ export class StorageManager {
       console.error('ファイルの削除に失敗しました: ', error);
       throw error;
     }
-  }
-
-  getObjectURL(file: File | null | undefined) {
-    return file ? URL.createObjectURL(file) : "";
   }
 }
 

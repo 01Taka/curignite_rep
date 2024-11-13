@@ -24,6 +24,7 @@ export const startLearningGoal = async (
 ) => {
   const learningService = serviceFactory.createUserLearningGoalService();
   const userService = serviceFactory.createUserService();
+  const userStateManager = serviceFactory.createUserStateManager();
 
   try {
     const prevGoalId = (await userService.getUser(userId))?.currentTargetLearningGoalId;
@@ -33,7 +34,7 @@ export const startLearningGoal = async (
     }
 
     const goalRef = await learningService.createGoal(userId, objective, subject, targetDuration, "inProgress");
-    await userService.setCurrentTargetLearningGoalId(userId, goalRef.id);
+    await userStateManager.setCurrentTargetLearningGoalId(userId, goalRef.id);
 
     IndexedLearningGoalService.createCurrentGoal(userId, goalRef.id);
 
@@ -55,6 +56,7 @@ export const endLearningGoal = async (
 ) => {
   const learningService = serviceFactory.createUserLearningGoalService();
   const userService = serviceFactory.createUserService();
+  const userStateManager = serviceFactory.createUserStateManager();
 
   const learningGoalId = (await userService.getUser(userId))?.currentTargetLearningGoalId;
   if (!learningGoalId) {
@@ -70,7 +72,7 @@ export const endLearningGoal = async (
 
     //リセット操作
     await endSession(userId, learningGoalId);
-    await userService.setCurrentTargetLearningGoalId(userId, null);
+    await userStateManager.setCurrentTargetLearningGoalId(userId, null);
     await IndexedLearningGoalService.clearCurrentGoal(userId);
     dispatch(resetLearningGoalSlice());
 

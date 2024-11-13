@@ -36,7 +36,10 @@ export const updateUserData = createAsyncThunk<
         return rejectWithValue("User data not found");
       }
 
-      const avatarIconUrl = await storageManager.getFileUrl(userData.avatarIconId);
+      const avatarIconUrl = await storageManager.getFileUrl(userData.avatarIconId).then((url) => url).catch((error) => {
+        console.error('Failed to get user icon url.', error);
+        return '';
+      });
 
       const userDataWithIconUrl = {...userData, avatarIconUrl } as UserWithSupplementary
       
