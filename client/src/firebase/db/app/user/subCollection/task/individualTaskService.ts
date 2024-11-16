@@ -10,8 +10,9 @@ export class IndividualTaskService {
     this.fss = new FirestoreService(firestore, ['users', 'individualTasks']);
   }
 
-  private updatePath(userId: string) {
+  private callFss(userId: string) {
     this.fss.setCollectionPath(userId);
+    return this.fss;
   }
 
   async createTask(
@@ -33,17 +34,16 @@ export class IndividualTaskService {
         completed,
         estimatedDuration,
       }
-      return await this.fss.create(data);
+      return await this.callFss(creatorId).create(data);
     } catch (error) {
       console.error("Error creating task: ", error);
       throw new Error("Failed to create task");
     }
   }
 
-  async getTask(docId: string, taskId: string): Promise<IndividualTaskRead | null> {
+  async getTask(userId: string, taskId: string): Promise<IndividualTaskRead | null> {
     try {
-      this.updatePath(docId);
-      return await this.fss.read(taskId);
+      return await this.callFss(userId).read(taskId);
     } catch (error) {
       console.error("Error retrieving task: ", error);
       return null;
@@ -52,18 +52,16 @@ export class IndividualTaskService {
 
   async getAllTasks(userId: string, ...queryConstraints: QueryConstraint[]): Promise<IndividualTaskRead[]> {
     try {
-      this.updatePath(userId);
-      return await this.fss.getAll(...queryConstraints);
+      return await this.callFss(userId).getAll(...queryConstraints);
     } catch (error) {
       console.error("Error getting all tasks: ", error);
       throw new Error("Failed to get all tasks");
     }
   }
 
-  async updateTask(docId: string, taskId: string, data: Partial<AutoFieldToUndefined<IndividualTaskWrite>>): Promise<void> {
+  async updateTask(userId: string, taskId: string, data: Partial<AutoFieldToUndefined<IndividualTaskWrite>>): Promise<void> {
     try {
-      this.updatePath(docId);
-      await this.fss.update(taskId, data);
+      await this.callFss(userId).update(taskId, data);
     } catch (error) {
       console.error("Error updating task: ", error);
       throw new Error("Failed to update task");

@@ -9,17 +9,17 @@ import { UserWithNotExistUsersId } from "../../../../types/module/redux/slice/us
 import FirestoreService from "../../handler/firestoreService";
 
 export class UserService {
-  private fss: FirestoreService<UserRead, UserWrite>;
+  private _fss: FirestoreService<UserRead, UserWrite>;
 
   constructor(
     firestore: Firestore,
     private storageManager: StorageManager,
   ) {
-    this.fss = new FirestoreService(firestore, 'users');
+    this._fss = new FirestoreService(firestore, 'users');
   }
 
-  get firestoreService() {
-    return this.fss;
+  get fss() {
+    return this._fss;
   }
 
   /**

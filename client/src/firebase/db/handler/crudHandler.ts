@@ -17,7 +17,7 @@ class CRUDHandler<Read extends BaseDocumentRead, Write extends BaseDocumentWrite
    * @param errorMessage エラーメッセージ
    * @returns Firestore操作の結果
    */
-  private async handleFirestoreOperation<T>(
+  private static async handleFirestoreOperation<T>(
     operation: Promise<T>, 
     action: string, 
     context?: string
@@ -53,7 +53,7 @@ class CRUDHandler<Read extends BaseDocumentRead, Write extends BaseDocumentWrite
    * @returns 作成されたドキュメントの参照
    */
   async create(data: Write): Promise<DocumentReference<Write>> {
-    const result = await this.handleFirestoreOperation(addDoc(this.writeCollectionRef, this.writePreprocessing(data)), "Failed to create document");
+    const result = await CRUDHandler.handleFirestoreOperation(addDoc(this.writeCollectionRef, this.writePreprocessing(data)), "Failed to create document");
     return result as DocumentReference<Write>;
   }
 
@@ -66,7 +66,7 @@ class CRUDHandler<Read extends BaseDocumentRead, Write extends BaseDocumentWrite
    */
   async createWithId(documentId: string, data: Write, merge: boolean = false): Promise<void> {
     const docRef = doc(this.writeCollectionRef, documentId);
-    return this.handleFirestoreOperation(setDoc(docRef, this.writePreprocessing(data), { merge }), "Failed to create document with ID", documentId);
+    return CRUDHandler.handleFirestoreOperation(setDoc(docRef, this.writePreprocessing(data), { merge }), "Failed to create document with ID", documentId);
   }
 
   /**
@@ -76,7 +76,7 @@ class CRUDHandler<Read extends BaseDocumentRead, Write extends BaseDocumentWrite
    */
   async readAsDocumentSnapshot(documentId: string): Promise<DocumentSnapshot<Read>> {
     const docRef = doc(this.readCollectionRef, documentId);
-    return this.handleFirestoreOperation(getDoc(docRef), "Failed to read document snapshot", documentId);
+    return CRUDHandler.handleFirestoreOperation(getDoc(docRef), "Failed to read document snapshot", documentId);
   }
 
   /**
@@ -106,7 +106,7 @@ class CRUDHandler<Read extends BaseDocumentRead, Write extends BaseDocumentWrite
   async update(documentId: string, data: FieldValueSupported<Partial<Write>>): Promise<void> {
     console.log("Called update"); // 開発用
     const docRef = doc(this.writeCollectionRef, documentId);
-    return this.handleFirestoreOperation(updateDoc(docRef, {...data, updatedAt: serverTimestamp()}), "Failed to update document", documentId);
+    return CRUDHandler.handleFirestoreOperation(updateDoc(docRef, {...data, updatedAt: serverTimestamp()}), "Failed to update document", documentId);
   }
 
   /**
@@ -116,7 +116,7 @@ class CRUDHandler<Read extends BaseDocumentRead, Write extends BaseDocumentWrite
   async hardDelete(documentId: string): Promise<void> {
     console.log("Called hard delete"); // 開発用
     const docRef = doc(this.writeCollectionRef, documentId);
-    return this.handleFirestoreOperation(deleteDoc(docRef), "Failed to hard delete document", documentId);
+    return CRUDHandler.handleFirestoreOperation(deleteDoc(docRef), "Failed to hard delete document", documentId);
   }  
 
   /**
@@ -138,7 +138,7 @@ class CRUDHandler<Read extends BaseDocumentRead, Write extends BaseDocumentWrite
    */
   async getAllAsQuerySnapshot(...queryConstraints: QueryConstraint[]): Promise<QuerySnapshot<Read>> {
     const q = query(this.readCollectionRef, where("isActive", "==", true), ...queryConstraints);
-    return this.handleFirestoreOperation(getDocs(q), "Failed to get query snapshot");
+    return CRUDHandler.handleFirestoreOperation(getDocs(q), "Failed to get query snapshot");
   }
 
   /**
@@ -167,7 +167,7 @@ class CRUDHandler<Read extends BaseDocumentRead, Write extends BaseDocumentWrite
     console.log("Called get first match"); // 開発用
 
     const q = query(this.readCollectionRef, where(field as string, "==", value), where("isActive", "==", true), limit(1));
-    const querySnapshot: QuerySnapshot<Read> = await this.handleFirestoreOperation(getDocs(q), "Failed to get first match");
+    const querySnapshot: QuerySnapshot<Read> = await CRUDHandler.handleFirestoreOperation(getDocs(q), "Failed to get first match");
 
     if (!querySnapshot.empty) {
       const doc = querySnapshot.docs[0];
@@ -186,8 +186,8 @@ class CRUDHandler<Read extends BaseDocumentRead, Write extends BaseDocumentWrite
    * @param additionalConstraints その他のクエリ制約
    * @returns 構築されたクエリ制約配列
    */
-  private buildQueryConstraints(
-    startAfterDoc?: DocumentSnapshot<Read>,
+  private static buildQueryConstraints<T>(
+    startAfterDoc?: DocumentSnapshot<T>,
     limitCount?: number,
     additionalConstraints: QueryConstraint[] = []
   ): QueryConstraint[] {
@@ -224,11 +224,11 @@ class CRUDHandler<Read extends BaseDocumentRead, Write extends BaseDocumentWrite
   ): Promise<Read[]> {
     try {
       // クエリ制約を構築
-      const constraints = this.buildQueryConstraints(startAfterDoc, limitCount, queryConstraints);
+      const constraints = CRUDHandler.buildQueryConstraints(startAfterDoc, limitCount, queryConstraints);
 
       // クエリを実行
       const fullQuery = query(this.readCollectionRef, ...constraints);
-      const querySnapshot = await this.handleFirestoreOperation(getDocs(fullQuery), "Failed to get paginated data");
+      const querySnapshot = await CRUDHandler.handleFirestoreOperation(getDocs(fullQuery), "Failed to get paginated data");
 
       // 結果を整形して返却
       return querySnapshot.docs.map(doc => {

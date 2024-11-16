@@ -13,14 +13,16 @@ const ProblemSetStep: React.FC<ProblemSetStepProps> = () => {
 
   useEffect(() => {
     const updateTasks = async () => {
-      // if (uid) {
-      //   try {
-      //     const data = await TaskManagementService.fetchAllData(serviceFactory, uid);
-      //     setTasksData(data.tasks);
-      //   } catch (error) {
-      //     console.error("Error fetching tasks:", error);
-      //   }
-      // } //OUT//
+      if (uid) {
+        try {
+          const data = await TaskManagementService.fetchAllData(serviceFactory, uid);
+          console.log(data);
+          
+          setTasksData(data.tasks);
+        } catch (error) {
+          console.error("Error fetching tasks:", error);
+        }
+      }
     };
     
     updateTasks(); // uidが変更されたときにupdateTasksを呼び出す

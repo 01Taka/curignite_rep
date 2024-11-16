@@ -1,4 +1,3 @@
-import { Firestore } from "firebase/firestore";
 import { TodayCategoryTask, TodayTasks } from "../../../../features/app/task/plan/shared/planTypes";
 import { mathClamp } from "../../../../functions/utils/numberUtils";
 import { UserRead, UserWrite } from "../../../../types/firebase/db/user/userStructure";
@@ -12,7 +11,7 @@ export class UserTaskPlanManager {
   constructor(
     userService: UserService
   ) {
-    this.fss = userService.firestoreService;
+    this.fss = userService.fss;
   }
 
   static todayTasksToTaskPlan(todayTasks: TodayTasks): TaskPlan {

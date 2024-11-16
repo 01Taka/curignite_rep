@@ -1,6 +1,5 @@
 import { DocumentData, DocumentReference, Firestore, Timestamp } from "firebase/firestore";
 import { CategoryActivity } from "../../../../../../types/firebase/db/task/taskSupplementTypes";
-import { FunctionManager } from "../../../../util/functionManager";
 import FirestoreService from "../../../../handler/firestoreService";
 import { ProblemSetActivityRead, ProblemSetActivityWrite } from "../../../../../../types/firebase/db/task/taskStructure";
 
@@ -11,8 +10,9 @@ export class ProblemSetActivityService {
     this.fss = new FirestoreService(firestore, ['users', 'problemSets', 'activities']);
   }
 
-  private updatePath(userId: string, problemSetId: string) {
+  private callFss(userId: string, problemSetId: string) {
     this.fss.setCollectionPath(userId, problemSetId);
+    return this.fss;
   }
 
   async createActivity(
@@ -29,18 +29,15 @@ export class ProblemSetActivityService {
       completed
     }
 
-    this.updatePath(creatorId, problemSetId);
-    return await this.fss.create(data);
+    return await this.callFss(creatorId, problemSetId).create(data);
   }
 
   async getActivity(userId: string, problemSetId: string, activityId: string) {
-    this.updatePath(userId, problemSetId)
-    return await this.fss.read(activityId);
+    return await this.callFss(userId, problemSetId).read(activityId);
   }
 
   async getAllActivities(userId: string, problemSetId: string) {
-    this.updatePath(userId, problemSetId)
-    return await this.fss.getAll();
+    return await this.callFss(userId, problemSetId).getAll();
   }
 
   // addCollectionCallback(

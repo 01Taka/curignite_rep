@@ -10,8 +10,9 @@ export class ProblemSetCategoryService {
     this.fss = new FirestoreService(firestore, ['users', 'problemSets', 'categories']);
   }
 
-  private updatePath(userId: string, problemSetId: string) {
+  private callFss(userId: string, problemSetId: string) {
     this.fss.setCollectionPath(userId, problemSetId);
+    return this.fss;
   }
 
   async createCategory(
@@ -31,18 +32,15 @@ export class ProblemSetCategoryService {
       totalProblemNumber,
       completedProblemIdsRange,
     };
-    this.updatePath(creatorId, problemSetId);
-    return await this.fss.create(data);
+    return await this.callFss(creatorId, problemSetId).create(data);
   }
 
   async getCategory(userId: string, problemSetId: string, categoryId: string) {
-    this.updatePath(userId, problemSetId);
-    return this.fss.read(categoryId);
+    return this.callFss(userId, problemSetId).read(categoryId);
   }
 
   async getAllCategory(userId: string, problemSetId: string) {
-    this.updatePath(userId, problemSetId);
-    return this.fss.getAll();
+    return this.callFss(userId, problemSetId).getAll();
   }
 }
 

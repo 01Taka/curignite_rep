@@ -10,9 +10,11 @@ export class ProblemSetService {
     this.fss = new FirestoreService(firestore, ['users', 'problemSets']);
   }
 
-  private updatePath(userId: string) {
+  private callFss(userId: string) {
     this.fss.setCollectionPath(userId);
+    return this.fss;
   }
+  
   async createProblemSet(
     creatorId: string,
     problemSetName: string,
@@ -26,18 +28,15 @@ export class ProblemSetService {
       activityManagementMethod
     }
 
-    this.updatePath(creatorId);
-    return await this.fss.create(data);
+    return await this.callFss(creatorId).create(data);
   }
 
   async getProblemSet(userId: string, problemSetId: string): Promise<ProblemSetRead | null> {
-    this.updatePath(userId);
-    return await this.fss.read(problemSetId);
+    return await this.callFss(userId).read(problemSetId);
   }
 
   async getAllProblemSets(userId: string): Promise<ProblemSetRead[]> {
-    this.updatePath(userId);
-    return await this.fss.getAll();
+    return await this.callFss(userId).getAll();
   }
 
   // async createProblemSetStep(

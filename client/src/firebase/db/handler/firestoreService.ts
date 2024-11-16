@@ -7,21 +7,36 @@ import TransactionHandler from "./transactionHandler";
 import CollectionService from "./collectionService";
 import { FieldValueSupported } from "../../../types/firebase/db/formatTypes";
 
+class CallbacksManager<Read extends BaseDocumentRead> {
+  private callbacksInstances: Map<string, CallbacksHandler<Read>> = new Map();
+
+  getInstance(
+    collectionRef: CollectionReference<DocumentData>
+  ): CallbacksHandler<Read> {
+    const key = collectionRef.path;
+
+    if (!this.callbacksInstances.has(key)) {
+      this.callbacksInstances.set(key, new CallbacksHandler<Read>(collectionRef));
+    }
+
+    return this.callbacksInstances.get(key) as CallbacksHandler<Read>;
+  }
+}
+
 class FirestoreService<
   Read extends BaseDocumentRead,
   Write extends BaseDocumentWrite
 > {
-  private static instances: Map<string, FirestoreService<any, any>> = new Map();
-
   private _crudHandler?: CRUDHandler<Read, Write>;
-  private _callbacksHandler?: CallbacksHandler<Read>;
   private _batchHandler?: BatchHandler<Write>;
   private _transactionHandler?: TransactionHandler<Read, Write>;
 
   private _collectionService: CollectionService;
+  private _callbacksManager: CallbacksManager<Read>;
 
   constructor(firestore: Firestore, collectionPaths: string | string[]) {
     this._collectionService = new CollectionService(firestore, collectionPaths);
+    this._callbacksManager = new CallbacksManager();
   }
 
   public get collectionRef(): CollectionReference<DocumentData> {
@@ -33,32 +48,14 @@ class FirestoreService<
   }
 
   public setCollectionPath(...paths: string[]) {
-    // pathが変わると、リファレンスも変わる
-    // ハンドラ内で新しいリファレンスを使うためにハンドラをクリア
-    this._collectionService.setCollectionPath(paths, this.clearHandlers);
-  }
-  
-  /**
-   * すべてのハンドラーインスタンスを削除
-   */
-  private clearHandlers(): void {
-    this._crudHandler = undefined;
-    this._callbacksHandler = undefined;
-    this._batchHandler = undefined;
-    this._transactionHandler = undefined;
-  }
-
-  static getInstance<Read extends BaseDocumentRead, Write extends BaseDocumentWrite>(
-    firestore: Firestore,
-    path: string
-  ): FirestoreService<Read, Write> {
-    const key = `${firestore.app.name}:${path}`;
-
-    if (!FirestoreService.instances.has(key)) {
-      FirestoreService.instances.set(key, new FirestoreService<Read, Write>(firestore, path));
+    const atUpdatedPath = () => {
+      this._crudHandler = undefined;
+      this._batchHandler = undefined;
+      this._transactionHandler = undefined;
     }
-
-    return FirestoreService.instances.get(key) as FirestoreService<Read, Write>;
+    // pathが変わると、リファレンスも変わる
+    // ハンドラ内で新しいリファレンスを使うためにインスタンスをリセット
+    this._collectionService.setCollectionPath(paths, atUpdatedPath);
   }
 
   private get crudHandler(): CRUDHandler<Read, Write> {
@@ -69,10 +66,7 @@ class FirestoreService<
   }
 
   private get callbacksHandler(): CallbacksHandler<Read> {
-    if (!this._callbacksHandler) {
-      this._callbacksHandler = new CallbacksHandler<Read>(this.collectionRef);
-    }
-    return this._callbacksHandler;
+    return this._callbacksManager.getInstance(this.collectionRef)
   }
 
   private get batchHandler(): BatchHandler<Write> {
