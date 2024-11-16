@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import { arrayToRanges, rangesToArray, sumRanges } from '../../../../../../functions/utils/rangeUtils';
 import { TaskData } from '../../../../../../types/firebase/db/task/taskExpansionTypes';
-import { ProblemSetCategoryData } from '../../../../../../types/firebase/db/task/taskStructure';
 import useMultipleRangeSelections from '../../../../../hooks/range/useMultipleRangeSelections';
 import { getId, recoveryId } from './customPlanUtils';
 import { TodayCategoryTask, TodayIndividualTask, TodayProblemSetTask, TodayTasks } from '../../shared/planTypes';
 import { mathClamp } from '../../../../../../functions/utils/numberUtils';
 import { Range } from '../../../../../../types/util/componentsTypes';
+import { ProblemSetCategoryRead } from '../../../../../../types/firebase/db/task/taskStructure';
 
 const useCustomPlan = (tasks: TaskData[], recommendTask: TodayTasks | null) => {
   const [selectedTaskTime, setSelectedTaskTime] = useState<Record<string, number>>({});
@@ -35,7 +35,7 @@ const useCustomPlan = (tasks: TaskData[], recommendTask: TodayTasks | null) => {
   );
 
   const categoryMap = useMemo(() => {
-    return tasks.reduce<Record<string, ProblemSetCategoryData>>((acc, task) => ({
+    return tasks.reduce<Record<string, ProblemSetCategoryRead>>((acc, task) => ({
       ...acc,
       ...(task.problemSetActivityField?.categoryMap ?? {})
     }), {});
@@ -138,6 +138,7 @@ const useCustomPlan = (tasks: TaskData[], recommendTask: TodayTasks | null) => {
     const data: TodayIndividualTask = {
       id: task.docId,
       title: task.title,
+      currentProgress: task.progress,
       todayProgress,
       estimatedDuration: task.estimatedDuration * todayProgress
     };

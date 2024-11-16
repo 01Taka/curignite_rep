@@ -1,8 +1,8 @@
 import { Timestamp } from "firebase/firestore";
 import { LearningState, LobbyVisibility } from "./learningSupplementTypes";
-import { BaseDocumentData } from "../baseTypes";
+import { BaseDocumentWrite } from "../baseTypes";
 
-export interface LearningLobbyData extends BaseDocumentData {
+export interface LearningLobbyData extends BaseDocumentWrite {
   visibility: LobbyVisibility;
   memberCount: number;
 }
@@ -12,7 +12,7 @@ export interface LearningLobbyData extends BaseDocumentData {
  * 親子関係: LearningLobbies/LearningMembers
  * ドキュメントID: UserId
  */
-export interface LearningMemberData extends BaseDocumentData {
+export interface LearningMemberData extends BaseDocumentWrite {
   state: LearningState;
   joinedAt: Timestamp;
 }

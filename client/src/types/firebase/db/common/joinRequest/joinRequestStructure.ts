@@ -1,8 +1,8 @@
 import { Timestamp } from "firebase/firestore";
-import { BaseDocumentData } from "../../baseTypes";
+import { BaseDocumentWrite } from "../../baseTypes";
 import { JoinRequestStatus } from "./joinRequestSupplementTypes";
 
-export interface JoinRequestData extends BaseDocumentData {
+export interface JoinRequestData extends BaseDocumentWrite {
   status: JoinRequestStatus;
   requestedAt: Timestamp;
   responseAt?: Timestamp;

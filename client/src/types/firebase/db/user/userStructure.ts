@@ -1,32 +1,39 @@
 import { Timestamp } from "firebase/firestore";
-import { BaseDocumentData } from "../baseTypes";
+import { BaseDocumentWrite, DocumentRead, DocumentWrite } from "../baseTypes";
 import { Subject } from "../common/commonTypes";
-import { LearningGoalStatus, PartnerStatus, UserStateData, UserTaskPlanData } from "./userSupplementTypes";
+import { LearningGoalStatus, PartnerStatus, UserStateData } from "./userSupplementTypes";
 import { JoinRequestStatus } from "../common/joinRequest/joinRequestSupplementTypes";
 import { ISODate } from "../../../util/dateTimeTypes";
+import { TaskPlan } from "./userTaskPlanStructure";
 
 /**
  * docId - userId
  */
-export interface UserData extends BaseDocumentData {
+interface UserData {
   username: string;
   avatarIconId: string;
   birthTimestamp: Timestamp;
 
-  taskPlan: UserTaskPlanData | null;
+  taskPlan: TaskPlan | null;
   state: UserStateData;
 }
 
-export interface UserWithSupplementary extends UserData {
+export type UserWrite = DocumentWrite<UserData>;
+export interface UserRead extends DocumentRead<UserData> {
   avatarIconUrl: string;
-}
+} 
+
+
+// export interface UserWithSupplementary extends UserData {
+//   avatarIconUrl: string;
+// }
 
 export interface Session {
   startTime: Timestamp;
   endTime: Timestamp;
 }
 
-export interface UserLearningGoalData extends BaseDocumentData {
+export interface UserLearningGoalData {
   objective: string
   subject: Subject;
   sessions: Session[];
@@ -38,7 +45,7 @@ export interface UserLearningGoalData extends BaseDocumentData {
 /**
  * date - YYYY-MM-DDの形式で保存
  */
-export interface UserDailyLearningSummaryData extends BaseDocumentData {
+export interface UserDailyLearningSummaryData {
   date: ISODate; 
   totalDurationSpent: number;
   learningGoalIds: string[];
@@ -48,7 +55,7 @@ export interface UserDailyLearningSummaryData extends BaseDocumentData {
 /**
  * docId - teamId
  */
-export interface UserTeamData extends BaseDocumentData {
+export interface UserTeamData {
   requestedAt: Timestamp;
   status: JoinRequestStatus;
   isMember: boolean;
@@ -57,12 +64,12 @@ export interface UserTeamData extends BaseDocumentData {
 /**
  * docId - partnerUserId
  */
-export interface UserPartnerData extends BaseDocumentData {
+export interface UserPartnerData {
   since: Timestamp;
   status: PartnerStatus;
 }
 
-export interface UserHelpData extends BaseDocumentData {
+export interface UserHelpData {
   subject: Subject;
   question: string;
   fileIds: string[];
@@ -74,7 +81,7 @@ export interface UserHelpData extends BaseDocumentData {
  * Users/UserHelps/
  * createdAt - answeredAt
  */
-export interface HelpAnswerData extends BaseDocumentData {
+export interface HelpAnswerData {
   answer: string;
   fileIds: string[];
   answeredBy: string;

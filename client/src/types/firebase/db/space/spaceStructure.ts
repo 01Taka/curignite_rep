@@ -1,7 +1,7 @@
 import { Timestamp } from "firebase/firestore";
-import { BaseDocumentData, BaseMemberRole } from "../baseTypes";
+import { BaseDocumentWrite, BaseMemberRole } from "../baseTypes";
 
-export interface SpaceData extends BaseDocumentData {
+export interface SpaceData extends BaseDocumentWrite {
   spaceName: string;
   description: string;
   requiresApproval: boolean;
@@ -11,14 +11,14 @@ export interface SpaceData extends BaseDocumentData {
 /**
  * docId - userId
  */
-export interface SpaceMemberData extends BaseDocumentData {
+export interface SpaceMemberData extends BaseDocumentWrite {
   isAway: boolean;
   joinedAt: Timestamp;
   role: BaseMemberRole;
 }
 
 // // TODO: SpaceInvitationDBを作成
-// export interface SpaceInvitationData extends BaseDocumentData {
+// export interface SpaceInvitationData extends BaseDocumentWrite {
 //   state: SpaceInvitationState;
 //   invitedAt: Timestamp;
 //   responseAt?: Timestamp

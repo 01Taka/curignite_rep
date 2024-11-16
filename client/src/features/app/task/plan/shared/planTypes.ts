@@ -3,6 +3,7 @@ import { Range } from "../../../../../types/util/componentsTypes";
 export interface TodayIndividualTask {
   id: string;
   title: string;
+  currentProgress: number;
   todayProgress: number;
   estimatedDuration: number;
 }

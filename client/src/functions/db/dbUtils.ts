@@ -1,15 +1,15 @@
 import { Timestamp } from "firebase/firestore";
-import { BaseDocumentData } from "../../types/firebase/db/baseTypes";
+import { BaseDocumentWrite } from "../../types/firebase/db/baseTypes";
 
-// 動的ドキュメント作成時の初期値を取得する
-export const getInitialBaseDocumentData = (createdById: string): BaseDocumentData => {
-    return {
-        createdById,
-        docId: '',
-        createdAt: undefined as unknown as Timestamp,
-        isActive: true
-    }
-}
+// // 動的ドキュメント作成時の初期値を取得する
+// export const getInitialBaseDocumentData = (createdById: string): BaseDocumentWrite => {
+//     return {
+//         createdById,
+//         docId: '',
+//         createdAt: undefined as unknown as Timestamp,
+//         isActive: true
+//     }
+// }
 
 // /**
 //  * 管理者メンバーとして作成者を追加するための関数
@@ -86,7 +86,7 @@ export const getInitialBaseDocumentData = (createdById: string): BaseDocumentDat
 //     return members && members.some(member => member.userId === userId);
 // }
 
-export const isDocumentExist = (docId: string, documents: BaseDocumentData[]): boolean => {
+export const isDocumentExist = (docId: string, documents: BaseDocumentWrite[]): boolean => {
     return documents.some(document => document.docId === docId);
 };
   

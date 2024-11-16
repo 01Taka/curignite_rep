@@ -1,5 +1,5 @@
 import { Timestamp } from "firebase/firestore";
-import { BaseDocumentData } from "../../types/firebase/db/baseTypes";
+import { BaseDocumentWrite } from "../../types/firebase/db/baseTypes";
 import { ConvertTimestampToNumber, DocumentIdMap, TimestampConvertedDocumentMap } from "../../types/firebase/db/formatTypes";
 
 /**
@@ -69,7 +69,7 @@ export const revertTimestampConversion = <T>(data: ConvertTimestampToNumber<T>):
  * @param array - 配列データ
  * @returns Timestampがnumberに変換されたドキュメントIDをキーとする辞書
  */
-export const arrayToDictWithTimestampToNumbers = <T extends BaseDocumentData>(array: T[]): TimestampConvertedDocumentMap<T> => {
+export const arrayToDictWithTimestampToNumbers = <T extends BaseDocumentWrite>(array: T[]): TimestampConvertedDocumentMap<T> => {
   return array.reduce((acc, item) => {
     acc[item.docId] = convertTimestampsToNumbers(item);
     return acc;
@@ -81,7 +81,7 @@ export const arrayToDictWithTimestampToNumbers = <T extends BaseDocumentData>(ar
  * @param dict - Timestampがnumberに変換されたドキュメントIDをキーとする辞書
  * @returns 元のデータ型に戻されたドキュメントの配列
  */
-export const dictToArrayWithRevertTimestampConversion = <T extends BaseDocumentData>(dict: TimestampConvertedDocumentMap<T>): T[] => {
+export const dictToArrayWithRevertTimestampConversion = <T extends BaseDocumentWrite>(dict: TimestampConvertedDocumentMap<T>): T[] => {
   const convertedDict = Object.entries(dict).reduce((acc, [key, value]) => {
     acc[key] = revertTimestampConversion(value) as unknown as T;
     return acc;

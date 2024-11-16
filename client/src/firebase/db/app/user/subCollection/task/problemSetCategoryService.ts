@@ -1,51 +1,70 @@
-import { DocumentData, DocumentReference, Firestore } from "firebase/firestore";
-import BaseDB from "../../../../base";
-import { ProblemSetCategoryData } from "../../../../../../types/firebase/db/task/taskStructure";
-import { getInitialBaseDocumentData } from "../../../../../../functions/db/dbUtils";
+import { DocumentReference, Firestore } from "firebase/firestore";
 import { Range } from "../../../../../../types/util/componentsTypes";
+import FirestoreService from "../../../../handler/firestoreService";
+import { ProblemSetCategoryRead, ProblemSetCategoryWrite } from "../../../../../../types/firebase/db/task/taskStructure";
 
 export class ProblemSetCategoryService {
-  private baseDB: BaseDB<ProblemSetCategoryData> | undefined;
-  
-  constructor(private firestore: Firestore) {}
+  private fss: FirestoreService<ProblemSetCategoryRead, ProblemSetCategoryWrite>;
 
-  private getBaseDB(userId: string, problemSetId: string): BaseDB<ProblemSetCategoryData> {
-    if (!this.baseDB || this.baseDB.getCollectionPath() !== this.getPath(userId, problemSetId)) {
-      this.baseDB = new BaseDB(this.firestore, this.getPath(userId, problemSetId));
-    }
-    return this.baseDB;
+  constructor(firestore: Firestore) {
+    this.fss = new FirestoreService(firestore, ['users', 'problemSets', 'categories']);
   }
 
-  getPath(userId: string, problemSetId: string) {
-    return `users/${userId}/problemSets/${problemSetId}/categories`;
+  private updatePath(userId: string, problemSetId: string) {
+    this.fss.setCollectionPath(userId, problemSetId);
   }
 
   async createCategory(
     creatorId: string,
     problemSetId: string,
-    name: string | '', // カテゴリの名前
+    name: string | '',
     isPage: boolean,
     timePerProblem: number,
-    totalProblemNumber: number | null, // カテゴリ内の問題の総数
-    completedProblemIdsRange: Range[] = [] // 完了した問題番号
-  ): Promise<DocumentReference<ProblemSetCategoryData, DocumentData> >{
-    const data: ProblemSetCategoryData = {
-      ...getInitialBaseDocumentData(creatorId),
+    totalProblemNumber: number | null,
+    completedProblemIdsRange: Range[] = []
+  ): Promise<DocumentReference<ProblemSetCategoryWrite>> {
+    const data: ProblemSetCategoryWrite = {
+      createdById: creatorId,
       name: isPage ? 'page' : name,
       isPage,
       timePerProblem,
       totalProblemNumber,
-      completedProblemIdsRange
-    }
-
-    return await this.getBaseDB(creatorId, problemSetId).create(data);
+      completedProblemIdsRange,
+    };
+    this.updatePath(creatorId, problemSetId);
+    return await this.fss.crudHandler.create(data);
   }
 
   async getCategory(userId: string, problemSetId: string, categoryId: string) {
-    return await this.getBaseDB(userId, problemSetId).read(categoryId);
+    this.updatePath(userId, problemSetId);
+    return this.fss.crudHandler.read(categoryId);
   }
 
   async getAllCategory(userId: string, problemSetId: string) {
-    return await this.getBaseDB(userId, problemSetId).getAll();
+    this.updatePath(userId, problemSetId);
+    return this.fss.crudHandler.getAll();
   }
 }
+
+  // addCollectionCallback(
+  //   userId: string,
+  //   problemSetId: string,
+  //   callback: (args: { userId: string, problemSetId: string, data: ProblemSetCategoryData[] }) => void
+  // ) {
+  //   const cb = (data: ProblemSetCategoryData[]) => callback({ userId, problemSetId, data });
+  //   this.functionManager.registerConversion(callback, cb);
+  //   this.getBaseDB(userId, problemSetId).addCollectionCallback(cb);
+  // }
+
+  // removeCollectionCallback(
+  //   userId: string,
+  //   problemSetId: string,
+  //   callback: (args: { userId: string, problemSetId: string, data: ProblemSetCategoryData[] }) => void
+  // ) {
+  //   // コールバックの参照を取得
+  //   const cb = this.functionManager.getConversion(callback)
+  //   if (cb) {
+  //     this.getBaseDB(userId, problemSetId).removeCollectionCallback(cb);
+  //     this.functionManager.deleteConversion(callback);
+  //   }
+  // }

@@ -1,83 +1,84 @@
-import { DocumentData, DocumentReference, Firestore } from "firebase/firestore";
-import { isBeforeDateTime, toTimestamp } from "../../../../functions/utils/dateTimeUtils";
-import { TimeTypes } from "../../../../types/util/dateTimeTypes";
-import BaseDB from "../../base";
-import { getInitialBaseDocumentData } from "../../../../functions/db/dbUtils";
-import { TeamCodeData } from "../../../../types/firebase/db/team/teamCodeStructure";
+// import { DocumentData, DocumentReference, Firestore } from "firebase/firestore";
+// import { isBeforeDateTime, toTimestamp } from "../../../../functions/utils/dateTimeUtils";
+// import { TimeTypes } from "../../../../types/util/dateTimeTypes";
+// import BaseDB from "../../handler/firestoreService";
+// import { getInitialBaseDocumentData } from "../../../../functions/db/dbUtils";
+// import { TeamCodeData } from "../../../../types/firebase/db/team/teamCodeStructure";
 
-export class TeamCodeService {
-    baseDB: BaseDB<TeamCodeData>;
+// export class TeamCodeService {
+//     baseDB: BaseDB<TeamCodeData>;
 
-    constructor(firestore: Firestore) {
-        this.baseDB = new BaseDB(firestore, "teamCodes");
-     }
+//     constructor(firestore: Firestore) {
+//         this.baseDB = new BaseDB(firestore, "teamCodes");
+//      }
 
-    async createTeamCode(createdById: string, teamId: string, period?: TimeTypes): Promise<DocumentReference<DocumentData, DocumentData>> {
-        try {
-            const prevCode = await this.baseDB.getFirstMatch("teamId", teamId);
-            if (prevCode) {
-                await this.baseDB.softDelete(prevCode.docId, { valid: false });
-            }
+//     async createTeamCode(createdById: string, teamId: string, period?: TimeTypes): Promise<DocumentReference<DocumentData, DocumentData>> {
+//         try {
+//             const prevCode = await this.baseDB.getFirstMatch("teamId", teamId);
+//             if (prevCode) {
+//                 await this.baseDB.softDelete(prevCode.docId, { valid: false });
+//             }
 
-            const data: TeamCodeData = {
-                ...getInitialBaseDocumentData(createdById),
-                teamId,
-                period: period ? toTimestamp(period) : null,
-                valid: true,
-            };
-            return this.baseDB.create(data);
-        } catch (error) {
-            // Handle the error appropriately
-            console.error("Error creating new team code:", error);
-            throw error;
-        }
-    }
+//             const data: TeamCodeData = {
+//                 ...getInitialBaseDocumentData(createdById),
+//                 teamId,
+//                 period: period ? toTimestamp(period) : null,
+//                 valid: true,
+//             };
+//             return this.baseDB.create(data);
+//         } catch (error) {
+//             // Handle the error appropriately
+//             console.error("Error creating new team code:", error);
+//             throw error;
+//         }
+//     }
 
-    /**
-     * チームコードデータを取得
-     * @param teamCodeId チームコードID
-     * @returns チームコードデータ
-     */
-    async getTeamCode(teamCodeId: string): Promise<TeamCodeData | null> {
-        try {
-            return await this.baseDB.read(teamCodeId);
-        } catch (error) {
-            console.error("Failed to get team code data: ", error);
-            return null;
-        }
-    }
+//     /**
+//      * チームコードデータを取得
+//      * @param teamCodeId チームコードID
+//      * @returns チームコードデータ
+//      */
+//     async getTeamCode(teamCodeId: string): Promise<TeamCodeData | null> {
+//         try {
+//             return await this.baseDB.read(teamCodeId);
+//         } catch (error) {
+//             console.error("Failed to get team code data: ", error);
+//             return null;
+//         }
+//     }
 
     
-    async getTeamCodeByTeamId(teamId: string): Promise<TeamCodeData | null> {
-        try {
-            const code = await this.baseDB.getFirstMatch("teamId", teamId);
-            return code;
-        } catch (error) {
-            console.error(`Failed to fetch team code for teamId: ${teamId}`, error);
-            return null;
-        }
-    }
+//     async getTeamCodeByTeamId(teamId: string): Promise<TeamCodeData | null> {
+//         try {
+//             const code = await this.baseDB.getFirstMatch("teamId", teamId);
+//             return code;
+//         } catch (error) {
+//             console.error(`Failed to fetch team code for teamId: ${teamId}`, error);
+//             return null;
+//         }
+//     }
 
-    async softDeleteTeamCode(teamCodeId: string): Promise<void> {
-        this.baseDB.softDelete(teamCodeId);
-    }
+//     async softDeleteTeamCode(teamCodeId: string): Promise<void> {
+//         this.baseDB.softDelete(teamCodeId);
+//     }
 
-    /**
-   * チームコードを確認する
-   * @param teamCode - チームコード
-   * @returns 正常true 問題false
-   */
-  async isValidTeamCode(teamCode: TeamCodeData): Promise<boolean> {
-    if (!teamCode.valid) {
-      console.error(`チームコード "${teamCode.code}" は無効としてマークされています。`);
-      return false;
-    }
+//     /**
+//    * チームコードを確認する
+//    * @param teamCode - チームコード
+//    * @returns 正常true 問題false
+//    */
+//   async isValidTeamCode(teamCode: TeamCodeData): Promise<boolean> {
+//     if (!teamCode.valid) {
+//       console.error(`チームコード "${teamCode.code}" は無効としてマークされています。`);
+//       return false;
+//     }
 
-    if (teamCode.period && isBeforeDateTime(new Date(), teamCode.period)) {
-      console.error(`チームコード "${teamCode.code}" の使用期限が切れています。`);
-      return false;
-    }
+//     if (teamCode.period && isBeforeDateTime(new Date(), teamCode.period)) {
+//       console.error(`チームコード "${teamCode.code}" の使用期限が切れています。`);
+//       return false;
+//     }
     
-    return true;
-  }
-}
+//     return true;
+//   }
+// }
+export {}

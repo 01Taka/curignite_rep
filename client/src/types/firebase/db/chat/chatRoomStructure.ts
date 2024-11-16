@@ -1,14 +1,14 @@
 import { Timestamp } from "firebase/firestore";
-import { BaseDocumentData, BaseMemberRole } from "../baseTypes";
+import { BaseDocumentWrite, BaseMemberRole } from "../baseTypes";
 import { ChatRoomRelationships, ChatStatusType } from "./chatRoomSupplementTypes";
 
 
-export interface ChatRoomData extends BaseDocumentData {
+export interface ChatRoomData extends BaseDocumentWrite {
   roomName: string;
   relationships: ChatRoomRelationships;
 }
 
-export interface ChatRoomMemberData extends BaseDocumentData {
+export interface ChatRoomMemberData extends BaseDocumentWrite {
     joinedAt: Timestamp;
     role: BaseMemberRole;
 }
@@ -16,7 +16,7 @@ export interface ChatRoomMemberData extends BaseDocumentData {
 /**
  * createdBy - senderId
  */
-export interface ChatData extends BaseDocumentData {
+export interface ChatData extends BaseDocumentWrite {
   content: string;
   fileUrls: string[];
   status: {
@@ -27,7 +27,7 @@ export interface ChatData extends BaseDocumentData {
   // threadId: string; // スレッドID、スレッドがない場合は省略される
 }
 
-// export interface ChatRoomThreadData extends BaseDocumentData {
+// export interface ChatRoomThreadData extends BaseDocumentWrite {
 //   title: string;
 //   status: ChatThreadStatus;
 //   participantsId: string[]

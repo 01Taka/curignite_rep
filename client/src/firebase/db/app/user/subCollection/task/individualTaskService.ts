@@ -1,23 +1,17 @@
 import { DocumentData, DocumentReference, Firestore, QueryConstraint, Timestamp } from "firebase/firestore";
-import BaseDB from "../../../../base";
-import { IndividualTaskData } from "../../../../../../types/firebase/db/task/taskStructure";
-import { getInitialBaseDocumentData } from "../../../../../../functions/db/dbUtils";
+import { IndividualTaskRead, IndividualTaskWrite } from "../../../../../../types/firebase/db/task/taskStructure";
 import { AutoFieldToUndefined } from "../../../../../../types/firebase/db/formatTypes";
+import FirestoreService from "../../../../handler/firestoreService";
 
 export class IndividualTaskService {
-  private baseDB: BaseDB<IndividualTaskData> | undefined;
-  
-  constructor(private firestore: Firestore) {}
+  private fss: FirestoreService<IndividualTaskRead, IndividualTaskWrite>;
 
-  private getBaseDB(userId: string): BaseDB<IndividualTaskData> {
-    if (!this.baseDB || this.baseDB.getCollectionPath() !== this.getPath(userId)) {
-      this.baseDB = new BaseDB(this.firestore, this.getPath(userId));
-    }
-    return this.baseDB;
+  constructor(firestore: Firestore) {
+    this.fss = new FirestoreService(firestore, ['users', 'individualTasks']);
   }
 
-  private getPath(userId: string) {
-    return `users/${userId}/individualTasks`;
+  private updatePath(userId: string) {
+    this.fss.setCollectionPath(userId);
   }
 
   async createTask(
@@ -28,10 +22,10 @@ export class IndividualTaskService {
     estimatedDuration: number,
     progress: number = 0,
     completed: boolean = false,
-  ): Promise<DocumentReference<IndividualTaskData, DocumentData>> {
+  ): Promise<DocumentReference<IndividualTaskWrite, DocumentData>> {
     try {
-      const data: IndividualTaskData = {
-        ...getInitialBaseDocumentData(creatorId),
+      const data: IndividualTaskWrite = {
+        createdById: creatorId,
         title,
         dueDateTime,
         taskNote,
@@ -39,55 +33,40 @@ export class IndividualTaskService {
         completed,
         estimatedDuration,
       }
-      return await this.getBaseDB(creatorId).create(data);
+      return await this.fss.crudHandler.create(data);
     } catch (error) {
       console.error("Error creating task: ", error);
       throw new Error("Failed to create task");
     }
   }
 
-  async getTask(docId: string, taskId: string): Promise<IndividualTaskData | null> {
+  async getTask(docId: string, taskId: string): Promise<IndividualTaskRead | null> {
     try {
-      return await this.getBaseDB(docId).read(taskId);
+      this.updatePath(docId);
+      return await this.fss.crudHandler.read(taskId);
     } catch (error) {
       console.error("Error retrieving task: ", error);
       return null;
     }
   }
 
-  async getAllTasks(userId: string, ...queryConstraints: QueryConstraint[]): Promise<IndividualTaskData[]> {
+  async getAllTasks(userId: string, ...queryConstraints: QueryConstraint[]): Promise<IndividualTaskRead[]> {
     try {
-      return await this.getBaseDB(userId).getAll(...queryConstraints);
+      this.updatePath(userId);
+      return await this.fss.crudHandler.getAll(...queryConstraints);
     } catch (error) {
       console.error("Error getting all tasks: ", error);
       throw new Error("Failed to get all tasks");
     }
   }
 
-  async updateTask(docId: string, taskId: string, data: Partial<AutoFieldToUndefined<IndividualTaskData>>): Promise<void> {
+  async updateTask(docId: string, taskId: string, data: Partial<AutoFieldToUndefined<IndividualTaskWrite>>): Promise<void> {
     try {
-      await this.getBaseDB(docId).update(taskId, data);
+      this.updatePath(docId);
+      await this.fss.crudHandler.update(taskId, data);
     } catch (error) {
       console.error("Error updating task: ", error);
       throw new Error("Failed to update task");
-    }
-  }
-
-  async softDeleteTask(docId: string, taskId: string): Promise<void> {
-    try {
-      await this.getBaseDB(docId).softDelete(taskId);
-    } catch (error) {
-      console.error("Error soft deleting task: ", error);
-      throw new Error("Failed to soft delete task");
-    }
-  }
-
-  async hardDeleteTask(docId: string, taskId: string): Promise<void> {
-    try {
-      await this.getBaseDB(docId).hardDelete(taskId);
-    } catch (error) {
-      console.error("Error hard deleting task: ", error);
-      throw new Error("Failed to hard delete task");
     }
   }
 }

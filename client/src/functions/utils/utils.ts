@@ -1,6 +1,5 @@
 import clsx, { ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { FormStateChangeEvent, FormStateChangeFunc, CustomHTMLElement } from "../../types/util/componentsTypes";
 import { ComparisonOperator } from "../../types/util/utilTypes";
 
 export function cn(...inputs: ClassValue[]) {
@@ -48,14 +47,6 @@ export const performComparison = (
 
 export const isNumeric = (value: string | number): boolean => {
   return typeof value === "number" ? Number.isFinite(value) : !isNaN(Number(value));
-}
-
-/**
- * NaNの場合に0を返します。
- */
-export const safeNumber = (value: number) => {
-  const num = Number(value);
-  return Number.isNaN(num) ? 0 : num;
 }
 
 export const applyFunctionToArray = <T, K, P extends unknown[]>(

@@ -1,23 +1,19 @@
 import { DocumentData, DocumentReference, Firestore, Timestamp } from "firebase/firestore";
-import { ProblemSetActivityData } from "../../../../../../types/firebase/db/task/taskStructure";
-import BaseDB from "../../../../base";
 import { getInitialBaseDocumentData } from "../../../../../../functions/db/dbUtils";
 import { CategoryActivity } from "../../../../../../types/firebase/db/task/taskSupplementTypes";
+import { FunctionManager } from "../../../../util/functionManager";
+import FirestoreService from "../../../../handler/firestoreService";
+import { ProblemSetActivityRead, ProblemSetActivityWrite } from "../../../../../../types/firebase/db/task/taskStructure";
 
 export class ProblemSetActivityService {
-  private baseDB: BaseDB<ProblemSetActivityData> | undefined;
-  
-  constructor(private firestore: Firestore) {}
+  private fss: FirestoreService<ProblemSetActivityRead, ProblemSetActivityWrite>;
 
-  private getBaseDB(userId: string, problemSetId: string): BaseDB<ProblemSetActivityData> {
-    if (!this.baseDB || this.baseDB.getCollectionPath() !== this.getPath(userId, problemSetId)) {
-      this.baseDB = new BaseDB(this.firestore, this.getPath(userId, problemSetId));
-    }
-    return this.baseDB;
+  constructor(firestore: Firestore) {
+    this.fss = new FirestoreService(firestore, ['users', 'problemSets', 'activities']);
   }
 
-  getPath(userId: string, problemSetId: string) {
-    return `users/${userId}/problemSets/${problemSetId}/activities`;
+  private updatePath(userId: string, problemSetId: string) {
+    this.fss.setCollectionPath(userId, problemSetId);
   }
 
   async createActivity(
@@ -26,22 +22,48 @@ export class ProblemSetActivityService {
     dueDateTime: Timestamp | null, // 課題の期限
     categoryActivities: CategoryActivity[],
     completed = false,
-  ): Promise<DocumentReference<ProblemSetActivityData, DocumentData> >{
-    const data: ProblemSetActivityData = {
+  ): Promise<DocumentReference<ProblemSetActivityWrite, DocumentData> >{
+    const data: ProblemSetActivityWrite = {
       ...getInitialBaseDocumentData(creatorId),
       dueDateTime,
       categoryActivities,
       completed
     }
 
-    return await this.getBaseDB(creatorId, problemSetId).create(data);
+    this.updatePath(creatorId, problemSetId);
+    return await this.fss.crudHandler.create(data);
   }
 
   async getActivity(userId: string, problemSetId: string, activityId: string) {
-    return await this.getBaseDB(userId, problemSetId).read(activityId);
+    this.updatePath(userId, problemSetId)
+    return await this.fss.crudHandler.read(activityId);
   }
 
   async getAllActivities(userId: string, problemSetId: string) {
-    return await this.getBaseDB(userId, problemSetId).getAll();
+    this.updatePath(userId, problemSetId)
+    return await this.fss.crudHandler.getAll();
   }
+
+  // addCollectionCallback(
+  //   userId: string,
+  //   problemSetId: string,
+  //   callback: (args: { userId: string, problemSetId: string, data: ProblemSetActivityWrite[] }) => void
+  // ) {
+  //   const cb = (data: ProblemSetActivityWrite[]) => callback({ userId, problemSetId, data });
+  //   this.functionManager.registerConversion(callback, cb);
+  //   this.getBaseDB(userId, problemSetId).addCollectionCallback(cb);
+  // }
+
+  // removeCollectionCallback(
+  //   userId: string,
+  //   problemSetId: string,
+  //   callback: (args: { userId: string, problemSetId: string, data: ProblemSetActivityWrite[] }) => void
+  // ) {
+  //   // コールバックの参照を取得
+  //   const cb = this.functionManager.getConversion(callback)
+  //   if (cb) {
+  //     this.getBaseDB(userId, problemSetId).removeCollectionCallback(cb);
+  //     this.functionManager.deleteConversion(callback);
+  //   }
+  // }
 }

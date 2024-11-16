@@ -1,28 +1,27 @@
 import { AuthStates } from "../../../../types/util/stateTypes";
 import { DocumentData, DocumentReference, Firestore, Timestamp } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import { AutoFieldToUndefined, DocumentIdMap } from "../../../../types/firebase/db/formatTypes";
-import BaseDB from "../../base";
-import { BaseDocumentData } from "../../../../types/firebase/db/baseTypes";
+import { DocumentIdMap } from "../../../../types/firebase/db/formatTypes";
+import { BaseDocumentWrite } from "../../../../types/firebase/db/baseTypes";
 import { TeamMemberService } from "../team/subCollection/teamMemberService";
-import { UserData, UserWithSupplementary } from "../../../../types/firebase/db/user/userStructure";
+import { UserRead, UserWrite } from "../../../../types/firebase/db/user/userStructure";
 import { StorageManager } from "../../../storage/storageManager";
 import { UserWithNotExistUsersId } from "../../../../types/module/redux/slice/userSliceTypes";
-import { autoFields } from "../../../../constants/firebase/firestoreConstants";
+import FirestoreService from "../../handler/firestoreService";
 
 export class UserService {
-  private baseDB: BaseDB<UserData>;
+  private fss: FirestoreService<UserRead, UserWrite>;
 
   constructor(
     firestore: Firestore,
     private storageManager: StorageManager,
-    private teamMemberService: TeamMemberService,
+    private teamMemberService: TeamMemberService
   ) {
-    this.baseDB = new BaseDB(firestore, "users");
+    this.fss = new FirestoreService(firestore, 'users');
   }
 
-  getBaseDB() {
-    return this.baseDB;
+  get firestoreService() {
+    return this.fss;
   }
 
   /**
@@ -35,10 +34,9 @@ export class UserService {
     birthTimestamp: Timestamp
   ): Promise<DocumentReference<DocumentData> | void> {
     try {
-      const fileId = await this.storageManager.uploadFile(this.baseDB.getCollectionPath(), userId, iconFile);
+      const fileId = await this.storageManager.uploadFile(this.fss.collectionPath, userId, iconFile);
 
-      const data: AutoFieldToUndefined<UserData> = {
-        ...autoFields,
+      const data: UserWrite = {
         createdById: userId,
         username,
         avatarIconId: fileId,
@@ -54,7 +52,7 @@ export class UserService {
         }
       };
       
-      await this.baseDB.createWithId(userId, data);
+      await this.fss.createWithId(userId, data);
     } catch (error) {
       this.handleError("Failed to create user.", error);
     }
@@ -63,8 +61,8 @@ export class UserService {
   /**
    * ユーザー情報を取得します。
    */
-  async getUser(userId: string): Promise<UserData> {
-    const user = await this.baseDB.read(userId);
+  async getUser(userId: string): Promise<UserRead> {
+    const user = await this.fss.read(userId);
     if (!user) throw new Error(`User not found: ${userId}`);
     return user;
   }
@@ -72,7 +70,7 @@ export class UserService {
   async getUsersWithNotExistIdsAndSupplementary(usersId: string[]): Promise<UserWithNotExistUsersId> {
     // 各IDに対するPromiseを作成
     const dataPromises = usersId.map(async id => {
-      const user = await this.baseDB.read(id);
+      const user = await this.fss.read(id);
         const avatarIconUrl = user ? await this.getFileUrl(user.avatarIconId).then((url) => url).catch(() => {
           console.error('failed to get user icon url.');
           return '';
@@ -89,7 +87,7 @@ export class UserService {
     const dataResults = await Promise.all(dataPromises);
   
     // ユーザーデータが存在するかどうかで配列を分ける
-    const users: UserWithSupplementary[] = [];
+    const users: UserRead[] = [];
     const notExistUsersId: string[] = [];
   
     for (const { id, data } of dataResults) {
@@ -109,7 +107,7 @@ export class UserService {
    */
   async checkIfUidExists(uid: string): Promise<boolean> {
     try {
-      const userSnapshot = await this.baseDB.readAsDocumentSnapshot(uid);
+      const userSnapshot = await this.fss.readAsDocumentSnapshot(uid);
       return userSnapshot.exists();
     } catch (error) {
       this.handleError("Failed to check UID existence.", error);
@@ -121,7 +119,7 @@ export class UserService {
    */
   async checkIfUserNameExists(username: string): Promise<boolean> {
     try {
-      const user = await this.baseDB.getFirstMatch('username', username);
+      const user = await this.fss.getFirstMatch('username', username);
       return user !== null;
     } catch (error) {
       this.handleError("Failed to check username existence.", error);
@@ -131,10 +129,10 @@ export class UserService {
   /**
    * UIDをキーとするデータの辞書を取得します。
    */
-  async getUserMapByUids(uids: string[]): Promise<DocumentIdMap<UserData>> {
+  async getUserMapByUids(uids: string[]): Promise<DocumentIdMap<UserRead>> {
     try {
       const userEntries = await Promise.all(
-        uids.map(async (uid) => [uid, await this.baseDB.read(uid)] as [string, UserData])
+        uids.map(async (uid) => [uid, await this.fss.read(uid)] as [string, UserRead])
       );
 
       return Object.fromEntries(userEntries);
@@ -146,7 +144,7 @@ export class UserService {
   /**
    * ドキュメントデータからUIDをキーとするデータの辞書を取得します。
    */
-  async getCreatorDataByDocuments(data: BaseDocumentData[]): Promise<DocumentIdMap<UserData>> {
+  async getCreatorDataByDocuments(data: BaseDocumentWrite[]): Promise<DocumentIdMap<UserWrite>> {
     try {
       const uids = data.map(value => value.createdById);
       return await this.getUserMapByUids(uids);
@@ -183,12 +181,12 @@ export class UserService {
     return await this.storageManager.getFileUrl(fileId);
   }
 
-  private async getUsersByIds(userIds: string[]): Promise<UserData[]> {
-    const data = await Promise.all(userIds.map(id => this.baseDB.read(id)));
-    return data.filter(user => user !== null) as UserData[];
+  private async getUsersByIds(userIds: string[]): Promise<UserRead[]> {
+    const data = await Promise.all(userIds.map(id => this.fss.read(id)));
+    return data.filter(user => user !== null) as UserRead[];
   }
 
-  private createSpaceIdMap(users: UserData[]): DocumentIdMap<string[]> {
+  private createSpaceIdMap(users: UserWrite[]): DocumentIdMap<string[]> {
     return users.reduce((map, user) => {
       if (user.relatedResources?.spaceIds) {
         map[user.docId] = user.relatedResources.spaceIds;

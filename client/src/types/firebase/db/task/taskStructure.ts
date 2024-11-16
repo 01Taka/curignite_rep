@@ -1,9 +1,9 @@
 import { Timestamp } from "firebase/firestore";
-import { BaseDocumentData } from "../baseTypes";
 import { Range } from "../../../util/componentsTypes";
 import { CategoryActivity, ProblemSetActivityManagementMethod } from "./taskSupplementTypes";
+import { DocumentRead, DocumentWrite } from "../baseTypes";
 
-export interface IndividualTaskData extends BaseDocumentData {
+interface IndividualTaskDocument {
   title: string; // タスクのタイトル
   estimatedDuration: number; // 推定所要時間
   dueDateTime: Timestamp | null; // 期限
@@ -12,13 +12,13 @@ export interface IndividualTaskData extends BaseDocumentData {
   completed: boolean; // 完了状態
 }
 
-export interface ProblemSetData extends BaseDocumentData {
+interface ProblemSetDocument {
   name: string; // 問題集の名前
   description: string; // 問題集の説明
   activityManagementMethod: ProblemSetActivityManagementMethod;
 }
 
-export interface ProblemSetCategoryData extends BaseDocumentData {
+interface ProblemSetCategoryDocument {
   name: string | 'page'; // カテゴリの名前
   isPage: boolean;
   timePerProblem: number;
@@ -26,9 +26,18 @@ export interface ProblemSetCategoryData extends BaseDocumentData {
   completedProblemIdsRange: Range[]; // 完了した問題番号
 }
 
-export interface ProblemSetActivityData extends BaseDocumentData {
+interface ProblemSetActivityDocument {
   dueDateTime: Timestamp | null; // 課題の期限
   completed: boolean; // 課題の完了状態
   categoryActivities: CategoryActivity[]; // カテゴリの活動
 }
 
+export type IndividualTaskWrite = DocumentWrite<IndividualTaskDocument>; 
+export type ProblemSetWrite = DocumentWrite<ProblemSetDocument>; 
+export type ProblemSetCategoryWrite = DocumentWrite<ProblemSetCategoryDocument>; 
+export type ProblemSetActivityWrite = DocumentWrite<ProblemSetActivityDocument>; 
+
+export type IndividualTaskRead = DocumentRead<IndividualTaskDocument>; 
+export type ProblemSetRead = DocumentRead<ProblemSetDocument>; 
+export type ProblemSetCategoryRead = DocumentRead<ProblemSetCategoryDocument>; 
+export type ProblemSetActivityRead = DocumentRead<ProblemSetActivityDocument>; 

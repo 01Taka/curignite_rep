@@ -1,7 +1,7 @@
 import { Timestamp } from "firebase/firestore";
-import { BaseDocumentData, BaseMemberRole } from "../baseTypes";
+import { BaseDocumentWrite, BaseMemberRole } from "../baseTypes";
 
-export interface TeamData extends BaseDocumentData {
+export interface TeamData extends BaseDocumentWrite {
   teamName: string;
   iconId: string;
   description: string;
@@ -16,7 +16,7 @@ export interface TeamWithSupplementary extends TeamData {
 /**
  * docId - userId
  */
-export interface TeamMemberData extends BaseDocumentData {
+export interface TeamMemberData extends BaseDocumentWrite {
   joinedAt: Timestamp;
   role: BaseMemberRole;
 }

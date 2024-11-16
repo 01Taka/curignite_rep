@@ -1,21 +1,21 @@
-import { ProblemSetCategoryData, IndividualTaskData, ProblemSetData } from "./taskStructure";
+import { IndividualTaskRead, ProblemSetCategoryRead, ProblemSetRead } from "./taskStructure";
 import { CategoryActivity, ProblemSetActivityManagementMethod } from "./taskSupplementTypes";
 
-export interface TaskData extends IndividualTaskData {
+export interface TaskData extends IndividualTaskRead {
   isIndividual: boolean;
   remainingEstimatedDuration: number;
   problemSetActivityField?: ProblemSetActivityField; // 問題集の活動フィールド
 }
 
-export interface ExpansionProblemSetData extends ProblemSetData {
+export interface ExpansionProblemSetData extends ProblemSetRead {
   averageEstimatedDuration: number;
   totalProblemNumber: number;
   completedProblemNumber: number;
 }
 
 export interface ProblemSetActivityField {
-  problemSet: ProblemSetData;
-  categoryMap: Record<string, ProblemSetCategoryData>;
+  problemSet: ProblemSetRead;
+  categoryMap: Record<string, ProblemSetCategoryRead>;
   totalProblemCount: number; // 総問題数
   totalRemainingProblemNumber: number;
   activityManagementMethod: ProblemSetActivityManagementMethod;
@@ -39,6 +39,6 @@ export interface CategoryActivityStatus extends CategoryActivity  {
 export interface FullProblemSetData {
   problemSet: ExpansionProblemSetData;
   activities: TaskData[];
-  categories: ProblemSetCategoryData[];
+  categories: ProblemSetCategoryRead[];
 }
 

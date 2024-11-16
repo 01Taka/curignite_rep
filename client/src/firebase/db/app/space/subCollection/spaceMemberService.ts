@@ -1,5 +1,5 @@
 import { doc, Firestore, Timestamp, Transaction } from "firebase/firestore";
-import BaseDB from "../../../base";
+import BaseDB from "../../../handler/firestoreService";
 import { isDocumentExist } from "../../../../../functions/db/dbUtils";
 import { BaseMemberRole } from "../../../../../types/firebase/db/baseTypes";
 import { SpaceData, SpaceMemberData } from "../../../../../types/firebase/db/space/spaceStructure";

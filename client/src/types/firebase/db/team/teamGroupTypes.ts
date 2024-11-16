@@ -1,4 +1,4 @@
-// import { BaseDocumentData } from "../baseTypes";
+// import { BaseDocumentWrite } from "../baseTypes";
 
 // // グループの公開設定
 // export type TeamGroupVisibility = 'public' | 'private';
@@ -11,7 +11,7 @@
 //     tagDescription: string,
 // }
 
-// export interface TeamGroupData extends BaseDocumentData {
+// export interface TeamGroupData extends BaseDocumentWrite {
 //     teamId: string; // このグループが所属するチームのID
 //     groupName: string; // グループの名前
 //     iconUrl?: string; // グループのアイコン画像のURL（オプション）

@@ -1,5 +1,5 @@
 import { Firestore, Timestamp } from "firebase/firestore";
-import BaseDB from "../../../base";
+import BaseDB from "../../../handler/firestoreService";
 import { AutoFieldToUndefined, DocumentIdMap } from "../../../../../types/firebase/db/formatTypes";
 import { UserTeamService } from "../../user/subCollection/userTeamService";
 import { BaseMemberRole } from "../../../../../types/firebase/db/baseTypes";

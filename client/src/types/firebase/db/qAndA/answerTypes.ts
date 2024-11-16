@@ -1,6 +1,6 @@
-import { BaseDocumentData } from "../baseTypes";
+import { BaseDocumentWrite } from "../baseTypes";
 
-export interface Answer extends BaseDocumentData {
+export interface Answer extends BaseDocumentWrite {
     questionId: string;
     content: string;
 }

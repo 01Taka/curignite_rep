@@ -1,14 +1,21 @@
 import { DocumentData, Timestamp } from "firebase/firestore";
 
 // すべての動的Firestoreドキュメントに存在するべきフィールド
-export interface BaseDocumentData extends DocumentData {
+export interface BaseDocumentWrite extends DocumentData {
+    createdById: string; // 作成者のUserId
+}
+
+export interface BaseDocumentRead {
+    createdById: string; // 作成者のUserId
     docId: string; // ドキュメントId
     createdAt: Timestamp; // 作成日時
     updatedAt?: Timestamp; // 更新日時
     deletedAt?: Timestamp // 削除日時
     isActive: boolean; // 論理的削除の状態
-    createdById: string; // 作成者のUserId
 }
+
+export type DocumentWrite<T> = T & BaseDocumentWrite;
+export type DocumentRead<T> = T & BaseDocumentRead;
 
 /**
  * チームやグループ内でのメンバーの役割を定義するenumです。

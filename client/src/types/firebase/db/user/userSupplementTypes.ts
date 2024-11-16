@@ -11,8 +11,6 @@ export interface UserProfileData {
   iconUrl: string;
 }
 
-export type UserTaskPlanData = TodayTasksWithRanges; 
-
 export interface UserStateData {
   status: UserStatus;
 

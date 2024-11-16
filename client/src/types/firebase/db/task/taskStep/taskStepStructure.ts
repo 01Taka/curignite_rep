@@ -1,9 +1,9 @@
 import { Timestamp } from "firebase/firestore";
-import { BaseDocumentData } from "../../baseTypes";
+import { BaseDocumentWrite } from "../../baseTypes";
 import { AutoPlanningSettings, CategoryQuantity, ProblemInfo, TaskStepState } from "./taskStepSupplementTypes";
 import { CategoryActivity } from "../taskSupplementTypes";
 
-export interface IndividualTaskStepData extends BaseDocumentData {
+export interface IndividualTaskStepData extends BaseDocumentWrite {
   stepNumber: number;
   dueDateTime: Timestamp | null;
   title: string;
@@ -14,7 +14,7 @@ export interface IndividualTaskStepData extends BaseDocumentData {
 /**
  * problemSetIdとID連携
  */
-export interface ProblemSetStepData extends BaseDocumentData {
+export interface ProblemSetStepData extends BaseDocumentWrite {
   stepStack: ProblemInfo[]; // 対象の問題の配列。この配列の順に解く
   autoPlanningSettings: AutoPlanningSettings;
 }
@@ -25,7 +25,7 @@ export interface ProblemSetStepData extends BaseDocumentData {
  * tackleProblems - 取り組む予定の問題
  * quantityToTackleの値はtackleProblemsと関係ない
  */
-export interface ProblemSetStepPlanData extends BaseDocumentData {
+export interface ProblemSetStepPlanData extends BaseDocumentWrite {
   date: Timestamp;
   mixedQuantityToTackle: number;
   quantityToTackle: CategoryQuantity[];

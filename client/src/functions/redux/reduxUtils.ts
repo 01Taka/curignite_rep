@@ -1,7 +1,7 @@
 import { ActionReducerMapBuilder, AsyncThunk, Dispatch, Draft } from "@reduxjs/toolkit";
 import { AsyncThunkState, AsyncThunkStatus } from "../../types/module/redux/asyncThunkTypes";
-import { BaseDocumentData } from "../../types/firebase/db/baseTypes";
-import BaseDB from "../../firebase/db/base";
+import { BaseDocumentWrite } from "../../types/firebase/db/baseTypes";
+import BaseDB from "../../firebase/db/handler/firestoreService";
 
 
 export const addAsyncCases = <T, Returned extends AsyncThunkState<any>, ThunkArg, RejectedValue>(
@@ -44,7 +44,7 @@ export const isSuccessfulPayload = <T>(payload: AsyncThunkState<T>): payload is 
  * @param setDataAction - Reduxアクション（データを設定するアクション）
  * @param dispatch - Reduxのdispatch関数
  */
-export const autoUpdateCollection = async <T extends BaseDocumentData>(
+export const autoUpdateCollection = async <T extends BaseDocumentWrite>(
   dbInstance: BaseDB<T>,
   userId: string,
   filterDataFunction: (userId: string, data: T[]) => (T[] | Promise<T[]>),
