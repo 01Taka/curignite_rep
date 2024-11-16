@@ -14,7 +14,7 @@ const JoinRequestItem: FC<{
   onJoinTeam: (teamId: string) => void;
 }> = memo(({ request, team, onJoinTeam }) => {
   return (
-    <div key={request.docId} className="flex justify-center items-center space-x-4 my-2 shadow rounded w-full max-w-md h-20">
+    <div key={'//OUT//'} className="flex justify-center items-center space-x-4 my-2 shadow rounded w-full max-w-md h-20">
       <div>
         <div>{team.teamName}へのリクエスト</div>
         <div>At: {format(request.requestedAt.toDate(), 'M/d HH:mm')}</div>
@@ -33,7 +33,7 @@ const JoinRequestItem: FC<{
           variant="contained"
           color="primary"
           className="flex justify-center items-center w-24 h-10 p-2 rounded"
-          onClick={() => onJoinTeam(request.docId)}
+          // onClick={() => onJoinTeam(request.docId)}
         >
           参加する
         </Button>
@@ -54,35 +54,35 @@ const JoinRequestsForUser: FC = () => {
     setLoading(true);
     setError(null);
 
-    try {
-      const userTeamService = serviceFactory.createUserTeamService();
-      const teamService = serviceFactory.createTeamService();
-      const teams = await userTeamService.getAllUserTeams(uid);
-      const teamMap = await teamService.getTeamDataMap(teams.map((team) => team.docId));
-      setUserTeams(teams);
-      setTeamMap(teamMap);
-    } catch (err: any) {
-      console.error('Error fetching user teams:', err);
-      setError(err.message || 'Failed to load user join requests.');
-    } finally {
-      setLoading(false);
-    }
+    // try {
+    //   const userTeamService = serviceFactory.createUserTeamService();
+    //   const teamService = serviceFactory.createTeamService();
+    //   const teams = await userTeamService.getAllUserTeams(uid);
+    //   const teamMap = await teamService.getTeamDataMap(teams.map((team) => team.docId));
+    //   setUserTeams(teams);
+    //   setTeamMap(teamMap);
+    // } catch (err: any) {
+    //   console.error('Error fetching user teams:', err);
+    //   setError(err.message || 'Failed to load user join requests.');
+    // } finally {
+    //   setLoading(false);
+    // } //OUT//
   }, [uid]);
 
   const handleJoinTeam = useCallback(
     async (teamId: string) => {
-      if (uid) {
-        try {
-          const teamService = serviceFactory.createTeamService();
-          const success = await teamService.tryBecomeMember(uid, teamId);
-          if (!success) {
-            setError('Failed to join the team.');
-          }
-        } catch (err: any) {
-          console.error('Error joining the team:', err);
-          setError('Failed to join the team.');
-        }
-      }
+      // if (uid) {
+      //   try {
+      //     const teamService = serviceFactory.createTeamService();
+      //     const success = await teamService.tryBecomeMember(uid, teamId);
+      //     if (!success) {
+      //       setError('Failed to join the team.');
+      //     }
+      //   } catch (err: any) {
+      //     console.error('Error joining the team:', err);
+      //     setError('Failed to join the team.');
+      //   }
+      // } //OUT//
     },
     [uid]
   );
@@ -108,14 +108,14 @@ const JoinRequestsForUser: FC = () => {
         <Typography>参加リクエスト中のチームはありません</Typography>
       ) : (
         <List>
-          {userTeams.filter(team => !team.isMember).map((request) => {
+          {/* {userTeams.filter(team => !team.isMember).map((request) => {
             const team = teamMap[request.docId];
             if (team.createdById === uid) return null;
             
             return team ? (
               <JoinRequestItem key={request.docId} request={request} team={team} onJoinTeam={handleJoinTeam} />
             ) : null;
-          })}
+          })} //OUT// */}
         </List>
       )}
     </div>

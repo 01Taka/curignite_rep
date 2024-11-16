@@ -3,17 +3,17 @@ import serviceFactory from '../../../../../firebase/db/factory';
 import { useAppSelector } from '../../../../../redux/hooks';
 import { toTimestamp } from '../../../../../functions/utils/dateTimeUtils';
 import useFormState from '../../../../hooks/form/useFormState';
-import { ProblemSetActivityData, ProblemSetCategoryData, ProblemSetData } from '../../../../../types/firebase/db/task/taskStructure';
 import useAsyncHandler from '../../../../hooks/form/useAsyncHandler';
 import { DocumentData, DocumentReference } from 'firebase/firestore';
 import CreateActivityView from './CreateActivityView';
 import { CreateActivityFormState } from './createActivityTypes';
 import { mergeRanges } from '../../../../../functions/utils/rangeUtils';
 import { CategoryActivity } from '../../../../../types/firebase/db/task/taskSupplementTypes';
+import { ProblemSetActivityRead, ProblemSetActivityWrite, ProblemSetCategoryRead, ProblemSetRead } from '../../../../../types/firebase/db/task/taskStructure';
 
 interface CreateActivityProps {
-  problemSet: ProblemSetData | null;
-  categories: ProblemSetCategoryData[];
+  problemSet: ProblemSetRead | null;
+  categories: ProblemSetCategoryRead[];
 }
 
 const CreateActivity: FC<CreateActivityProps> = ({ problemSet, categories }) => {
@@ -22,7 +22,7 @@ const CreateActivity: FC<CreateActivityProps> = ({ problemSet, categories }) => 
     dueDateTime: null,
     categoryActivities: []
   });
-  const { asyncStatus, callAsyncFunction } = useAsyncHandler<DocumentReference<ProblemSetActivityData, DocumentData>>();
+  const { asyncStatus, callAsyncFunction } = useAsyncHandler<DocumentReference<ProblemSetActivityWrite, DocumentData>>();
 
   const handleCreateActivity = useCallback(async () => {
     if (uid && problemSet && problemSet.docId) {

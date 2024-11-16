@@ -3,7 +3,7 @@ import { HeatmapCellColor } from "../../../types/util/componentsTypes";
 import { ISODate } from "../../../types/util/dateTimeTypes";
 import { BGColorClass } from "../../../types/module/tailwindTypes";
 import { HEATMAP_BY_LEARNING_TIME } from "../../../constants/components/heatmapConstants";
-import { UserDailyLearningSummaryService } from "../../../firebase/db/app/user/subCollection/userDailyLearningSummary";
+// import { UserDailyLearningSummaryService } from "../../../firebase/db/app/user/subCollection/userDailyLearningSummary";
 
 // 学習時間に応じた色を取得する関数
 export const getHeatmapCellColor = (count: number, heatmap: HeatmapCellColor[]): BGColorClass => {
@@ -16,25 +16,25 @@ export const getHeatmapCellColor = (count: number, heatmap: HeatmapCellColor[]):
   return colorClass;
 };
 
-// データベースから取得した学習時間に基づき、カレンダーの日付に色分けを適用する関数
-export const getLearningTimeHeatmapFromDB = async (userId: string, daysAgo: number = 21): Promise<Record<ISODate, BGColorClass>> => {
-  try {
-    const learningSummaryService = serviceFactory.createUserDailyLearningSummary();
-    const sessions = await learningSummaryService.fetchRecentSummariesByDaysAgo(userId, daysAgo, true);
-    if (!sessions) {
-      console.error('No sessions found');
-      return {};
-    }
-    const timeMap = UserDailyLearningSummaryService.mapLearningTimeByDate(sessions);
-    const heatmap: Record<ISODate, BGColorClass> = {};
-    for (let key of Object.keys(timeMap)) {
-      heatmap[key as ISODate] = getHeatmapCellColor(timeMap[key as ISODate], HEATMAP_BY_LEARNING_TIME)
-    }
+// // データベースから取得した学習時間に基づき、カレンダーの日付に色分けを適用する関数
+// export const getLearningTimeHeatmapFromDB = async (userId: string, daysAgo: number = 21): Promise<Record<ISODate, BGColorClass>> => {
+//   try {
+//     const learningSummaryService = serviceFactory.createUserDailyLearningSummary();
+//     const sessions = await learningSummaryService.fetchRecentSummariesByDaysAgo(userId, daysAgo, true);
+//     if (!sessions) {
+//       console.error('No sessions found');
+//       return {};
+//     }
+//     const timeMap = UserDailyLearningSummaryService.mapLearningTimeByDate(sessions);
+//     const heatmap: Record<ISODate, BGColorClass> = {};
+//     for (let key of Object.keys(timeMap)) {
+//       heatmap[key as ISODate] = getHeatmapCellColor(timeMap[key as ISODate], HEATMAP_BY_LEARNING_TIME)
+//     }
 
-    return heatmap;
-  } catch (error) {
-    console.error('DBからの学習時間の色分け取得に失敗しました:', error);
-    throw error;
-  }
-};
+//     return heatmap;
+//   } catch (error) {
+//     console.error('DBからの学習時間の色分け取得に失敗しました:', error);
+//     throw error;
+//   }
+// };
 

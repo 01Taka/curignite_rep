@@ -22,30 +22,30 @@ export const startLearningGoal = async (
   initialAllowedOverflowTime: number = 10 * MINUTES_IN_MILLISECOND,
   isStartingSession: boolean = true,
 ) => {
-  const learningService = serviceFactory.createUserLearningGoalService();
-  const userService = serviceFactory.createUserService();
-  const userStateManager = serviceFactory.createUserStateManager();
+  // const learningService = serviceFactory.createUserLearningGoalService();
+  // const userService = serviceFactory.createUserService();
+  // const userStateManager = serviceFactory.createUserStateManager();
 
-  try {
-    const prevGoalId = (await userService.getUser(userId))?.currentTargetLearningGoalId;
+  // try {
+  //   const prevGoalId = (await userService.getUser(userId))?.currentTargetLearningGoalId;
 
-    if (prevGoalId) {
-      throw new Error("現在学習中のため新しい学習を始められません。");
-    }
+  //   if (prevGoalId) {
+  //     throw new Error("現在学習中のため新しい学習を始められません。");
+  //   }
 
-    const goalRef = await learningService.createGoal(userId, objective, subject, targetDuration, "inProgress");
-    await userStateManager.setCurrentTargetLearningGoalId(userId, goalRef.id);
+  //   const goalRef = await learningService.createGoal(userId, objective, subject, targetDuration, "inProgress");
+  //   await userStateManager.setCurrentTargetLearningGoalId(userId, goalRef.id);
 
-    IndexedLearningGoalService.createCurrentGoal(userId, goalRef.id);
+  //   IndexedLearningGoalService.createCurrentGoal(userId, goalRef.id);
 
-    const learningGoal = await learningService.getGoal(userId, goalRef.id);
-    dispatch(setCurrentGoal(learningGoal ? convertTimestampsToNumbers(learningGoal) : null));
-    await updateAllowedOverflowTime(userId, initialAllowedOverflowTime, dispatch);
+  //   const learningGoal = await learningService.getGoal(userId, goalRef.id);
+  //   dispatch(setCurrentGoal(learningGoal ? convertTimestampsToNumbers(learningGoal) : null));
+  //   await updateAllowedOverflowTime(userId, initialAllowedOverflowTime, dispatch);
 
-    if (isStartingSession) await startSession(userId, goalRef.id);
-  } catch (error) {
-    handleError("Failed to start learning goal:", error);
-  }
+  //   if (isStartingSession) await startSession(userId, goalRef.id);
+  // } catch (error) {
+  //   handleError("Failed to start learning goal:", error);
+  // } //OUT//
 };
 
 // 学習ゴールの終了処理
@@ -54,48 +54,48 @@ export const endLearningGoal = async (
   dispatch: AppDispatch,
   status: LearningGoalStatus = "achieved",
 ) => {
-  const learningService = serviceFactory.createUserLearningGoalService();
-  const userService = serviceFactory.createUserService();
-  const userStateManager = serviceFactory.createUserStateManager();
+  // const learningService = serviceFactory.createUserLearningGoalService();
+  // const userService = serviceFactory.createUserService();
+  // const userStateManager = serviceFactory.createUserStateManager();
 
-  const learningGoalId = (await userService.getUser(userId))?.currentTargetLearningGoalId;
-  if (!learningGoalId) {
-    console.warn("現在学習中ではありません。");
-    return;
-  }
+  // const learningGoalId = (await userService.getUser(userId))?.currentTargetLearningGoalId;
+  // if (!learningGoalId) {
+  //   console.warn("現在学習中ではありません。");
+  //   return;
+  // }
 
-  try {
-    // セーブ操作
-    await learningService.updateGoalStatus(userId, learningGoalId, status);
-    await syncDurationToFirestoreFromIndexedDB(userId);
-    await saveSessionsToFirestore(userId, learningGoalId);
+  // try {
+  //   // セーブ操作
+  //   await learningService.updateGoalStatus(userId, learningGoalId, status);
+  //   await syncDurationToFirestoreFromIndexedDB(userId);
+  //   await saveSessionsToFirestore(userId, learningGoalId);
 
-    //リセット操作
-    await endSession(userId, learningGoalId);
-    await userStateManager.setCurrentTargetLearningGoalId(userId, null);
-    await IndexedLearningGoalService.clearCurrentGoal(userId);
-    dispatch(resetLearningGoalSlice());
+  //   //リセット操作
+  //   await endSession(userId, learningGoalId);
+  //   await userStateManager.setCurrentTargetLearningGoalId(userId, null);
+  //   await IndexedLearningGoalService.clearCurrentGoal(userId);
+  //   dispatch(resetLearningGoalSlice());
 
-  } catch (error) {
-    handleError("Failed to end learning goal:", error);
-  }
+  // } catch (error) {
+  //   handleError("Failed to end learning goal:", error);
+  // } //OUT//
 };
 
 // IndexedDBからFirestoreに経過時間を同期
 const syncDurationToFirestoreFromIndexedDB = async (userId: string) => {
-  try {
-    const learningService = serviceFactory.createUserLearningGoalService();
-    const currentLearningGoal = await IndexedLearningGoalService.getCurrentGoal(userId);
+  // try {
+  //   const learningService = serviceFactory.createUserLearningGoalService();
+  //   const currentLearningGoal = await IndexedLearningGoalService.getCurrentGoal(userId);
 
-    if (!currentLearningGoal) {
-      handleError("No current learning goal assigned.", null);
-      return;
-    }
+  //   if (!currentLearningGoal) {
+  //     handleError("No current learning goal assigned.", null);
+  //     return;
+  //   }
 
-    await learningService.setGoalDurationSpent(userId, currentLearningGoal.learningGoalId, currentLearningGoal.durationSpent);
-  } catch (error) {
-    handleError("Failed to sync duration to Firestore:", error);
-  }
+  //   await learningService.setGoalDurationSpent(userId, currentLearningGoal.learningGoalId, currentLearningGoal.durationSpent);
+  // } catch (error) {
+  //   handleError("Failed to sync duration to Firestore:", error);
+  // } //OUT//
 };
 
 // IndexedDBに経過時間を保存

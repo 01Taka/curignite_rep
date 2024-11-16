@@ -10,26 +10,26 @@ import { setAllowedOverflowTime, setCurrentGoal, setTargetDuration } from "../..
  * @param userId - ユーザーID
  */
 export const updateCurrentGoal = async (dispatch: AppDispatch, userId: string): Promise<void> => {
-  try {
-    const goalService = serviceFactory.createUserLearningGoalService();
+  // try {
+  //   const goalService = serviceFactory.createUserLearningGoalService();
 
-    const indexedLearningGoal = await IndexedLearningGoalService.getCurrentGoal(userId);
-    if (!indexedLearningGoal) {
-      return;
-    }
+  //   const indexedLearningGoal = await IndexedLearningGoalService.getCurrentGoal(userId);
+  //   if (!indexedLearningGoal) {
+  //     return;
+  //   }
 
-    const learningGoal = await goalService.getGoal(userId, indexedLearningGoal.learningGoalId);
-    if (!learningGoal) {
-      return;
-    }
+  //   const learningGoal = await goalService.getGoal(userId, indexedLearningGoal.learningGoalId);
+  //   if (!learningGoal) {
+  //     return;
+  //   }
 
-    setTargetDuration(learningGoal.targetDuration);
+  //   setTargetDuration(learningGoal.targetDuration);
     
-    const allowedOverflowTime = await IndexedLearningGoalService.getAllowedOverflowTime(userId);
-    dispatch(setAllowedOverflowTime(allowedOverflowTime));
+  //   const allowedOverflowTime = await IndexedLearningGoalService.getAllowedOverflowTime(userId);
+  //   dispatch(setAllowedOverflowTime(allowedOverflowTime));
 
-    dispatch(setCurrentGoal(convertTimestampsToNumbers(learningGoal)));
-  } catch (error) {
-    console.error("現在の学習目標の更新に失敗しました:", error);
-  }
+  //   dispatch(setCurrentGoal(convertTimestampsToNumbers(learningGoal)));
+  // } catch (error) {
+  //   console.error("現在の学習目標の更新に失敗しました:", error);
+  // } //OUT//
 };

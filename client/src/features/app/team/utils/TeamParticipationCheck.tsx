@@ -15,11 +15,11 @@ const TeamParticipationCheck: FC<TeamParticipationCheckProps> = ({ uid, teamId, 
 
   useEffect(() => {
     const updateParticipationStatus = async () => {
-      if (uid && teamId) {
-        const teamService = serviceFactory.createTeamService();
-        const state = await teamService.getParticipationStatus(teamId, uid);
-        setParticipationStatus(state);
-      }
+      // if (uid && teamId) {
+      //   const teamService = serviceFactory.createTeamService();
+      //   const state = await teamService.getParticipationStatus(teamId, uid);
+      //   setParticipationStatus(state);
+      // } //OUT//
     };
     updateParticipationStatus();
   }, [uid, teamId]);

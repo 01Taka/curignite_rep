@@ -1,4 +1,4 @@
-import { fetchChats } from "../../../redux/actions/chat/chatRoomActions";
+// import { fetchChats } from "../../../redux/actions/chat/chatRoomActions";
 import { clearChatRoom, setCurrentRoomId, setStartAfterMessageId } from "../../../redux/slices/chat/chatRoomSlice";
 import store from "../../../redux/store";
 import { ChatData } from "../../../types/firebase/db/chat/chatRoomStructure";
@@ -75,7 +75,7 @@ const getLastMessageId = (messages: TimestampConvertedDocumentMap<ChatData>): st
  */
 const fetchChatsInRoom = async (dispatch: AppDispatch, roomId: string, messageLimit: number, startAfterMessageId?: string): Promise<TimestampConvertedDocumentMap<ChatData>> => {
     try {
-        await dispatch(fetchChats({ roomId, messageLimit, startAfterMessageId }));
+        // await dispatch(fetchChats({ roomId, messageLimit, startAfterMessageId }));
         const { messages } = store.getState().chatRoomSlice;
         return messages;
     } catch (error) {

@@ -1,6 +1,5 @@
 import { DocumentData, DocumentReference, Firestore } from "firebase/firestore";
 import { ProblemSetRead, ProblemSetWrite } from "../../../../../../types/firebase/db/task/taskStructure";
-import { getInitialBaseDocumentData } from "../../../../../../functions/db/dbUtils";
 import { ProblemSetActivityManagementMethod } from "../../../../../../types/firebase/db/task/taskSupplementTypes";
 import FirestoreService from "../../../../handler/firestoreService";
 
@@ -21,24 +20,24 @@ export class ProblemSetService {
     activityManagementMethod: ProblemSetActivityManagementMethod
   ): Promise<DocumentReference<ProblemSetWrite, DocumentData>> {
     const data: ProblemSetWrite = {
-      ...getInitialBaseDocumentData(creatorId),
+      createdById: creatorId,
       name: problemSetName,
       description,
       activityManagementMethod
     }
 
     this.updatePath(creatorId);
-    return await this.fss.crudHandler.create(data);
+    return await this.fss.create(data);
   }
 
   async getProblemSet(userId: string, problemSetId: string): Promise<ProblemSetRead | null> {
     this.updatePath(userId);
-    return await this.fss.crudHandler.read(problemSetId);
+    return await this.fss.read(problemSetId);
   }
 
   async getAllProblemSets(userId: string): Promise<ProblemSetRead[]> {
     this.updatePath(userId);
-    return await this.fss.crudHandler.getAll();
+    return await this.fss.getAll();
   }
 
   // async createProblemSetStep(

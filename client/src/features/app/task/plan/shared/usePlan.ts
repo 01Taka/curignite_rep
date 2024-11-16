@@ -4,14 +4,14 @@ import { convertToDate } from "../../../../../functions/utils/dateTimeUtils";
 import { groupingByKey, removeDuplicates } from "../../../../../functions/utils/objectUtils";
 import { TodayIndividualTask, TodayTasks, TodayCategoryTask } from "./planTypes";
 import { TaskData } from "../../../../../types/firebase/db/task/taskExpansionTypes";
-import { ProblemSetCategoryData, ProblemSetData } from "../../../../../types/firebase/db/task/taskStructure";
+import { ProblemSetCategoryRead, ProblemSetRead } from "../../../../../types/firebase/db/task/taskStructure";
 
 const usePlan = (tasks: TaskData[], containExpired: boolean) => {
   const [isContainExpired, setIsContainExpired] = useState(containExpired);
 
   const { problemSetMap, categoryMap } = useMemo(() => {
-    const problemSetMap: Record<string, ProblemSetData> = {};
-    const categoryMap: Record<string, ProblemSetCategoryData> = {};
+    const problemSetMap: Record<string, ProblemSetRead> = {};
+    const categoryMap: Record<string, ProblemSetCategoryRead> = {};
   
     tasks.forEach((task) => {
       if (task.problemSetActivityField) {

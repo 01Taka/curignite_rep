@@ -3,7 +3,6 @@ import { DocumentData, DocumentReference, Firestore, Timestamp } from "firebase/
 import { getAuth } from "firebase/auth";
 import { DocumentIdMap } from "../../../../types/firebase/db/formatTypes";
 import { BaseDocumentWrite } from "../../../../types/firebase/db/baseTypes";
-import { TeamMemberService } from "../team/subCollection/teamMemberService";
 import { UserRead, UserWrite } from "../../../../types/firebase/db/user/userStructure";
 import { StorageManager } from "../../../storage/storageManager";
 import { UserWithNotExistUsersId } from "../../../../types/module/redux/slice/userSliceTypes";
@@ -15,7 +14,6 @@ export class UserService {
   constructor(
     firestore: Firestore,
     private storageManager: StorageManager,
-    private teamMemberService: TeamMemberService
   ) {
     this.fss = new FirestoreService(firestore, 'users');
   }
@@ -144,7 +142,7 @@ export class UserService {
   /**
    * ドキュメントデータからUIDをキーとするデータの辞書を取得します。
    */
-  async getCreatorDataByDocuments(data: BaseDocumentWrite[]): Promise<DocumentIdMap<UserWrite>> {
+  async getCreatorDataByDocuments(data: BaseDocumentWrite[]): Promise<DocumentIdMap<UserRead>> {
     try {
       const uids = data.map(value => value.createdById);
       return await this.getUserMapByUids(uids);
@@ -170,29 +168,29 @@ export class UserService {
   /**
    * 同じチームに所属するメンバーのスペースIDを取得します。
    */
-  async getSameTeamMembersSpaceIdMap(userId: string): Promise<DocumentIdMap<string[]>> {
-    const userIds = await this.teamMemberService.getSameTeamMembersId(userId);
-    const users = await this.getUsersByIds(userIds);
-    return this.createSpaceIdMap(users);
-  }
+  // async getSameTeamMembersSpaceIdMap(userId: string): Promise<DocumentIdMap<string[]>> {
+  //   const userIds = await this.teamMemberService.getSameTeamMembersId(userId);
+  //   const users = await this.getUsersByIds(userIds);
+  //   return this.createSpaceIdMap(users);
+  // }
+
+  // private async getUsersByIds(userIds: string[]): Promise<UserRead[]> {
+  //   const data = await Promise.all(userIds.map(id => this.fss.read(id)));
+  //   return data.filter(user => user !== null) as UserRead[];
+  // }
+
+  // private createSpaceIdMap(users: UserWrite[]): DocumentIdMap<string[]> {
+  //   return users.reduce((map, user) => {
+  //     if (user.relatedResources?.spaceIds) {
+  //       map[user.docId] = user.relatedResources.spaceIds;
+  //     }
+  //     return map;
+  //   }, {} as DocumentIdMap<string[]>);
+  // }
 
   // ヘルパーメソッド群
   private async getFileUrl(fileId: string): Promise<string> {
     return await this.storageManager.getFileUrl(fileId);
-  }
-
-  private async getUsersByIds(userIds: string[]): Promise<UserRead[]> {
-    const data = await Promise.all(userIds.map(id => this.fss.read(id)));
-    return data.filter(user => user !== null) as UserRead[];
-  }
-
-  private createSpaceIdMap(users: UserWrite[]): DocumentIdMap<string[]> {
-    return users.reduce((map, user) => {
-      if (user.relatedResources?.spaceIds) {
-        map[user.docId] = user.relatedResources.spaceIds;
-      }
-      return map;
-    }, {} as DocumentIdMap<string[]>);
   }
 
   private handleError(message: string, error: unknown): never {

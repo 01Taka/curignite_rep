@@ -21,7 +21,7 @@ const UserLevel: FC<UserLevelProps> = ({ username, small = false }) => {
   useEffect(() => {
     if (userData) {
       try {
-        const levelInfo = getLevelAndRemainingXPFromLearningTime(userData.totalLearningTime);
+        const levelInfo = getLevelAndRemainingXPFromLearningTime(userData.state.totalLearningTime);
         setLevelInfo(levelInfo);
       } catch (error) {
         console.error(error);

@@ -23,32 +23,32 @@ import { setCurrentSpaceId } from "../../../redux/slices/space/spaceSlice";
     navigate: NavigateFunction,
     dispatch: Dispatch,
 ) => {
-    try {
-        setIsStartingSpace(true);
-        const userService = serviceFactory.createUserService();
-        const spaceService = serviceFactory.createSpaceService();
+    // try {
+    //     setIsStartingSpace(true);
+    //     const userService = serviceFactory.createUserService();
+    //     const spaceService = serviceFactory.createSpaceService();
 
-        // await userService.setLearningState(uid, true);
+    //     // await userService.setLearningState(uid, true);
 
-        // スペースの作成処理
-        const spaceRef = await spaceService.createSpace(
-            uid,
-            formState.spaceName,
-            formState.description,
-            formState.requiresApproval
-        );
+    //     // スペースの作成処理
+    //     const spaceRef = await spaceService.createSpace(
+    //         uid,
+    //         formState.spaceName,
+    //         formState.description,
+    //         formState.requiresApproval
+    //     );
 
-        const newSpaceId = spaceRef.id;
-        // navigate(replaceParams(spacePaths.home, { [PathParam.SpaceId]: newSpaceId }));
-        dispatch(setCurrentSpaceId(newSpaceId));
+    //     const newSpaceId = spaceRef.id;
+    //     // navigate(replaceParams(spacePaths.home, { [PathParam.SpaceId]: newSpaceId }));
+    //     dispatch(setCurrentSpaceId(newSpaceId));
 
-        // スペース参加のためのストレージ設定
-        // startLearningSession(dispatch, uid, newSpaceId); UNDONE
-    } catch (error) {
-        console.error("新しいスペースの作成に失敗しました:", error);
-        // エラーハンドリングの追加
-        // 必要に応じてユーザーへの通知やログ出力を追加できます。
-    } finally {
-        setIsStartingSpace(false);
-    }
+    //     // スペース参加のためのストレージ設定
+    //     // startLearningSession(dispatch, uid, newSpaceId); UNDONE
+    // } catch (error) {
+    //     console.error("新しいスペースの作成に失敗しました:", error);
+    //     // エラーハンドリングの追加
+    //     // 必要に応じてユーザーへの通知やログ出力を追加できます。
+    // } finally {
+    //     setIsStartingSpace(false);
+    // } //OUT//
 };

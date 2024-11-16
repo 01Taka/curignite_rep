@@ -29,15 +29,15 @@ const dispatchCallbackWithProblemSetIds = (userId: string, problemSetMap: Record
 }
 
 const dispatchCallback = (userId: string, dispatch: AppDispatch) => {
-  const dispatchIndividualTasks = (tasks: IndividualTaskRead[]) => {
-    dispatch(setIndividualTasks(tasks));
-  }
-  const dispatchProblemSet = (problemSets: ProblemSetRead[]) => {
-    const problemSetMap = mapToDocIdMap(problemSets);
-    dispatchCallbackWithProblemSetIds(userId, problemSetMap, dispatch);
-    dispatch(setProblemSetMap(problemSetMap));
-  }
+  // const dispatchIndividualTasks = (tasks: IndividualTaskRead[]) => {
+  //   dispatch(setIndividualTasks(tasks));
+  // }
+  // const dispatchProblemSet = (problemSets: ProblemSetRead[]) => {
+  //   const problemSetMap = mapToDocIdMap(problemSets);
+  //   dispatchCallbackWithProblemSetIds(userId, problemSetMap, dispatch);
+  //   dispatch(setProblemSetMap(problemSetMap));
+  // }
   
-  serviceFactory.createIndividualTaskService().addCollectionCallback(userId, dispatchIndividualTasks);
-  serviceFactory.createProblemSetService().addCollectionCallback(userId, dispatchProblemSet);
+  // serviceFactory.createIndividualTaskService().addCollectionCallback(userId, dispatchIndividualTasks);
+  // serviceFactory.createProblemSetService().addCollectionCallback(userId, dispatchProblemSet);
 }

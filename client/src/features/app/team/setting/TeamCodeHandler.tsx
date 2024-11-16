@@ -24,16 +24,16 @@ const TeamCodeHandler: FC<TeamCodeHandlerProps> = ({ team }) => {
   const [reissuedCode, setReissuedCode] = useState(false);
 
   const updateCurrentCode = useCallback(async () => {
-    try {
-      if (team) {
-        const codeService = serviceFactory.createTeamCodeService();
-        const code = await codeService.getTeamCodeByTeamId(team.docId);
-        setJoinCode(code);
-      }
-    } catch (error) {
-      console.error('Error fetching current team code:', error);
-      setError("チームコードの取得に失敗しました。");
-    }
+    // try {
+    //   if (team) {
+    //     const codeService = serviceFactory.createTeamCodeService();
+    //     const code = await codeService.getTeamCodeByTeamId(team.docId);
+    //     setJoinCode(code);
+    //   }
+    // } catch (error) {
+    //   console.error('Error fetching current team code:', error);
+    //   setError("チームコードの取得に失敗しました。");
+    // } //OUT//
   }, [team]);
 
   useEffect(() => {
@@ -44,15 +44,15 @@ const TeamCodeHandler: FC<TeamCodeHandlerProps> = ({ team }) => {
     setMessage("");
     setError("");
     try {
-      if (uid && team && newCodePeriod) {
-        const codeService = serviceFactory.createTeamCodeService();
-        await codeService.createTeamCode(uid, team.docId, newCodePeriod);
-        await updateCurrentCode();
-        setReissuedCode(true);
-        setMessage("新しい参加コードが発行されました。");
-      } else {
-        setError("全てのフィールドを正しく入力してください。");
-      }
+      // if (uid && team && newCodePeriod) {
+      //   const codeService = serviceFactory.createTeamCodeService();
+      //   await codeService.createTeamCode(uid, team.docId, newCodePeriod);
+      //   await updateCurrentCode();
+      //   setReissuedCode(true);
+      //   setMessage("新しい参加コードが発行されました。");
+      // } else {
+      //   setError("全てのフィールドを正しく入力してください。");
+      // } //OUT//
     } catch (error) {
       console.error('Error reissuing team code:', error);
       setError("参加コードの再発行に失敗しました。");
@@ -63,14 +63,14 @@ const TeamCodeHandler: FC<TeamCodeHandlerProps> = ({ team }) => {
     setMessage("");
     setError("");
     try {
-      if (joinCode) {
-        const codesDB = serviceFactory.createTeamCodeService();
-        await codesDB.softDeleteTeamCode(joinCode.docId);
-        setJoinCode(null);
-        setMessage("参加コードが停止されました。");
-      } else {
-        setError("停止するコードがありません。");
-      }
+      // if (joinCode) {
+      //   const codesDB = serviceFactory.createTeamCodeService();
+      //   await codesDB.softDeleteTeamCode(joinCode.docId);
+      //   setJoinCode(null);
+      //   setMessage("参加コードが停止されました。");
+      // } else {
+      //   setError("停止するコードがありません。");
+      // } //OUT//
     } catch (error) {
       console.error('Error stopping team code:', error);
       setError("参加コードの停止に失敗しました。");

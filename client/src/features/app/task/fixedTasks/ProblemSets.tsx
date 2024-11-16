@@ -8,10 +8,10 @@ import Popup from '../../../../components/display/popup/Popup';
 import { getMinAndMaxFromObjectArray, sortObjectArray } from '../../../../functions/utils/objectUtils';
 import { convertToDate } from '../../../../functions/utils/dateTimeUtils';
 import useProblemSet from '../hooks/useProblemSet';
-import { ProblemSetData } from '../../../../types/firebase/db/task/taskStructure';
 import ProblemSetSubmissions from './submissions/ProblemSetSubmissions';
 import CreateActivity from '../createTask/createActivity/CreateActivity';
 import { FullProblemSetData } from '../../../../types/firebase/db/task/taskExpansionTypes';
+import { ProblemSetRead } from '../../../../types/firebase/db/task/taskStructure';
 
 interface ProblemSetsProps { }
 
@@ -21,7 +21,7 @@ const ProblemSets: React.FC<ProblemSetsProps> = () => {
   const { problemSetData } = useProblemSet();
   const { isOpenAll, openIndexes, handleToggleAll, toggleOpenIndex } = useToggleList(false, problemSetData.length);
   const [editingProblemSet, setEditingProblemSet] = useState<FullProblemSetData | null>(null);
-  const [addingSubmissionProblemSet, setAddingSubmissionProblemSet] = useState<ProblemSetData | null>(null);
+  const [addingSubmissionProblemSet, setAddingSubmissionProblemSet] = useState<ProblemSetRead | null>(null);
 
   const handleEditProblemSet = (problemSetData: FullProblemSetData) => {
     setEditingProblemSet(problemSetData);
@@ -31,7 +31,7 @@ const ProblemSets: React.FC<ProblemSetsProps> = () => {
     navigate(mainPaths.learning);
   }
 
-  const handleOpenCreateSubmission = (problemSet: ProblemSetData | null) => {
+  const handleOpenCreateSubmission = (problemSet: ProblemSetRead | null) => {
     setAddingSubmissionProblemSet(problemSet);
   }
 
@@ -56,8 +56,9 @@ const ProblemSets: React.FC<ProblemSetsProps> = () => {
         {problemSetData.map((data, index) => {
           const nextActivity = () => {
             try {
-              const value = getMinAndMaxFromObjectArray(data.activities, 'dueDateTime', convertToDate)?.min || null;
-              return value;
+              // const value = getMinAndMaxFromObjectArray(data.activities, 'dueDateTime', convertToDate)?.min || null;
+              // return value; //OUT// ???
+              return null
             } catch (error) {
               return null;
             }

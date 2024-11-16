@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from "react";
 import Heatmap from "../../../../../components/app/calendar/Heatmap";
 import { ISODate } from "../../../../../types/util/dateTimeTypes";
 import { BGColorClass } from "../../../../../types/module/tailwindTypes";
-import { getLearningTimeHeatmapFromDB } from "../../../../../functions/app/calendar/calendarUtils";
+// import { getLearningTimeHeatmapFromDB } from "../../../../../functions/app/calendar/calendarUtils";
 import { useAppSelector } from "../../../../../redux/hooks";
 
 const SpaceHeatmap: FC = () => {
@@ -12,8 +12,8 @@ const SpaceHeatmap: FC = () => {
   useEffect(() => {
     const updateDateColors = async () => {
       if (uid) {
-        const heatmap = await getLearningTimeHeatmapFromDB(uid);
-        setDateColors(heatmap);
+        // const heatmap = await getLearningTimeHeatmapFromDB(uid);
+        // setDateColors(heatmap); //OUT//
       }
     }
     updateDateColors();

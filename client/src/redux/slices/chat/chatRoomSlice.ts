@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { fetchChats } from '../../actions/chat/chatRoomActions';
 import { ChatRoomSliceState } from '../../../types/module/redux/chat/reduxChatTypes';
 import { addAsyncCases, isSuccessfulPayload } from '../../../functions/redux/reduxUtils';
 import { AsyncThunkStatus } from '../../../types/module/redux/asyncThunkTypes';
@@ -27,14 +26,14 @@ const chatRoomSlice = createSlice({
       state.messages = {};
     },
   },
-  extraReducers: (builder) => {
-    addAsyncCases(builder, fetchChats, (state, payload) => {
-      state.messageFetchStatus = payload;
-      if (isSuccessfulPayload(payload)) {
-        state.messages = payload.value;
-      }
-    })
-  },
+  // extraReducers: (builder) => {
+  //   addAsyncCases(builder, fetchChats, (state, payload) => {
+  //     state.messageFetchStatus = payload;
+  //     if (isSuccessfulPayload(payload)) {
+  //       state.messages = payload.value;
+  //     }
+  //   })
+  // }, //OUT//
 });
 
 export const { setCurrentRoomId, setStartAfterMessageId, clearChatRoom } = chatRoomSlice.actions;

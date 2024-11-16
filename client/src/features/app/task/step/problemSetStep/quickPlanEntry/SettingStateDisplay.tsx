@@ -1,12 +1,12 @@
 import React from 'react';
-import { ProblemSetCategoryData } from '../../../../../../types/firebase/db/task/taskStructure';
+import { ProblemSetCategoryRead } from '../../../../../../types/firebase/db/task/taskStructure';
 import { Box, Divider, Typography } from '@mui/material';
 import { arrayToRangeString } from '../../../../../../functions/utils/rangeUtils';
 import { dictToArray, groupingByKey } from '../../../../../../functions/utils/objectUtils';
 import { getDatesElements } from '../../../../../../functions/utils/dateTimeUtils';
 
 interface SettingStateDisplayProps {
-  categoryMap: Record<string, ProblemSetCategoryData>;
+  categoryMap: Record<string, ProblemSetCategoryRead>;
   problems: Record<string, number[]>;
   dates: Date[];
   distributionRatio: number[] | 'fillWithOne';

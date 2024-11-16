@@ -18,9 +18,9 @@ const Helps: FC<HelpsProps> = () => {
   useEffect(() => {
     const fetchHelpData = async () => {
       if (uid) {
-        const helpService = serviceFactory.createUserHelpService();
-        const list = await helpService.getAllHelpAndAnswersWithFileUrls(uid);
-        setHelpWithAnswersList(list);
+        // const helpService = serviceFactory.createUserHelpService();
+        // const list = await helpService.getAllHelpAndAnswersWithFileUrls(uid);
+        // setHelpWithAnswersList(list); //OUT//
       }
     };
 

@@ -17,14 +17,14 @@ const JoiningTeam: FC<JoiningTeamProps> = ({ team, codeId, uid, onCancel, onJoin
 
   const handleJoin = async () => {
     setError(null);
-    try {
-      const teamService = serviceFactory.createTeamService();
-      await teamService.handleTeamJoinWithTeamCodeId(uid, codeId);
-      onJoined();
-    } catch (err) {
-      console.error('Failed to join team:', err);
-      setError('チーム参加に失敗しました。もう一度お試しください。');
-    }
+    // try {
+    //   const teamService = serviceFactory.createTeamService();
+    //   await teamService.handleTeamJoinWithTeamCodeId(uid, codeId);
+    //   onJoined();
+    // } catch (err) {
+    //   console.error('Failed to join team:', err);
+    //   setError('チーム参加に失敗しました。もう一度お試しください。');
+    // } //OUT//
   };
 
   return (

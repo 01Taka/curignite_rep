@@ -3,36 +3,37 @@ import { db } from '../firebase';
 import { StorageManager, storageManager } from '../storage/storageManager';
 // ユーザー関連サービス
 import { UserService } from './app/user/userService';
-import { UserTeamService } from './app/user/subCollection/userTeamService';
-import { UserPartnerService } from './app/user/subCollection/userPartnerService';
-import { UserLearningGoalService } from './app/user/subCollection/userLearningGoalService';
-import { UserDailyLearningSummaryService } from './app/user/subCollection/userDailyLearningSummary';
-import { UserHelpService } from './app/user/subCollection/userHelpService';
-import { HelpAnswerService } from './app/user/subCollection/helpAnswerService';
+import { UserTaskPlanManager } from './app/user/userTaskPlanManager';
+// import { UserTeamService } from './app/user/subCollection/userTeamService';
+// import { UserPartnerService } from './app/user/subCollection/userPartnerService';
+// import { UserLearningGoalService } from './app/user/subCollection/userLearningGoalService';
+// import { UserDailyLearningSummaryService } from './app/user/subCollection/userDailyLearningSummary';
+// import { UserHelpService } from './app/user/subCollection/userHelpService';
+// import { HelpAnswerService } from './app/user/subCollection/helpAnswerService';
 
 // ユーザータスク関連サービス
 import { IndividualTaskService } from './app/user/subCollection/task/individualTaskService';
 import { ProblemSetService } from './app/user/subCollection/task/problemSetService';
 import { ProblemSetActivityService } from './app/user/subCollection/task/problemSetActivityService';
 import { ProblemSetCategoryService } from './app/user/subCollection/task/problemSetCategoryService';
-import { problemSetStepPlanService } from './app/user/subCollection/task/taskStep/problemSetStepPlanService';
+// import { problemSetStepPlanService } from './app/user/subCollection/task/taskStep/problemSetStepPlanService';
 
 // チーム関連サービス
-import { TeamService } from './app/team/teamService';
-import { TeamJoinRequestService } from './app/team/subCollection/teamJoinRequestService';
-import { TeamMemberService } from './app/team/subCollection/teamMemberService';
-import { TeamCodeService } from './app/team/teamCodeService';
+// import { TeamService } from './app/team/teamService';
+// import { TeamJoinRequestService } from './app/team/subCollection/teamJoinRequestService';
+// import { TeamMemberService } from './app/team/subCollection/teamMemberService';
+// import { TeamCodeService } from './app/team/teamCodeService';
 
 // スペース関連サービス
-import { SpaceService } from './app/space/SpaceService';
-import { SpaceJoinRequestService } from './app/space/subCollection/spaceJoinRequestService';
-import { SpaceMemberService } from './app/space/subCollection/spaceMemberService';
+// import { SpaceService } from './app/space/SpaceService';
+// import { SpaceJoinRequestService } from './app/space/subCollection/spaceJoinRequestService';
+// import { SpaceMemberService } from './app/space/subCollection/spaceMemberService';
 
 // チャット関連サービス
-import { ChatRoomService } from './app/chat/chatRoomService';
-import { ChatRoomChatService } from './app/chat/subCollection/chatRoomChatService';
-import { UserStateManager } from './app/user/userStateManager';
-import { UserTaskPlanManager } from './app/user/userTaskPlanManager';
+// import { ChatRoomService } from './app/chat/chatRoomService';
+// import { ChatRoomChatService } from './app/chat/subCollection/chatRoomChatService';
+// import { UserStateManager } from './app/user/userStateManager';
+
 
 
 type ConstructorWithArgs<T, Args extends any[]> = new (...args: Args) => T;
@@ -61,17 +62,8 @@ export class ServiceFactory {
       'user',
       UserService,
       this.firestore,
-      this.storageManager,
-      this.createTeamMemberService()
+      this.storageManager
     );
-  }
-
-  createUserStateManager() {
-    return this.getInstance(
-      'userState',
-      UserStateManager,
-      this.createUserService()
-    )
   }
 
   createUserTaskPlanManager() {
@@ -82,29 +74,37 @@ export class ServiceFactory {
     )
   }
 
-  createUserTeamService() {
-    return this.getInstance('userTeam', UserTeamService, this.firestore);
-  }
+  // createUserStateManager() {
+  //   return this.getInstance(
+  //     'userState',
+  //     UserStateManager,
+  //     this.createUserService()
+  //   )
+  // }
 
-  createUserPartnerService() {
-    return this.getInstance('userPartner', UserPartnerService, this.firestore);
-  }
+  // createUserTeamService() {
+  //   return this.getInstance('userTeam', UserTeamService, this.firestore);
+  // }
 
-  createUserLearningGoalService() {
-    return this.getInstance('userGoal', UserLearningGoalService, this.firestore);
-  }
+  // createUserPartnerService() {
+  //   return this.getInstance('userPartner', UserPartnerService, this.firestore);
+  // }
 
-  createUserDailyLearningSummary() {
-    return this.getInstance('userDailyLearningSummary', UserDailyLearningSummaryService, this.firestore);
-  }
+  // createUserLearningGoalService() {
+  //   return this.getInstance('userGoal', UserLearningGoalService, this.firestore);
+  // }
 
-  createUserHelpService() {
-    return this.getInstance('userHelp', UserHelpService, this.firestore, this.storageManager, this.createHelpAnswerService());
-  }
+  // createUserDailyLearningSummary() {
+  //   return this.getInstance('userDailyLearningSummary', UserDailyLearningSummaryService, this.firestore);
+  // }
 
-  createHelpAnswerService() {
-    return this.getInstance('helpAnswer', HelpAnswerService, this.firestore, this.storageManager);
-  }
+  // createUserHelpService() {
+  //   return this.getInstance('userHelp', UserHelpService, this.firestore, this.storageManager, this.createHelpAnswerService());
+  // }
+
+  // createHelpAnswerService() {
+  //   return this.getInstance('helpAnswer', HelpAnswerService, this.firestore, this.storageManager);
+  // }
 
   createIndividualTaskService() {
     return this.getInstance('individualTask', IndividualTaskService, this.firestore);
@@ -112,10 +112,6 @@ export class ServiceFactory {
 
   createProblemSetService() {
     return this.getInstance('problemSet', ProblemSetService, this.firestore);
-  }
-
-  createProblemSetStepPlanService() {
-    return this.getInstance('problemSetStepPlan', problemSetStepPlanService, this.firestore);
   }
 
   createProblemSetActivityService() {
@@ -126,59 +122,64 @@ export class ServiceFactory {
     return this.getInstance('problemSetCategory', ProblemSetCategoryService, this.firestore)
   }
 
-  createTeamService() {
-    return this.getInstance(
-      'team',
-      TeamService,
-      this.firestore,
-      this.storageManager,
-      this.createTeamMemberService(),
-      this.createTeamJoinRequestService(),
-      this.createTeamCodeService(),
-      this.createUserTeamService(),
-      this.createChatRoomService()
-    );
-  }
+  // createProblemSetStepPlanService() {
+  //   return this.getInstance('problemSetStepPlan', problemSetStepPlanService, this.firestore);
+  // }
 
-  createTeamJoinRequestService() {
-    return this.getInstance('teamJoinRequest', TeamJoinRequestService, this.firestore, this.createUserTeamService());
-  }
 
-  createTeamMemberService() {
-    return this.getInstance('teamMember', TeamMemberService, this.firestore, this.createUserTeamService());
-  }
+  // createTeamService() {
+  //   return this.getInstance(
+  //     'team',
+  //     TeamService,
+  //     this.firestore,
+  //     this.storageManager,
+  //     this.createTeamMemberService(),
+  //     this.createTeamJoinRequestService(),
+  //     this.createTeamCodeService(),
+  //     this.createUserTeamService(),
+  //     this.createChatRoomService()
+  //   );
+  // }
 
-  createTeamCodeService() {
-    return this.getInstance('teamCode', TeamCodeService, this.firestore);
-  }
+  // createTeamJoinRequestService() {
+  //   return this.getInstance('teamJoinRequest', TeamJoinRequestService, this.firestore, this.createUserTeamService());
+  // }
 
-  createSpaceService() {
-    return this.getInstance(
-      'space',
-      SpaceService,
-      this.firestore,
-      this.createSpaceMemberService(),
-      this.createSpaceJoinRequestService(),
-      this.createUserStateManager(),
-      this.createChatRoomService()
-    );
-  }
+  // createTeamMemberService() {
+  //   return this.getInstance('teamMember', TeamMemberService, this.firestore, this.createUserTeamService());
+  // }
 
-  createSpaceJoinRequestService() {
-    return this.getInstance('spaceJoinRequest', SpaceJoinRequestService, this.firestore);
-  }
+  // createTeamCodeService() {
+  //   return this.getInstance('teamCode', TeamCodeService, this.firestore);
+  // }
 
-  createSpaceMemberService() {
-    return this.getInstance('spaceMember', SpaceMemberService, this.firestore);
-  }
+  // createSpaceService() {
+  //   return this.getInstance(
+  //     'space',
+  //     SpaceService,
+  //     this.firestore,
+  //     this.createSpaceMemberService(),
+  //     this.createSpaceJoinRequestService(),
+  //     this.createUserStateManager(),
+  //     this.createChatRoomService()
+  //   );
+  // }
 
-  createChatRoomService() {
-    return this.getInstance('chatRoom', ChatRoomService, this.firestore);
-  }
+  // createSpaceJoinRequestService() {
+  //   return this.getInstance('spaceJoinRequest', SpaceJoinRequestService, this.firestore);
+  // }
 
-  createChatRoomChatService() {
-    return this.getInstance('chatRoomChat', ChatRoomChatService, this.firestore, this.storageManager);
-  }
+  // createSpaceMemberService() {
+  //   return this.getInstance('spaceMember', SpaceMemberService, this.firestore);
+  // }
+
+  // createChatRoomService() {
+  //   return this.getInstance('chatRoom', ChatRoomService, this.firestore);
+  // }
+
+  // createChatRoomChatService() {
+  //   return this.getInstance('chatRoomChat', ChatRoomChatService, this.firestore, this.storageManager);
+  // }
 }
 
 const serviceFactory = new ServiceFactory(db, storageManager);

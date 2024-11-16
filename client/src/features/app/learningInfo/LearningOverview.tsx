@@ -6,7 +6,7 @@ import { convertToDate } from '../../../functions/utils/dateTimeUtils';
 import { Card, CardContent, Tooltip, Typography } from '@mui/material';
 import { MINUTES_IN_MILLISECOND } from '../../../constants/utils/dateTimeConstants';
 import { UserDailyLearningSummaryData } from '../../../types/firebase/db/user/userStructure';
-import { UserDailyLearningSummaryService } from '../../../firebase/db/app/user/subCollection/userDailyLearningSummary';
+// import { UserDailyLearningSummaryService } from '../../../firebase/db/app/user/subCollection/userDailyLearningSummary';
 
 const LearningOverview: FC = () => {
   const { uid, userData } = useAppSelector(state => state.userSlice);
@@ -20,22 +20,22 @@ const LearningOverview: FC = () => {
     const updateLearningSessions = async () => {
       try {
         if (uid) {
-          const learningSession = serviceFactory.createUserDailyLearningSummary();
+          // const learningSession = serviceFactory.createUserDailyLearningSummary();
 
-          const monthSessions = await learningSession.fetchRecentSummariesByDaysAgo(uid, 30);
-          const weekStartDate = startOfWeek(new Date());
-          const weekSessions = monthSessions.filter(session => convertToDate(session.date) >= weekStartDate);
+          // const monthSessions = await learningSession.fetchRecentSummariesByDaysAgo(uid, 30);
+          // const weekStartDate = startOfWeek(new Date());
+          // const weekSessions = monthSessions.filter(session => convertToDate(session.date) >= weekStartDate);
 
-          const today = new Date();
-          const todaySessionData = monthSessions.find(session => convertToDate(session.date).getTime() === today.getTime()) || 
-                                   await learningSession.getSummaryByDate(uid, today);
+          // const today = new Date();
+          // const todaySessionData = monthSessions.find(session => convertToDate(session.date).getTime() === today.getTime()) || 
+          //                          await learningSession.getSummaryByDate(uid, today);
 
-          const averageLearningTime = UserDailyLearningSummaryService.calculateAverageLearningTime(monthSessions, "length");
-          const weeklyTotalLearningTime = UserDailyLearningSummaryService.calculateTotalLearningTime(weekSessions);
+          // const averageLearningTime = UserDailyLearningSummaryService.calculateAverageLearningTime(monthSessions, "length");
+          // const weeklyTotalLearningTime = UserDailyLearningSummaryService.calculateTotalLearningTime(weekSessions);
 
-          setTodaySession(todaySessionData);
-          setAvgTime(averageLearningTime);
-          setWeekTotalTime(weeklyTotalLearningTime);
+          // setTodaySession(todaySessionData);
+          // setAvgTime(averageLearningTime);
+          // setWeekTotalTime(weeklyTotalLearningTime); //OUT//
         }
       } catch (err) {
         console.error("Error fetching learning sessions:", err);
@@ -67,7 +67,7 @@ const LearningOverview: FC = () => {
         ) : (
           <div className="space-y-3">
             <Typography variant="body1" className="text-gray-700">
-              今日の合計: {todaySession ? formatEstimatedDuration(todaySession.totalLearningTime) : '0分'}
+              {/* 今日の合計: {todaySession ? formatEstimatedDuration(todaySession.totalLearningTime) : '0分'} //OUT// */}
             </Typography>
             <Typography variant="body1" className="text-gray-700">
               今週の合計: {formatEstimatedDuration(weekTotalTime)}
@@ -78,7 +78,7 @@ const LearningOverview: FC = () => {
               </Typography>
             </Tooltip>
             <Typography variant="body1" className="text-gray-700">
-              連続学習日数: {userData?.consecutiveLearningNumber ?? 0} 日
+              {/* 連続学習日数: {userData?.consecutiveLearningNumber ?? 0} 日 //OUT// */}
             </Typography>
           </div>
         )}

@@ -2,7 +2,7 @@ import { Dispatch } from '@reduxjs/toolkit';
 import serviceFactory from '../../../firebase/db/factory';
 import store from '../../store';
 import { assignSpaceInfoMap, setSpacesUpdateState } from '../../slices/space/spaceSlice';
-import { autoUpdateCollection } from '../../../functions/redux/reduxUtils';
+// import { autoUpdateCollection } from '../../../functions/redux/reduxUtils';
 import { SpaceData } from '../../../types/firebase/db/space/spaceStructure';
 import { TimestampConvertedDocumentMap } from '../../../types/firebase/db/formatTypes';
 import { convertTimestampsToNumbers, revertTimestampConversion } from '../../../functions/db/dataFormatUtils';
@@ -19,32 +19,32 @@ export const getSpaceInfo = (spaceId: string): Partial<SpaceInfoMap> => {
  * @param userId - ユーザーID
  */
 export const autoUpdateSpaces = (dispatch: Dispatch, userId: string) => {
-  const spaceService = serviceFactory.createSpaceService();
-  const spaceMemberService = serviceFactory.createSpaceMemberService();
+  // const spaceService = serviceFactory.createSpaceService();
+  // const spaceMemberService = serviceFactory.createSpaceMemberService();
 
-  const setFunc = (updatedData: SpaceData[]) => {
-    const prevData = store.getState().spaceSlice.spaceInfoMap;
+  // const setFunc = (updatedData: SpaceData[]) => {
+  //   const prevData = store.getState().spaceSlice.spaceInfoMap;
     
-    const dataMap: TimestampConvertedDocumentMap<SpaceInfoMap> = updatedData.reduce((map, data) => {
-      const existingData = prevData[data.docId] || {};
+  //   const dataMap: TimestampConvertedDocumentMap<SpaceInfoMap> = updatedData.reduce((map, data) => {
+  //     const existingData = prevData[data.docId] || {};
       
-      map[data.docId] = {
-        ...existingData,
-        space: convertTimestampsToNumbers(data),
-      };
+  //     map[data.docId] = {
+  //       ...existingData,
+  //       space: convertTimestampsToNumbers(data),
+  //     };
       
-      return map;
-    }, {} as TimestampConvertedDocumentMap<SpaceInfoMap>);
+  //     return map;
+  //   }, {} as TimestampConvertedDocumentMap<SpaceInfoMap>);
   
-    return assignSpaceInfoMap({ ...prevData, ...dataMap });
-  };
+  //   return assignSpaceInfoMap({ ...prevData, ...dataMap });
+  // };
 
-  autoUpdateCollection(
-    spaceService.baseDB,
-    userId,
-    spaceMemberService.filterNonMemberSpaces.bind(spaceMemberService),
-    setFunc,
-    setSpacesUpdateState,
-    dispatch
-  );
+  // autoUpdateCollection(
+  //   spaceService.baseDB,
+  //   userId,
+  //   spaceMemberService.filterNonMemberSpaces.bind(spaceMemberService),
+  //   setFunc,
+  //   setSpacesUpdateState,
+  //   dispatch
+  // ); //OUT//
 };

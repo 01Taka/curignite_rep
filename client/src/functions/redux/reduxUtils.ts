@@ -36,38 +36,38 @@ export const isSuccessfulPayload = <T>(payload: AsyncThunkState<T>): payload is 
   return payload.state === AsyncThunkStatus.SUCCESS && !!payload.value;
 }
 
-/**
- * コレクションの変更をリアルタイムで監視し、Reduxストアを更新するユーティリティ関数
- * @param dbInstance - データベースインスタンス
- * @param userId - ユーザーID
- * @param filterDataFunction - ユーザーIDに基づいてデータをフィルタリングする関数
- * @param setDataAction - Reduxアクション（データを設定するアクション）
- * @param dispatch - Reduxのdispatch関数
- */
-export const autoUpdateCollection = async <T extends BaseDocumentWrite>(
-  dbInstance: BaseDB<T>,
-  userId: string,
-  filterDataFunction: (userId: string, data: T[]) => (T[] | Promise<T[]>),
-  setDataAction: (updatedData: T[]) => any,
-  setStateAction: (status: AsyncThunkStatus) => any,
-  dispatch: Dispatch
-) => {
-  const callback: (data: T[]) => Promise<void> = async (data: T[]) => {
-    try {
-      dispatch(setStateAction(AsyncThunkStatus.LOADING));
-      const filteredData = await filterDataFunction(userId, data);
-      dispatch(setDataAction(filteredData));
-      dispatch(setStateAction(AsyncThunkStatus.SUCCESS));
-    } catch (error) {
-      console.error('Error in collection update callback:', error);
-      dispatch(setStateAction(AsyncThunkStatus.ERROR));
-    }
-  };
+// /**
+//  * コレクションの変更をリアルタイムで監視し、Reduxストアを更新するユーティリティ関数
+//  * @param dbInstance - データベースインスタンス
+//  * @param userId - ユーザーID
+//  * @param filterDataFunction - ユーザーIDに基づいてデータをフィルタリングする関数
+//  * @param setDataAction - Reduxアクション（データを設定するアクション）
+//  * @param dispatch - Reduxのdispatch関数
+//  */
+// export const autoUpdateCollection = async <T extends BaseDocumentWrite>(
+//   dbInstance: BaseDB<T>,
+//   userId: string,
+//   filterDataFunction: (userId: string, data: T[]) => (T[] | Promise<T[]>),
+//   setDataAction: (updatedData: T[]) => any,
+//   setStateAction: (status: AsyncThunkStatus) => any,
+//   dispatch: Dispatch
+// ) => {
+//   const callback: (data: T[]) => Promise<void> = async (data: T[]) => {
+//     try {
+//       dispatch(setStateAction(AsyncThunkStatus.LOADING));
+//       const filteredData = await filterDataFunction(userId, data);
+//       dispatch(setDataAction(filteredData));
+//       dispatch(setStateAction(AsyncThunkStatus.SUCCESS));
+//     } catch (error) {
+//       console.error('Error in collection update callback:', error);
+//       dispatch(setStateAction(AsyncThunkStatus.ERROR));
+//     }
+//   };
 
-  try {
-    dbInstance.addCollectionCallback(callback);
-  } catch (error) {
-    console.error("Failed to register collection callback:", error);
-    dispatch(setStateAction(AsyncThunkStatus.ERROR));
-  }
-};
+//   try {
+//     dbInstance.addCollectionCallback(callback);
+//   } catch (error) {
+//     console.error("Failed to register collection callback:", error);
+//     dispatch(setStateAction(AsyncThunkStatus.ERROR));
+//   }
+// };

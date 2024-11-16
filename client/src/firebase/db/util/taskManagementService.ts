@@ -14,7 +14,7 @@ export class TaskManagementService {
     callback: (args: { userId: string, problemSetId: string, data: ProblemSetCategoryRead[] }) => void
   ) {
     problemIds.forEach(problemId => {
-      factory.createProblemSetCategoryService().addCollectionCallback(userId, problemId, callback);
+      // factory.createProblemSetCategoryService().addCollectionCallback(userId, problemId, callback);
     });
   }
 
@@ -25,7 +25,7 @@ export class TaskManagementService {
     callback: (args: { userId: string, problemSetId: string, data: ProblemSetActivityRead[] }) => void
   ) {
     problemIds.forEach(problemId => {
-      factory.createProblemSetActivityService().addCollectionCallback(userId, problemId, callback);
+      // factory.createProblemSetActivityService().addCollectionCallback(userId, problemId, callback);
     });
   }
 

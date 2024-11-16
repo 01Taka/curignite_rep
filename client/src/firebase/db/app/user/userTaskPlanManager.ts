@@ -4,18 +4,15 @@ import { mathClamp } from "../../../../functions/utils/numberUtils";
 import { UserRead, UserWrite } from "../../../../types/firebase/db/user/userStructure";
 import { TaskPlan } from "../../../../types/firebase/db/user/userTaskPlanStructure";
 import FirestoreService from "../../handler/firestoreService";
+import { UserService } from "./userService";
 
 export class UserTaskPlanManager {
   private fss: FirestoreService<UserRead, UserWrite>;
 
   constructor(
-    firestore: Firestore
+    userService: UserService
   ) {
-    this.fss = new FirestoreService(firestore, 'users');
-  }
-
-  get firestoreService() {
-    return this.fss;
+    this.fss = userService.firestoreService;
   }
 
   static todayTasksToTaskPlan(todayTasks: TodayTasks): TaskPlan {

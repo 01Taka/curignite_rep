@@ -47,15 +47,15 @@ const CreateAnswerForm: FC<CreateAnswerFormProps> = ({ targetHelpAndAnswersInfo,
 
     try {
       const help = targetHelpAndAnswersInfo.help;
-      const answerService = serviceFactory.createHelpAnswerService();
+      // const answerService = serviceFactory.createHelpAnswerService();
 
-      await answerService.createHelpAnswer(
-        help.createdById,
-        help.docId,
-        formState.answer,
-        formState.files,
-        uid
-      );
+      // await answerService.createHelpAnswer(
+      //   help.createdById,
+      //   help.docId,
+      //   formState.answer,
+      //   formState.files,
+      //   uid
+      // ); //OUT//
       resetFormState();
       if (onCreated) onCreated();
     } catch (error) {

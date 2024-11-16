@@ -8,28 +8,30 @@ import { TimestampConvertedDocumentMap } from '../../../types/firebase/db/format
 import { convertTimestampsToNumbers } from '../../../functions/db/dataFormatUtils';
 import { ChatData } from '../../../types/firebase/db/chat/chatRoomStructure';
 
-export const fetchChats = createAsyncThunk<
-  AsyncThunkState<TimestampConvertedDocumentMap<ChatData>>, 
-  FetchChatsParams,
-  { rejectValue: string }
->(
-  'chatRoom/fetchChats',
-  async ({ roomId, messageLimit, startAfterMessageId }, { getState, rejectWithValue }) => {
-    try {
-      const chatService = serviceFactory.createChatRoomChatService();
-      const messages = await  chatService.getChatsInRoom(roomId, messageLimit, startAfterMessageId);
+// export const fetchChats = createAsyncThunk<
+//   AsyncThunkState<TimestampConvertedDocumentMap<ChatData>>, 
+//   FetchChatsParams,
+//   { rejectValue: string }
+// >(
+//   'chatRoom/fetchChats',
+//   async ({ roomId, messageLimit, startAfterMessageId }, { getState, rejectWithValue }) => {
+//     try {
+//       const chatService = serviceFactory.createChatRoomChatService();
+//       const messages = await  chatService.getChatsInRoom(roomId, messageLimit, startAfterMessageId);
 
-      const prevChats: TimestampConvertedDocumentMap<ChatData> = (getState() as RootState).chatRoomSlice.messages;
-      const messageIdMap: TimestampConvertedDocumentMap<ChatData> = {
-        ...prevChats,
-      }
-      messages.forEach(message => {
-          messageIdMap[message.docId] = convertTimestampsToNumbers(message);
-      });
+//       const prevChats: TimestampConvertedDocumentMap<ChatData> = (getState() as RootState).chatRoomSlice.messages;
+//       const messageIdMap: TimestampConvertedDocumentMap<ChatData> = {
+//         ...prevChats,
+//       }
+//       messages.forEach(message => {
+//           messageIdMap[message.docId] = convertTimestampsToNumbers(message);
+//       });
       
-      return fulfillWithState(convertTimestampsToNumbers(messageIdMap));
-    } catch (error) {
-      return rejectWithValue('Failed to fetch chat messages.');
-    }
-  }
-);
+//       return fulfillWithState(convertTimestampsToNumbers(messageIdMap));
+//     } catch (error) {
+//       return rejectWithValue('Failed to fetch chat messages.');
+//     }
+//   }
+// );
+
+export {}

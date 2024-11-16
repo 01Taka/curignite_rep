@@ -4,12 +4,12 @@ import { InitialSetupFormState } from "./InitialSetupView";
 import { authStorage } from "../../../../functions/browserStorage/localStorage/storages";
 import { getUniqueUserName } from "../../../../firebase/util/getUniqueName";
 import { ConvertTimestampToNumber } from "../../../../types/firebase/db/formatTypes";
-import { UserData } from "../../../../types/firebase/db/user/userStructure";
+import { UserRead } from "../../../../types/firebase/db/user/userStructure";
 
 export const getUniqueName = async (
-  userData?: ConvertTimestampToNumber<UserData> | null
+  userData?: ConvertTimestampToNumber<UserRead> | null
 ) => {
-  const name = userData?.displayName || authStorage.getData('username') || "";
+  const name = userData?.username || authStorage.getData('username') || "";
   const uniqueName = await getUniqueUserName(name);
   return uniqueName;
 }

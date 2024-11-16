@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useAppSelector } from '../../../../redux/hooks';
 import { DocumentIdMap } from '../../../../types/firebase/db/formatTypes';
-import { UserWithSupplementary } from '../../../../types/firebase/db/user/userStructure';
+import { UserRead } from '../../../../types/firebase/db/user/userStructure';
 import serviceFactory from '../../../../firebase/db/factory';
 import { useUserMap } from '../../../hooks/useUserMap';
 
@@ -10,15 +10,15 @@ import { useUserMap } from '../../../hooks/useUserMap';
 const useActiveMembers = () => {
   const uid = useAppSelector(state => state.userSlice.uid);
   const [sameTeamMembersId, setSameTeamMembersId] = useState<string[]>([]);
-  const [activeMemberMap, setActiveMemberMap] = useState<DocumentIdMap<UserWithSupplementary>>({});
+  const [activeMemberMap, setActiveMemberMap] = useState<DocumentIdMap<UserRead>>({});
 
   // 同じチームのメンバーIDを取得する
   const updateSameTeamMembersId = useCallback(async () => {
-    if (uid) {
-      const teamService = serviceFactory.createTeamMemberService();
-      const membersId = await teamService.getSameTeamMembersId(uid);
-      setSameTeamMembersId(membersId);
-    }
+    // if (uid) {
+    //   const teamService = serviceFactory.createTeamMemberService();
+    //   const membersId = await teamService.getSameTeamMembersId(uid);
+    //   setSameTeamMembersId(membersId);
+    // } //OUT//
   }, [uid]);
 
   // TODO データのリアルタイム性が必要なのでReduxから取得ではなくデータをDBから取得して使用するかReduxのメンバーの自動更新を行うように変更する
@@ -27,14 +27,14 @@ const useActiveMembers = () => {
 
   // ユーザーマップからアクティブなメンバーをフィルタリング
   useEffect(() => {
-    const activeMembers: DocumentIdMap<UserWithSupplementary> = {};
-    Object.keys(userMap).forEach((key) => {
-      const user = userMap[key];
-      if (user?.isLearning) {
-        activeMembers[key] = user;
-      }
-    });
-    setActiveMemberMap(activeMembers);
+    // const activeMembers: DocumentIdMap<UserRead> = {};
+    // Object.keys(userMap).forEach((key) => {
+    //   const user = userMap[key];
+    //   if (user?.isLearning) {
+    //     activeMembers[key] = user;
+    //   }
+    // });
+    // setActiveMemberMap(activeMembers); //OUT//
   }, [userMap]);
 
   // フックから取得するデータ

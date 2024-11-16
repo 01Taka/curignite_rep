@@ -34,8 +34,8 @@ const ChatRoom: React.FC<ChatProps> = ({ chatRoomId }) => {
     const handleSendChat = async () => {
         if (uid) {
             resetFormState();
-            const chatService = serviceFactory.createChatRoomChatService();
-            await chatService.sendChat(chatRoomId, uid, formState.content, formState.files, formState.replyTo);
+            // const chatService = serviceFactory.createChatRoomChatService();
+            // await chatService.sendChat(chatRoomId, uid, formState.content, formState.files, formState.replyTo); //OUT//
         }
     };
 

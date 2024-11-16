@@ -15,17 +15,17 @@ export const useTeamMembers = (teamId: string | null) => {
       setLoading(true);
       setError(null);
 
-      try {
-        const memberService = serviceFactory.createTeamMemberService();
-        const fetchedMembers = await memberService.getAllMembers(teamId);
-        setMembers(fetchedMembers);
-        setMembersId(fetchedMembers.map(member => member.docId));
-      } catch (err) {
-        console.error("Failed to fetch team members:", err);
-        setError("Failed to fetch team members.");
-      } finally {
-        setLoading(false);
-      }
+      // try {
+      //   const memberService = serviceFactory.createTeamMemberService();
+      //   const fetchedMembers = await memberService.getAllMembers(teamId);
+      //   setMembers(fetchedMembers);
+      //   setMembersId(fetchedMembers.map(member => member.docId));
+      // } catch (err) {
+      //   console.error("Failed to fetch team members:", err);
+      //   setError("Failed to fetch team members.");
+      // } finally {
+      //   setLoading(false);
+      // } //OUT//
     };
 
     fetchMembers();

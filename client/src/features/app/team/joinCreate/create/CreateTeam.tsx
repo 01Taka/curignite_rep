@@ -33,21 +33,21 @@ const CreateTeam: FC<CreateTeamProps> = ({ onCreatedTeam }) => {
   const handleCreateTeam = async () => {
     try {
       // チームの作成と追加
-      if (uid) {
-        setCreating(true);
-        const teamService = serviceFactory.createTeamService();
-        const result = await teamService.createTeam(
-          uid,
-          formState.teamName,
-          formState.iconImage,
-          formState.description,
-          formState.requiresApproval
-        )
+      // if (uid) {
+      //   setCreating(true);
+      //   const teamService = serviceFactory.createTeamService();
+      //   const result = await teamService.createTeam(
+      //     uid,
+      //     formState.teamName,
+      //     formState.iconImage,
+      //     formState.description,
+      //     formState.requiresApproval
+      //   )
         
-        onCreatedTeam(result);
-      } else {
-        console.error("uidが取得できませんでした。");
-      }
+      //   onCreatedTeam(result);
+      // } else {
+      //   console.error("uidが取得できませんでした。");
+      // } //OUT//
     } catch (error) {
       // エラーハンドリング
       console.error('Error creating team:', error);

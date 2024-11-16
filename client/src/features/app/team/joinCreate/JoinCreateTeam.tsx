@@ -30,18 +30,18 @@ const JoinCreateTeam: FC = () => {
     }
 
     const handleJoinEnter = useCallback(async () => {
-        try {
-          setPopupState('loading');
-          const teamService = serviceFactory.createTeamService();
-          const team = await teamService.getTeamDataWithTeamCodeId(teamCodeId);
-          const fullTeam = team ? await teamService.addSupplementaryToTeam(team) : null;
-          setJoiningTeam(fullTeam);
-          setPopupState('open');
-        } catch (error) {
-          console.error('Failed to join team:', error);
-          setPopupState('open');
-          setJoiningTeam(null);
-        }
+        // try {
+        //   setPopupState('loading');
+        //   const teamService = serviceFactory.createTeamService();
+        //   const team = await teamService.getTeamDataWithTeamCodeId(teamCodeId);
+        //   const fullTeam = team ? await teamService.addSupplementaryToTeam(team) : null;
+        //   setJoiningTeam(fullTeam);
+        //   setPopupState('open');
+        // } catch (error) {
+        //   console.error('Failed to join team:', error);
+        //   setPopupState('open');
+        //   setJoiningTeam(null);
+        // } //OUT//
       }, [teamCodeId]);
     
       const handleCreateEnter = useCallback(() => {

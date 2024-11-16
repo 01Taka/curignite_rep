@@ -16,9 +16,9 @@ export const useSpaceParticipationStatus = () => {
       }
 
       try {
-        const spaceService = serviceFactory.createSpaceService();
-        const status = await spaceService.getParticipationState(currentSpaceId, uid);
-        setParticipationStatus(status);
+        // const spaceService = serviceFactory.createSpaceService();
+        // const status = await spaceService.getParticipationState(currentSpaceId, uid);
+        // setParticipationStatus(status); //OUT//
       } catch (error) {
         console.error("Error fetching join request status: ", error);
         setParticipationStatus("error");

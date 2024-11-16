@@ -43,8 +43,8 @@ const LearningGoalCard: FC<LearningGoalCardProps> = ({ learningGoal, shadow }) =
 
   return (
     <div className={cn('relative', shadow && "bg-white p-4 rounded-lg shadow-md")} >
-      <Typography variant='h6'>{learningGoal.objectives}</Typography>
-      <Typography>{getFormattedDeadline(learningGoal.deadline)}</Typography>
+      {/* <Typography variant='h6'>{learningGoal.objectives}</Typography>
+      <Typography>{getFormattedDeadline(learningGoal.deadline)}</Typography> //OUT// */}
       <SubjectIcon subject={learningGoal.subject} />
     </div>
   );

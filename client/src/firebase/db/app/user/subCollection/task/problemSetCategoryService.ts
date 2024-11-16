@@ -32,17 +32,17 @@ export class ProblemSetCategoryService {
       completedProblemIdsRange,
     };
     this.updatePath(creatorId, problemSetId);
-    return await this.fss.crudHandler.create(data);
+    return await this.fss.create(data);
   }
 
   async getCategory(userId: string, problemSetId: string, categoryId: string) {
     this.updatePath(userId, problemSetId);
-    return this.fss.crudHandler.read(categoryId);
+    return this.fss.read(categoryId);
   }
 
   async getAllCategory(userId: string, problemSetId: string) {
     this.updatePath(userId, problemSetId);
-    return this.fss.crudHandler.getAll();
+    return this.fss.getAll();
   }
 }
 

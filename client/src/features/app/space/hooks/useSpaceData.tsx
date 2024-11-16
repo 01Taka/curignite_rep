@@ -3,13 +3,14 @@ import { useAppSelector } from '../../../../redux/hooks';
 import { DocumentIdMap } from '../../../../types/firebase/db/formatTypes';
 import { revertTimestampConversion } from '../../../../functions/db/dataFormatUtils';
 import serviceFactory from '../../../../firebase/db/factory';
-import JoinRequestService from '../../../../firebase/db/common/joinRequestService';
+// import JoinRequestService from '../../../../firebase/db/common/joinRequestService';
 import { sortObjectArray } from '../../../../functions/utils/objectUtils';
-import { UserData } from '../../../../types/firebase/db/user/userStructure';
+import { UserRead } from '../../../../types/firebase/db/user/userStructure';
+import { JoinRequestData } from '../../../../types/firebase/db/common/joinRequest/joinRequestStructure';
 
 const useSpaceData = () => {
   const { currentSpaceId, spaceInfoMap } = useAppSelector(state => state.spaceSlice);
-  const [memberUserDataMap, setMemberUserDataMap] = useState<DocumentIdMap<UserData>>({});
+  const [memberUserDataMap, setMemberUserDataMap] = useState<DocumentIdMap<UserRead>>({});
 
   const currentSpace = useMemo(() => {
     const space = spaceInfoMap[currentSpaceId];
@@ -17,7 +18,7 @@ const useSpaceData = () => {
   }, [currentSpaceId, spaceInfoMap]);
 
   const members = useMemo(() => currentSpace?.members ? sortObjectArray(currentSpace.members, "isAway") : [], [currentSpace]);
-  const sortedJoinRequests = useMemo(() => currentSpace?.joinRequests ? JoinRequestService.sortJoinRequestsByRequestedAt(currentSpace.joinRequests) : [], [currentSpace]);
+  const sortedJoinRequests = [] as JoinRequestData[] //useMemo(() => currentSpace?.joinRequests ? JoinRequestService.sortJoinRequestsByRequestedAt(currentSpace.joinRequests) : [], [currentSpace]); //OUT//
 
   useEffect(() => {
     const updateUserMap = async () => {
@@ -29,7 +30,7 @@ const useSpaceData = () => {
       setMemberUserDataMap(userMap);
     };
     updateUserMap();
-  }, [members, sortedJoinRequests]);
+  }, [members]);
 
   return { members, sortedJoinRequests, memberUserDataMap };
 };

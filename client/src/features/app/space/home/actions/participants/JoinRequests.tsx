@@ -3,7 +3,7 @@ import React, { FC, useMemo } from 'react';
 import { DocumentIdMap } from '../../../../../../types/firebase/db/formatTypes';
 import { cn } from '../../../../../../functions/utils/utils';
 import { dateTimeToString } from '../../../../../../functions/utils/dateTimeUtils';
-import { UserWithSupplementary } from '../../../../../../types/firebase/db/user/userStructure';
+import { UserRead } from '../../../../../../types/firebase/db/user/userStructure';
 import { JoinRequestStatus } from '../../../../../../types/firebase/db/common/joinRequest/joinRequestSupplementTypes';
 import { JoinRequestData } from '../../../../../../types/firebase/db/common/joinRequest/joinRequestStructure';
 
@@ -29,7 +29,7 @@ const getActionColorClass = (actionType: JoinStatus): string => actionColors[act
 interface JoinRequestsProps {
   joinRequests: JoinRequestData[];
   activeMembersId: string[];
-  userMap: DocumentIdMap<UserWithSupplementary>;
+  userMap: DocumentIdMap<UserRead>;
 }
 
 const JoinRequests: FC<JoinRequestsProps> = ({ joinRequests, userMap, activeMembersId }) => {

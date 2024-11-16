@@ -1,11 +1,11 @@
 import React, { FC } from 'react';
 import { Avatar, Box, Typography } from '@mui/material';
 import UserLevel from './UserLevel';
-import { UserWithSupplementary } from '../../../types/firebase/db/user/userStructure';
+import { UserRead } from '../../../types/firebase/db/user/userStructure';
 import { cn } from '../../../functions/utils/utils';
 
 interface UserProfileCardProps {
-  userData: UserWithSupplementary | null;
+  userData: UserRead | null;
   shadow?: boolean;
 }
 

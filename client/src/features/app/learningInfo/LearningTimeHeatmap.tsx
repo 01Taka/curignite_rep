@@ -6,7 +6,7 @@ import Heatmap from '../../../components/app/calendar/Heatmap';
 import { mapDateToColor } from '../../../functions/components/heatmapUtils';
 import { HEATMAP_BY_LEARNING_TIME } from '../../../constants/components/heatmapConstants';
 import { BGColorClass } from '../../../types/module/tailwindTypes';
-import { UserDailyLearningSummaryService } from '../../../firebase/db/app/user/subCollection/userDailyLearningSummary';
+// import { UserDailyLearningSummaryService } from '../../../firebase/db/app/user/subCollection/userDailyLearningSummary';
 
 const LearningTimeHeatmap: FC = () => {
   const uid = useAppSelector(state => state.userSlice.uid);
@@ -17,17 +17,17 @@ const LearningTimeHeatmap: FC = () => {
     const updateColorMap = async () => {
       if (!uid) return;
       
-      try {
-        const learningSession = serviceFactory.createUserDailyLearningSummary();
-        const sessions = await learningSession.fetchRecentSummariesByDaysAgo(uid, 30, true);
-        const learningTimeMap = UserDailyLearningSummaryService.mapLearningTimeByDate(sessions);
-        const colorMap = mapDateToColor(learningTimeMap, HEATMAP_BY_LEARNING_TIME);
-        setColorMap(colorMap);
-        setError(null); // 成功したらエラーをリセット
-      } catch (err) {
-        console.error('Error fetching learning sessions:', err);
-        setError('学習セッションの取得中にエラーが発生しました。'); // エラーメッセージを設定
-      }
+      // try {
+      //   const learningSession = serviceFactory.createUserDailyLearningSummary();
+      //   const sessions = await learningSession.fetchRecentSummariesByDaysAgo(uid, 30, true);
+      //   const learningTimeMap = UserDailyLearningSummaryService.mapLearningTimeByDate(sessions);
+      //   const colorMap = mapDateToColor(learningTimeMap, HEATMAP_BY_LEARNING_TIME);
+      //   setColorMap(colorMap);
+      //   setError(null); // 成功したらエラーをリセット
+      // } catch (err) {
+      //   console.error('Error fetching learning sessions:', err);
+      //   setError('学習セッションの取得中にエラーが発生しました。'); // エラーメッセージを設定
+      // } //OUT//
     };
 
     updateColorMap();

@@ -1,5 +1,4 @@
 import { DocumentData, DocumentReference, Firestore, Timestamp } from "firebase/firestore";
-import { getInitialBaseDocumentData } from "../../../../../../functions/db/dbUtils";
 import { CategoryActivity } from "../../../../../../types/firebase/db/task/taskSupplementTypes";
 import { FunctionManager } from "../../../../util/functionManager";
 import FirestoreService from "../../../../handler/firestoreService";
@@ -24,24 +23,24 @@ export class ProblemSetActivityService {
     completed = false,
   ): Promise<DocumentReference<ProblemSetActivityWrite, DocumentData> >{
     const data: ProblemSetActivityWrite = {
-      ...getInitialBaseDocumentData(creatorId),
+      createdById: creatorId,
       dueDateTime,
       categoryActivities,
       completed
     }
 
     this.updatePath(creatorId, problemSetId);
-    return await this.fss.crudHandler.create(data);
+    return await this.fss.create(data);
   }
 
   async getActivity(userId: string, problemSetId: string, activityId: string) {
     this.updatePath(userId, problemSetId)
-    return await this.fss.crudHandler.read(activityId);
+    return await this.fss.read(activityId);
   }
 
   async getAllActivities(userId: string, problemSetId: string) {
     this.updatePath(userId, problemSetId)
-    return await this.fss.crudHandler.getAll();
+    return await this.fss.getAll();
   }
 
   // addCollectionCallback(

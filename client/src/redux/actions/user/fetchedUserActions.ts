@@ -2,7 +2,7 @@ import serviceFactory from "../../../firebase/db/factory";
 import { convertTimestampsToNumbers, revertTimestampConversion } from "../../../functions/db/dataFormatUtils";
 import { objectArrayToDict, removeDuplicates } from "../../../functions/utils/objectUtils";
 import { ConvertTimestampToNumber, DocumentIdMap } from "../../../types/firebase/db/formatTypes";
-import { UserWithSupplementary } from "../../../types/firebase/db/user/userStructure";
+import { UserRead } from "../../../types/firebase/db/user/userStructure";
 import { AppDispatch } from "../../../types/module/redux/reduxTypes";
 import { FetchedUserSliceState, UserWithNotExistUsersId } from "../../../types/module/redux/slice/userSliceTypes";
 import { setNotExitsUsersId, setUsers } from "../../slices/user/fetchedUserSlice";
@@ -25,7 +25,7 @@ const updateUserState = (dispatch: AppDispatch, state: FetchedUserSliceState, re
   const newNotExistIds = removeDuplicates([...state.notExistUsersId, ...result.notExistUsersId]);
   dispatch(setNotExitsUsersId(newNotExistIds));
 
-  const fetchedUsersMap = convertTimestampsToNumbers(objectArrayToDict(result.users, "docId")) as DocumentIdMap<ConvertTimestampToNumber<UserWithSupplementary>>;
+  const fetchedUsersMap = convertTimestampsToNumbers(objectArrayToDict(result.users, "docId")) as DocumentIdMap<ConvertTimestampToNumber<UserRead>>;
   const updatedUsers = { ...state.users, ...fetchedUsersMap };
 
   dispatch(setUsers(updatedUsers));
@@ -36,7 +36,7 @@ const updateUserState = (dispatch: AppDispatch, state: FetchedUserSliceState, re
 export const fetchAndSetUsers = async (
   dispatch: AppDispatch,
   userIdsToFetch: string[],
-): Promise<DocumentIdMap<UserWithSupplementary>> => {
+): Promise<DocumentIdMap<UserRead>> => {
   const state = store.getState().fetchedUserSlice;
   
   const targetIds = userIdsToFetch.filter(id => !state.users[id] && !state.notExistUsersId.includes(id));

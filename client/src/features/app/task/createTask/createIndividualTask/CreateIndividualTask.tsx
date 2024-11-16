@@ -9,7 +9,7 @@ import { MINUTES_IN_MILLISECOND } from '../../../../../constants/utils/dateTimeC
 import useFormState from '../../../../hooks/form/useFormState';
 import useAsyncHandler from '../../../../hooks/form/useAsyncHandler';
 import { DocumentData, DocumentReference } from 'firebase/firestore';
-import { IndividualTaskData } from '../../../../../types/firebase/db/task/taskStructure';
+import { IndividualTaskWrite } from '../../../../../types/firebase/db/task/taskStructure';
 
 const CreateIndividualTask: FC = () => {
   const navigate = useNavigate();
@@ -21,7 +21,7 @@ const CreateIndividualTask: FC = () => {
     priority: "medium",
     estimatedDuration: 10,
   });
-  const { callAsyncFunction } = useAsyncHandler<DocumentReference<IndividualTaskData, DocumentData>>();
+  const { callAsyncFunction } = useAsyncHandler<DocumentReference<IndividualTaskWrite, DocumentData>>();
 
   const handleCreateIndividualTask = async () => {
     if (uid) {

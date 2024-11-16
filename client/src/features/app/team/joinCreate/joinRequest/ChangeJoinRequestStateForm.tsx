@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 import { JoinRequestData } from '../../../../../types/firebase/db/common/joinRequest/joinRequestStructure';
-import { UserWithSupplementary } from '../../../../../types/firebase/db/user/userStructure';
+import { UserRead } from '../../../../../types/firebase/db/user/userStructure';
 import serviceFactory from '../../../../../firebase/db/factory';
 import { JoinRequestStatus } from '../../../../../types/firebase/db/common/joinRequest/joinRequestSupplementTypes';
 import Button from '@mui/material/Button';
@@ -12,7 +12,7 @@ import { JoinRequestStatusColors, JoinRequestStatusLabels } from '../../../../..
 interface ChangeJoinRequestStatusFormProps {
   teamId: string;
   targetJoinRequest: JoinRequestData;
-  targetUser: UserWithSupplementary;
+  targetUser: UserRead;
   onChanged?: () => void;
 }
 
@@ -20,13 +20,13 @@ const ChangeJoinRequestStatusForm: FC<ChangeJoinRequestStatusFormProps> = ({ tea
   const [status, setStatus] = useState<JoinRequestStatus>(targetJoinRequest.status);
 
   const handleChangeStatus = async () => {
-    const joinRequestService = serviceFactory.createTeamJoinRequestService();
-    try {
-      await joinRequestService.updateJoinRequestStatus(teamId, targetJoinRequest.docId, status);
-      if (onChanged) onChanged();
-    } catch (error) {
-      console.error("Failed to update status", error);
-    }
+    // const joinRequestService = serviceFactory.createTeamJoinRequestService();
+    // try {
+    //   await joinRequestService.updateJoinRequestStatus(teamId, targetJoinRequest.docId, status);
+    //   if (onChanged) onChanged();
+    // } catch (error) {
+    //   console.error("Failed to update status", error);
+    // } //OUT//
   };
 
   return (

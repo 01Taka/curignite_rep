@@ -14,12 +14,12 @@ const useProblemSet = (): UseProblemSetReturns => {
 
   useEffect(() => {
     const getProblemSetData = async () => {
-      if (uid) {
-        const data = await TaskManagementService.fetchAllData(serviceFactory, uid);
-        console.log(data);
+      // if (uid) {
+      //   const data = await TaskManagementService.fetchAllData(serviceFactory, uid);
+      //   console.log(data);
         
-        setProblemSetData(data.problemSetData);
-      }
+      //   setProblemSetData(data.problemSetData);
+      // } //OUT//
     }
     getProblemSetData();
   }, [uid])

@@ -4,7 +4,7 @@ import CRUDHandler from "./crudHandler";
 import CallbacksHandler from "./callbacksHandler";
 import BatchHandler from "./batchHandler";
 import TransactionHandler from "./transactionHandler";
-import CollectionService from "./CollectionService";
+import CollectionService from "./collectionService";
 import { FieldValueSupported } from "../../../types/firebase/db/formatTypes";
 
 class FirestoreService<

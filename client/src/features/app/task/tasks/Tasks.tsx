@@ -21,10 +21,10 @@ const Tasks: React.FC<TasksProps> = ({ maxLength = Infinity }) => {
 
   useEffect(() => {
     const updateTasks = async () => {
-      if (uid) {
-        const data = await TaskManagementService.fetchAllData(serviceFactory, uid);
-        setTasksData(truncateArray(data.tasks, maxLength));
-      }
+      // if (uid) {
+      //   const data = await TaskManagementService.fetchAllData(serviceFactory, uid);
+      //   setTasksData(truncateArray(data.tasks, maxLength));
+      // } //OUT//
     };
     updateTasks();
   }, [uid, maxLength]);  // uidが変わる時だけ実行

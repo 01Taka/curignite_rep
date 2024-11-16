@@ -49,8 +49,8 @@ const CreateHelpForm: FC<CreateHelpFormProps> = ({ onSentHelp }) => {
 
     try {
       if (uid) {
-        const helpService = serviceFactory.createUserHelpService();
-        await helpService.createUserHelp(uid, formState.subject, formState.question, formState.files);
+        // const helpService = serviceFactory.createUserHelpService();
+        // await helpService.createUserHelp(uid, formState.subject, formState.question, formState.files); //OUT//
         setSuccess(true);
         resetFormState();
         if (onSentHelp) onSentHelp();

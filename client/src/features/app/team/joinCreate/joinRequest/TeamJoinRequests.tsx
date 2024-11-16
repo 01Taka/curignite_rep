@@ -10,7 +10,7 @@ import Typography from '@mui/material/Typography';
 import { format } from 'date-fns';
 import { JoinRequestStatusColors, JoinRequestStatusLabels } from '../../../../../constants/label/JoinRequestLabels';
 import Popup from '../../../../../components/display/popup/Popup';
-import { UserWithSupplementary } from '../../../../../types/firebase/db/user/userStructure';
+import { UserRead } from '../../../../../types/firebase/db/user/userStructure';
 import ChangeJoinRequestStatusForm from './ChangeJoinRequestStateForm';
 import { useTeamMembers } from '../../hooks/useTeamMembers';
 import { cn } from '../../../../../functions/utils/utils';
@@ -21,25 +21,25 @@ const TeamJoinRequests: FC = () => {
   const [joinRequests, setJoinRequests] = useState<JoinRequestData[]>([]);
   const { userMap, loading: usersLoading, error: usersError } = useUserMap(joinRequests.map(request => request.docId));
   const [selectedRequest, setSelectedRequest] = useState<JoinRequestData | null>(null);
-  const [selectedUser, setSelectedUser] = useState<UserWithSupplementary | null>(null);
+  const [selectedUser, setSelectedUser] = useState<UserRead | null>(null);
   const [isPopupOpen, setPopupOpen] = useState(false);
 
   const updateJoinRequests = useCallback(async () => {
     if (!teamId) return;
-    try {
-      const joinRequestService = serviceFactory.createTeamJoinRequestService();
-      const fetchedJoinRequests = await joinRequestService.getAllJoinRequests(teamId);
-      setJoinRequests(fetchedJoinRequests);
-    } catch (error) {
-      console.error('Error fetching join requests:', error);
-    }
+    // try {
+    //   const joinRequestService = serviceFactory.createTeamJoinRequestService();
+    //   const fetchedJoinRequests = await joinRequestService.getAllJoinRequests(teamId);
+    //   setJoinRequests(fetchedJoinRequests);
+    // } catch (error) {
+    //   console.error('Error fetching join requests:', error);
+    // } //OUT//
   }, [teamId]);
 
   useEffect(() => {
     updateJoinRequests();
   }, [updateJoinRequests]);
 
-  const handleOpenPopup = (request: JoinRequestData, user: UserWithSupplementary) => {
+  const handleOpenPopup = (request: JoinRequestData, user: UserRead) => {
     setSelectedRequest(request);
     setSelectedUser(user);
     setPopupOpen(true);

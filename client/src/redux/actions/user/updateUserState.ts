@@ -5,11 +5,11 @@ import { AsyncThunkState } from '../../../types/module/redux/asyncThunkTypes';
 import { fulfillWithState } from '../../../functions/redux/reduxUtils';
 import { convertTimestampsToNumbers } from '../../../functions/db/dataFormatUtils';
 import { ConvertTimestampToNumber } from '../../../types/firebase/db/formatTypes';
-import { UserWithSupplementary } from '../../../types/firebase/db/user/userStructure';
+import { UserRead } from '../../../types/firebase/db/user/userStructure';
 import { storageManager } from '../../../firebase/storage/storageManager';
 
 export const updateUserData = createAsyncThunk<
-  AsyncThunkState<ConvertTimestampToNumber<UserWithSupplementary> | null>,
+  AsyncThunkState<ConvertTimestampToNumber<UserRead> | null>,
   void,
   { rejectValue: string }
 >(
@@ -41,10 +41,10 @@ export const updateUserData = createAsyncThunk<
         return '';
       });
 
-      const userDataWithIconUrl = {...userData, avatarIconUrl } as UserWithSupplementary
+      const userDataWithIconUrl = {...userData, avatarIconUrl } as UserRead
       
       // タイムスタンプの変換
-      const convertedUserData: ConvertTimestampToNumber<UserWithSupplementary> = convertTimestampsToNumbers(userDataWithIconUrl);
+      const convertedUserData: ConvertTimestampToNumber<UserRead> = convertTimestampsToNumbers(userDataWithIconUrl);
       return fulfillWithState(convertedUserData);
     } catch (error) {
       console.error("Error in updateUserState:", error);

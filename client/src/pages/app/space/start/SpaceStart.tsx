@@ -98,18 +98,18 @@ const SpaceStart: FC = () => {
    * 指定したスペースに参加する
    */
   const handleJoinSpace = useCallback(async (spaceId: string) => {
-    if (!uid) return;
+    // if (!uid) return;
 
-    try {
-      const spaceService = serviceFactory.createSpaceService();
-      const result = await spaceService.handleSpaceJoin(spaceId, uid);
+    // try {
+    //   const spaceService = serviceFactory.createSpaceService();
+    //   const result = await spaceService.handleSpaceJoin(spaceId, uid);
 
-      if (result === "joined") {
-        // navigate(replaceParams(spacePaths.home, { [PathParam.SpaceId]: spaceId }));
-      }
-    } catch (error) {
-      console.error('Failed to join space:', error);
-    }
+    //   if (result === "joined") {
+    //     // navigate(replaceParams(spacePaths.home, { [PathParam.SpaceId]: spaceId }));
+    //   }
+    // } catch (error) {
+    //   console.error('Failed to join space:', error);
+    // } //OUT//
   }, [uid, navigate]);
 
   return (

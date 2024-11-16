@@ -4,11 +4,11 @@ import { DocumentIdMap } from '../../../../../../types/firebase/db/formatTypes';
 import { cn } from '../../../../../../functions/utils/utils';
 import { BaseMemberRole } from '../../../../../../types/firebase/db/baseTypes';
 import { SpaceMemberData } from '../../../../../../types/firebase/db/space/spaceStructure';
-import { UserWithSupplementary } from '../../../../../../types/firebase/db/user/userStructure';
+import { UserRead } from '../../../../../../types/firebase/db/user/userStructure';
 
 interface MembersProps {
   members: SpaceMemberData[];
-  userMap: DocumentIdMap<UserWithSupplementary>;
+  userMap: DocumentIdMap<UserRead>;
   onClickMember?: (member: SpaceMemberData) => void;
 }
 

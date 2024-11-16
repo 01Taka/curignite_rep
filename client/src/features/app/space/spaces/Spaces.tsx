@@ -6,10 +6,10 @@ import { dateTimeToString } from '../../../../functions/utils/dateTimeUtils';
 import { SpacesProps } from '../../../../types/app/space/spaceTypes';
 import { DocumentIdMap } from '../../../../types/firebase/db/formatTypes';
 import serviceFactory from '../../../../firebase/db/factory';
-import { UserData } from '../../../../types/firebase/db/user/userStructure';
+import { UserRead } from '../../../../types/firebase/db/user/userStructure';
 
 const Spaces: FC<SpacesProps> = ({ spaces, onSpaceClick }) => {
-  const [usersData, setUsersData] = useState<DocumentIdMap<UserData>>({});
+  const [usersData, setUsersData] = useState<DocumentIdMap<UserRead>>({});
 
   useEffect(() => {
     const updateUsersData = async () => {

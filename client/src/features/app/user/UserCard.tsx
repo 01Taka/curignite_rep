@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useEffect, useState } from 'react';
-import { HelpAndAnswersWithFileUrls, UserLearningGoalData, UserWithSupplementary } from '../../../types/firebase/db/user/userStructure';
+import { HelpAndAnswersWithFileUrls, UserLearningGoalData, UserRead } from '../../../types/firebase/db/user/userStructure';
 import UserProfileCard from './UserProfileCard';
 import serviceFactory from '../../../firebase/db/factory';
 import { Divider } from '@mui/material';
@@ -8,7 +8,7 @@ import GoalView from './GoalView';
 import Tag from './Tag';
 
 interface UserCardProps {
-  user: UserWithSupplementary;
+  user: UserRead;
 }
 
 const UserCard: FC<UserCardProps> = ({ user }) => {
@@ -29,12 +29,12 @@ const UserCard: FC<UserCardProps> = ({ user }) => {
       //   setGoal(fetchedGoal);
       // }
 
-      if (!helpAndAnswerInfo) {
-        const helpService = serviceFactory.createUserHelpService();
-        const fetchedHelps = await helpService.getAllHelpAndAnswersWithFileUrls(user.docId);
-        setHelpAndAnswerInfo(fetchedHelps);
-        if (fetchedHelps && fetchedHelps.length !== 0) setCurrentIndex(helpIndex);
-      }
+      // if (!helpAndAnswerInfo) {
+      //   const helpService = serviceFactory.createUserHelpService();
+      //   const fetchedHelps = await helpService.getAllHelpAndAnswersWithFileUrls(user.docId);
+      //   setHelpAndAnswerInfo(fetchedHelps);
+      //   if (fetchedHelps && fetchedHelps.length !== 0) setCurrentIndex(helpIndex);
+      // } //OUT//
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {

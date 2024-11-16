@@ -1,6 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
 import { CategoryActivityStatus, ProblemSetActivityField, TaskData } from "../../../../../../types/firebase/db/task/taskExpansionTypes";
-import { ProblemSetCategoryData } from "../../../../../../types/firebase/db/task/taskStructure";
 import { distributeTargetByRatio, groupingByKey, removeDuplicates, removeNullAndUndefined, splitArray } from "../../../../../../functions/utils/objectUtils";
 import { arrayToRanges, rangesToArray } from "../../../../../../functions/utils/rangeUtils";
 import { convertToDate } from "../../../../../../functions/utils/dateTimeUtils";
