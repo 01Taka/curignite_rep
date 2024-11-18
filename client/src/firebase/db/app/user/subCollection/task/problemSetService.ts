@@ -39,32 +39,12 @@ export class ProblemSetService {
     return await this.callFss(userId).getAll();
   }
 
-  // async createProblemSetStep(
-  //   createdById: string,
-  //   problemSetId: string,
-  //   stepStack: ProblemInfo[],
-  //   recurringTacklePlan: RecurringTacklePlan[],
-  //   tackleExcludedDates: TimeTypes[] = []
-  // ): Promise<void> {
-  //   const autoPlanningSettings: AutoPlanningSettings = {
-  //     recurringTacklePlan: removeDuplicatesByKey(recurringTacklePlan, 'dayOfWeek'),
-  //     // 今日より前の取り組まない予定を削除
-  //     excludedDates: tackleExcludedDates.filter(date => !isBeforeDateTime(date, new Date(), false, true)).map(date => toTimestamp(date))
-  //   }
-  //   const data: AutoFieldToUndefined<ProblemSetStepData> = {
-  //     ...autoFields,
-  //     createdById,
-  //     autoPlanningSettings,
-  //     stepStack
-  //   }
-  //   await this.stepService.createStepWithId(createdById, problemSetId, data);
-  // }
+  
+  addCollectionCallback(userId: string, callback: (data: ProblemSetRead[]) => void) {
+    this.callFss(userId).addReadCollectionCallback(callback);
+  }
 
-  // addCollectionCallback(userId: string, callback: (data: ProblemSetData[]) => void) {
-  //   this.getBaseDB(userId).addCollectionCallback(callback);
-  // }
-
-  // removeCollectionCallback(userId: string, callback: (data: ProblemSetData[]) => void) {
-  //   this.getBaseDB(userId).removeCollectionCallback(callback);
-  // }
+  removeCollectionCallback(userId: string, callback: (data: ProblemSetRead[]) => void) {
+    this.callFss(userId).removeReadCollectionCallback(callback);
+  }
 }

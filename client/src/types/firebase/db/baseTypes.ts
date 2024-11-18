@@ -6,6 +6,8 @@ export interface BaseDocumentWrite extends DocumentData {
 }
 
 export interface BaseDocumentRead {
+    path: string;
+    parentId: string;
     createdById: string; // 作成者のUserId
     docId: string; // ドキュメントId
     createdAt: Timestamp; // 作成日時

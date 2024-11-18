@@ -40,26 +40,11 @@ export class ProblemSetActivityService {
     return await this.callFss(userId, problemSetId).getAll();
   }
 
-  // addCollectionCallback(
-  //   userId: string,
-  //   problemSetId: string,
-  //   callback: (args: { userId: string, problemSetId: string, data: ProblemSetActivityWrite[] }) => void
-  // ) {
-  //   const cb = (data: ProblemSetActivityWrite[]) => callback({ userId, problemSetId, data });
-  //   this.functionManager.registerConversion(callback, cb);
-  //   this.getBaseDB(userId, problemSetId).addCollectionCallback(cb);
-  // }
+  addCollectionCallback(userId: string, problemSetId: string, callback: (data: ProblemSetActivityRead[]) => void) {
+    this.callFss(userId, problemSetId).addReadCollectionCallback(callback);
+  }
 
-  // removeCollectionCallback(
-  //   userId: string,
-  //   problemSetId: string,
-  //   callback: (args: { userId: string, problemSetId: string, data: ProblemSetActivityWrite[] }) => void
-  // ) {
-  //   // コールバックの参照を取得
-  //   const cb = this.functionManager.getConversion(callback)
-  //   if (cb) {
-  //     this.getBaseDB(userId, problemSetId).removeCollectionCallback(cb);
-  //     this.functionManager.deleteConversion(callback);
-  //   }
-  // }
+  removeCollectionCallback(userId: string, problemSetId: string, callback: (data: ProblemSetActivityRead[]) => void) {
+    this.callFss(userId, problemSetId).removeReadCollectionCallback(callback);
+  }
 }

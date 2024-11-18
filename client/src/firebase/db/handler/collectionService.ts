@@ -11,22 +11,26 @@ class CollectionService {
     }
   }
 
-  private setCollectionRef(path: string) {
-    this._collectionRef = collection(this.firestore, path);
-  }
-
-  public setCollectionPath(paths: string[], callbackAtUpdatePath: (newPath: string) => void = () => {}): void {
-    if (paths.length !== this._collectionPaths.length - 1) {
-      throw new Error(`The number of provided paths (${paths.length}) does not match the expected number (${this._collectionPaths.length - 1}).`);
+  public static getCollectionPath(basePaths: string[], paths: string[]) {
+    if (paths.length !== basePaths.length - 1) {
+      throw new Error(`The number of provided paths (${paths.length}) does not match the expected number (${basePaths.length - 1}).`);
     }
 
-    const newPath = this._collectionPaths.reduce((path, collectionPath, index) => {
+    return basePaths.reduce((path, collectionPath, index) => {
       if (index !== 0) {
         path.push(paths[index - 1]);
       }
       path.push(collectionPath);
       return path;
     }, [] as string[]).join('/');
+  }
+
+  private setCollectionRef(path: string) {
+    this._collectionRef = collection(this.firestore, path);
+  }
+
+  public setCollectionPath(paths: string[], callbackAtUpdatePath: (newPath: string) => void = () => {}): void {
+    const newPath = CollectionService.getCollectionPath(this._collectionPaths, paths);
 
     if (!this._collectionRef || this._collectionRef.path !== newPath) {
       this.setCollectionRef(newPath);

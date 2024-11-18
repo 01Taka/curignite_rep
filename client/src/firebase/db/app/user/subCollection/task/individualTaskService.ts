@@ -67,4 +67,12 @@ export class IndividualTaskService {
       throw new Error("Failed to update task");
     }
   }
+
+  addCollectionCallback(userId: string, callback: (data: IndividualTaskRead[]) => void) {
+    this.callFss(userId).addReadCollectionCallback(callback);
+  }
+
+  removeCollectionCallback(userId: string, callback: (data: IndividualTaskRead[]) => void) {
+    this.callFss(userId).removeReadCollectionCallback(callback);
+  }
 }

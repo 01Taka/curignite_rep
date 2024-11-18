@@ -42,27 +42,12 @@ export class ProblemSetCategoryService {
   async getAllCategory(userId: string, problemSetId: string) {
     return this.callFss(userId, problemSetId).getAll();
   }
+  
+  addCollectionCallback(userId: string, problemSetId: string, callback: (data: ProblemSetCategoryRead[]) => void) {
+    this.callFss(userId, problemSetId).addReadCollectionCallback(callback);
+  }
+
+  removeCollectionCallback(userId: string, problemSetId: string, callback: (data: ProblemSetCategoryRead[]) => void) {
+    this.callFss(userId, problemSetId).removeReadCollectionCallback(callback);
+  }
 }
-
-  // addCollectionCallback(
-  //   userId: string,
-  //   problemSetId: string,
-  //   callback: (args: { userId: string, problemSetId: string, data: ProblemSetCategoryData[] }) => void
-  // ) {
-  //   const cb = (data: ProblemSetCategoryData[]) => callback({ userId, problemSetId, data });
-  //   this.functionManager.registerConversion(callback, cb);
-  //   this.getBaseDB(userId, problemSetId).addCollectionCallback(cb);
-  // }
-
-  // removeCollectionCallback(
-  //   userId: string,
-  //   problemSetId: string,
-  //   callback: (args: { userId: string, problemSetId: string, data: ProblemSetCategoryData[] }) => void
-  // ) {
-  //   // コールバックの参照を取得
-  //   const cb = this.functionManager.getConversion(callback)
-  //   if (cb) {
-  //     this.getBaseDB(userId, problemSetId).removeCollectionCallback(cb);
-  //     this.functionManager.deleteConversion(callback);
-  //   }
-  // }

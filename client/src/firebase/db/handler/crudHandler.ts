@@ -1,6 +1,7 @@
 import { DocumentReference, DocumentSnapshot, QuerySnapshot, addDoc, deleteDoc, doc, getDoc, getDocs, updateDoc, CollectionReference, QueryConstraint, query, where, limit, setDoc, startAfter, orderBy, DocumentData, serverTimestamp, FieldValue } from "firebase/firestore";
 import { BaseDocumentRead, BaseDocumentWrite } from "../../../types/firebase/db/baseTypes";
 import { FieldValueSupported } from "../../../types/firebase/db/formatTypes";
+import { parseDocumentSnapshot, parseQuerySnapshot } from "./utils";
 
 class CRUDHandler<Read extends BaseDocumentRead, Write extends BaseDocumentWrite> {
   private writeCollectionRef: CollectionReference<Write>;
@@ -45,7 +46,7 @@ class CRUDHandler<Read extends BaseDocumentRead, Write extends BaseDocumentWrite
       isActive: !options.setInvalid,
       ...options.additionalFields,
     };
-  }  
+  }
 
   /**
    * ドキュメントを作成するメソッド
@@ -85,17 +86,8 @@ class CRUDHandler<Read extends BaseDocumentRead, Write extends BaseDocumentWrite
    * @returns 読み込んだドキュメントのデータ、存在しない場合はnull
    */
   async read(documentId: string): Promise<Read | null> {
-    console.log("Called read"); // 開発用
-
     const docSnapshot = await this.readAsDocumentSnapshot(documentId);
-    if (docSnapshot.exists()) {
-      const data = docSnapshot.data() as Read;
-      if (!data.isActive) return null; // Return null if the document is logically deleted
-      data.docId = docSnapshot.id;
-      return data;
-    } else {
-      return null;
-    }
+    return parseDocumentSnapshot<Read>(docSnapshot);
   }
 
   /**
@@ -104,7 +96,6 @@ class CRUDHandler<Read extends BaseDocumentRead, Write extends BaseDocumentWrite
    * @param data 更新するドキュメントのデータ（部分的）
    */
   async update(documentId: string, data: FieldValueSupported<Partial<Write>>): Promise<void> {
-    console.log("Called update"); // 開発用
     const docRef = doc(this.writeCollectionRef, documentId);
     return CRUDHandler.handleFirestoreOperation(updateDoc(docRef, {...data, updatedAt: serverTimestamp()}), "Failed to update document", documentId);
   }
@@ -114,7 +105,6 @@ class CRUDHandler<Read extends BaseDocumentRead, Write extends BaseDocumentWrite
    * @param documentId 削除するドキュメントのID
    */
   async hardDelete(documentId: string): Promise<void> {
-    console.log("Called hard delete"); // 開発用
     const docRef = doc(this.writeCollectionRef, documentId);
     return CRUDHandler.handleFirestoreOperation(deleteDoc(docRef), "Failed to hard delete document", documentId);
   }  
@@ -124,7 +114,6 @@ class CRUDHandler<Read extends BaseDocumentRead, Write extends BaseDocumentWrite
    * @param documentId 削除するドキュメントのID
    */
   async softDelete(documentId: string, updateFields?: Partial<Write>): Promise<void> {
-    console.log("soft deleted: ", documentId);
     return this.update(
       documentId,
       { ...updateFields, isActive: false, deletedAt: serverTimestamp() } as FieldValueSupported<Partial<Write>>
@@ -147,14 +136,8 @@ class CRUDHandler<Read extends BaseDocumentRead, Write extends BaseDocumentWrite
    * @returns 取得したドキュメントの配列
    */
   async getAll(...queryConstraints: QueryConstraint[]): Promise<Read[]> {
-    console.log("Called get All"); // 開発用
-
     const querySnapshot = await this.getAllAsQuerySnapshot(...queryConstraints);
-    return querySnapshot.docs.map(doc => {
-      const data = doc.data();
-      data.docId = doc.id;
-      return data;
-    });
+    return parseQuerySnapshot<Read>(querySnapshot);
   }
 
   /**
@@ -164,19 +147,10 @@ class CRUDHandler<Read extends BaseDocumentRead, Write extends BaseDocumentWrite
    * @returns 一致するドキュメント、存在しない場合はnull
    */
   async getFirstMatch(field: keyof Read, value: any): Promise<Read | null> {
-    console.log("Called get first match"); // 開発用
-
     const q = query(this.readCollectionRef, where(field as string, "==", value), where("isActive", "==", true), limit(1));
     const querySnapshot: QuerySnapshot<Read> = await CRUDHandler.handleFirestoreOperation(getDocs(q), "Failed to get first match");
 
-    if (!querySnapshot.empty) {
-      const doc = querySnapshot.docs[0];
-      const data = doc.data() as Read;
-      data.docId = doc.id;
-      return data;
-    } else {
-      return null;
-    }
+    return parseDocumentSnapshot<Read>(querySnapshot.docs[0]);
   }
   
   /**
@@ -230,12 +204,7 @@ class CRUDHandler<Read extends BaseDocumentRead, Write extends BaseDocumentWrite
       const fullQuery = query(this.readCollectionRef, ...constraints);
       const querySnapshot = await CRUDHandler.handleFirestoreOperation(getDocs(fullQuery), "Failed to get paginated data");
 
-      // 結果を整形して返却
-      return querySnapshot.docs.map(doc => {
-        const data = doc.data();
-        data.docId = doc.id;
-        return data;
-      });
+      return parseQuerySnapshot(querySnapshot);
     } catch (error) {
       console.error("Error creating query or fetching documents:", error);
       throw error;

@@ -6,22 +6,8 @@ import BatchHandler from "./batchHandler";
 import TransactionHandler from "./transactionHandler";
 import CollectionService from "./collectionService";
 import { FieldValueSupported } from "../../../types/firebase/db/formatTypes";
-
-class CallbacksManager<Read extends BaseDocumentRead> {
-  private callbacksInstances: Map<string, CallbacksHandler<Read>> = new Map();
-
-  getInstance(
-    collectionRef: CollectionReference<DocumentData>
-  ): CallbacksHandler<Read> {
-    const key = collectionRef.path;
-
-    if (!this.callbacksInstances.has(key)) {
-      this.callbacksInstances.set(key, new CallbacksHandler<Read>(collectionRef));
-    }
-
-    return this.callbacksInstances.get(key) as CallbacksHandler<Read>;
-  }
-}
+import { CallbacksManager, ReadCallbacksManager } from "./callbacksExpansionServices";
+import { parseDocumentSnapshot } from "./utils";
 
 class FirestoreService<
   Read extends BaseDocumentRead,
@@ -33,6 +19,7 @@ class FirestoreService<
 
   private _collectionService: CollectionService;
   private _callbacksManager: CallbacksManager<Read>;
+  private _readCallbacksManager?: ReadCallbacksManager<Read>
 
   constructor(firestore: Firestore, collectionPaths: string | string[]) {
     this._collectionService = new CollectionService(firestore, collectionPaths);
@@ -52,6 +39,7 @@ class FirestoreService<
       this._crudHandler = undefined;
       this._batchHandler = undefined;
       this._transactionHandler = undefined;
+      this._readCallbacksManager = undefined;
     }
     // pathが変わると、リファレンスも変わる
     // ハンドラ内で新しいリファレンスを使うためにインスタンスをリセット
@@ -83,13 +71,22 @@ class FirestoreService<
     return this._transactionHandler;
   }
 
+  private get readCallbacksManager() {
+    if (!this._readCallbacksManager) {
+      this._readCallbacksManager = new ReadCallbacksManager(this.callbacksHandler);
+    }
+    return this._readCallbacksManager;
+  }
+
   
   // CRUDHandler methods
   async create(data: Write): Promise<DocumentReference<Write>> {
+    console.log('called create');
     return await this.crudHandler.create(data);
   }
 
   async createWithId(documentId: string, data: Write, merge: boolean = false): Promise<void> {
+    console.log('called createWithId');
     return await this.crudHandler.createWithId(documentId, data, merge);
   }
 
@@ -98,18 +95,22 @@ class FirestoreService<
   }
 
   async read(documentId: string): Promise<Read | null> {
+    console.log('called read');
     return await this.crudHandler.read(documentId);
   }
 
   async update(documentId: string, data: FieldValueSupported<Partial<Write>>): Promise<void> {
+    console.log('called update');
     return await this.crudHandler.update(documentId, data);
   }
 
   async hardDelete(documentId: string): Promise<void> {
+    console.log('called hard delete');
     return await this.crudHandler.hardDelete(documentId);
   }
 
   async softDelete(documentId: string, updateFields?: Partial<Write>): Promise<void> {
+    console.log('called soft delete');
     return await this.crudHandler.softDelete(documentId, updateFields);
   }
 
@@ -118,10 +119,12 @@ class FirestoreService<
   }
 
   async getAll(...queryConstraints: QueryConstraint[]): Promise<Read[]> {
+    console.log('called get all');
     return await this.crudHandler.getAll(...queryConstraints);
   }
 
   async getFirstMatch(field: keyof Read, value: any): Promise<Read | null> {
+    console.log('called get first match');
     return await this.crudHandler.getFirstMatch(field, value);
   }
 
@@ -134,24 +137,36 @@ class FirestoreService<
   }
 
   // CallbacksHandler methods
-  addCallback(documentId: string, callback: (data: Read) => void): void {
+  addCallback(documentId: string, callback: (snapshot: DocumentSnapshot<Read, DocumentData>) => void): void {
     this.callbacksHandler.addCallback(documentId, callback);
   }
 
-  removeCallback(documentId: string, callback: (data: Read) => void): void {
+  addReadCallback(documentId: string, callback: (data: Read | null) => void): void {
+    this.readCallbacksManager.addReadCallback(documentId, callback);
+  }
+
+  removeCallback(documentId: string, callback: (snapshot: DocumentSnapshot<Read, DocumentData>) => void): void {
     this.callbacksHandler.removeCallback(documentId, callback);
   }
-
-  async executeCallbacks(documentId: string): Promise<void> {
-    await this.callbacksHandler.executeCallbacks(documentId);
+  
+  removeReadCallback(documentId: string, callback: (data: Read | null) => void): void {
+    this.readCallbacksManager.removeReadCallback(documentId, callback);
   }
 
-  addCollectionCallback(callback: (data: Read[]) => void): void {
+  addCollectionCallback(callback: (snapshot: QuerySnapshot<Read, DocumentData>) => void): void {
     this.callbacksHandler.addCollectionCallback(callback);
   }
 
-  removeCollectionCallback(callback: (data: Read[]) => void): void {
+  removeCollectionCallback(callback: (snapshot: QuerySnapshot<Read, DocumentData>) => void): void {
     this.callbacksHandler.removeCollectionCallback(callback);
+  }
+
+  addReadCollectionCallback(callback: (data: Read[]) => void): void {
+    this.readCallbacksManager.addCollectionCallback(callback);
+  }
+
+  removeReadCollectionCallback(callback: (data: Read[]) => void): void {
+    this.readCallbacksManager.removeCollectionCallback(callback);
   }
 
   // BatchHandler methods
@@ -186,6 +201,11 @@ class FirestoreService<
 
   async getInTransaction(documentId: string): Promise<DocumentSnapshot<Read>> {
     return await this.transactionHandler.get(documentId);
+  }
+
+  async readInTransaction(documentId: string): Promise<Read | null> {
+    const snapshot = await this.getInTransaction(documentId);
+    return parseDocumentSnapshot<Read>(snapshot);
   }
 
   setInTransaction(documentId: string, data: Write): void {
