@@ -1,13 +1,7 @@
 import { Timestamp } from "firebase/firestore";
 import { BaseDocumentWrite } from "../../types/firebase/db/baseTypes";
 import { ConvertTimestampToNumber, DocumentIdMap, TimestampConvertedDocumentMap } from "../../types/firebase/db/formatTypes";
-
-/**
- * Timestampをnumberに変換する関数
- * @param timestamp - FirestoreのTimestamp
- * @returns number型のUNIXタイムスタンプ
- */
-const timestampToNumber = (timestamp: Timestamp): number => timestamp.seconds;
+import { convertToMilliseconds } from "../utils/dateTimeUtils";
 
 /**
  * データを再帰的に変換する関数
@@ -17,7 +11,7 @@ const timestampToNumber = (timestamp: Timestamp): number => timestamp.seconds;
  */
 export const convertTimestampsToNumbers = <T>(data: T): ConvertTimestampToNumber<T> => {
   if (data instanceof Timestamp) {
-    return timestampToNumber(data) as ConvertTimestampToNumber<T>;
+    return convertToMilliseconds(data) as ConvertTimestampToNumber<T>;
   }
 
   if (Array.isArray(data)) {
