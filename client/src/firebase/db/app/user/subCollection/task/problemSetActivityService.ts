@@ -2,6 +2,7 @@ import { DocumentData, DocumentReference, Firestore, Timestamp } from "firebase/
 import { CategoryActivity } from "../../../../../../types/firebase/db/task/taskSupplementTypes";
 import FirestoreService from "../../../../handler/firestoreService";
 import { ProblemSetActivityRead, ProblemSetActivityWrite } from "../../../../../../types/firebase/db/task/taskStructure";
+import { removeDuplicates } from "../../../../../../functions/utils/objectUtils";
 
 export class ProblemSetActivityService {
   private fss: FirestoreService<ProblemSetActivityRead, ProblemSetActivityWrite>;
@@ -40,11 +41,30 @@ export class ProblemSetActivityService {
     return await this.callFss(userId, problemSetId).getAll();
   }
 
-  addCollectionCallback(userId: string, problemSetId: string, callback: (data: ProblemSetActivityRead[]) => void) {
-    this.callFss(userId, problemSetId).addReadCollectionCallback(callback);
+  addCollectionCallback(userId: string, problemSetId: string, callback: (data: ProblemSetActivityRead[]) => void, callbackId?: string) {
+    return this.callFss(userId, problemSetId).addReadCollectionCallback(callback, callbackId);
   }
 
-  removeCollectionCallback(userId: string, problemSetId: string, callback: (data: ProblemSetActivityRead[]) => void) {
-    this.callFss(userId, problemSetId).removeReadCollectionCallback(callback);
+  removeCollectionCallback(userId: string, problemSetId: string, callbackId: string) {
+    this.callFss(userId, problemSetId).removeCollectionCallback(callbackId);
+  }
+
+  addCollectionCallbackToAll(userId: string, problemSetIds: string[], callback: (data: ProblemSetActivityRead[]) => void, callbackId?: string) {
+    const uniqueIds = removeDuplicates(problemSetIds);
+    const callbackIds = uniqueIds.map(problemSetId => {
+      const generatedId = this.addCollectionCallback(userId, problemSetId, callback, callbackId);
+      return {
+        problemSetId,
+        callbackId: generatedId
+      }
+    })
+    return callbackIds;
+  }
+
+  removeCollectionCallbackToAll(userId: string, problemSetIds: string[], callbackId: string) {
+    const uniqueIds = removeDuplicates(problemSetIds);
+    uniqueIds.map(problemSetId => {
+      this.removeCollectionCallback(userId, problemSetId, callbackId);
+    })
   }
 }

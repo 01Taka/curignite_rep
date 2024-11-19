@@ -8,6 +8,11 @@ interface TaskSliceState {
   activityMap: Record<string, ProblemSetActivityRead>;
   categoryMap: Record<string, ProblemSetCategoryRead>;
   problemSetMap: Record<string, ProblemSetRead>;
+  problemSetStructures: {
+    problemSetId: string;
+    categories: ProblemSetCategoryRead[];
+    activities: ProblemSetActivityRead[];
+}[]
 }
 
 const initialState: TaskSliceState = {
@@ -15,13 +20,17 @@ const initialState: TaskSliceState = {
   individualTasks: [],
   activityMap: {},
   categoryMap: {},
-  problemSetMap: {}
+  problemSetMap: {},
+  problemSetStructures: []
 };
 
 const taskSlice = createSlice({
   name: 'taskSlice',
   initialState,
   reducers: {
+    setTaskSliceState: (state, action: PayloadAction<TaskSliceState>) => {
+      state = action.payload;
+    },
     setTasks: (state, action: PayloadAction<TaskData[]>) => {
       state.tasks = action.payload;
     },
@@ -40,5 +49,5 @@ const taskSlice = createSlice({
   },
 });
 
-export const { setTasks, setIndividualTasks, setActivityMap, setCategoryMap, setProblemSetMap } = taskSlice.actions;
+export const { setTaskSliceState, setTasks, setIndividualTasks, setActivityMap, setCategoryMap, setProblemSetMap } = taskSlice.actions;
 export default taskSlice.reducer;

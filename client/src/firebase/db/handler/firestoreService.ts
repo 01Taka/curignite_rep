@@ -6,8 +6,8 @@ import BatchHandler from "./batchHandler";
 import TransactionHandler from "./transactionHandler";
 import CollectionService from "./collectionService";
 import { FieldValueSupported } from "../../../types/firebase/db/formatTypes";
-import { CallbacksManager, ReadCallbacksManager } from "./callbacksExpansionServices";
-import { parseDocumentSnapshot } from "./utils";
+import { CallbacksManager } from "./callbacksExpansionServices";
+import { parseDocumentSnapshot, parseQuerySnapshot } from "./utils";
 
 class FirestoreService<
   Read extends BaseDocumentRead,
@@ -19,7 +19,6 @@ class FirestoreService<
 
   private _collectionService: CollectionService;
   private _callbacksManager: CallbacksManager<Read>;
-  private _readCallbacksManager?: ReadCallbacksManager<Read>
 
   constructor(firestore: Firestore, collectionPaths: string | string[]) {
     this._collectionService = new CollectionService(firestore, collectionPaths);
@@ -39,7 +38,6 @@ class FirestoreService<
       this._crudHandler = undefined;
       this._batchHandler = undefined;
       this._transactionHandler = undefined;
-      this._readCallbacksManager = undefined;
     }
     // pathが変わると、リファレンスも変わる
     // ハンドラ内で新しいリファレンスを使うためにインスタンスをリセット
@@ -70,14 +68,6 @@ class FirestoreService<
     }
     return this._transactionHandler;
   }
-
-  private get readCallbacksManager() {
-    if (!this._readCallbacksManager) {
-      this._readCallbacksManager = new ReadCallbacksManager(this.callbacksHandler);
-    }
-    return this._readCallbacksManager;
-  }
-
   
   // CRUDHandler methods
   async create(data: Write): Promise<DocumentReference<Write>> {
@@ -137,36 +127,28 @@ class FirestoreService<
   }
 
   // CallbacksHandler methods
-  addCallback(documentId: string, callback: (snapshot: DocumentSnapshot<Read, DocumentData>) => void): void {
-    this.callbacksHandler.addCallback(documentId, callback);
+  addCallback(documentId: string, callback: (snapshot: DocumentSnapshot<Read, DocumentData>) => void, callbackId?: string): string {
+    return this.callbacksHandler.addCallback(documentId, callback, callbackId);
   }
 
-  addReadCallback(documentId: string, callback: (data: Read | null) => void): void {
-    this.readCallbacksManager.addReadCallback(documentId, callback);
+  addReadCallback(documentId: string, callback: (data: Read | null) => void, callbackId?: string): string {
+    return this.addCallback(documentId, (snapshot) => callback(parseDocumentSnapshot(snapshot)), callbackId);
   }
 
-  removeCallback(documentId: string, callback: (snapshot: DocumentSnapshot<Read, DocumentData>) => void): void {
-    this.callbacksHandler.removeCallback(documentId, callback);
+  removeCallback(documentId: string, callbackId: string): void {
+    this.callbacksHandler.removeCallback(documentId, callbackId);
   }
   
-  removeReadCallback(documentId: string, callback: (data: Read | null) => void): void {
-    this.readCallbacksManager.removeReadCallback(documentId, callback);
+  addCollectionCallback(callback: (snapshot: QuerySnapshot<Read, DocumentData>) => void, callbackId?: string): string {
+    return this.callbacksHandler.addCollectionCallback(callback, callbackId);
   }
 
-  addCollectionCallback(callback: (snapshot: QuerySnapshot<Read, DocumentData>) => void): void {
-    this.callbacksHandler.addCollectionCallback(callback);
+  addReadCollectionCallback(callback: (data: Read[]) => void, callbackId?: string): string {
+    return this.addCollectionCallback((snapshot) => callback(parseQuerySnapshot(snapshot)), callbackId);
   }
 
-  removeCollectionCallback(callback: (snapshot: QuerySnapshot<Read, DocumentData>) => void): void {
-    this.callbacksHandler.removeCollectionCallback(callback);
-  }
-
-  addReadCollectionCallback(callback: (data: Read[]) => void): void {
-    this.readCallbacksManager.addCollectionCallback(callback);
-  }
-
-  removeReadCollectionCallback(callback: (data: Read[]) => void): void {
-    this.readCallbacksManager.removeCollectionCallback(callback);
+  removeCollectionCallback(callbackId: string): void {
+    this.callbacksHandler.removeCollectionCallback(callbackId);
   }
 
   // BatchHandler methods

@@ -6,24 +6,25 @@ import {
   CollectionReference, 
   Unsubscribe 
 } from "firebase/firestore";
+import { nanoid } from "nanoid";
 import { BaseDocumentRead } from "../../../types/firebase/db/baseTypes";
 
 // 個別ドキュメント用のコールバック
 export interface Callback<Read extends BaseDocumentRead> {
   unsubscribe?: Unsubscribe;
-  func: Array<(snapshot: DocumentSnapshot<Read>) => void>;
+  func: Map<string, (snapshot: DocumentSnapshot<Read>) => void>;
 }
 
 // コレクション全体用のコールバック
 export interface CollectionCallback<Read extends BaseDocumentRead> {
   unsubscribe?: Unsubscribe;
-  func: Array<(snapshot: QuerySnapshot<Read>) => void>;
+  func: Map<string, (snapshot: QuerySnapshot<Read>) => void>;
 }
 
 class CallbacksHandler<Read extends BaseDocumentRead> {
   private readCollectionRef: CollectionReference<Read>;
   private callbacks: Map<string, Callback<Read>> = new Map();
-  private collectionCallbacks: CollectionCallback<Read> = { func: [] };
+  private collectionCallbacks: CollectionCallback<Read> = { func: new Map() };
 
   constructor(collectionReference: CollectionReference) {
     this.readCollectionRef = collectionReference as CollectionReference<Read>;
@@ -31,22 +32,39 @@ class CallbacksHandler<Read extends BaseDocumentRead> {
 
   /**
    * 個別ドキュメントのコールバックを追加
+   * @param documentId - ドキュメントID
+   * @param callback - コールバック関数
+   * @param callbackId - コールバックID
+   * @param overwrite - 上書きオプション
+   * @returns callbackId
    */
-  addCallback(documentId: string, callback: (snapshot: DocumentSnapshot<Read>) => void): void {
+  addCallback(documentId: string, callback: (snapshot: DocumentSnapshot<Read>) => void, callbackId?: string, overwrite = false): string {
+    const cbId = callbackId ?? nanoid();
     const callbackEntry = this.callbacks.get(documentId) ?? this.createDocumentCallbackEntry(documentId);
-    if (!callbackEntry.func.includes(callback)) {
-      callbackEntry.func.push(callback);
+
+    if (overwrite) {
+      // 上書きの場合は既存のコールバックを削除
+      callbackEntry.func.set(cbId, callback);
+    } else {
+      // 既に同じIDのコールバックがある場合は追加しない
+      if (!callbackEntry.func.has(cbId)) {
+        callbackEntry.func.set(cbId, callback);
+      }
     }
+
+    return cbId;
   }
 
   /**
    * 個別ドキュメントのコールバックを削除
+   * @param documentId - ドキュメントID
+   * @param callbackId - コールバックID
    */
-  removeCallback(documentId: string, callback: (snapshot: DocumentSnapshot<Read>) => void): void {
+  removeCallback(documentId: string, callbackId: string): void {
     const callbackEntry = this.callbacks.get(documentId);
     if (callbackEntry) {
-      callbackEntry.func = callbackEntry.func.filter(cb => cb !== callback);
-      if (callbackEntry.func.length === 0) {
+      callbackEntry.func.delete(callbackId);
+      if (callbackEntry.func.size === 0) {
         this.unregisterDocumentListener(documentId);
         this.callbacks.delete(documentId);
       }
@@ -55,22 +73,38 @@ class CallbacksHandler<Read extends BaseDocumentRead> {
 
   /**
    * コレクション全体のコールバックを追加
+   * @param callback - コールバック関数
+   * @param callbackId - コールバックID
+   * @param overwrite - 上書きオプション
+   * @returns callbackId
    */
-  addCollectionCallback(callback: (snapshot: QuerySnapshot<Read>) => void): void {
-    if (!this.collectionCallbacks.func.includes(callback)) {
-      this.collectionCallbacks.func.push(callback);
+  addCollectionCallback(callback: (snapshot: QuerySnapshot<Read>) => void, callbackId?: string, overwrite = false): string {
+    const cbId = callbackId ?? nanoid();
+
+    if (overwrite) {
+      // 上書きの場合は既存のコールバックを削除
+      this.collectionCallbacks.func.set(cbId, callback);
+    } else {
+      // 既に同じIDのコールバックがある場合は追加しない
+      if (!this.collectionCallbacks.func.has(cbId)) {
+        this.collectionCallbacks.func.set(cbId, callback);
+      }
     }
+
     if (!this.collectionCallbacks.unsubscribe) {
       this.registerCollectionListener();
     }
+
+    return cbId;
   }
 
   /**
    * コレクション全体のコールバックを削除
+   * @param callbackId - コールバックID
    */
-  removeCollectionCallback(callback: (snapshot: QuerySnapshot<Read>) => void): void {
-    this.collectionCallbacks.func = this.collectionCallbacks.func.filter(cb => cb !== callback);
-    if (this.collectionCallbacks.func.length === 0) {
+  removeCollectionCallback(callbackId: string): void {
+    this.collectionCallbacks.func.delete(callbackId);
+    if (this.collectionCallbacks.func.size === 0) {
       this.unregisterCollectionListener();
     }
   }
@@ -83,7 +117,7 @@ class CallbacksHandler<Read extends BaseDocumentRead> {
     const unsubscribe = onSnapshot(docRef, docSnapshot => {
       this.callbacks.get(documentId)?.func.forEach(cb => cb(docSnapshot));
     });
-    const entry = { func: [], unsubscribe };
+    const entry = { func: new Map(), unsubscribe };
     this.callbacks.set(documentId, entry);
     return entry;
   }

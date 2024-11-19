@@ -1,43 +1,143 @@
-import serviceFactory from "../../../firebase/db/factory"
-import { TaskManagementService } from "../../../firebase/db/util/taskManagementService"
-import { IndividualTaskRead, ProblemSetActivityRead, ProblemSetCategoryRead, ProblemSetRead } from "../../../types/firebase/db/task/taskStructure";
+import { IndividualTaskService } from "../../../firebase/db/app/user/subCollection/task/individualTaskService";
+import { ProblemSetActivityService } from "../../../firebase/db/app/user/subCollection/task/problemSetActivityService";
+import { ProblemSetCategoryService } from "../../../firebase/db/app/user/subCollection/task/problemSetCategoryService";
+import { ProblemSetService } from "../../../firebase/db/app/user/subCollection/task/problemSetService";
+import serviceFactory from "../../../firebase/db/factory";
+import { TaskManagementService } from "../../../firebase/db/util/taskManagementService";
+import {
+  IndividualTaskRead,
+  ProblemSetActivityRead,
+  ProblemSetCategoryRead,
+  ProblemSetRead,
+} from "../../../types/firebase/db/task/taskStructure";
 import { AppDispatch } from "../../../types/module/redux/reduxTypes";
-import { setCategoryMap, setIndividualTasks, setActivityMap, setProblemSetMap } from "../../slices/task/taskSlice";
+import { setTaskSliceState } from "../../slices/task/taskSlice";
 import store from "../../store";
+import { nanoid } from "nanoid";
 
-const mapToDocIdMap = <T extends { docId: string }>(items: T[]): Record<string, T> => {
-  return Object.fromEntries(items.map(item => [item.docId, item]));
+class IDManager {
+  private static _idMap: Map<string, string> = new Map();
+
+  static getId(genre: string): string {
+    if (!this._idMap.has(genre)) {
+      this._idMap.set(genre, `${genre}_${nanoid()}`);
+    }
+    return this._idMap.get(genre)!;
+  }
+}
+
+// 型定義
+type TaskData = Partial<{
+  individualTasks: IndividualTaskRead[];
+  problemSets: ProblemSetRead[];
+  activities: ProblemSetActivityRead[];
+  categories: ProblemSetCategoryRead[];
+}>;
+
+// サービス依存性注入用の型
+interface TaskServices {
+  individualTaskService: IndividualTaskService;
+  problemSetService: ProblemSetService;
+  categoryService: ProblemSetCategoryService;
+  activityService: ProblemSetActivityService;
+}
+
+// TaskManagerのファクトリ関数
+export const createTaskManager = (services: TaskServices) => {
+  // store の参照と効率化
+  const taskStore = store.getState().taskSlice;
+  const {
+    individualTasks: storeIndividualTasks,
+    problemSetMap,
+    activityMap,
+    categoryMap,
+  } = taskStore;
+
+  const storeProblemSets = Object.values(problemSetMap);
+  const storeActivities = Object.values(activityMap);
+  const storeCategories = Object.values(categoryMap);
+
+  // ディスパッチ用のデータ更新関数
+  const dispatchData = (dispatch: AppDispatch, data: TaskData) => {
+    const newData = {
+      individualTasks: data.individualTasks ?? storeIndividualTasks,
+      problemSets: data.problemSets ?? storeProblemSets,
+      activities: data.activities ?? storeActivities,
+      categories: data.categories ?? storeCategories,
+    };
+
+    const formatData = TaskManagementService.formatDataForExport(
+      newData.individualTasks,
+      newData.problemSets,
+      newData.categories,
+      newData.activities
+    );
+    dispatch(setTaskSliceState({ ...newData, ...formatData }));
+  };
+
+  // ProblemSet ID に基づくリアルタイム更新登録
+  const dispatchCallbackWithProblemSetIds = (userId: string, dispatch: AppDispatch) => {
+    let problemSetIds = storeProblemSets.map((problemSet) => problemSet.docId);
+
+    // ProblemSet 更新コールバック
+    services.problemSetService.addCollectionCallback(userId, (problemSets) => {
+      problemSetIds = problemSets.map((problemSet) => problemSet.docId);
+      dispatchData(dispatch, { problemSets });
+    }), IDManager.getId('problemSet');
+
+    // Activity 更新コールバック
+    services.activityService.addCollectionCallbackToAll(userId, problemSetIds, (activities) => {
+      dispatchData(dispatch, { activities });
+    }, IDManager.getId('activity'));
+
+    // Category 更新コールバック
+    services.categoryService.addCollectionCallbackToAll(userId, problemSetIds, (categories) => {
+      dispatchData(dispatch, { categories });
+    }, IDManager.getId('category'));
+
+    // Individual Task 更新コールバック
+    services.individualTaskService.addCollectionCallback(userId, (individualTasks) => {
+      dispatchData(dispatch, { individualTasks });
+    }, IDManager.getId('individualTask'));
+  };
+
+  // 初期化関数
+  const initializeTaskSlice = async (userId: string, dispatch: AppDispatch) => {
+    try {
+      const formatData = await TaskManagementService.fetchAllTasksAsFormatData(userId, services);
+      dispatch(setTaskSliceState(formatData));
+    } catch (error) {
+      console.error("Failed to initialize task slice:", error);
+      // 必要に応じてフォールバックを実装
+    }
+  };
+
+  return { initializeTaskSlice, dispatchCallbackWithProblemSetIds };
 };
 
-const a = (args: {problemSet: ProblemSetRead, activities?: ProblemSetActivityRead[], categories?: ProblemSetCategoryRead[] }) => {
-  const taskData = store.getState().taskSlice;
-  const problemSet = args.problemSet;
-  // const activities = args.activities ?? taskData.problemSetActivities
-}
+// 使用例
+const taskManager = createTaskManager({
+  individualTaskService: serviceFactory.createIndividualTaskService(),
+  problemSetService: serviceFactory.createProblemSetService(),
+  categoryService: serviceFactory.createProblemSetCategoryService(),
+  activityService: serviceFactory.createProblemSetActivityService(),
+});
 
-const dispatchCallbackWithProblemSetIds = (userId: string, problemSetMap: Record<string, ProblemSetRead>, dispatch: AppDispatch) => {
-  const dispatchProblemSetActivity = (args: { userId: string; problemSetId: string; data: ProblemSetActivityRead[] }) => {
-    const problemSet = problemSetMap[args.problemSetId];
-    dispatch(setActivityMap(mapToDocIdMap(args.data)));
-  }
-  const dispatchProblemSetCategory = (args: { userId: string; problemSetId: string; data: ProblemSetCategoryRead[] }) => {
-    dispatch(setCategoryMap(mapToDocIdMap(args.data)));
-  }
-  const problemSetIds = Object.keys(problemSetMap);
-  TaskManagementService.addCollectionCallbackForAllActivities(serviceFactory, userId, problemSetIds, dispatchProblemSetActivity);
-  TaskManagementService.addCollectionCallbackForAllCategories(serviceFactory, userId, problemSetIds, dispatchProblemSetCategory);
-}
+// 初期化例
+export const initializeTasks = async (userId: string, dispatch: AppDispatch) => {
+  await taskManager.initializeTaskSlice(userId, dispatch);
+};
 
-const dispatchCallback = (userId: string, dispatch: AppDispatch) => {
-  // const dispatchIndividualTasks = (tasks: IndividualTaskRead[]) => {
-  //   dispatch(setIndividualTasks(tasks));
-  // }
-  // const dispatchProblemSet = (problemSets: ProblemSetRead[]) => {
-  //   const problemSetMap = mapToDocIdMap(problemSets);
-  //   dispatchCallbackWithProblemSetIds(userId, problemSetMap, dispatch);
-  //   dispatch(setProblemSetMap(problemSetMap));
-  // }
-  
-  // serviceFactory.createIndividualTaskService().addCollectionCallback(userId, dispatchIndividualTasks);
-  // serviceFactory.createProblemSetService().addCollectionCallback(userId, dispatchProblemSet);
-}
+// リアルタイム更新登録例
+export const setupRealTimeUpdates = (userId: string, dispatch: AppDispatch) => {
+  taskManager.dispatchCallbackWithProblemSetIds(userId, dispatch);
+};
+
+export const removeRealTimeUpdates = (userId: string, services: TaskServices) => {
+  const taskStore = store.getState().taskSlice;
+  const problemSetIds = Object.keys(taskStore.problemSetMap)
+  services.activityService.removeCollectionCallbackToAll(userId, problemSetIds, IDManager.getId('activity'));
+  services.categoryService.removeCollectionCallbackToAll(userId, problemSetIds, IDManager.getId('category'));
+  services.problemSetService.removeCollectionCallback(userId, IDManager.getId('problemSet'));
+  services.individualTaskService.removeCollectionCallback(userId, IDManager.getId('individualTask'));
+};

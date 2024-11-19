@@ -68,11 +68,11 @@ export class IndividualTaskService {
     }
   }
 
-  addCollectionCallback(userId: string, callback: (data: IndividualTaskRead[]) => void) {
-    this.callFss(userId).addReadCollectionCallback(callback);
+  addCollectionCallback(userId: string, callback: (data: IndividualTaskRead[]) => void, callbackId?: string) {
+    this.callFss(userId).addReadCollectionCallback(callback, callbackId);
   }
 
-  removeCollectionCallback(userId: string, callback: (data: IndividualTaskRead[]) => void) {
-    this.callFss(userId).removeReadCollectionCallback(callback);
+  removeCollectionCallback(userId: string, callbackId: string) {
+    this.callFss(userId).removeCollectionCallback(callbackId);
   }
 }
