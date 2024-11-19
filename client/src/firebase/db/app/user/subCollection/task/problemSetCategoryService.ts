@@ -66,7 +66,7 @@ export class ProblemSetCategoryService {
 
   removeCollectionCallbackToAll(userId: string, problemSetIds: string[], callbackId: string) {
     const uniqueIds = removeDuplicates(problemSetIds);
-    uniqueIds.map(problemSetId => {
+    uniqueIds.forEach(problemSetId => {
       this.removeCollectionCallback(userId, problemSetId, callbackId);
     })
   }

@@ -13,6 +13,7 @@ import FocusLearning from '../../../features/app/focusLearning/FocusLearning';
 import { updateCurrentGoal } from '../../../redux/actions/learning/learningGoalActions';
 import LearningRoot from '../learning/LearningRoot';
 import TaskRoot from '../task/TaskRoot';
+import { initializeTasks, setupRealTimeUpdates } from '../../../redux/actions/task/taskActions';
 
 const MainRoutes: FC = () => {
   const dispatch = useAppDispatch();
@@ -23,6 +24,8 @@ const MainRoutes: FC = () => {
       setApprovedTeams(dispatch, uid);
       autoUpdateSpaces(dispatch, uid);
       updateCurrentGoal(dispatch, uid);
+      initializeTasks(uid, dispatch);
+      setupRealTimeUpdates(uid, dispatch);
     }
   }, [dispatch, uid]);
 

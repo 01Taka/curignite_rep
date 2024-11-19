@@ -78,27 +78,30 @@ export const createTaskManager = (services: TaskServices) => {
   // ProblemSet ID に基づくリアルタイム更新登録
   const dispatchCallbackWithProblemSetIds = (userId: string, dispatch: AppDispatch) => {
     let problemSetIds = storeProblemSets.map((problemSet) => problemSet.docId);
+    const ids = Object.fromEntries(['problemSet', 'activity', 'category', 'individualTask'].map(
+      genre => ([genre, IDManager.getId(genre)])
+    )) as Record<'problemSet' | 'activity' | 'category' | 'individualTask', string>;
 
     // ProblemSet 更新コールバック
     services.problemSetService.addCollectionCallback(userId, (problemSets) => {
       problemSetIds = problemSets.map((problemSet) => problemSet.docId);
       dispatchData(dispatch, { problemSets });
-    }), IDManager.getId('problemSet');
+    }, ids.problemSet);
 
     // Activity 更新コールバック
     services.activityService.addCollectionCallbackToAll(userId, problemSetIds, (activities) => {
       dispatchData(dispatch, { activities });
-    }, IDManager.getId('activity'));
+    }, ids.activity);
 
     // Category 更新コールバック
     services.categoryService.addCollectionCallbackToAll(userId, problemSetIds, (categories) => {
       dispatchData(dispatch, { categories });
-    }, IDManager.getId('category'));
+    }, ids.category);
 
     // Individual Task 更新コールバック
     services.individualTaskService.addCollectionCallback(userId, (individualTasks) => {
       dispatchData(dispatch, { individualTasks });
-    }, IDManager.getId('individualTask'));
+    }, ids.individualTask);
   };
 
   // 初期化関数

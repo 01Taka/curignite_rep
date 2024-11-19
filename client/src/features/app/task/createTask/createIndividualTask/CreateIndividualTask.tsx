@@ -1,9 +1,8 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import CreateIndividualTaskView from './CreateIndividualTaskView'
 import { CreateIndividualTaskViewFormState } from '../../../../../types/app/task/taskForm';
 import serviceFactory from '../../../../../firebase/db/factory';
 import { useAppSelector } from '../../../../../redux/hooks';
-import { toTimestamp } from '../../../../../functions/utils/dateTimeUtils';
 import { useNavigate } from 'react-router-dom';
 import { MINUTES_IN_MILLISECOND } from '../../../../../constants/utils/dateTimeConstants';
 import useFormState from '../../../../hooks/form/useFormState';
@@ -29,7 +28,7 @@ const CreateIndividualTask: FC = () => {
         callAsyncFunction([
           uid,
           formState.title,
-          formState.dueDateTime ? toTimestamp(formState.dueDateTime) : formState.dueDateTime,
+          formState.dueDateTime,
           formState.taskNote,
           formState.estimatedDuration * MINUTES_IN_MILLISECOND
         ], individualTaskService.createTask.bind(individualTaskService))

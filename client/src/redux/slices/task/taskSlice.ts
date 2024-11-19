@@ -12,7 +12,7 @@ interface TaskSliceState {
     problemSetId: string;
     categories: ProblemSetCategoryRead[];
     activities: ProblemSetActivityRead[];
-}[]
+  }[]
 }
 
 const initialState: TaskSliceState = {
@@ -28,8 +28,8 @@ const taskSlice = createSlice({
   name: 'taskSlice',
   initialState,
   reducers: {
-    setTaskSliceState: (state, action: PayloadAction<TaskSliceState>) => {
-      state = action.payload;
+    setTaskSliceState: (_, action: PayloadAction<TaskSliceState>) => {
+      return action.payload;
     },
     setTasks: (state, action: PayloadAction<TaskData[]>) => {
       state.tasks = action.payload;

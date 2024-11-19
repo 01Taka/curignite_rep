@@ -14,7 +14,7 @@ interface PlanProps {
 }
 
 const Plan: React.FC<PlanProps> = ({ tasks }) => {
-  const { todayTasks, studyTimeNeededToday } = usePlan(tasks, false);
+  const { todayTasks, studyTimeNeededToday } = usePlan(false);
   const { isOpen, toOpen, toClose } = useToggle();
   const { createTaskPlan } = useTaskPlanManager();
 

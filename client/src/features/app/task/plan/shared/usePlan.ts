@@ -3,30 +3,11 @@ import { useMemo, useState } from "react";
 import { convertToDate } from "../../../../../functions/utils/dateTimeUtils";
 import { groupingByKey, removeDuplicates } from "../../../../../functions/utils/objectUtils";
 import { TodayIndividualTask, TodayTasks, TodayCategoryTask } from "./planTypes";
-import { TaskData } from "../../../../../types/firebase/db/task/taskExpansionTypes";
-import { ProblemSetCategoryRead, ProblemSetRead } from "../../../../../types/firebase/db/task/taskStructure";
+import { useAppSelector } from "../../../../../redux/hooks";
 
-const usePlan = (tasks: TaskData[], containExpired: boolean) => {
+const usePlan = (containExpired: boolean) => {
+  const { tasks, problemSetMap, categoryMap } = useAppSelector(state => state.taskSlice);
   const [isContainExpired, setIsContainExpired] = useState(containExpired);
-
-  const { problemSetMap, categoryMap } = useMemo(() => {
-    const problemSetMap: Record<string, ProblemSetRead> = {};
-    const categoryMap: Record<string, ProblemSetCategoryRead> = {};
-  
-    tasks.forEach((task) => {
-      if (task.problemSetActivityField) {
-        const { problemSet, categoryMap: taskCategoryMap } = task.problemSetActivityField;
-        
-        if (problemSet) {
-          problemSetMap[problemSet.docId] = problemSet;
-        }
-        
-        Object.assign(categoryMap, taskCategoryMap);
-      }
-    });
-  
-    return { problemSetMap, categoryMap };
-  }, [tasks]);
 
   const today = useMemo(() => {
     const now = new Date();

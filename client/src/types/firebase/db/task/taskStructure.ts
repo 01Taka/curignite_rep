@@ -6,7 +6,7 @@ import { DocumentRead, DocumentWrite } from "../baseTypes";
 interface IndividualTaskDocument {
   title: string; // タスクのタイトル
   estimatedDuration: number; // 推定所要時間
-  dueDateTime: Timestamp | null; // 期限
+  dueDateTime: number | null; // 期限
   progress: number; // 進捗率（0〜1）
   taskNote: string; // タスクのノート
   completed: boolean; // 完了状態
@@ -27,15 +27,15 @@ interface ProblemSetCategoryDocument {
 }
 
 interface ProblemSetActivityDocument {
-  dueDateTime: Timestamp | null; // 課題の期限
+  dueDateTime: number | null; // 課題の期限
   completed: boolean; // 課題の完了状態
   categoryActivities: CategoryActivity[]; // カテゴリの活動
 }
 
-export type IndividualTaskWrite = DocumentWrite<IndividualTaskDocument>; 
+export type IndividualTaskWrite = DocumentWrite<IndividualTaskDocument | { dueDateTime: Timestamp | null }>; 
 export type ProblemSetWrite = DocumentWrite<ProblemSetDocument>; 
 export type ProblemSetCategoryWrite = DocumentWrite<ProblemSetCategoryDocument>; 
-export type ProblemSetActivityWrite = DocumentWrite<ProblemSetActivityDocument>; 
+export type ProblemSetActivityWrite = DocumentWrite<ProblemSetActivityDocument | { dueDateTime: Timestamp | null }>; 
 
 export type IndividualTaskRead = DocumentRead<IndividualTaskDocument>; 
 export type ProblemSetRead = DocumentRead<ProblemSetDocument>; 

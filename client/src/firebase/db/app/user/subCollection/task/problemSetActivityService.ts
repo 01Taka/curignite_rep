@@ -1,8 +1,10 @@
-import { DocumentData, DocumentReference, Firestore, Timestamp } from "firebase/firestore";
+import { DocumentData, DocumentReference, Firestore } from "firebase/firestore";
 import { CategoryActivity } from "../../../../../../types/firebase/db/task/taskSupplementTypes";
 import FirestoreService from "../../../../handler/firestoreService";
 import { ProblemSetActivityRead, ProblemSetActivityWrite } from "../../../../../../types/firebase/db/task/taskStructure";
 import { removeDuplicates } from "../../../../../../functions/utils/objectUtils";
+import { toTimestamp } from "../../../../../../functions/utils/dateTimeUtils";
+import { TimeTypes } from "../../../../../../types/util/dateTimeTypes";
 
 export class ProblemSetActivityService {
   private fss: FirestoreService<ProblemSetActivityRead, ProblemSetActivityWrite>;
@@ -19,13 +21,13 @@ export class ProblemSetActivityService {
   async createActivity(
     creatorId: string,
     problemSetId: string,
-    dueDateTime: Timestamp | null, // 課題の期限
+    dueDateTime: TimeTypes | null, // 課題の期限
     categoryActivities: CategoryActivity[],
     completed = false,
   ): Promise<DocumentReference<ProblemSetActivityWrite, DocumentData> >{
     const data: ProblemSetActivityWrite = {
       createdById: creatorId,
-      dueDateTime,
+      dueDateTime: dueDateTime ? toTimestamp(dueDateTime) : null,
       categoryActivities,
       completed
     }
@@ -63,7 +65,7 @@ export class ProblemSetActivityService {
 
   removeCollectionCallbackToAll(userId: string, problemSetIds: string[], callbackId: string) {
     const uniqueIds = removeDuplicates(problemSetIds);
-    uniqueIds.map(problemSetId => {
+    uniqueIds.forEach(problemSetId => {
       this.removeCollectionCallback(userId, problemSetId, callbackId);
     })
   }

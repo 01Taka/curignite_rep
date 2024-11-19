@@ -1,5 +1,6 @@
 import { DocumentSnapshot, QuerySnapshot } from "firebase/firestore";
 import { BaseDocumentRead } from "../../../types/firebase/db/baseTypes";
+import { convertTimestampsToNumbers } from "../../../functions/db/dataFormatUtils";
 
 /**
  * ドキュメントスナップショットからデータを抽出して整形するユーティリティ関数
@@ -15,12 +16,14 @@ export const parseDocumentSnapshot = <Read extends BaseDocumentRead>(
 
   if (!data.isActive) return null; // 論理削除されたデータは無効
 
-  // 基本プロパティの設定
-  data.docId = docSnapshot.id;
-  data.path = docSnapshot.ref.path; // 修正: フルパスに変更
-  data.parentId = docSnapshot.ref.parent.parent?.id ?? '';
+  const convertedData = convertTimestampsToNumbers(data) as Read;
 
-  return data;
+  // 基本プロパティの設定
+  convertedData.docId = docSnapshot.id;
+  convertedData.path = docSnapshot.ref.path; // 修正: フルパスに変更
+  convertedData.parentId = docSnapshot.ref.parent.parent?.id ?? '';
+
+  return convertedData;
 }
 
 /**

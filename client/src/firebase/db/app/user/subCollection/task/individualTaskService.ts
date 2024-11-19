@@ -1,7 +1,9 @@
-import { DocumentData, DocumentReference, Firestore, QueryConstraint, Timestamp } from "firebase/firestore";
+import { DocumentData, DocumentReference, Firestore, QueryConstraint } from "firebase/firestore";
 import { IndividualTaskRead, IndividualTaskWrite } from "../../../../../../types/firebase/db/task/taskStructure";
 import { AutoFieldToUndefined } from "../../../../../../types/firebase/db/formatTypes";
 import FirestoreService from "../../../../handler/firestoreService";
+import { toTimestamp } from "../../../../../../functions/utils/dateTimeUtils";
+import { TimeTypes } from "../../../../../../types/util/dateTimeTypes";
 
 export class IndividualTaskService {
   private fss: FirestoreService<IndividualTaskRead, IndividualTaskWrite>;
@@ -18,7 +20,7 @@ export class IndividualTaskService {
   async createTask(
     creatorId: string,
     title: string,
-    dueDateTime: Timestamp | null,
+    dueDateTime: TimeTypes | null,
     taskNote: string,
     estimatedDuration: number,
     progress: number = 0,
@@ -28,7 +30,7 @@ export class IndividualTaskService {
       const data: IndividualTaskWrite = {
         createdById: creatorId,
         title,
-        dueDateTime,
+        dueDateTime: dueDateTime ? toTimestamp(dueDateTime) : null,
         taskNote,
         progress,
         completed,

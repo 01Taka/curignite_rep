@@ -1,4 +1,4 @@
-import { DocumentData, Timestamp } from "firebase/firestore";
+import { DocumentData } from "firebase/firestore";
 
 // すべての動的Firestoreドキュメントに存在するべきフィールド
 export interface BaseDocumentWrite extends DocumentData {
@@ -10,9 +10,9 @@ export interface BaseDocumentRead {
     parentId: string;
     createdById: string; // 作成者のUserId
     docId: string; // ドキュメントId
-    createdAt: Timestamp; // 作成日時
-    updatedAt?: Timestamp; // 更新日時
-    deletedAt?: Timestamp // 削除日時
+    createdAt: number; // 作成日時
+    updatedAt?: number; // 更新日時
+    deletedAt?: number // 削除日時
     isActive: boolean; // 論理的削除の状態
 }
 
