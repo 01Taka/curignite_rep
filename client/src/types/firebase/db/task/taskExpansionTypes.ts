@@ -1,5 +1,6 @@
+import { Range } from "../../../util/componentsTypes";
 import { IndividualTaskRead, ProblemSetCategoryRead, ProblemSetRead } from "./taskStructure";
-import { CategoryActivity, ProblemSetActivityManagementMethod } from "./taskSupplementTypes";
+import { ProblemSetActivityManagementMethod } from "./taskSupplementTypes";
 
 export interface TaskData extends IndividualTaskRead {
   isIndividual: boolean;
@@ -14,8 +15,8 @@ export interface ExpansionProblemSetData extends ProblemSetRead {
 }
 
 export interface ProblemSetActivityField {
-  problemSet: ProblemSetRead;
-  categoryMap: Record<string, ProblemSetCategoryRead>;
+  problemSetId: string;
+  problemSetName: string;
   totalProblemCount: number; // 総問題数
   totalRemainingProblemNumber: number;
   activityManagementMethod: ProblemSetActivityManagementMethod;
@@ -23,8 +24,10 @@ export interface ProblemSetActivityField {
   completionRate: `${number}/${number}`;
 }
 
-export interface CategoryActivityStatus extends CategoryActivity  {
+export interface CategoryActivityStatus {
+  categoryId: string; // カテゴリのID
   categoryName: string;
+  problemIdsRange: Range[]; // カテゴリ内の問題番号
   completedProblemIds: number[];
   remainingProblemIds: number[];
 }

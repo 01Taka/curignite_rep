@@ -6,9 +6,14 @@ import { getId, recoveryId } from './customPlanUtils';
 import { TodayCategoryTask, TodayIndividualTask, TodayProblemSetTask, TodayTasks } from '../../shared/planTypes';
 import { mathClamp } from '../../../../../../functions/utils/numberUtils';
 import { Range } from '../../../../../../types/util/componentsTypes';
-import { ProblemSetCategoryRead } from '../../../../../../types/firebase/db/task/taskStructure';
+import { useAppSelector } from '../../../../../../redux/hooks';
 
-const useCustomPlan = (tasks: TaskData[], recommendTask: TodayTasks | null) => {
+const useCustomPlan = (
+  _tasks?: TaskData[],
+  recommendTask?: TodayTasks
+) => {
+  const { tasks: storeTasks, categoryMap, problemSetMap } = useAppSelector(state => state.taskSlice);
+  const tasks = _tasks ?? storeTasks;
   const [selectedTaskTime, setSelectedTaskTime] = useState<Record<string, number>>({});
   const [todayIndividualTasks, setTodayIndividualTasks] = useState<Record<string, TodayIndividualTask>>({});
   const [todayProblemSetTask, setTodayProblemSetTask] = useState<Record<string, TodayProblemSetTask>>({});
@@ -30,42 +35,31 @@ const useCustomPlan = (tasks: TaskData[], recommendTask: TodayTasks | null) => {
   );
 
   const taskProblemSetIdMap = useMemo(
-    () => Object.fromEntries(tasks.map(task => [task.docId, task.problemSetActivityField?.problemSet.docId ?? null])),
+    () => Object.fromEntries(tasks.map(task => [task.docId, task.problemSetActivityField?.problemSetId ?? null])),
     [tasks]
   );
 
-  const categoryMap = useMemo(() => {
-    return tasks.reduce<Record<string, ProblemSetCategoryRead>>((acc, task) => ({
-      ...acc,
-      ...(task.problemSetActivityField?.categoryMap ?? {})
-    }), {});
-  }, [tasks]);
-
   const updateTodayProblemSetTask = useCallback(
     (id: string, ranges: Range[]) => {
-      const { taskId, categoryId } = recoveryId(id);
+      const { categoryId } = recoveryId(id);
       const category = categoryMap[categoryId];
       if (!category) return;
-      
 
+      const problemSetId = category.parentId;
+      
       const todayTaskProblemIds = rangesToArray(ranges);
       const newCategory: TodayCategoryTask = {
-        taskId,
+        problemSetId,
+        problemSetName: problemSetMap[problemSetId].name,
         categoryId,
         categoryName: category.name,
         todayTaskProblemIds,
         estimatedDuration: todayTaskProblemIds.length * category.timePerProblem
       };
 
-      const problemSetId = taskProblemSetIdMap[taskId];
-
-
-
-      if (!problemSetId) return;
-
       const problemSetTask = todayProblemSetTask[problemSetId] || {
         problemSetId,
-        taskName: taskNameMap[taskId],
+        problemSetName: problemSetMap[problemSetId],
         estimatedDuration: 0,
         categories: []
       };;
@@ -110,8 +104,8 @@ const useCustomPlan = (tasks: TaskData[], recommendTask: TodayTasks | null) => {
     tasks.forEach(task => {
       const activityField = task.problemSetActivityField;
       if (!activityField) return;
-      Object.keys(activityField.categoryMap).forEach(categoryId => {
-        const pairId = getId(activityField.problemSet.docId, categoryId);
+      Object.keys(categoryMap).forEach(categoryId => {
+        const pairId = getId(activityField.problemSetId, categoryId);
         const taskId = getId(task.docId, categoryId);
         addRangeSelectionWithPairing(pairId, taskId);
       });

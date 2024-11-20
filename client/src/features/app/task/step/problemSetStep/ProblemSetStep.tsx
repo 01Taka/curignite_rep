@@ -5,8 +5,8 @@ import { useAppSelector } from '../../../../../redux/hooks';
 interface ProblemSetStepProps {}
 
 const ProblemSetStep: React.FC<ProblemSetStepProps> = () => {
-  const tasks = useAppSelector(state => state.taskSlice.tasks);
-  return <Plan tasks={tasks} />;
+  const { tasks, categoryMap } = useAppSelector(state => state.taskSlice);
+  return <Plan tasks={tasks} categoryMap={categoryMap} />;
 };
 
 export default ProblemSetStep;

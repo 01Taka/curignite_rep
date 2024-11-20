@@ -74,7 +74,8 @@ const usePlan = (containExpired: boolean) => {
 
         if (!categoryStatusMap[status.categoryId]) {
           categoryStatusMap[status.categoryId] = {
-            taskId: activityField.problemSet.docId,
+            problemSetId: problemSetMap[activityField.problemSetId]?.docId,
+            problemSetName: problemSetMap[activityField.problemSetId]?.name,
             categoryId: status.categoryId,
             categoryName: status.categoryName,
             todayTaskProblemIds: taskProblemIds,
@@ -95,10 +96,10 @@ const usePlan = (containExpired: boolean) => {
   }, [tasks, isContainExpired, categoryMap, today]);
 
   const todayTasks: TodayTasks = useMemo(() => {
-    const groupedStatuses = groupingByKey(todayTaskStatuses, 'taskId');
+    const groupedStatuses = groupingByKey(todayTaskStatuses, 'problemSetId');
     const problemSetTasks = Object.entries(groupedStatuses).map(([key, categories]) => ({
       problemSetId: key,
-      taskName: problemSetMap[key].name,
+      problemSetName: problemSetMap[key]?.name,
       estimatedDuration: categories.reduce((acc, category) => acc + category.estimatedDuration, 0),
       categories
     }));

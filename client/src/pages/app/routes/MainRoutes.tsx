@@ -36,8 +36,8 @@ const MainRoutes: FC = () => {
         <Route path="/" element={<Home />} />
         <Route path='*' element={<NotFound />} />
         <Route path={mainRootPaths.learning} element={<LearningRoot />} />
-        <Route path={mainRootPaths.focusLearning} element={<FocusLearning />} />
         <Route path={mainRootPaths.task} element={<TaskRoot />} />
+        <Route path={mainRootPaths.focusLearning} element={<FocusLearning />} />
         <Route path={mainRootPaths.team} element={<TeamRoutes />} />
         <Route path={mainRootPaths.activeMember} element={<ActiveMemberRoutes />} />
       </Routes>

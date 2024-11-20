@@ -10,14 +10,15 @@ import SettingStateDisplay from './SettingStateDisplay';
 import { usePlanEntry } from '../hooks/usePlanEntry';
 import useLog from '../../../../../hooks/useLog';
 import useMultipleRefs from '../../../../../hooks/useMultipleRefs';
+import { ProblemSetCategoryRead } from '../../../../../../types/firebase/db/task/taskStructure';
 
 interface QuickPlanEntryProps {
   taskData: TaskData;
+  categoryMap: Record<string, ProblemSetCategoryRead>;
 }
 
-const QuickPlanEntry: React.FC<QuickPlanEntryProps> = ({ taskData }) => {
+const QuickPlanEntry: React.FC<QuickPlanEntryProps> = ({ taskData, categoryMap }) => {
   const {
-    categoryMap,
     problemsWithDate,
     currentProblems,
     currentDates,

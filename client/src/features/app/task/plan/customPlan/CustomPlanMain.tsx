@@ -7,11 +7,13 @@ import { TaskData } from '../../../../../types/firebase/db/task/taskExpansionTyp
 import useCustomPlan from './shared/useCustomPlan';
 import { millToMin } from '../shared/planUtils';
 import { TodayTasks } from '../shared/planTypes';
+import { ProblemSetCategoryRead } from '../../../../../types/firebase/db/task/taskStructure';
 
 interface CustomPlanProps {
   studyTimeNeededToday: number;
   recommendTask: TodayTasks | null;
   tasks: TaskData[];
+  categoryMap: Record<string, ProblemSetCategoryRead>;
   createTaskPlan: (todayTasks: TodayTasks) => void;
 }
 
@@ -26,7 +28,7 @@ const CustomPlanMain: React.FC<CustomPlanProps> = ({ studyTimeNeededToday, recom
     getState,
     onCancelSelection,
     onDeleteOperatingRange,
-  } = useCustomPlan(tasks, recommendTask);
+  } = useCustomPlan(tasks, recommendTask ?? undefined);
 
   return (
     <Box sx={{ bgcolor: 'ghostwhite', pt: 2 }}>

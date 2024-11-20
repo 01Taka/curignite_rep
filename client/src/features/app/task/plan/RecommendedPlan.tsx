@@ -34,7 +34,7 @@ const RecommendedPlan: React.FC<RecommendedPlanProps> = ({ todayTasks, studyTime
         {todayTasks.problemSetTasks.map((task, index) => (
           <Box key={index} sx={{ my: 2 }}>
             <Typography variant="h6" sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}>
-              {task.taskName} 推定{millToMin(task.estimatedDuration)}分
+              {task.problemSetName} 推定{millToMin(task.estimatedDuration)}分
             </Typography>
             {task.categories.map((category, catIndex) => (
               <Box key={catIndex} sx={{ pl: 2, mt: 1 }}>

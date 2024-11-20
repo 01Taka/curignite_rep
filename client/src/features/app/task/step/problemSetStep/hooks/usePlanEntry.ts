@@ -21,10 +21,6 @@ export const usePlanEntry = (taskData: TaskData) => {
     setCurrentDates([]);
   };
 
-  const categoryMap = useMemo(() => (
-    taskData?.problemSetActivityField?.categoryMap ?? {}
-  ), [taskData]);
-
   const problemsWithKey = useMemo(() => {
     return Object.entries(currentProblems).flatMap(([key, problems]) =>
       problems.map(problemId => ({ key, problemId }))
@@ -113,7 +109,6 @@ export const usePlanEntry = (taskData: TaskData) => {
   };
 
   return {
-    categoryMap,
     currentProblems,
     currentDates,
     problemsWithDate,

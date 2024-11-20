@@ -7,11 +7,15 @@ import ProblemSetStep from '../../../features/app/task/step/problemSetStep/Probl
 import QuickPlanEntry from '../../../features/app/task/step/problemSetStep/quickPlanEntry/QuickPlanEntry';
 import useProblemSet from '../../../features/app/task/hooks/useProblemSet';
 import Prob from '../../../features/app/task/step/problemSetStep/quickPlanEntry/SelectDateCalendar';
+import { useAppSelector } from '../../../redux/hooks';
 
 interface LearningRootProps { }
 
 const LearningRoot: React.FC<LearningRootProps> = () => {
   return <ProblemSetStep />
+//   const { tasks } = useAppSelector(state => state.taskSlice);
+// console.log(tasks);
+
   return (
     <div>
       <Box sx={{

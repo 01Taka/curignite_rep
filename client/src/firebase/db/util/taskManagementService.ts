@@ -142,76 +142,6 @@ export class TaskManagementService {
     };
   }
 
-  // static async getIndividualTasksAsTasksData(factory: ServiceFactory, userId: string): Promise<FetchAllPart> {
-  //   const tasks = await factory.createIndividualTaskService().getAllTasks(userId);
-  //   return { tasks: TaskManagementService.individualTasksToTasksData(tasks), problemSetData: null };
-  // }
-
-  // static async fetchAllData(factory: ServiceFactory, userId: string): Promise<FetchAllResults> {
-  //   const problemSetService = factory.createProblemSetService();
-  //   const activityService = factory.createProblemSetActivityService();
-  //   const categoryService = factory.createProblemSetCategoryService();
-  
-  //   try {
-  //     const fetchPromises: Promise<FetchAllPart>[] = [];
-
-  //     // ProblemSetの取得
-  //     const problemSets = await problemSetService.getAllProblemSets(userId);
-      
-  //     if (problemSets.length > 0) {
-  //       // ActivitiesとCategoriesの取得
-  //       const result: Promise<FetchAllPart>[] = problemSets.map(async (problemSet) => {
-  //         const problemSetId = problemSet.docId;
-  //         const activities = await activityService.getAllActivities(userId, problemSetId);
-  //         const categories = await categoryService.getAllCategory(userId, problemSetId);
-
-  //         if (categories.length === 0) {
-  //           console.error('Categoriesが見つかりませんでした。userId, problemSetId: ', userId, problemSetId);
-  //           return { tasks: [], problemSetData: null };
-  //         }
-
-  //         let tasks: TaskData[] = []
-    
-  //         if (activities.length > 0) {
-  //           tasks = TaskManagementService.problemSetDataToTaskData(problemSet, categories, activities);
-  //         }
-          
-  //         const expansionProblemSetData: ExpansionProblemSetData = {
-  //           ...problemSet,
-  //           averageEstimatedDuration: categories.reduce((total, category) => total + category.timePerProblem, 0) / categories.length,
-  //           totalProblemNumber: categories.reduce((total, category) => total + (category.totalProblemNumber ?? sumRanges(category.completedProblemIdsRange)), 0),
-  //           completedProblemNumber: categories.reduce((total, category) => total + sumRanges(category.completedProblemIdsRange), 0),
-  //         }
-
-  //         const problemSetWithTaskData: FullProblemSetData = {
-  //           problemSet: expansionProblemSetData,
-  //           activities: tasks,
-  //           categories
-  //         }
-    
-  //         return { tasks, problemSetData: problemSetWithTaskData } as FetchAllPart;
-  //       });
-  //       fetchPromises.push(...result);
-  //     }
-
-  //     // 個別タスクの取得
-  //     const individualTasks = TaskManagementService.getIndividualTasksAsTasksData(factory, userId);
-  //     fetchPromises.push(individualTasks);
-  
-  //     // Promise.allを使ってすべての処理が完了するのを待機
-  //     const results = await Promise.all(fetchPromises);
-  //     const flattedResults = results.flat();
-  //     const fetchAllResults: FetchAllResults = {
-  //       tasks: flattedResults.flatMap(res => res.tasks),
-  //       problemSetData: flattedResults.map(res => res.problemSetData).filter(data => data !== null) as FullProblemSetData[]
-  //     }
-  //     return fetchAllResults;
-  //   } catch (error) {
-  //     console.error('データ取得中にエラーが発生しました。userId: ', userId, error);
-  //     return { tasks: [], problemSetData: [] };
-  //   }
-  // }
-
   static problemSetDataToTaskData(
     problemSet: ProblemSetRead,
     categories: ProblemSetCategoryRead[],
@@ -221,6 +151,7 @@ export class TaskManagementService {
 
     const createBaseData = (activity: ProblemSetActivityRead) => ({
       ...activity,
+      docId: `${activity.parentId}_${activity.docId}`,
       title: problemSet.name,
       taskNote: '',
     });
@@ -256,8 +187,8 @@ export class TaskManagementService {
       const progress = validateNumber(completedCount / totalProblemCount);
 
       const activityField: ProblemSetActivityField = {
-        problemSet,
-        categoryMap,
+        problemSetId: problemSet.docId,
+        problemSetName: problemSet.name,
         totalProblemCount,
         totalRemainingProblemNumber,
         activityManagementMethod: problemSet.activityManagementMethod,

@@ -9,7 +9,8 @@ export interface TodayIndividualTask {
 }
 
 export interface TodayCategoryTask {
-  taskId: string;
+  problemSetId: string;
+  problemSetName: string;
   categoryId: string;
   categoryName: string;
   todayTaskProblemIds: number[];
@@ -26,7 +27,7 @@ export interface TodayCategoryTaskWithRanges {
 
 export interface TodayProblemSetTask {
   problemSetId: string;
-  taskName: string;
+  problemSetName: string;
   estimatedDuration: number;
   categories: TodayCategoryTask[];
 }

@@ -8,15 +8,20 @@ import Popup from '../../../../components/display/popup/Popup';
 import useToggle from '../../../hooks/useToggle';
 import CustomPlanMain from './customPlan/CustomPlanMain';
 import { useTaskPlanManager } from './shared/useTaskPlanManager';
+import { ProblemSetCategoryRead } from '../../../../types/firebase/db/task/taskStructure';
+import useLog from '../../../hooks/useLog';
 
 interface PlanProps {
   tasks: TaskData[];
+  categoryMap: Record<string, ProblemSetCategoryRead>;
 }
 
-const Plan: React.FC<PlanProps> = ({ tasks }) => {
+const Plan: React.FC<PlanProps> = ({ tasks, categoryMap }) => {
   const { todayTasks, studyTimeNeededToday } = usePlan(false);
   const { isOpen, toOpen, toClose } = useToggle();
   const { createTaskPlan } = useTaskPlanManager();
+
+  useLog(todayTasks)
 
   return (
     <>
@@ -48,6 +53,7 @@ const Plan: React.FC<PlanProps> = ({ tasks }) => {
         <CustomPlanMain
           studyTimeNeededToday={studyTimeNeededToday}
           tasks={tasks}
+          categoryMap={categoryMap}
           recommendTask={isOpen('editRecommend') ? todayTasks : null}
           createTaskPlan={createTaskPlan}
         />

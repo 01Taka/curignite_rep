@@ -35,7 +35,7 @@ export class UserTaskPlanManager {
   
     const problemSetTasks = todayTasks.problemSetTasks.map(task => ({
       problemSetId: task.problemSetId,
-      problemSetName: task.taskName,
+      problemSetName: task.problemSetName,
       categories: task.categories.map(createCategoryTaskPlan)
     }));
   
