@@ -1,7 +1,9 @@
 import { TodayCategoryTask, TodayTasks } from "../../../../features/app/task/plan/shared/planTypes";
 import { mathClamp } from "../../../../functions/utils/numberUtils";
+import { arrayToRanges, subtractRanges, sumRanges } from "../../../../functions/utils/rangeUtils";
+import { IndividualTaskRead, ProblemSetCategoryRead, ProblemSetRead } from "../../../../types/firebase/db/task/taskStructure";
 import { UserRead, UserWrite } from "../../../../types/firebase/db/user/userStructure";
-import { TaskPlan } from "../../../../types/firebase/db/user/userTaskPlanStructure";
+import { IndividualTaskPlan, IndividualTaskPlanExpansion, ProblemSetTaskPlan, ProblemSetTaskPlanExpansion, ProblemSetTaskPlanTarget, ProblemSetTaskPlanTargetExpansion, TaskPlan, TaskPlanExpansion } from "../../../../types/firebase/db/user/userTaskPlanStructure";
 import FirestoreService from "../../handler/firestoreService";
 import { UserService } from "./userService";
 
@@ -17,26 +19,22 @@ export class UserTaskPlanManager {
   static todayTasksToTaskPlan(todayTasks: TodayTasks): TaskPlan {
     const createProgress = (currentProgress: number, todayProgress: number) => ({
       start: currentProgress,
-      current: currentProgress,
       goal: mathClamp(currentProgress + todayProgress, 0, 1)
     });
   
-    const createCategoryTaskPlan = (category: TodayCategoryTask) => ({
+    const createTargets = (category: TodayCategoryTask) => ({
       categoryId: category.categoryId,
-      categoryName: category.categoryName,
-      targetTaskProblemIds: category.todayTaskProblemIds
+      targetProblemIdRanges: arrayToRanges(category.todayTaskProblemIds)
     });
   
-    const individualTasks = todayTasks.individualTasks.map(task => ({
-      id: task.id,
-      title: task.title,
+    const individualTasks: IndividualTaskPlan[] = todayTasks.individualTasks.map(task => ({
+      individualTaskId: task.id,
       progress: createProgress(task.currentProgress, task.todayProgress)
     }));
   
-    const problemSetTasks = todayTasks.problemSetTasks.map(task => ({
+    const problemSetTasks: ProblemSetTaskPlan[] = todayTasks.problemSetTasks.map(task => ({
       problemSetId: task.problemSetId,
-      problemSetName: task.problemSetName,
-      categories: task.categories.map(createCategoryTaskPlan)
+      targets: task.categories.map(createTargets)
     }));
   
     return {
@@ -56,4 +54,77 @@ export class UserTaskPlanManager {
     const data = UserTaskPlanManager.todayTasksToTaskPlan(todayTasks);
     await this.updateTaskPlanField(creatorId, data);
   }
+  
+  static expandTaskPlan(
+    taskPlan: TaskPlan,
+    individualTaskMap: Record<string, IndividualTaskRead>,
+    problemSetMap: Record<string, ProblemSetRead>,
+    categoryMap: Record<string, ProblemSetCategoryRead>
+  ): TaskPlanExpansion {
+    // 個別タスクの拡張を行う関数
+    const expandIndividualTasks = (): IndividualTaskPlanExpansion[] =>
+      taskPlan.individualTasks.map(task => {
+        const taskData = individualTaskMap[task.individualTaskId];
+        const progressRemaining = mathClamp(task.progress.goal - taskData.progress, 0, 1);
+  
+        return {
+          individualTaskId: task.individualTaskId,
+          title: taskData.title,
+          progress: {
+            start: Math.min(task.progress.start, taskData.progress),
+            current: taskData.progress,
+            goal: task.progress.goal,
+          },
+          totalEstimatedDuration: taskData.estimatedDuration,
+          remainingEstimatedDuration: taskData.estimatedDuration * progressRemaining,
+        };
+      });
+  
+    // 問題セットタスクのターゲット処理関数
+    const processTarget = (
+      target: ProblemSetTaskPlanTarget,
+      category: ProblemSetCategoryRead
+    ): ProblemSetTaskPlanTargetExpansion => {
+      const remainingRanges = subtractRanges(target.targetProblemIdRanges, category.completedProblemIdsRange);
+      const remainingEstimatedDuration = sumRanges(remainingRanges) * category.timePerProblem;
+  
+      return {
+        categoryId: target.categoryId,
+        categoryName: category.name,
+        targetProblemIdRanges: target.targetProblemIdRanges,
+        remainingProblemIdRanges: remainingRanges,
+        complicatedProblemIdRanges: category.completedProblemIdsRange,
+        timePerProblem: category.timePerProblem,
+        remainingEstimatedDuration,
+      };
+    };
+  
+    // 問題セットタスクの拡張を行う関数
+    const expandProblemSetTasks = (): ProblemSetTaskPlanExpansion[] =>
+      taskPlan.problemSetTasks.map(task => {
+        const problemSet = problemSetMap[task.problemSetId];
+        const targets = task.targets.map(target => {
+          const category = categoryMap[target.categoryId];
+          return processTarget(target, category);
+        });
+  
+        const remainingEstimatedDuration = targets.reduce(
+          (sum, target) => sum + target.remainingEstimatedDuration,
+          0
+        );
+  
+        return {
+          problemSetId: task.problemSetId,
+          problemSetName: problemSet.name,
+          targets,
+          remainingEstimatedDuration,
+        };
+      });
+  
+    return {
+      individualTasks: expandIndividualTasks(),
+      problemSetTasks: expandProblemSetTasks(),
+    };
+  }
+  
 }

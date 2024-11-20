@@ -1,5 +1,5 @@
 import { Timestamp } from "firebase/firestore";
-import { BaseDocumentWrite, DocumentRead, DocumentWrite } from "../baseTypes";
+import { DocumentRead, DocumentWrite } from "../baseTypes";
 import { Subject } from "../common/commonTypes";
 import { LearningGoalStatus, PartnerStatus, UserStateData } from "./userSupplementTypes";
 import { JoinRequestStatus } from "../common/joinRequest/joinRequestSupplementTypes";

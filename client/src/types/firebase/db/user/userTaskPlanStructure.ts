@@ -1,27 +1,58 @@
+import { Range } from "../../../util/componentsTypes";
 
 export interface IndividualTaskPlan {
-  id: string;
+  individualTaskId: string;
+  progress: {
+    start: number;
+    goal: number;
+  }
+}
+
+export interface ProblemSetTaskPlan {
+  problemSetId: string;
+  targets: ProblemSetTaskPlanTarget[];
+}
+
+export interface ProblemSetTaskPlanTarget {
+  categoryId: string;
+  targetProblemIdRanges: Range[];
+}
+
+export interface IndividualTaskPlanExpansion {
+  individualTaskId: string;
   title: string;
   progress: {
     start: number;
     current: number;
     goal: number;
   }
+  totalEstimatedDuration: number;
+  remainingEstimatedDuration: number;
 }
 
-export interface CategoryTaskPlan {
+export interface ProblemSetTaskPlanTargetExpansion {
   categoryId: string;
   categoryName: string;
-  targetTaskProblemIds: number[];
+  targetProblemIdRanges: Range[];
+  remainingProblemIdRanges: Range[];
+  complicatedProblemIdRanges: Range[];
+  timePerProblem: number;
+  remainingEstimatedDuration: number;
 }
 
-export interface ProblemSetTaskPlan {
+export interface ProblemSetTaskPlanExpansion {
   problemSetId: string;
   problemSetName: string;
-  categories: CategoryTaskPlan[];
+  targets: ProblemSetTaskPlanTargetExpansion[];
+  remainingEstimatedDuration: number;
 }
 
 export interface TaskPlan {
   individualTasks: IndividualTaskPlan[];
   problemSetTasks: ProblemSetTaskPlan[];
+}
+
+export interface TaskPlanExpansion {
+  individualTasks: IndividualTaskPlanExpansion[];
+  problemSetTasks: ProblemSetTaskPlanExpansion[];
 }

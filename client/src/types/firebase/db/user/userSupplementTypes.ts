@@ -1,5 +1,4 @@
 import { Timestamp } from "firebase/firestore";
-import { TodayTasksWithRanges } from "../../../../features/app/task/plan/shared/planTypes";
 
 export type UserStatus = "active" | "idle" | "away" | "offline";
 export type LearningGoalStatus = "inProgress" | "achieved" | "paused" | "procrastinate" | "canceled";
