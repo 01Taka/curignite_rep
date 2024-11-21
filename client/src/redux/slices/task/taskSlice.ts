@@ -4,7 +4,7 @@ import { IndividualTaskRead, ProblemSetActivityRead, ProblemSetCategoryRead, Pro
 
 interface TaskSliceState {
   tasks: TaskData[];
-  individualTasks: IndividualTaskRead[];
+  individualTaskMap: Record<string, IndividualTaskRead>;
   activityMap: Record<string, ProblemSetActivityRead>;
   categoryMap: Record<string, ProblemSetCategoryRead>;
   problemSetMap: Record<string, ProblemSetRead>;
@@ -17,7 +17,7 @@ interface TaskSliceState {
 
 const initialState: TaskSliceState = {
   tasks: [],
-  individualTasks: [],
+  individualTaskMap: {},
   activityMap: {},
   categoryMap: {},
   problemSetMap: {},
@@ -34,8 +34,8 @@ const taskSlice = createSlice({
     setTasks: (state, action: PayloadAction<TaskData[]>) => {
       state.tasks = action.payload;
     },
-    setIndividualTasks: (state, action: PayloadAction<IndividualTaskRead[]>) => {
-      state.individualTasks = action.payload;
+    setIndividualTasks: (state, action: PayloadAction<Record<string, IndividualTaskRead>>) => {
+      state.individualTaskMap = action.payload;
     },
     setActivityMap: (state, action: PayloadAction<Record<string, ProblemSetActivityRead>>) => {
       state.activityMap = action.payload;

@@ -7,19 +7,20 @@ import useToggleList from '../../../hooks/useToggleList';
 import Popup from '../../../../components/display/popup/Popup';
 import { getMinAndMaxFromObjectArray, sortObjectArray } from '../../../../functions/utils/objectUtils';
 import { convertToDate } from '../../../../functions/utils/dateTimeUtils';
-import useProblemSet from '../hooks/useProblemSet';
 import ProblemSetSubmissions from './submissions/ProblemSetSubmissions';
 import CreateActivity from '../createTask/createActivity/CreateActivity';
 import { FullProblemSetData } from '../../../../types/firebase/db/task/taskExpansionTypes';
 import { ProblemSetRead } from '../../../../types/firebase/db/task/taskStructure';
+import { useAppSelector } from '../../../../redux/hooks';
 
 interface ProblemSetsProps { }
 
 const ProblemSets: React.FC<ProblemSetsProps> = () => {
   const navigate = useNavigate();
   
-  const { problemSetData } = useProblemSet();
-  const { isOpenAll, openIndexes, handleToggleAll, toggleOpenIndex } = useToggleList(false, problemSetData.length);
+  
+  const { problemSetMap, categoryMap } = useAppSelector(state => state.taskSlice)
+  const { isOpenAll, openIndexes, handleToggleAll, toggleOpenIndex } = useToggleList(false, Object.keys(problemSetMap).length);
   const [editingProblemSet, setEditingProblemSet] = useState<FullProblemSetData | null>(null);
   const [addingSubmissionProblemSet, setAddingSubmissionProblemSet] = useState<ProblemSetRead | null>(null);
 
@@ -35,7 +36,6 @@ const ProblemSets: React.FC<ProblemSetsProps> = () => {
     setAddingSubmissionProblemSet(problemSet);
   }
 
-  const categories = problemSetData.flatMap(data => data.categories); 
   return (
     <Box sx={{ marginX: 1 }}>
       <Button onClick={handleToggleAll} variant="contained" sx={{ marginBottom: 2 }}>
@@ -53,7 +53,7 @@ const ProblemSets: React.FC<ProblemSetsProps> = () => {
           gap: 1,
         }}
       >
-        {problemSetData.map((data, index) => {
+        {Object.values(problemSetMap).map((data, index) => {
           const nextActivity = () => {
             try {
               // const value = getMinAndMaxFromObjectArray(data.activities, 'dueDateTime', convertToDate)?.min || null;
@@ -64,19 +64,21 @@ const ProblemSets: React.FC<ProblemSetsProps> = () => {
             }
           };
 
-          return (
-            <ProblemSetsContainer
-              key={data.problemSet.docId}
-              problemSet={data.problemSet}
-              nextActivity={nextActivity()}
-              activityNumber={data.activities.length}
-              isOpen={openIndexes.has(index)}
-              onCreateSubmission={() => handleOpenCreateSubmission(data.problemSet)}
-              onClickEditTask={() => handleEditProblemSet(data)}
-              onClickWorkOn={() => handleWorkOnProblemSet(data)}
-              onToggle={() => toggleOpenIndex(index)}
-            />
-          )
+          return null;
+
+          // return (
+            // <ProblemSetsContainer
+            //   key={data.docId}
+            //   problemSet={data}
+            //   nextActivity={nextActivity()}
+            //   activityNumber={data.activities.length}
+            //   isOpen={openIndexes.has(index)}
+            //   onCreateSubmission={() => handleOpenCreateSubmission(data)}
+            //   onClickEditTask={() => handleEditProblemSet(data)}
+            //   onClickWorkOn={() => handleWorkOnProblemSet(data)}
+            //   onToggle={() => toggleOpenIndex(index)}
+            // />
+          // ) //OUT//
         })}
       </Box>
       <Popup open={!!editingProblemSet} handleClose={() => setEditingProblemSet(null)}>
@@ -92,8 +94,8 @@ const ProblemSets: React.FC<ProblemSetsProps> = () => {
         }}>
           <CreateActivity
             problemSet={addingSubmissionProblemSet}
-            categories={categories}
-            />
+            categories={Object.values(categoryMap)}
+          />
         </Box>
       </Popup>
     </Box>

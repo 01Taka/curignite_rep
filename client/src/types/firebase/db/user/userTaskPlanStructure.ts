@@ -18,16 +18,24 @@ export interface ProblemSetTaskPlanTarget {
   targetProblemIdRanges: Range[];
 }
 
+export interface TaskPlan {
+  individualTasks: IndividualTaskPlan[];
+  problemSetTasks: ProblemSetTaskPlan[];
+}
+
+
+// 拡張型
 export interface IndividualTaskPlanExpansion {
   individualTaskId: string;
   title: string;
+  isCompleted: boolean;
   progress: {
     start: number;
     current: number;
     goal: number;
   }
   totalEstimatedDuration: number;
-  remainingEstimatedDuration: number;
+  estimatedDuration: number;
 }
 
 export interface ProblemSetTaskPlanTargetExpansion {
@@ -47,12 +55,8 @@ export interface ProblemSetTaskPlanExpansion {
   remainingEstimatedDuration: number;
 }
 
-export interface TaskPlan {
-  individualTasks: IndividualTaskPlan[];
-  problemSetTasks: ProblemSetTaskPlan[];
-}
-
 export interface TaskPlanExpansion {
   individualTasks: IndividualTaskPlanExpansion[];
   problemSetTasks: ProblemSetTaskPlanExpansion[];
 }
+

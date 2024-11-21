@@ -4,6 +4,7 @@ import { ProblemSetCategoryService } from "../../../firebase/db/app/user/subColl
 import { ProblemSetService } from "../../../firebase/db/app/user/subCollection/task/problemSetService";
 import serviceFactory from "../../../firebase/db/factory";
 import { TaskManagementService } from "../../../firebase/db/util/taskManagementService";
+import { objectArrayToDict } from "../../../functions/utils/objectUtils";
 import {
   IndividualTaskRead,
   ProblemSetActivityRead,
@@ -47,12 +48,13 @@ export const createTaskManager = (services: TaskServices) => {
   // store の参照と効率化
   const taskStore = store.getState().taskSlice;
   const {
-    individualTasks: storeIndividualTasks,
+    individualTaskMap,
     problemSetMap,
     activityMap,
     categoryMap,
   } = taskStore;
 
+  const storeIndividualTasks =  Object.values(individualTaskMap);
   const storeProblemSets = Object.values(problemSetMap);
   const storeActivities = Object.values(activityMap);
   const storeCategories = Object.values(categoryMap);
@@ -72,7 +74,7 @@ export const createTaskManager = (services: TaskServices) => {
       newData.categories,
       newData.activities
     );
-    dispatch(setTaskSliceState({ ...newData, ...formatData }));
+    dispatch(setTaskSliceState({ ...formatData, individualTaskMap: objectArrayToDict(newData.individualTasks, 'docId') }));
   };
 
   // ProblemSet ID に基づくリアルタイム更新登録

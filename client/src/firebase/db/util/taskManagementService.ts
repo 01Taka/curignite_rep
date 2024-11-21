@@ -107,7 +107,7 @@ export class TaskManagementService {
       data.activities
     )
 
-    return { individualTasks: data.individualTasks, ...formatData}
+    return { individualTaskMap: objectArrayToDict(data.individualTasks, 'docId'), ...formatData}
   }
   
   static formatDataForExport(

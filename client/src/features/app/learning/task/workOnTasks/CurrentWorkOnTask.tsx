@@ -1,6 +1,6 @@
 import { Box, Button, Typography } from '@mui/material';
 import React from 'react';
-import { TaskData } from '../../../../types/firebase/db/task/taskExpansionTypes';
+import { TaskData } from '../../../../../types/firebase/db/task/taskExpansionTypes';
 
 interface CurrentWorkOnTaskProps {
   currentTask: TaskData | null;

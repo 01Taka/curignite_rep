@@ -1,5 +1,6 @@
 import { TodayCategoryTask, TodayTasks } from "../../../../features/app/task/plan/shared/planTypes";
 import { mathClamp } from "../../../../functions/utils/numberUtils";
+import { removeNullAndUndefined } from "../../../../functions/utils/objectUtils";
 import { arrayToRanges, subtractRanges, sumRanges } from "../../../../functions/utils/rangeUtils";
 import { IndividualTaskRead, ProblemSetCategoryRead, ProblemSetRead } from "../../../../types/firebase/db/task/taskStructure";
 import { UserRead, UserWrite } from "../../../../types/firebase/db/user/userStructure";
@@ -70,13 +71,14 @@ export class UserTaskPlanManager {
         return {
           individualTaskId: task.individualTaskId,
           title: taskData.title,
+          isCompleted: taskData.completed,
           progress: {
             start: Math.min(task.progress.start, taskData.progress),
             current: taskData.progress,
             goal: task.progress.goal,
           },
           totalEstimatedDuration: taskData.estimatedDuration,
-          remainingEstimatedDuration: taskData.estimatedDuration * progressRemaining,
+          estimatedDuration: taskData.estimatedDuration * progressRemaining,
         };
       });
   
@@ -103,12 +105,21 @@ export class UserTaskPlanManager {
     const expandProblemSetTasks = (): ProblemSetTaskPlanExpansion[] =>
       taskPlan.problemSetTasks.map(task => {
         const problemSet = problemSetMap[task.problemSetId];
+        if (!problemSet) {
+          return null;
+        }
+
         const targets = task.targets.map(target => {
           const category = categoryMap[target.categoryId];
+          if (!category) {
+            return null;
+          }
           return processTarget(target, category);
         });
+
+        const validTargets = targets.filter(target => !!target) as ProblemSetTaskPlanTargetExpansion[];
   
-        const remainingEstimatedDuration = targets.reduce(
+        const remainingEstimatedDuration = validTargets.reduce(
           (sum, target) => sum + target.remainingEstimatedDuration,
           0
         );
@@ -116,10 +127,10 @@ export class UserTaskPlanManager {
         return {
           problemSetId: task.problemSetId,
           problemSetName: problemSet.name,
-          targets,
+          targets: validTargets,
           remainingEstimatedDuration,
         };
-      });
+      }).filter(data => !!data) as ProblemSetTaskPlanExpansion[];
   
     return {
       individualTasks: expandIndividualTasks(),
