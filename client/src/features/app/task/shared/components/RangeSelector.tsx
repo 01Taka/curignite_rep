@@ -1,10 +1,10 @@
 import { Box, Typography } from "@mui/material";
 import { forwardRef, useEffect, useImperativeHandle, useMemo } from "react";
-import { ProblemContainerRef } from "../step/problemSetStep/problemSetStepTypes";
-import { isNumberInRange } from "../../../../functions/utils/rangeUtils";
-import useRangeSelection from "../../../hooks/range/useRangeSelection";
-import SnackbarForRangeSelection from "../step/problemSetStep/quickPlanEntry/SnackbarForRangeSelection";
 import RangeNumbersDisplay from "./RangeNumbersDisplay";
+import { isNumberInRange } from "../../../../../functions/utils/rangeUtils";
+import useRangeSelection from "../../../../hooks/range/useRangeSelection";
+import { ProblemContainerRef } from "../../step/problemSetStep/problemSetStepTypes";
+import SnackbarForRangeSelection from "./SnackbarForRangeSelection";
 
 interface ProblemContainerProps {
   id: string;

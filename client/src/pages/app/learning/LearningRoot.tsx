@@ -6,7 +6,7 @@ import ProblemSetStep from '../../../features/app/task/step/problemSetStep/Probl
 import QuickPlanEntry from '../../../features/app/task/step/problemSetStep/quickPlanEntry/QuickPlanEntry';
 import Prob from '../../../features/app/task/step/problemSetStep/quickPlanEntry/SelectDateCalendar';
 import { useAppSelector } from '../../../redux/hooks';
-import TaskPreview from '../../../features/app/learning/task/taksPreview/TaskPreview';
+import TaskPreview from '../../../features/app/learning/task/taskPreview/TaskPreview';
 import WorkOnTasksManager from '../../../features/app/learning/task/workOnTasks/WorkOnTasksManager';
 import { usePreviewTasks } from '../../../features/app/learning/task/shared/usePreviewTasks';
 import TaskOrder from '../../../features/app/learning/task/settings/TaskOrder';

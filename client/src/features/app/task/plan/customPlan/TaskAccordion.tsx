@@ -2,10 +2,10 @@
 import React from 'react';
 import { Accordion, AccordionSummary, AccordionDetails, Typography, Box } from '@mui/material';
 import { TaskData } from '../../../../../types/firebase/db/task/taskExpansionTypes';
-import RangeNumbersDisplay from '../../util/RangeNumbersDisplay';
-import SnackbarForRangeSelection from '../../util/SnackbarForRangeSelection';
-import { getId } from './shared/customPlanUtils';
-import { formatDueDateTime } from '../shared/planUtils';
+import { getId } from '../../shared/utils/plan/customPlanUtils';
+import { formatDueDateTime } from '../../shared/utils/plan/planUtils';
+import RangeNumbersDisplay from '../../shared/components/RangeNumbersDisplay';
+import SnackbarForRangeSelection from '../../shared/components/SnackbarForRangeSelection';
 
 interface TaskAccordionProps {
   task: TaskData;

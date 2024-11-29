@@ -61,31 +61,34 @@ export const sortObjectArray = <T extends Record<string, any>>(
   nullsLast: boolean = true,
   expectedType: "string" | "number" | "boolean" | null = null
 ): T[] => {
-  // 最初の要素の型を取得  
-  const realExpectedType = expectedType ?? typeof arr[0];
+  if (arr.length === 0) return arr; // 空の配列が渡された場合はそのまま返す
 
-  return arr.sort((a, b) => {
+  // 最初の要素の型を取得
+  const realExpectedType = expectedType ?? typeof arr[0][key];
+
+  return [...arr].sort((a, b) => {
     const valueA = a[key];
     const valueB = b[key];
 
     // 型が一致しない場合はnullとみなす
-    const isInvalidA = typeof valueA !== realExpectedType || valueA === null || valueA === undefined;
-    const isInvalidB = typeof valueB !== realExpectedType || valueB === null || valueB === undefined;
+    const isInvalidA = valueA === null || valueA === undefined || typeof valueA !== realExpectedType;
+    const isInvalidB = valueB === null || valueB === undefined || typeof valueB !== realExpectedType;
 
     // 無効な値を先にするか後にするかの処理
     if (isInvalidA && isInvalidB) return 0;
     if (isInvalidA) return nullsLast ? 1 : -1;
     if (isInvalidB) return nullsLast ? -1 : 1;
 
-    // ソートの処理
+    // ソートの処理（数値や文字列以外に対応）
     const order = ascending ? 1 : -1;
+
+    // 数値や文字列の比較
     if (valueA > valueB) return order;
     if (valueA < valueB) return -order;
 
     return 0;
   });
 };
-
 
 /**
  * 辞書をキーまたは値に基づいてソートする関数
@@ -266,6 +269,8 @@ export const removeDuplicatesByKey = <T extends Record<string, any>>(objects: T[
  */
 export const groupingByKey = <T extends Record<string, any>>(objectArray: T[], key: keyof T): Record<string, T[]> => {
   return objectArray.reduce((acc, obj) => {
+      if (obj === undefined || obj === null) return acc
+    
       const groupKey = obj[key];
 
       // groupKeyがstringまたはJSON形式の文字列の場合を確認

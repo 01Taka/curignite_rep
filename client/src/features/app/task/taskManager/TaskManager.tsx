@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Box, Tabs, Tab, Fab, Zoom } from '@mui/material';
 import Tasks from '../tasks/Tasks';
-import FixedTasks from '../fixedTasks/ProblemSets';
+import ProblemSets from '../problemSets/ProblemSets';
 import { Add } from '@mui/icons-material';
 import usePulseOnChange from '../../../hooks/usePulseOnChange';
 import Popup from '../../../../components/display/popup/Popup';
@@ -74,7 +74,7 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
         <CreateTask isFabVisible={isFabVisible} selectedTab={selectedTab} onFabClick={handleFabClick} />
         <Box>
           {selectedTab === 0 && <Tasks />}
-          {selectedTab === 1 && <FixedTasks />}
+          {selectedTab === 1 && <ProblemSets />}
         </Box>
         <Box height={200} />
       </Box>

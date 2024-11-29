@@ -8,8 +8,6 @@ interface ActivityRangesDisplayProps {
 }
 
 const ActivityRangesDisplay: React.FC<ActivityRangesDisplayProps> = ({ activityStatuses }) => {
-  console.log(activityStatuses);
-  
   return (
     <Box>
       {activityStatuses.map(status => (

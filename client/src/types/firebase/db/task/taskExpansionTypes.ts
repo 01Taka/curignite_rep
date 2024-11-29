@@ -5,6 +5,7 @@ import { ProblemSetActivityManagementMethod } from "./taskSupplementTypes";
 export interface TaskData extends IndividualTaskRead {
   isIndividual: boolean;
   remainingEstimatedDuration: number;
+  formatEstDuration: string;
   problemSetActivityField?: ProblemSetActivityField; // 問題集の活動フィールド
 }
 
@@ -45,3 +46,8 @@ export interface FullProblemSetData {
   categories: ProblemSetCategoryRead[];
 }
 
+export interface ProblemSetStructure {
+  problemSetId: string;
+  categoryIds: string[];
+  activityIds: string[];
+}

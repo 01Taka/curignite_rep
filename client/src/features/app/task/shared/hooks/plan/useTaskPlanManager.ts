@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from "react";
-import serviceFactory from "../../../../../firebase/db/factory";
-import useMultipleAsyncHandler from "../../../../hooks/form/useMultipleAsyncHandler";
-import { useAppSelector } from "../../../../../redux/hooks";
-import { TodayTasks } from "./planTypes";
+import serviceFactory from "../../../../../../firebase/db/factory";
+import { useAppSelector } from "../../../../../../redux/hooks";
+import useMultipleAsyncHandler from "../../../../../hooks/form/useMultipleAsyncHandler";
+import { TodayTasks } from "../../types/plan/planTypes";
 
 export const useTaskPlanManager = () => {
   const uid = useAppSelector(state => state.userSlice.uid);

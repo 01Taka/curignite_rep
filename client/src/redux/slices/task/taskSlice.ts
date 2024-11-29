@@ -1,18 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { TaskData } from '../../../types/firebase/db/task/taskExpansionTypes';
+import { ProblemSetStructure, TaskData } from '../../../types/firebase/db/task/taskExpansionTypes';
 import { IndividualTaskRead, ProblemSetActivityRead, ProblemSetCategoryRead, ProblemSetRead } from '../../../types/firebase/db/task/taskStructure';
 
-interface TaskSliceState {
+export interface TaskSliceState {
   tasks: TaskData[];
   individualTaskMap: Record<string, IndividualTaskRead>;
   activityMap: Record<string, ProblemSetActivityRead>;
   categoryMap: Record<string, ProblemSetCategoryRead>;
   problemSetMap: Record<string, ProblemSetRead>;
-  problemSetStructures: {
-    problemSetId: string;
-    categories: ProblemSetCategoryRead[];
-    activities: ProblemSetActivityRead[];
-  }[]
+  problemSetStructureMap: Record<string, ProblemSetStructure>;
 }
 
 const initialState: TaskSliceState = {
@@ -21,7 +17,7 @@ const initialState: TaskSliceState = {
   activityMap: {},
   categoryMap: {},
   problemSetMap: {},
-  problemSetStructures: []
+  problemSetStructureMap: {}
 };
 
 const taskSlice = createSlice({
@@ -29,6 +25,8 @@ const taskSlice = createSlice({
   initialState,
   reducers: {
     setTaskSliceState: (_, action: PayloadAction<TaskSliceState>) => {
+      console.log(action.payload);
+      
       return action.payload;
     },
     setTasks: (state, action: PayloadAction<TaskData[]>) => {

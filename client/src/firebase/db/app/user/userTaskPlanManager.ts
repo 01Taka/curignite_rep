@@ -1,4 +1,4 @@
-import { TodayCategoryTask, TodayTasks } from "../../../../features/app/task/plan/shared/planTypes";
+import { TodayCategoryTask, TodayTasks } from "../../../../features/app/task/shared/types/plan/planTypes";
 import { mathClamp } from "../../../../functions/utils/numberUtils";
 import { removeNullAndUndefined } from "../../../../functions/utils/objectUtils";
 import { arrayToRanges, subtractRanges, sumRanges } from "../../../../functions/utils/rangeUtils";

@@ -3,16 +3,24 @@ import { FC, ReactNode } from "react";
 import { Close } from "@mui/icons-material";
 
 interface PopupProps {
-  open: boolean;
+  open?: boolean;
   children: ReactNode;
   height?: string | number;
   props?: SxProps;
   centeredItem?: boolean;
   fixationCloseButton?: boolean;
-  handleClose: () => void;
+  handleClose?: () => void;
 }
 
-const Popup: FC<PopupProps> = ({ open, children, height = 'fit-content', centeredItem, fixationCloseButton, props, handleClose }) => {
+const Popup: FC<PopupProps> = ({
+  open = true,
+  children,
+  height = 'fit-content',
+  centeredItem,
+  fixationCloseButton,
+  props,
+  handleClose = () => {}
+}) => {
   return (
     <Modal
       open={open}

@@ -1,10 +1,10 @@
 import { Box, Typography } from '@mui/material';
 import React from 'react';
-import { TaskData } from '../../../../types/firebase/db/task/taskExpansionTypes';
-import ActivityRangesDisplay from '../fixedTasks/submissions/ActivityRangesDisplay';
+import { TaskData } from '../../../../../types/firebase/db/task/taskExpansionTypes';
 import { format } from 'date-fns';
-import { convertToDate, formatDateDifference, isBeforeDateTime } from '../../../../functions/utils/dateTimeUtils';
+import { convertToDate, formatDateDifference, isBeforeDateTime } from '../../../../../functions/utils/dateTimeUtils';
 import { ja } from 'date-fns/locale';
+import TaskDetailHeading from './TaskDetailHeading';
 
 interface TaskDetailsProps {
   task: TaskData;
@@ -28,14 +28,7 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ task }) => {
       bgcolor: 'beige',
       height: '95vh'
     }}>
-      <Box sx={boxStyle}>
-        <Typography>
-          {task.title}
-        </Typography>
-        {task.problemSetActivityField && 
-          <ActivityRangesDisplay activityStatuses={task.problemSetActivityField.activityStatus}/>
-        }
-      </Box>
+      <TaskDetailHeading task={task} sx={boxStyle} />
       <Box sx={boxStyle}>
         {task.dueDateTime ? (
           <Typography color={dueDateColor}>

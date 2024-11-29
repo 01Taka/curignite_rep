@@ -1,5 +1,5 @@
 import { groupingByKey, objectArrayToDict } from "../../../functions/utils/objectUtils";
-import { CategoryActivityStatus, ProblemSetActivityField, TaskData } from "../../../types/firebase/db/task/taskExpansionTypes";
+import { CategoryActivityStatus, ProblemSetActivityField, ProblemSetStructure, TaskData } from "../../../types/firebase/db/task/taskExpansionTypes";
 import { validateNumber } from "../../../functions/utils/formUtils";
 import { isNumberInRange, rangesToArray } from "../../../functions/utils/rangeUtils";
 import { CategoryActivity } from "../../../types/firebase/db/task/taskSupplementTypes";
@@ -8,14 +8,19 @@ import { ProblemSetService } from "../app/user/subCollection/task/problemSetServ
 import { ProblemSetActivityService } from "../app/user/subCollection/task/problemSetActivityService";
 import { ProblemSetCategoryService } from "../app/user/subCollection/task/problemSetCategoryService";
 import { IndividualTaskService } from "../app/user/subCollection/task/individualTaskService";
+import { timeOmissionFormat } from "../../../functions/utils/dateTimeUtils";
 
 export class TaskManagementService {
   static individualTasksToTasksData(individualTasks: IndividualTaskRead[]): TaskData[] {
-    return individualTasks.map(task => ({
-      ...task,
-      isIndividual: true,
-      remainingEstimatedDuration: (1 - task.progress) * task.estimatedDuration,
-    }));
+    return individualTasks.map(task => {
+      const remainingEstimatedDuration = (1 - task.progress) * task.estimatedDuration
+      return {
+        ...task,
+        isIndividual: true,
+        remainingEstimatedDuration,
+        formatEstDuration: timeOmissionFormat(remainingEstimatedDuration)
+      }
+    });
   }
 
   static createTaskData(
@@ -109,6 +114,21 @@ export class TaskManagementService {
 
     return { individualTaskMap: objectArrayToDict(data.individualTasks, 'docId'), ...formatData}
   }
+
+  static createProblemSetStructure = (
+    problemSet: ProblemSetRead,
+    categoriesByParent: Record<string, ProblemSetCategoryRead[]>,
+    activitiesByParent: Record<string, ProblemSetActivityRead[]>
+  ): ProblemSetStructure => {
+    const problemSetId = problemSet.docId;
+    const categories = categoriesByParent[problemSetId] ?? [];
+    const activities = activitiesByParent[problemSetId] ?? [];
+    return {
+      problemSetId,
+      categoryIds: categories.map(category => category.docId),
+      activityIds: activities.map(activity => activity.docId),
+    } as ProblemSetStructure
+  }
   
   static formatDataForExport(
     individualTasks: IndividualTaskRead[],
@@ -127,18 +147,17 @@ export class TaskManagementService {
     const activityMap = objectArrayToDict(activities, 'docId');
   
     // 構造データを生成
-    const problemSetStructures = problemSets.map(problemSet => ({
-      problemSetId: problemSet.docId,
-      categories: categoriesByParent[problemSet.docId] || [],
-      activities: activitiesByParent[problemSet.docId] || []
-    }));
-  
+    const problemSetStructures = problemSets.flatMap(problemSet => (
+      this.createProblemSetStructure(problemSet, categoriesByParent, activitiesByParent)
+    ));
+    const problemSetStructureMap = objectArrayToDict(problemSetStructures, "problemSetId");
+
     return {
       tasks,
       problemSetMap,
       categoryMap,
       activityMap,
-      problemSetStructures
+      problemSetStructureMap
     };
   }
 
@@ -200,6 +219,7 @@ export class TaskManagementService {
         ...baseData,
         estimatedDuration: totalEstimatedDuration,
         remainingEstimatedDuration,
+        formatEstDuration: timeOmissionFormat(remainingEstimatedDuration),
         progress,
         isIndividual: false,
         completed: progress === 1,

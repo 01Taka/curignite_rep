@@ -2,6 +2,7 @@ import React from 'react';
 import { TaskData } from '../../../../types/firebase/db/task/taskExpansionTypes';
 import { Box, Typography } from '@mui/material';
 import { formatDateDifference, isBeforeDateTime } from '../../../../functions/utils/dateTimeUtils';
+import { dynamicStyles } from '../../../../styles/mui/dynamicStyles';
 
 interface SimpleTaskContainerProps {
   task: TaskData;
@@ -13,11 +14,8 @@ const SimpleTaskContainer: React.FC<SimpleTaskContainerProps> = ({ task }) => {
   
   return (
     <Box sx={{
-      display: 'flex',
-      alignItems: 'center',
-      padding: 1,
-      border: 1,
-      borderRadius: 2
+      ...dynamicStyles.flexCenter({ direction: 'row' }),
+      ...dynamicStyles.card()
     }}>
       <Typography flex={4}>
         {task.title}

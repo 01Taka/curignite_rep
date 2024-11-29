@@ -4,10 +4,10 @@ import { Box, Button, Typography } from '@mui/material';
 import TaskCheckbox from './TaskCheckbox';
 import TaskAccordion from './TaskAccordion';
 import { TaskData } from '../../../../../types/firebase/db/task/taskExpansionTypes';
-import useCustomPlan from './shared/useCustomPlan';
-import { millToMin } from '../shared/planUtils';
-import { TodayTasks } from '../shared/planTypes';
+import { millToMin } from '../../shared/utils/plan/planUtils';
+import { TodayTasks } from '../../shared/types/plan/planTypes';
 import { ProblemSetCategoryRead } from '../../../../../types/firebase/db/task/taskStructure';
+import useCustomPlan from '../../shared/hooks/plan/useCustomPlan';
 
 interface CustomPlanProps {
   studyTimeNeededToday: number;

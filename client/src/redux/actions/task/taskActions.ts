@@ -25,6 +25,11 @@ class IDManager {
     }
     return this._idMap.get(genre)!;
   }
+
+  // IDManagerのリセット機能を追加
+  static reset() {
+    this._idMap.clear();
+  }
 }
 
 // 型定義
@@ -45,75 +50,85 @@ interface TaskServices {
 
 // TaskManagerのファクトリ関数
 export const createTaskManager = (services: TaskServices) => {
-  // store の参照と効率化
-  const taskStore = store.getState().taskSlice;
-  const {
-    individualTaskMap,
-    problemSetMap,
-    activityMap,
-    categoryMap,
-  } = taskStore;
-
-  const storeIndividualTasks =  Object.values(individualTaskMap);
-  const storeProblemSets = Object.values(problemSetMap);
-  const storeActivities = Object.values(activityMap);
-  const storeCategories = Object.values(categoryMap);
+  // 追加: ロック機構を管理するフラグ
+  let isDispatching = false;
 
   // ディスパッチ用のデータ更新関数
-  const dispatchData = (dispatch: AppDispatch, data: TaskData) => {
-    const newData = {
-      individualTasks: data.individualTasks ?? storeIndividualTasks,
-      problemSets: data.problemSets ?? storeProblemSets,
-      activities: data.activities ?? storeActivities,
-      categories: data.categories ?? storeCategories,
-    };
+  const dispatchData = async (data: TaskData, dispatch: AppDispatch) => {
+    if (isDispatching) return; // ロックされている場合は処理しない
+    isDispatching = true;
 
-    const formatData = TaskManagementService.formatDataForExport(
-      newData.individualTasks,
-      newData.problemSets,
-      newData.categories,
-      newData.activities
-    );
-    dispatch(setTaskSliceState({ ...formatData, individualTaskMap: objectArrayToDict(newData.individualTasks, 'docId') }));
+    try {
+      const state = store.getState();
+      const { taskSlice } = state;
+      const { individualTaskMap, problemSetMap, activityMap, categoryMap } = taskSlice;
+
+      const storeIndividualTasks = Object.values(individualTaskMap);
+      const storeProblemSets = Object.values(problemSetMap);
+      const storeActivities = Object.values(activityMap);
+      const storeCategories = Object.values(categoryMap);
+
+      const newData = {
+        individualTasks: data.individualTasks ?? storeIndividualTasks,
+        problemSets: data.problemSets ?? storeProblemSets,
+        activities: data.activities ?? storeActivities,
+        categories: data.categories ?? storeCategories,
+      };
+
+      const formatData = TaskManagementService.formatDataForExport(
+        newData.individualTasks,
+        newData.problemSets,
+        newData.categories,
+        newData.activities
+      );
+
+      dispatch(setTaskSliceState({
+        ...formatData,
+        individualTaskMap: objectArrayToDict(newData.individualTasks, 'docId'),
+      }));
+    } catch (error) {
+      console.error("Error in dispatchData:", error);
+    } finally {
+      isDispatching = false; // 処理が完了したらロック解除
+    }
   };
 
-  // ProblemSet ID に基づくリアルタイム更新登録
   const dispatchCallbackWithProblemSetIds = (userId: string, dispatch: AppDispatch) => {
-    let problemSetIds = storeProblemSets.map((problemSet) => problemSet.docId);
     const ids = Object.fromEntries(['problemSet', 'activity', 'category', 'individualTask'].map(
       genre => ([genre, IDManager.getId(genre)])
     )) as Record<'problemSet' | 'activity' | 'category' | 'individualTask', string>;
 
+    const updateProblemSetChildCallback = (userId: string, problemSetIds: string[], dispatch: AppDispatch) => {
+      // Activity 更新コールバック
+      services.activityService.addCollectionCallbackToAll(userId, problemSetIds, (activities) => {
+        dispatchData({ activities }, dispatch);
+      }, ids.activity);
+
+      // Category 更新コールバック
+      services.categoryService.addCollectionCallbackToAll(userId, problemSetIds, (categories) => {
+        dispatchData({ categories }, dispatch);
+      }, ids.category);
+    };
+
     // ProblemSet 更新コールバック
     services.problemSetService.addCollectionCallback(userId, (problemSets) => {
-      problemSetIds = problemSets.map((problemSet) => problemSet.docId);
-      dispatchData(dispatch, { problemSets });
+      const problemSetIds = problemSets.map((problemSet) => problemSet.docId);
+      updateProblemSetChildCallback(userId, problemSetIds, dispatch);
+      dispatchData({ problemSets }, dispatch);
     }, ids.problemSet);
-
-    // Activity 更新コールバック
-    services.activityService.addCollectionCallbackToAll(userId, problemSetIds, (activities) => {
-      dispatchData(dispatch, { activities });
-    }, ids.activity);
-
-    // Category 更新コールバック
-    services.categoryService.addCollectionCallbackToAll(userId, problemSetIds, (categories) => {
-      dispatchData(dispatch, { categories });
-    }, ids.category);
 
     // Individual Task 更新コールバック
     services.individualTaskService.addCollectionCallback(userId, (individualTasks) => {
-      dispatchData(dispatch, { individualTasks });
+      dispatchData({ individualTasks }, dispatch);
     }, ids.individualTask);
   };
 
-  // 初期化関数
   const initializeTaskSlice = async (userId: string, dispatch: AppDispatch) => {
     try {
       const formatData = await TaskManagementService.fetchAllTasksAsFormatData(userId, services);
       dispatch(setTaskSliceState(formatData));
     } catch (error) {
       console.error("Failed to initialize task slice:", error);
-      // 必要に応じてフォールバックを実装
     }
   };
 
@@ -130,6 +145,7 @@ const taskManager = createTaskManager({
 
 // 初期化例
 export const initializeTasks = async (userId: string, dispatch: AppDispatch) => {
+  IDManager.reset(); // IDManagerを初期化
   await taskManager.initializeTaskSlice(userId, dispatch);
 };
 
@@ -138,9 +154,11 @@ export const setupRealTimeUpdates = (userId: string, dispatch: AppDispatch) => {
   taskManager.dispatchCallbackWithProblemSetIds(userId, dispatch);
 };
 
+// リアルタイム更新削除例
 export const removeRealTimeUpdates = (userId: string, services: TaskServices) => {
   const taskStore = store.getState().taskSlice;
-  const problemSetIds = Object.keys(taskStore.problemSetMap)
+  const problemSetIds = Object.keys(taskStore.problemSetMap);
+
   services.activityService.removeCollectionCallbackToAll(userId, problemSetIds, IDManager.getId('activity'));
   services.categoryService.removeCollectionCallbackToAll(userId, problemSetIds, IDManager.getId('category'));
   services.problemSetService.removeCollectionCallback(userId, IDManager.getId('problemSet'));

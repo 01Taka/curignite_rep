@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Checkbox, FormControlLabel, Typography, Box, Slider } from '@mui/material';
 import { TaskData } from '../../../../../types/firebase/db/task/taskExpansionTypes';
-import { formatDueDateTime, millToMin } from '../shared/planUtils';
-import { TodayIndividualTask } from '../shared/planTypes';
+import { formatDueDateTime, millToMin } from '../../shared/utils/plan/planUtils';
+import { TodayIndividualTask } from '../../shared/types/plan/planTypes';
 
 interface TaskCheckboxProps {
   task: TaskData;

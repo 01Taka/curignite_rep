@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Button, Snackbar } from '@mui/material';
-import { RangeSelectionState } from '../../../hooks/range/rangeHookTypes';
+import { RangeSelectionState } from '../../../../hooks/range/rangeHookTypes';
 
 interface SnackbarForRangeSelectionProps {
   categoryName: string;
