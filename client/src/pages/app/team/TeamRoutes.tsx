@@ -25,7 +25,7 @@ const TeamRoutes: FC = () => {
     <>
       <Routes>
         <Route path='' element={<TeamIndexNavigation />} />
-        <Route path={getLastSegment(teamPaths.home, true)} element={<TeamHome />} />
+        <Route path={getLastSegment(teamPaths.home, { wildcard: true })} element={<TeamHome />} />
         <Route path={getLastSegment(teamPaths.menu)} element={<TeamMenu />} />
         <Route
           path={getLastSegment(teamPaths.create)}

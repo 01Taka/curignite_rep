@@ -25,8 +25,6 @@ const taskSlice = createSlice({
   initialState,
   reducers: {
     setTaskSliceState: (_, action: PayloadAction<TaskSliceState>) => {
-      console.log(action.payload);
-      
       return action.payload;
     },
     setTasks: (state, action: PayloadAction<TaskData[]>) => {

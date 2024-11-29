@@ -8,6 +8,10 @@ import Popup from '../../../../components/display/popup/Popup';
 import CreateIndividualTask from '../createTask/createIndividualTask/CreateIndividualTask';
 import useEventListener from '../../../hooks/useEventListener';
 import CreateProblemSet from '../createTask/createProblemSet/CreateProblemSet';
+import useLocationTab from './useLocationTab';
+import { taskPaths } from '../../../../types/path/mainPaths';
+import { Route } from 'react-router-dom';
+import { appPaths } from '../../../../types/path/appPaths';
 
 interface TaskManagerProps {}
 
@@ -46,7 +50,13 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
   const [isFabVisible, setIsFabVisible] = useState(true);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+
+  const { RouteElement, TabsElement } = useLocationTab([
+    { label: "タスク一覧", path: appPaths.task.list, element: <Tasks /> },
+    { label: "問題集", path: appPaths.task.problemSets, element: <ProblemSets /> }
+  ], { defaultAbsPath: appPaths.task.list._abs, navigateOptions: { replace: true }})
+
+  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     setSelectedTab(newValue);
   };
 
@@ -63,6 +73,13 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
   const handleFabClick = () => {
     setSelectedForm(selectedTab);
   }
+
+  return (
+    <Box>
+      {TabsElement}
+      {RouteElement}
+    </Box>
+  )
 
   return (
     <>

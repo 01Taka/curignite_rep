@@ -4,7 +4,7 @@ import Home from '../home/Home';
 import TeamRoutes from '../team/TeamRoutes';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import NotFound from '../../error/NotFound';
-import { CircularProgress } from '@mui/material';
+import { Box, CircularProgress } from '@mui/material';
 import { mainRootPaths } from '../../../types/path/mainPaths';
 import { autoUpdateSpaces } from '../../../redux/actions/space/spaceActions';
 import { setApprovedTeams } from '../../../redux/actions/team/teamActions';
@@ -14,6 +14,9 @@ import { updateCurrentGoal } from '../../../redux/actions/learning/learningGoalA
 import LearningRoot from '../learning/LearningRoot';
 import TaskRoot from '../task/TaskRoot';
 import { initializeTasks, setupRealTimeUpdates } from '../../../redux/actions/task/taskActions';
+import { appPaths } from '../../../types/path/appPaths';
+
+
 
 const MainRoutes: FC = () => {
   const dispatch = useAppDispatch();
@@ -28,20 +31,18 @@ const MainRoutes: FC = () => {
       setupRealTimeUpdates(uid, dispatch);
     }
   }, [dispatch, uid]);
-
+  
   return (
-    <div className='w-full h-full bg-primaryBase overflow-auto'>
-      <Routes>
+    <Routes>
         {userFetchState.state !== "success" && <Route path="/*" element={<CircularProgress />} />}
         <Route path="/" element={<Home />} />
         <Route path='*' element={<NotFound />} />
         <Route path={mainRootPaths.learning} element={<LearningRoot />} />
-        <Route path={mainRootPaths.task} element={<TaskRoot />} />
+        <Route path={`${appPaths.task._rel}/*`} element={<TaskRoot />} />
         <Route path={mainRootPaths.focusLearning} element={<FocusLearning />} />
         <Route path={mainRootPaths.team} element={<TeamRoutes />} />
         <Route path={mainRootPaths.activeMember} element={<ActiveMemberRoutes />} />
       </Routes>
-    </div>
   );
 };
 

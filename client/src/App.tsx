@@ -11,6 +11,7 @@ import { useAppDispatch } from './redux/hooks';
 import { initializeApp, handleUpdateDevice } from './redux/actions/app/appThunks';
 import { rootPaths } from './types/path/paths';
 import Test from './test/Test';
+import { appPaths } from './types/path/appPaths';
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -23,15 +24,13 @@ const App: React.FC = () => {
   }, [dispatch]);
 
   return (
-    <Navigation>
-      <Routes>
-        {/* <Route path='/*' element={<Test />} /> */}
-        <Route path={rootPaths.top} element={<TopPage />} />
-        <Route path={`${rootPaths.auth}/*`} element={<AuthRoutes />} />
-        <Route path={`${rootPaths.main}/*`} element={<MainRoutes />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </Navigation>
+    <Routes>
+      {/* <Route path='/*' element={<Test />} /> */}
+      <Route path={rootPaths.top} element={<TopPage />} />
+      <Route path={`${rootPaths.auth}/*`} element={<AuthRoutes />} />
+      <Route path={`${appPaths._abs}/*`} element={<MainRoutes />} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 };
 

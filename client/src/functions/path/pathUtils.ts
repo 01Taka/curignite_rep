@@ -20,29 +20,26 @@ export const replaceParams = (path: string, params: ParamReplace): string => {
  * @param paramReplace - パスのパラメータを置換するオブジェクト
  * @returns - パスの最後のセグメント
  */
-export function getLastSegment(path: string, wildcard: boolean = false, paramReplace?: ParamReplace): string {
+export function getLastSegment(path: string, options?: Partial<{ wildcard: boolean, paramReplace: ParamReplace, startPosition: number }>): string {
   if (typeof path !== 'string' || path.trim() === '') {
     throw new Error('パスは有効な文字列である必要があります');
   }
 
   // オプションのパラメータ置換を適用
-  const replacedPath = paramReplace ? replaceParams(path, paramReplace) : path;
+  const replacedPath = options?.paramReplace ? replaceParams(path, options.paramReplace) : path;
 
   // 最後のスラッシュの位置を取得
-  const lastSlashIndex = replacedPath.lastIndexOf('/');
+  let lastSlashIndex = replacedPath.length - 1;
+
+  for (let index = 0; index < Math.abs((options?.startPosition) ?? 1); index++) {
+    lastSlashIndex = replacedPath.lastIndexOf('/', lastSlashIndex - 1);
+    if (replacedPath[lastSlashIndex + 1] === ":") {
+      index -= 1;
+    }
+  }
   
   // 最後のセグメントを取得
   let lastSegment = lastSlashIndex === -1 ? replacedPath : replacedPath.substring(lastSlashIndex + 1);
 
-  // 最後のセグメントがパラメータの場合、その一つ前のセグメントも含める
-  if (lastSegment.startsWith(":")) {
-    const secondLastSlashIndex = replacedPath.lastIndexOf('/', lastSlashIndex - 1);
-    if (secondLastSlashIndex !== -1) {
-      lastSegment = replacedPath.substring(secondLastSlashIndex + 1);
-    } else {
-      lastSegment = replacedPath;
-    }
-  }
-
-  return `${lastSegment}${wildcard ? "/*" : ""}`;
+  return `${lastSegment}${options?.wildcard ? "/*" : ""}`;
 }

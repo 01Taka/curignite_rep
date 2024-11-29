@@ -1,15 +1,15 @@
 import React from 'react';
 import TaskManager from '../../../features/app/task/taskManager/TaskManager';
+import { Route, Routes } from 'react-router-dom';
 // import GoalSettingForm from '../../../features/app/task/goalSetting/GoalSettingForm';
 
-interface TaskRootProps { }
+interface TaskRootProps {}
 
 const TaskRoot: React.FC<TaskRootProps> = () => {
   return (
-    <div>
-      {/* <GoalSettingForm /> */}
-      <TaskManager />
-    </div>
+    <Routes>
+      <Route path='/*' element={<TaskManager />} />
+    </Routes>
   );
 };
 

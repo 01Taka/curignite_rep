@@ -73,9 +73,17 @@ export const focusLearningPaths = {
 
 export const taskPaths = {
   base: mainPaths.task,
+  detailPaths: {
+    individual: `${mainPaths.task}/individual/:taskId`,
+  },
+  createPaths: {
+    individual: `${mainPaths.task}/createindividual`,
+    problemSet: `${mainPaths.task}/createproblemSet`,
+    activity: `${mainPaths.task}/create`
+  },
+  
   home: `${mainPaths.task}/home`,
   collections: `${mainPaths.task}/collections`,
-  create: `${mainPaths.task}/home/create`,
   createChildren: {
     individual:`${mainPaths.task}/home/create/individual`,
     collection:`${mainPaths.task}/home/create/collection`, 
