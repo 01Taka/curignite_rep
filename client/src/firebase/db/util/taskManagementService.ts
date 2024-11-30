@@ -11,16 +11,18 @@ import { IndividualTaskService } from "../app/user/subCollection/task/individual
 import { timeOmissionFormat } from "../../../functions/utils/dateTimeUtils";
 
 export class TaskManagementService {
+  static individualTaskToTaskData(individualTask: IndividualTaskRead): TaskData {
+    const remainingEstimatedDuration = (1 - individualTask.progress) * individualTask.estimatedDuration
+    return {
+      ...individualTask,
+      isIndividual: true,
+      remainingEstimatedDuration,
+      formatEstDuration: timeOmissionFormat(remainingEstimatedDuration)
+    }
+  }
+
   static individualTasksToTasksData(individualTasks: IndividualTaskRead[]): TaskData[] {
-    return individualTasks.map(task => {
-      const remainingEstimatedDuration = (1 - task.progress) * task.estimatedDuration
-      return {
-        ...task,
-        isIndividual: true,
-        remainingEstimatedDuration,
-        formatEstDuration: timeOmissionFormat(remainingEstimatedDuration)
-      }
-    });
+    return individualTasks.map(task => this.individualTaskToTaskData(task));
   }
 
   static createTaskData(

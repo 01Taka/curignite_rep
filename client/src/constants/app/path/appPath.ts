@@ -1,23 +1,18 @@
 import { createPathStructure } from "../../../functions/utils/pathUtils";
 import { PathStructure } from "../../../types/app/pathTypes";
 
-const createPath = (rel: string = ""): PathStructure => ({
+const createPath = (options?: Partial<{ rel: string, param: string }>): PathStructure => ({
   _abs: "",
-  _rel: rel,
+  _rel: options?.rel ?? "",
+  _param: options?.param
 });
 
 const appPathStructure = {
   ...createPath(),
   task: {
     ...createPath(),
-    list: {
-      ...createPath(),
-      taskDetail: createPath(),
-    },
-    problemSets: {
-      ...createPath(),
-      problemSetDetail: createPath(),
-    },
+    list: createPath(),
+    problemSets: createPath()
   },
 };
 

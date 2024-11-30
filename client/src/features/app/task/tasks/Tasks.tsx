@@ -7,22 +7,13 @@ import ClickableContainer from '../../../../components/container/ClickableContai
 import Popup from '../../../../components/display/popup/Popup';
 import TaskDetails from './details/TaskDetails';
 import { dynamicStyles } from '../../../../styles/mui/dynamicStyles';
-import useLog from '../../../hooks/useLog';
 import { sortTasks } from '../shared/utils/taskUtils';
-import { Route, Routes, useLocation, useParams } from 'react-router-dom';
-import { taskPaths } from '../../../../types/path/mainPaths';
-import { getLastSegment } from '../../../../functions/path/pathUtils';
 
-
-interface TasksProps {
-
-}
+interface TasksProps {}
 
 const Tasks: React.FC<TasksProps> = () => {
-  const location = useLocation();
-  const param = useParams();
-  const [showDetailTaskfsfaw, setShowDetailTask] = useState<TaskData | null>(null);
-  const { tasks, individualTaskMap } = useAppSelector(state => state.taskSlice);
+  const [showDetailTask, setShowDetailTask] = useState<TaskData | null>(null);
+  const { tasks } = useAppSelector(state => state.taskSlice);
   const sortedTasks = useMemo(() => sortTasks(tasks, "dueDateTime"), [tasks]) as TaskData[];
 
   return (
@@ -42,20 +33,11 @@ const Tasks: React.FC<TasksProps> = () => {
           </ClickableContainer>
         ))}
       </Box>
-      <Routes>
-        <Route path={getLastSegment(taskPaths.detailPaths.individual)} element={<Sample />} />
-      </Routes>
-      {/* <Popup open={!!showDetailTask && location.pathname === taskPaths.createPaths.individual} handleClose={() => setShowDetailTask(null)} >
-        {showDetailTask && <TaskDetails task={showDetailTask} />}
-      </Popup> */}
+      <Popup open={!!showDetailTask} handleClose={() => setShowDetailTask(null)}>
+        {showDetailTask && <TaskDetails task={showDetailTask}/>}
+      </Popup>
     </>
   );
 };
-
-const Sample = () => {
-  const param = useParams();
-  useLog(param)
-  return <Box>AAAAAAAAAAAA</Box>
-}
 
 export default Tasks;

@@ -1,24 +1,36 @@
 import { toKebabCase } from "../../functions/utils/stringUtils";
 import { PathStructure } from "../../types/app/pathTypes";
 
-export const createPathStructure = (path: PathStructure, relPath: string = "", absPath: string = ""): PathStructure => {
+export const createPathStructure = (
+  path: PathStructure,
+  relPath: string = "",
+  absPath: string = "",
+  param?: string
+): PathStructure => {
   const updatedPath: PathStructure = {
     _abs: absPath,
     _rel: relPath,
+    _param: param,
   };
 
   Object.entries(path)
-    .filter(([key]) => !["_abs", "_rel"].includes(key))
+    .filter(([key]) => !["_abs", "_rel", "_param"].includes(key)) // 無視するキーをフィルタリング
     .forEach(([key, value]) => {
-      if (typeof value !== "object" || value === null) {
+      if (!isPathStructure(value)) {
         throw new Error("Nested values must be an object of PathStructure.");
       }
-      const item = typeof path[key] === "object" ? path[key] as PathStructure : null;
-      const relPath = toKebabCase((!!item && item._rel) || key);
-      updatedPath[key] = createPathStructure(value, relPath, `${absPath}/${relPath}`);
+
+      const item = value as PathStructure;
+      const newRelPath = `${toKebabCase(item._rel || key)}${item._param ? `/:${item._param}` : ""}`;
+      updatedPath[key] = createPathStructure(item, newRelPath, `${absPath}/${newRelPath}`, item._param);
     });
 
   return updatedPath;
+};
+
+// PathStructure型かどうかを確認するガード関数
+const isPathStructure = (value: any): value is PathStructure => {
+  return typeof value === "object" && value !== null && "_abs" in value && "_rel" in value;
 };
 
 export const getPathList = (
@@ -48,4 +60,21 @@ export const getPathList = (
 
   const paths = collectPaths(path);
   return includeRoot ? paths : paths.filter(item => item !== path[pathType]);
+};
+
+export const removeParam = (path: string): string => {
+  return path.replace(/\/:[^/]+/g, '');  // `/:param` を削除
+};
+
+/**
+ * パスのパラメータを置換する関数
+ * @param path - パス文字列
+ * @param params - パスのパラメータを置換するオブジェクト
+ * @returns - 置換後のパス
+ */
+export const replaceParams = (path: string, params: Record<string, string>): string => {
+  return path.replace(/:([a-zA-Z0-9_]+)/g, (match, key) => {
+    // パラメータが存在すれば置換し、なければそのまま保持
+    return key in params ? params[key] : match;
+  });
 };

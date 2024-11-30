@@ -13,6 +13,9 @@ import useDefaultNavigation from '../../hooks/navigate/useDefaultNavigation';
 import useSwitchComponents from '../../hooks/components/useSwitchComponents';
 import { appPaths } from '../../../constants/app/path/appPath';
 import { getPathList } from '../../../functions/utils/pathUtils';
+import { useNavigate, useParams } from 'react-router-dom';
+import { UseLocationTabChildren, UseLocationTabItem } from '../../hooks/navigate/shared/types/useLocationTabTypes';
+import TaskDetails from './tasks/details/TaskDetails';
 
 interface TaskManagerProps {}
 
@@ -53,13 +56,14 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
 
   const { RouteElement, TabsElement, selectedItem } = useLocationTab([
     { id: "list", label: "タスク一覧", path: appPaths.task.list, element: <Tasks /> },
-    { id: "problemSet", label: "問題集", path: appPaths.task.problemSets, element: <ProblemSets /> }
+    { id: "problemSet", label: "問題集", path: appPaths.task.problemSets, element: <ProblemSets />}
   ], { navigateOptions: { replace: true }});
 
   const { Component, isUsingDefaultComponent, switchToDefault, switchComponent } = useSwitchComponents([
     { id: "createIndividual", Component: <CreateIndividualTask /> },
     { id: "createProblemSet", Component: <CreateProblemSet /> }
   ])
+
 
   const handleScroll = () => {
     if (containerRef.current) {

@@ -1,10 +1,15 @@
 import { Box, Typography } from '@mui/material';
 import React from 'react';
-import { TaskData } from '../../../../../types/firebase/db/task/taskExpansionTypes';
 import { format } from 'date-fns';
 import { convertToDate, formatDateDifference, isBeforeDateTime } from '../../../../../functions/utils/dateTimeUtils';
 import { ja } from 'date-fns/locale';
 import TaskDetailHeading from './TaskDetailHeading';
+import { useParams } from 'react-router-dom';
+import { useAppSelector } from '../../../../../redux/hooks';
+import { TaskManagementService } from '../../../../../firebase/db/util/taskManagementService';
+import { appPaths } from '../../../../../constants/app/path/appPath';
+import { dynamicStyles } from '../../../../../styles/mui/dynamicStyles';
+import { TaskData } from '../../../../../types/firebase/db/task/taskExpansionTypes';
 
 interface TaskDetailsProps {
   task: TaskData;
@@ -52,7 +57,6 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ task }) => {
           </Typography>
         )}
       </Box>
-      
     </Box>
   );
 };
