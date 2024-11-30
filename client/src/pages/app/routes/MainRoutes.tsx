@@ -14,8 +14,7 @@ import { updateCurrentGoal } from '../../../redux/actions/learning/learningGoalA
 import LearningRoot from '../learning/LearningRoot';
 import TaskRoot from '../task/TaskRoot';
 import { initializeTasks, setupRealTimeUpdates } from '../../../redux/actions/task/taskActions';
-import { appPaths } from '../../../types/path/appPaths';
-
+import { appPaths } from '../../../constants/app/path/appPath';
 
 
 const MainRoutes: FC = () => {

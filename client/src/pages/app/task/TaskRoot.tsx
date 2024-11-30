@@ -1,5 +1,5 @@
 import React from 'react';
-import TaskManager from '../../../features/app/task/taskManager/TaskManager';
+import TaskManager from '../../../features/app/task/TaskManager';
 import { Route, Routes } from 'react-router-dom';
 // import GoalSettingForm from '../../../features/app/task/goalSetting/GoalSettingForm';
 
