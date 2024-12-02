@@ -8,15 +8,27 @@ import ClickableContainer from '../../../../components/container/ClickableContai
 import ProblemSetContainer from './ProblemSetContainer';
 import { dynamicStyles } from '../../../../styles/mui/dynamicStyles';
 import ProblemSetDetails from './details/ProblemSetDetails';
+import DeleteProblemSetForm from './details/DeleteProblemSetForm';
+import { useNavigate } from 'react-router-dom';
+import { appPaths } from '../../../../constants/app/path/appPath';
 
 interface ProblemSetsProps {
   
 }
 
 const ProblemSets: React.FC<ProblemSetsProps> = ({}) => {
+  const navigate = useNavigate();
   const { problemSetMap, categoryMap } = useAppSelector(state => state.taskSlice);
   const [createActivityTargetSet, setCreateActivityTargetSet] = useState<ProblemSetRead | null>(null);
   const [displayDetailProblemSet, setDisplayDetailProblemSet] = useState<null | ProblemSetRead>(null);
+  const [isOpenDeleteProblemSet, setIsOpenDeleteProblemSet] = useState(false);
+
+
+  const onDeleteProblemSet = () => {
+    setDisplayDetailProblemSet(null);
+    setIsOpenDeleteProblemSet(false);
+    navigate(appPaths.task.problemSets._abs, { replace: true });
+  }
 
   return (
     <>
@@ -36,19 +48,34 @@ const ProblemSets: React.FC<ProblemSetsProps> = ({}) => {
         ))}
       </Box>
       <Popup open={!!createActivityTargetSet} handleClose={() => setCreateActivityTargetSet(null)} >
-        <Box sx={{
-          maxHeight: '90vh',
-          overflow: 'auto'
-        }}>
-          <CreateActivity
-            problemSet={createActivityTargetSet}
-            categories={Object.values(categoryMap)}
-          />
-        </Box>
+        {createActivityTargetSet &&
+          <Box sx={{
+            maxHeight: '90vh',
+            overflow: 'auto'
+          }}>
+            <CreateActivity
+              problemSet={createActivityTargetSet}
+              categories={Object.values(categoryMap)}
+            />
+          </Box>
+        }
       </Popup>
       <Popup open={!!displayDetailProblemSet} handleClose={() => setDisplayDetailProblemSet(null)} >
         {displayDetailProblemSet &&
-          <ProblemSetDetails problemSet={displayDetailProblemSet} onCreateActivity={() => setCreateActivityTargetSet(displayDetailProblemSet)}/>
+          <ProblemSetDetails
+            problemSet={displayDetailProblemSet}
+            onCreateActivity={() => setCreateActivityTargetSet(displayDetailProblemSet)}
+            onDeleteProblemSet={() => setIsOpenDeleteProblemSet(true)}
+          />
+        }
+      </Popup>
+      <Popup open={isOpenDeleteProblemSet && !!displayDetailProblemSet} handleClose={() => setIsOpenDeleteProblemSet(false)} >
+      {displayDetailProblemSet &&
+          <DeleteProblemSetForm
+            problemSet={displayDetailProblemSet}
+            onDeleted={onDeleteProblemSet}
+            onCancelDelete={() => setIsOpenDeleteProblemSet(false) }
+          />
         }
       </Popup>
     </>

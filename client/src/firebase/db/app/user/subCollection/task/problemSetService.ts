@@ -39,6 +39,9 @@ export class ProblemSetService {
     return await this.callFss(userId).getAll();
   }
 
+  async hardDeleteActivity(userId: string, problemSetId: string): Promise<void> {
+    await this.callFss(userId).hardDelete(problemSetId);
+  }
   
   addCollectionCallback(userId: string, callback: (data: ProblemSetRead[]) => void, callbackId?: string) {
     this.callFss(userId).addReadCollectionCallback(callback, callbackId);

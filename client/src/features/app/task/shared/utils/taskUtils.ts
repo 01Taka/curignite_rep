@@ -1,23 +1,22 @@
 import { endOfDay, format } from "date-fns";
 import { convertToDate, convertToMilliseconds } from "../../../../../functions/utils/dateTimeUtils";
-import { TaskData } from "../../../../../types/firebase/db/task/taskExpansionTypes";
 import { sortObjectArray } from "../../../../../functions/utils/objectUtils";
 import { MINUTES_IN_MILLISECOND } from "../../../../../constants/utils/dateTimeConstants";
 import { TimeTypes } from "../../../../../types/util/dateTimeTypes";
 
-export const sortTasks = (tasks: TaskData[], key: keyof TaskData): TaskData[] => {
+export const sortByDueDateTime = <T extends Record<string, any>>(items: T[], key: keyof T): T[] => {
   const todayMs = convertToMilliseconds(endOfDay(new Date()));
 
-  const withinTasks = tasks.filter(task => task.dueDateTime !== null && task.dueDateTime >= todayMs);
-  const overdueTasks = tasks.filter(task => task.dueDateTime !== null && task.dueDateTime < todayMs);
-  const noDeadlineTasks = tasks.filter(task => task.dueDateTime === null);
+  const withinTasks = items.filter(task => task[key] && task[key] >= todayMs);
+  const overdueTasks = items.filter(task => task[key] && task[key] < todayMs);
+  const noDeadlineTasks = items.filter(task => !task[key]);
 
   // それぞれのタスクをソート
   const sortedWithinTasks = sortObjectArray(withinTasks, key);
   const sortedOverdueTasks = sortObjectArray(overdueTasks, key, false);
 
   return [...sortedWithinTasks, ...noDeadlineTasks, ...sortedOverdueTasks];
-};
+}
 
 export const millToMin = (mill: number) => Math.ceil(mill / MINUTES_IN_MILLISECOND);
 

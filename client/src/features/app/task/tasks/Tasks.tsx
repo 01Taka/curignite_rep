@@ -7,7 +7,7 @@ import ClickableContainer from '../../../../components/container/ClickableContai
 import Popup from '../../../../components/display/popup/Popup';
 import TaskDetails from './details/TaskDetails';
 import { dynamicStyles } from '../../../../styles/mui/dynamicStyles';
-import { sortTasks } from '../shared/utils/taskUtils';
+import { sortByDueDateTime } from '../shared/utils/taskUtils';
 
 interface TasksProps {}
 
@@ -15,7 +15,7 @@ const Tasks: React.FC<TasksProps> = () => {
   const [showDetailTask, setShowDetailTask] = useState<TaskData | null>(null);
   const { taskMap } = useAppSelector(state => state.taskSlice);
   const tasks = useMemo(() => Object.values(taskMap), [taskMap]);
-  const sortedTasks = useMemo(() => sortTasks(tasks, "dueDateTime"), [taskMap]) as TaskData[];
+  const sortedTasks = useMemo(() => sortByDueDateTime(tasks, "dueDateTime"), [taskMap]) as TaskData[];
 
   return (
     <>
