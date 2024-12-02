@@ -3,7 +3,7 @@ import { ProblemSetStructure, TaskData } from '../../../types/firebase/db/task/t
 import { IndividualTaskRead, ProblemSetActivityRead, ProblemSetCategoryRead, ProblemSetRead } from '../../../types/firebase/db/task/taskStructure';
 
 export interface TaskSliceState {
-  tasks: TaskData[];
+  taskMap: Record<string, TaskData>;
   individualTaskMap: Record<string, IndividualTaskRead>;
   activityMap: Record<string, ProblemSetActivityRead>;
   categoryMap: Record<string, ProblemSetCategoryRead>;
@@ -12,7 +12,7 @@ export interface TaskSliceState {
 }
 
 const initialState: TaskSliceState = {
-  tasks: [],
+  taskMap: {},
   individualTaskMap: {},
   activityMap: {},
   categoryMap: {},
@@ -27,8 +27,8 @@ const taskSlice = createSlice({
     setTaskSliceState: (_, action: PayloadAction<TaskSliceState>) => {
       return action.payload;
     },
-    setTasks: (state, action: PayloadAction<TaskData[]>) => {
-      state.tasks = action.payload;
+    setTasks: (state, action: PayloadAction<Record<string, TaskData>>) => {
+      state.taskMap = action.payload;
     },
     setIndividualTasks: (state, action: PayloadAction<Record<string, IndividualTaskRead>>) => {
       state.individualTaskMap = action.payload;

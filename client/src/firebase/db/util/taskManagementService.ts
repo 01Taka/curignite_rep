@@ -15,6 +15,7 @@ export class TaskManagementService {
     const remainingEstimatedDuration = (1 - individualTask.progress) * individualTask.estimatedDuration
     return {
       ...individualTask,
+      taskId: individualTask.docId,
       isIndividual: true,
       remainingEstimatedDuration,
       formatEstDuration: timeOmissionFormat(remainingEstimatedDuration)
@@ -142,8 +143,10 @@ export class TaskManagementService {
     const categoriesByParent = groupingByKey(categories, 'parentId');
     const activitiesByParent = groupingByKey(activities, 'parentId');
   
-    // マッピングを生成
     const tasks = this.createTaskData(individualTasks, problemSets, categoriesByParent, activitiesByParent);
+
+    // マッピングを生成
+    const taskMap = objectArrayToDict(tasks, 'taskId');
     const problemSetMap = objectArrayToDict(problemSets, 'docId');
     const categoryMap = objectArrayToDict(categories, 'docId');
     const activityMap = objectArrayToDict(activities, 'docId');
@@ -155,7 +158,7 @@ export class TaskManagementService {
     const problemSetStructureMap = objectArrayToDict(problemSetStructures, "problemSetId");
 
     return {
-      tasks,
+      taskMap,
       problemSetMap,
       categoryMap,
       activityMap,
@@ -172,7 +175,7 @@ export class TaskManagementService {
 
     const createBaseData = (activity: ProblemSetActivityRead) => ({
       ...activity,
-      docId: `${activity.parentId}_${activity.docId}`,
+      taskId: activity.docId,
       title: problemSet.name,
       taskNote: '',
     });
@@ -243,7 +246,7 @@ export class TaskManagementService {
     categoryMap: { [docId: string]: ProblemSetCategoryRead }
   ) {
     const category = categoryMap[act.categoryId];
-    const problemIds = rangesToArray(act.problemIdsRange);
+    const problemIds = rangesToArray([...act.problemIdsRange]);
     const problemCount = problemIds.length;
 
     if (!category) {

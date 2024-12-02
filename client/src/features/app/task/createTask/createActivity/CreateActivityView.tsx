@@ -1,12 +1,12 @@
 import React, { FC } from 'react';
 import { FormStateChangeFunc } from '../../../../../types/util/componentsTypes';
 import { Box, Button, CircularProgress, Typography } from '@mui/material';
-import { CreateActivityFormState } from './createActivityTypes';
 import ActivityRangeForm from './ActivityRangeForm';
 import { UpdateArrayFieldArgs } from '../../../../hooks/form/AsyncHandlerTypes';
 import DateField from '../../../../../components/input/field/DateField';
 import { ProblemSetActivityManagementMethod } from '../../../../../types/firebase/db/task/taskSupplementTypes';
 import { ProblemSetCategoryRead } from '../../../../../types/firebase/db/task/taskStructure';
+import { CreateActivityFormState } from '../../shared/types/createTask/createActivityTypes';
 
 interface CreateActivityViewProps {
   problemSetName: string;

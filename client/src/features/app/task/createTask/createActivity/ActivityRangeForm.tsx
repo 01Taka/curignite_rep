@@ -1,5 +1,4 @@
 import React, { useMemo, useCallback } from 'react';
-import { CategoryActivityFormState, CreateActivityFormState } from './createActivityTypes';
 import { ProblemSetCategoryRead } from '../../../../../types/firebase/db/task/taskStructure';
 import { Box, Button } from '@mui/material';
 import RangeField from '../../../../../components/input/field/number/RangeField';
@@ -9,6 +8,7 @@ import { UpdateArrayFieldArgs } from '../../../../hooks/form/AsyncHandlerTypes';
 import useArrayState from '../../../../hooks/form/useArrayState';
 import { objectArrayToDict } from '../../../../../functions/utils/objectUtils';
 import { ProblemSetActivityManagementMethod } from '../../../../../types/firebase/db/task/taskSupplementTypes';
+import { CategoryActivityFormState, CreateActivityFormState } from '../../shared/types/createTask/createActivityTypes';
 
 interface ActivityRangeFormProps {
   managementMethod: ProblemSetActivityManagementMethod;

@@ -5,10 +5,10 @@ import useFormState from '../../../../hooks/form/useFormState';
 import useAsyncHandler from '../../../../hooks/form/useAsyncHandler';
 import { DocumentData, DocumentReference } from 'firebase/firestore';
 import CreateActivityView from './CreateActivityView';
-import { CreateActivityFormState } from './createActivityTypes';
 import { mergeRanges } from '../../../../../functions/utils/rangeUtils';
 import { CategoryActivity } from '../../../../../types/firebase/db/task/taskSupplementTypes';
 import { ProblemSetActivityWrite, ProblemSetCategoryRead, ProblemSetRead } from '../../../../../types/firebase/db/task/taskStructure';
+import { CreateActivityFormState } from '../../shared/types/createTask/createActivityTypes';
 
 interface CreateActivityProps {
   problemSet: ProblemSetRead | null;

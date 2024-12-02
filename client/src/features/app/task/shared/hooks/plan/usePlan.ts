@@ -6,8 +6,10 @@ import { useAppSelector } from "../../../../../../redux/hooks";
 import { TodayIndividualTask, TodayCategoryTask, TodayTasks } from "../../types/plan/planTypes";
 
 const usePlan = (containExpired: boolean) => {
-  const { tasks, problemSetMap, categoryMap } = useAppSelector(state => state.taskSlice);
+  const { taskMap, problemSetMap, categoryMap } = useAppSelector(state => state.taskSlice);
   const [isContainExpired, setIsContainExpired] = useState(containExpired);
+
+  const tasks = useMemo(() => Object.values(taskMap), [taskMap]);
 
   const today = useMemo(() => {
     const now = new Date();
@@ -49,7 +51,7 @@ const usePlan = (containExpired: boolean) => {
         const estimatedDuration = todayProgress * task.estimatedDuration;
 
         return {
-          id: task.docId,
+          id: task.taskId,
           title: task.title,
           todayProgress,
           estimatedDuration,

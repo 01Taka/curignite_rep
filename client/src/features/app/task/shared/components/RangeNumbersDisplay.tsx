@@ -35,9 +35,8 @@ const RangeNumbersDisplay: React.FC<RangeNumbersDisplayProps> = ({
           }}
         >
           {row.map((num, index) => (
-            <button onClick={()=> onClickNumber(num)}>
+            <button key={`${rowIndex}-${index}`} onClick={()=> onClickNumber(num)}>
               <Box
-                key={`${rowIndex}-${index}`}
                 sx={{
                   height: cellSize,
                   minWidth: cellSize,

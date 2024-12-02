@@ -1,7 +1,9 @@
-import { endOfDay } from "date-fns";
-import { convertToMilliseconds } from "../../../../../functions/utils/dateTimeUtils";
+import { endOfDay, format } from "date-fns";
+import { convertToDate, convertToMilliseconds } from "../../../../../functions/utils/dateTimeUtils";
 import { TaskData } from "../../../../../types/firebase/db/task/taskExpansionTypes";
 import { sortObjectArray } from "../../../../../functions/utils/objectUtils";
+import { MINUTES_IN_MILLISECOND } from "../../../../../constants/utils/dateTimeConstants";
+import { TimeTypes } from "../../../../../types/util/dateTimeTypes";
 
 export const sortTasks = (tasks: TaskData[], key: keyof TaskData): TaskData[] => {
   const todayMs = convertToMilliseconds(endOfDay(new Date()));
@@ -16,3 +18,11 @@ export const sortTasks = (tasks: TaskData[], key: keyof TaskData): TaskData[] =>
 
   return [...sortedWithinTasks, ...noDeadlineTasks, ...sortedOverdueTasks];
 };
+
+export const millToMin = (mill: number) => Math.ceil(mill / MINUTES_IN_MILLISECOND);
+
+export const formatDueDateTime = (dueDateTime: TimeTypes | null) => {
+  return dueDateTime 
+  ? format(convertToDate(dueDateTime), 'MM/dd') 
+  : null;
+}

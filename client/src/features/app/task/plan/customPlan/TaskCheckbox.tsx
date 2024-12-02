@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Checkbox, FormControlLabel, Typography, Box, Slider } from '@mui/material';
 import { TaskData } from '../../../../../types/firebase/db/task/taskExpansionTypes';
-import { formatDueDateTime, millToMin } from '../../shared/utils/plan/planUtils';
 import { TodayIndividualTask } from '../../shared/types/plan/planTypes';
+import { formatDueDateTime, millToMin } from '../../shared/utils/taskUtils';
 
 interface TaskCheckboxProps {
   task: TaskData;
@@ -42,13 +42,14 @@ const TaskCheckbox: React.FC<TaskCheckboxProps> = ({ task, todayTask, onChangeSt
       />
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <Typography variant='body2' color="textSecondary" sx={{ mr: 1 }}>
-          {percent}%
+          {Math.floor(percent)}%
         </Typography>
         <Slider
           sx={{ width: '100%' }}
-          value={percent}
+          value={Math.floor(percent)}
           min={task.progress * 100}
           max={100}
+          step={5}
           onChange={(_, value) => setPercent(Array.isArray(value) ? 100 : value as number)}
           onChangeCommitted={() => onChangeState(checked, percent / 100)}
           size="small"

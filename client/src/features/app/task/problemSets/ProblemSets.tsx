@@ -7,14 +7,16 @@ import { ProblemSetRead } from '../../../../types/firebase/db/task/taskStructure
 import ClickableContainer from '../../../../components/container/ClickableContainer';
 import ProblemSetContainer from './ProblemSetContainer';
 import { dynamicStyles } from '../../../../styles/mui/dynamicStyles';
+import ProblemSetDetails from './details/ProblemSetDetails';
 
-interface ProblemSetsProps { }
+interface ProblemSetsProps {
+  
+}
 
 const ProblemSets: React.FC<ProblemSetsProps> = ({}) => {
   const { problemSetMap, categoryMap } = useAppSelector(state => state.taskSlice);
   const [createActivityTargetSet, setCreateActivityTargetSet] = useState<ProblemSetRead | null>(null);
-  console.log(problemSetMap);
-  
+  const [displayDetailProblemSet, setDisplayDetailProblemSet] = useState<null | ProblemSetRead>(null);
 
   return (
     <>
@@ -28,7 +30,7 @@ const ProblemSets: React.FC<ProblemSetsProps> = ({}) => {
         marginX: 1
       }}>
         {Object.values(problemSetMap).map((problemSet, index) => (
-          <ClickableContainer key={index} onClick={() => {}}>
+          <ClickableContainer key={index} onClick={() => setDisplayDetailProblemSet(problemSet)} >
             <ProblemSetContainer problemSet={problemSet} />
           </ClickableContainer>
         ))}
@@ -43,6 +45,11 @@ const ProblemSets: React.FC<ProblemSetsProps> = ({}) => {
             categories={Object.values(categoryMap)}
           />
         </Box>
+      </Popup>
+      <Popup open={!!displayDetailProblemSet} handleClose={() => setDisplayDetailProblemSet(null)} >
+        {displayDetailProblemSet &&
+          <ProblemSetDetails problemSet={displayDetailProblemSet} onCreateActivity={() => setCreateActivityTargetSet(displayDetailProblemSet)}/>
+        }
       </Popup>
     </>
   );

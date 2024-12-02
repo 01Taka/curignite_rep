@@ -2,7 +2,11 @@ import { Range } from "../../../util/componentsTypes";
 import { IndividualTaskRead, ProblemSetCategoryRead, ProblemSetRead } from "./taskStructure";
 import { ProblemSetActivityManagementMethod } from "./taskSupplementTypes";
 
-export interface TaskData extends IndividualTaskRead {
+/**
+ * taskId - Individual: docId, ProblemSetActivity: activity docId
+ */
+export interface TaskData extends Omit<IndividualTaskRead, "docId"> {
+  taskId: string;
   isIndividual: boolean;
   remainingEstimatedDuration: number;
   formatEstDuration: string;

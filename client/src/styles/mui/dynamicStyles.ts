@@ -7,8 +7,8 @@ export const dynamicStyles = {
   }),
   flexCenter: (options?: Partial<{
     direction: 'row' | 'column'
-    justifyContent: 'start' | 'center' | 'end',
-    alignItems:  'start' | 'center' | 'end'
+    justifyContent: 'start' | 'center' | 'end' | string,
+    alignItems:  'start' | 'center' | 'end' | string,
   }>) => ({
     display: 'flex',
     flexDirection: options?.direction ?? 'column',

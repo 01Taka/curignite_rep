@@ -12,8 +12,8 @@ const useCustomPlan = (
   _tasks?: TaskData[],
   recommendTask?: TodayTasks
 ) => {
-  const { tasks: storeTasks, categoryMap, problemSetMap } = useAppSelector(state => state.taskSlice);
-  const tasks = _tasks ?? storeTasks;
+  const { taskMap, categoryMap, problemSetMap } = useAppSelector(state => state.taskSlice);
+  const tasks = useMemo(() => _tasks ?? Object.values(taskMap), [_tasks, taskMap]);
   const [selectedTaskTime, setSelectedTaskTime] = useState<Record<string, number>>({});
   const [todayIndividualTasks, setTodayIndividualTasks] = useState<Record<string, TodayIndividualTask>>({});
   const [todayProblemSetTask, setTodayProblemSetTask] = useState<Record<string, TodayProblemSetTask>>({});
@@ -30,12 +30,12 @@ const useCustomPlan = (
   }, [recommendTask])
 
   const taskNameMap = useMemo(
-    () => Object.fromEntries(tasks.map(task => [task.docId, task.title])),
+    () => Object.fromEntries(tasks.map(task => [task.taskId, task.title])),
     [tasks]
   );
 
   const taskProblemSetIdMap = useMemo(
-    () => Object.fromEntries(tasks.map(task => [task.docId, task.problemSetActivityField?.problemSetId ?? null])),
+    () => Object.fromEntries(tasks.map(task => [task.taskId, task.problemSetActivityField?.problemSetId ?? null])),
     [tasks]
   );
 
@@ -106,7 +106,7 @@ const useCustomPlan = (
       if (!activityField) return;
       Object.keys(categoryMap).forEach(categoryId => {
         const pairId = getId(activityField.problemSetId, categoryId);
-        const taskId = getId(task.docId, categoryId);
+        const taskId = getId(task.taskId, categoryId);
         addRangeSelectionWithPairing(pairId, taskId);
       });
     });
@@ -130,7 +130,7 @@ const useCustomPlan = (
   const addIndividualTask = useCallback((task: TaskData, progress: number = 1) => {
     const todayProgress = mathClamp(progress - task.progress, 0, 1);
     const data: TodayIndividualTask = {
-      id: task.docId,
+      id: task.taskId,
       title: task.title,
       currentProgress: task.progress,
       todayProgress,

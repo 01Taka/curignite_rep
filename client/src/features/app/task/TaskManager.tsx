@@ -13,9 +13,6 @@ import useDefaultNavigation from '../../hooks/navigate/useDefaultNavigation';
 import useSwitchComponents from '../../hooks/components/useSwitchComponents';
 import { appPaths } from '../../../constants/app/path/appPath';
 import { getPathList } from '../../../functions/utils/pathUtils';
-import { useNavigate, useParams } from 'react-router-dom';
-import { UseLocationTabChildren, UseLocationTabItem } from '../../hooks/navigate/shared/types/useLocationTabTypes';
-import TaskDetails from './tasks/details/TaskDetails';
 
 interface TaskManagerProps {}
 

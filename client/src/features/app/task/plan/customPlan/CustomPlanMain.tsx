@@ -4,10 +4,10 @@ import { Box, Button, Typography } from '@mui/material';
 import TaskCheckbox from './TaskCheckbox';
 import TaskAccordion from './TaskAccordion';
 import { TaskData } from '../../../../../types/firebase/db/task/taskExpansionTypes';
-import { millToMin } from '../../shared/utils/plan/planUtils';
 import { TodayTasks } from '../../shared/types/plan/planTypes';
 import { ProblemSetCategoryRead } from '../../../../../types/firebase/db/task/taskStructure';
 import useCustomPlan from '../../shared/hooks/plan/useCustomPlan';
+import { millToMin } from '../../shared/utils/taskUtils';
 
 interface CustomPlanProps {
   studyTimeNeededToday: number;
@@ -39,17 +39,17 @@ const CustomPlanMain: React.FC<CustomPlanProps> = ({ studyTimeNeededToday, recom
       <Box sx={{ padding: 2 }} >
         {tasks.map((task) => (
           <TaskCheckbox
-            key={task.docId}
+            key={task.taskId}
             task={task}
-            todayTask={todayIndividualTasks[task.docId]}
-            onChangeState={(checked, percent) => checked ? addIndividualTask(task, percent) : removeIndividualTask(task.docId)}
+            todayTask={todayIndividualTasks[task.taskId]}
+            onChangeState={(checked, percent) => checked ? addIndividualTask(task, percent) : removeIndividualTask(task.taskId)}
           />
         ))}
       </Box>
       <Box sx={{ padding: 1 }} >
         {tasks.map((task) => (
           <TaskAccordion
-            key={task.docId}
+            key={task.taskId}
             task={task}
             getNumberColor={getNumberColor}
             onSelectNumber={onSelectNumber}

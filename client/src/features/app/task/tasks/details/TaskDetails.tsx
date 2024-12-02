@@ -4,21 +4,11 @@ import { format } from 'date-fns';
 import { convertToDate, formatDateDifference, isBeforeDateTime } from '../../../../../functions/utils/dateTimeUtils';
 import { ja } from 'date-fns/locale';
 import TaskDetailHeading from './TaskDetailHeading';
-import { useParams } from 'react-router-dom';
-import { useAppSelector } from '../../../../../redux/hooks';
-import { TaskManagementService } from '../../../../../firebase/db/util/taskManagementService';
-import { appPaths } from '../../../../../constants/app/path/appPath';
-import { dynamicStyles } from '../../../../../styles/mui/dynamicStyles';
 import { TaskData } from '../../../../../types/firebase/db/task/taskExpansionTypes';
+import { detailBoxStyle } from '../../shared/constants/problemSets/problemSetsConstants';
 
 interface TaskDetailsProps {
   task: TaskData;
-}
-
-const boxStyle = {
-  bgcolor: 'white',
-  borderRadius: 2,
-  padding: 1,
 }
 
 const TaskDetails: React.FC<TaskDetailsProps> = ({ task }) => {
@@ -33,8 +23,8 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ task }) => {
       bgcolor: 'beige',
       height: '95vh'
     }}>
-      <TaskDetailHeading task={task} sx={boxStyle} />
-      <Box sx={boxStyle}>
+      <TaskDetailHeading task={task} sx={detailBoxStyle} />
+      <Box sx={detailBoxStyle}>
         {task.dueDateTime ? (
           <Typography color={dueDateColor}>
             {formatDateDifference(task.dueDateTime)}<br />
@@ -46,7 +36,7 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ task }) => {
           </Typography>
         )}
       </Box>
-      <Box sx={boxStyle}>
+      <Box sx={detailBoxStyle}>
         {task.taskNote ? (
           <Typography>
             {task.taskNote}

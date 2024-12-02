@@ -3,9 +3,9 @@ import React from 'react';
 import { Accordion, AccordionSummary, AccordionDetails, Typography, Box } from '@mui/material';
 import { TaskData } from '../../../../../types/firebase/db/task/taskExpansionTypes';
 import { getId } from '../../shared/utils/plan/customPlanUtils';
-import { formatDueDateTime } from '../../shared/utils/plan/planUtils';
 import RangeNumbersDisplay from '../../shared/components/RangeNumbersDisplay';
 import SnackbarForRangeSelection from '../../shared/components/SnackbarForRangeSelection';
+import { formatDueDateTime } from '../../shared/utils/taskUtils';
 
 interface TaskAccordionProps {
   task: TaskData;
@@ -33,7 +33,7 @@ const TaskAccordion: React.FC<TaskAccordionProps> = ({
       <AccordionSummary><Typography>{task.title} {formatDeadline}</Typography></AccordionSummary>
       <AccordionDetails>
         {task.problemSetActivityField.activityStatus.map((status) => {
-          const id = getId(task.docId, status.categoryId);
+          const id = getId(task.taskId, status.categoryId);
           return (
             <Box key={id} >
               <Typography>{status.categoryName}</Typography>

@@ -1,27 +1,23 @@
-import React from 'react';
-import { TaskData } from '../../../../types/firebase/db/task/taskExpansionTypes';
+import React, { useMemo } from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import { MINUTES_IN_MILLISECOND } from '../../../../constants/utils/dateTimeConstants';
 import RecommendedPlan from './RecommendedPlan';
 import Popup from '../../../../components/display/popup/Popup';
 import useToggle from '../../../hooks/useToggle';
 import CustomPlanMain from './customPlan/CustomPlanMain';
-import { ProblemSetCategoryRead } from '../../../../types/firebase/db/task/taskStructure';
-import useLog from '../../../hooks/useLog';
 import usePlan from '../shared/hooks/plan/usePlan';
 import { useTaskPlanManager } from '../shared/hooks/plan/useTaskPlanManager';
+import { useAppSelector } from '../../../../redux/hooks';
 
-interface PlanProps {
-  tasks: TaskData[];
-  categoryMap: Record<string, ProblemSetCategoryRead>;
-}
+interface PlanProps {}
 
-const Plan: React.FC<PlanProps> = ({ tasks, categoryMap }) => {
+const Plan: React.FC<PlanProps> = () => {
+  const { taskMap, categoryMap } = useAppSelector(state => state.taskSlice);
+  const tasks = useMemo(() => Object.values(taskMap), [taskMap]);
+
   const { todayTasks, studyTimeNeededToday } = usePlan(false);
   const { isOpen, toOpen, toClose } = useToggle();
   const { createTaskPlan } = useTaskPlanManager();
-
-  useLog(todayTasks)
 
   return (
     <>

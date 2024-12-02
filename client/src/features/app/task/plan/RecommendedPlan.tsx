@@ -2,7 +2,7 @@ import React from 'react';
 import { TodayTasks } from '../shared/types/plan/planTypes';
 import { arrayToRangeString } from '../../../../functions/utils/rangeUtils';
 import { Box, Button, Typography } from '@mui/material';
-import { millToMin } from '../shared/utils/plan/planUtils';
+import { millToMin } from '../shared/utils/taskUtils';
 
 interface RecommendedPlanProps {
   todayTasks: TodayTasks;

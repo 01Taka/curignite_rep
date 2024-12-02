@@ -13,8 +13,9 @@ interface TasksProps {}
 
 const Tasks: React.FC<TasksProps> = () => {
   const [showDetailTask, setShowDetailTask] = useState<TaskData | null>(null);
-  const { tasks } = useAppSelector(state => state.taskSlice);
-  const sortedTasks = useMemo(() => sortTasks(tasks, "dueDateTime"), [tasks]) as TaskData[];
+  const { taskMap } = useAppSelector(state => state.taskSlice);
+  const tasks = useMemo(() => Object.values(taskMap), [taskMap]);
+  const sortedTasks = useMemo(() => sortTasks(tasks, "dueDateTime"), [taskMap]) as TaskData[];
 
   return (
     <>
@@ -28,7 +29,7 @@ const Tasks: React.FC<TasksProps> = () => {
         marginX: 1
       }}>
         {sortedTasks.map(task => (
-          <ClickableContainer key={task.docId} onClick={() => setShowDetailTask(task)}>
+          <ClickableContainer key={task.taskId} onClick={() => setShowDetailTask(task)}>
             <SimpleTaskContainer task={task} />
           </ClickableContainer>
         ))}

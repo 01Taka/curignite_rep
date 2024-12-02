@@ -1,4 +1,4 @@
-import { Range } from "../../../../../types/util/componentsTypes";
+import { Range } from "../../../../../../types/util/componentsTypes";
 
 export interface CategoryActivityFormState {
   categoryId: string;
