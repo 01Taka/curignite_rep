@@ -13,7 +13,7 @@ const useDeleteActivityHandler = (problemSetId: string, activityId: string, onFa
       return;
     }
     const activityService = serviceFactory.createProblemSetActivityService();
-    callAsyncFunction([userId, problemSetId, activityId], activityService.hardDeleteActivity.bind(activityService), onFailedMessage);
+    callAsyncFunction(activityService.hardDeleteActivity.bind(activityService), [userId, problemSetId, activityId], onFailedMessage);
   }
 
   return { asyncStatus, errorMessage, handleDeleteActivity };

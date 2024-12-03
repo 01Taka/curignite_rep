@@ -1,21 +1,18 @@
 import React from 'react';
-import useDeleteProblemSet from '../../shared/hooks/problemSet/crud/useDeleteProblemSet';
 import { ProblemSetRead } from '../../../../../types/firebase/db/task/taskStructure';
 import { Box, Button, Typography } from '@mui/material';
+import useDeleteProblemSetHandler from '../../shared/hooks/problemSet/crud/useDeleteProblemSetHandler';
+import { useAppSelector } from '../../../../../redux/hooks';
 
 interface DeleteProblemSetFormProps {
   problemSet: ProblemSetRead;
-  onDeleted: () => void;
+  onSuccessDelete: () => void;
   onCancelDelete: () => void;
 }
 
-const DeleteProblemSetForm: React.FC<DeleteProblemSetFormProps> = ({ problemSet, onDeleted, onCancelDelete }) => {
-  const { asyncStatus, errorMessage, handleDeleteActivity } = useDeleteProblemSet(problemSet.docId);
-
-  const handleDelete = () => {
-    onDeleted();
-    handleDeleteActivity();
-  }
+const DeleteProblemSetForm: React.FC<DeleteProblemSetFormProps> = ({ problemSet, onSuccessDelete, onCancelDelete }) => {
+  const uid = useAppSelector(state => state.userSlice.uid);
+  const { asyncStatus, errorMessage, handleDeleteActivity } = useDeleteProblemSetHandler(uid, problemSet.docId, onSuccessDelete);
 
   return (
     <Box
@@ -56,7 +53,7 @@ const DeleteProblemSetForm: React.FC<DeleteProblemSetFormProps> = ({ problemSet,
           キャンセル
         </Button>
         <Button
-          onClick={handleDelete}
+          onClick={handleDeleteActivity}
           variant="contained"
           color="error"
           sx={{ width: '45%' }}

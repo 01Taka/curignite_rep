@@ -25,13 +25,13 @@ const CreateIndividualTask: FC = () => {
   const handleCreateIndividualTask = async () => {
     if (uid) {
       const individualTaskService = serviceFactory.createIndividualTaskService();
-        callAsyncFunction([
+        callAsyncFunction(individualTaskService.createTask.bind(individualTaskService),[
           uid,
           formState.title,
           formState.dueDateTime,
           formState.taskNote,
           formState.estimatedDuration * MINUTES_IN_MILLISECOND
-        ], individualTaskService.createTask.bind(individualTaskService))
+        ])
     } else {
       console.error('User is not authenticated or user data is missing.'); // 認証エラー
     }

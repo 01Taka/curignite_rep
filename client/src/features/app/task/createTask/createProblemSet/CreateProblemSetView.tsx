@@ -4,7 +4,7 @@ import { KeyMirrorObject } from '../../../../../functions/utils/objectUtils';
 import { StringField } from '../../../../../components/input/inputIndex';
 import MultilineField from '../../../../../components/input/field/MultilineField';
 import { Box, Button, Typography } from '@mui/material';
-import { CreateProblemSetViewFormState } from './createProblemSetTypes';
+import { CreateProblemSetViewFormState } from '../../shared/types/createTask/createProblemSetTypes';
 import ManagementMethodSelector from './ManagementMethodSelector';
 
 interface CreateProblemSetViewProps {

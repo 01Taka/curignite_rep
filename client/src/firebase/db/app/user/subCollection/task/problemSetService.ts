@@ -2,6 +2,7 @@ import { DocumentData, DocumentReference, Firestore } from "firebase/firestore";
 import { ProblemSetRead, ProblemSetWrite } from "../../../../../../types/firebase/db/task/taskStructure";
 import { ProblemSetActivityManagementMethod } from "../../../../../../types/firebase/db/task/taskSupplementTypes";
 import FirestoreService from "../../../../handler/firestoreService";
+import { FieldValueSupported } from "../../../../../../types/firebase/db/formatTypes";
 
 export class ProblemSetService {
   private fss: FirestoreService<ProblemSetRead, ProblemSetWrite>;
@@ -39,7 +40,11 @@ export class ProblemSetService {
     return await this.callFss(userId).getAll();
   }
 
-  async hardDeleteActivity(userId: string, problemSetId: string): Promise<void> {
+  async updateProblemSet(userId: string, problemSetId: string, data: FieldValueSupported<Partial<ProblemSetWrite>>) {
+    await this.callFss(userId).update(problemSetId, data);
+  }
+
+  async hardDeleteProblemSet(userId: string, problemSetId: string): Promise<void> {
     await this.callFss(userId).hardDelete(problemSetId);
   }
   

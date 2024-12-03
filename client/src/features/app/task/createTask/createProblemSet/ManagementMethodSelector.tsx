@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { CreateProblemSetViewFormState, ProblemSetCategoryForm } from './createProblemSetTypes';
+import { CreateProblemSetViewFormState, ProblemSetCategoryForm } from '../../shared/types/createTask/createProblemSetTypes';
 import useArrayState from '../../../../hooks/form/useArrayState';
 import { Box, Button, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
 import QuickNumberField from '../../../../../components/input/field/number/QuickNumberField';

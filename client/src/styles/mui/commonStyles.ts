@@ -1,8 +1,12 @@
 // styles.ts
 export const commonStyles = {
-  centerAlign: {
+  flexCenter: {
     display: 'flex',
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+  centerAlign: {
+    display: 'flex',
     alignItems: 'center',
   },
   cardShadow: {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ProblemSetCategoryForm } from './createProblemSetTypes';
+import { ProblemSetCategoryForm } from '../../shared/types/createTask/createProblemSetTypes';
 import { Box, IconButton, TextField } from '@mui/material';
 import { FormStateChangeFunc } from '../../../../../types/util/componentsTypes';
 import { keyMirror } from '../../../../../functions/utils/objectUtils';

@@ -1,26 +1,20 @@
 import { DocumentReference, DocumentData } from "firebase/firestore";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import serviceFactory from "../../../../../../../firebase/db/factory";
 import { mergeRanges } from "../../../../../../../functions/utils/rangeUtils";
-import { useAppSelector } from "../../../../../../../redux/hooks";
 import { ProblemSetActivityWrite } from "../../../../../../../types/firebase/db/task/taskStructure";
 import { CategoryActivity } from "../../../../../../../types/firebase/db/task/taskSupplementTypes";
 import useAsyncHandler from "../../../../../../hooks/form/useAsyncHandler";
-import useFormState from "../../../../../../hooks/form/useFormState";
 import { CreateActivityFormState } from "../../../types/createTask/createActivityTypes";
+import useEffectOnCondition from "../../../../../../hooks/common/useEffectOnCondition";
 
-const useCreateActivityHandler = (problemSetId: string, onFailedMessage?: string) => {
-  const { uid } = useAppSelector(state => state.userSlice);
+const useCreateActivityHandler = (formState: CreateActivityFormState, userId: string | null, problemSetId: string, onSuccessCreate: () => void, onFailedMessage?: string) => {
+  const { asyncStatus, callAsyncFunction, setErrorMessage, reset } = useAsyncHandler<DocumentReference<ProblemSetActivityWrite, DocumentData>>();
 
-  const formStateValues = useFormState<CreateActivityFormState>({
-    dueDateTime: null,
-    categoryActivities: []
-  });
-  const { formState } = formStateValues;
-  const { asyncStatus, callAsyncFunction, setErrorMessage } = useAsyncHandler<DocumentReference<ProblemSetActivityWrite, DocumentData>>();
+  useEffectOnCondition(asyncStatus === "success", { onSuccess: [onSuccessCreate, reset] });
 
   const handleCreateActivity = useCallback(async () => {
-    if (!uid) {
+    if (!userId) {
       console.error('User is not authenticated.');
       setErrorMessage("ユーザーが認証されていません。ログインしてください。");
       return;
@@ -30,17 +24,19 @@ const useCreateActivityHandler = (problemSetId: string, onFailedMessage?: string
         categoryId: activity.categoryId,
         problemIdsRange: mergeRanges(activity.problemRanges)
       }))
-      callAsyncFunction([
-        uid,
+      callAsyncFunction(
+      activityService.createActivity.bind(activityService),
+      [
+        userId,
         problemSetId,
         formState.dueDateTime,
         categoryActivities
-      ], activityService.createActivity.bind(activityService),
+      ], 
       onFailedMessage
     );
-  }, [uid, problemSetId, formState, onFailedMessage, callAsyncFunction]);
+  }, [userId, problemSetId, formState, onFailedMessage, callAsyncFunction]);
 
-  return { ...formStateValues, asyncStatus, handleCreateActivity}
+  return { asyncStatus, handleCreateActivity }
 }
 
 export default useCreateActivityHandler;

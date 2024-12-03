@@ -34,8 +34,8 @@ const useAsyncHandler = <T = void>() => {
 
   // 改善されたcallAsyncFunction
   const callAsyncFunction = async <A extends any[]>(
-    args: A,
     func: (...args: A) => Promise<T>,
+    args: A,
     onFailedMessage?: string
   ): Promise<AsyncState<T> & { isSuccess: boolean }> => {
     startLoading();

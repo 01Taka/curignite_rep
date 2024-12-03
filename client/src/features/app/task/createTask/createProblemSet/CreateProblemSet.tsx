@@ -3,7 +3,7 @@ import serviceFactory from '../../../../../firebase/db/factory';
 import { useAppSelector } from '../../../../../redux/hooks';
 import { useNavigate } from 'react-router-dom';
 import CreateProblemSetView from './CreateProblemSetView';
-import { CreateProblemSetStateTypes, CreateProblemSetViewFormState } from './createProblemSetTypes';
+import { CreateProblemSetStateTypes, CreateProblemSetViewFormState } from '../../shared/types/createTask/createProblemSetTypes';
 import useFormState from '../../../../hooks/form/useFormState';
 import useMultipleAsyncHandler from '../../../../hooks/form/useMultipleAsyncHandler';
 import { MINUTES_IN_MILLISECOND } from '../../../../../constants/utils/dateTimeConstants';
