@@ -4,7 +4,6 @@ import { cn } from '../../../functions/utils/utils';
 import { getValueBetween } from '../../../functions/utils/objectUtils';
 import { StringNumber } from '../../../types/util/utilTypes';
 import { cva } from 'class-variance-authority';
-import { GradientCircleSize } from '../../../types/app/task/taskTypes';
 
 interface GradientCircleProps<T extends string | number | StringNumber> {
   title?: string;
@@ -13,7 +12,7 @@ interface GradientCircleProps<T extends string | number | StringNumber> {
   errorColor?: ComponentColor;
   value: T;
   useUpper?: boolean; // 上限か下限かを選択するオプション
-  size?: GradientCircleSize; // サイズオプション
+  size?: 'sm' | 'md' | 'lg'; // サイズオプション
 }
 
 const gradientCircleStyles = cva(

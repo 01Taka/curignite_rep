@@ -66,7 +66,6 @@ const useAsyncHandler = <T = void>() => {
     data,
     error,
     errorMessage,
-    setErrorMessage,
     startLoading,
     setDataOnSuccess,
     logError,

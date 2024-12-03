@@ -5,14 +5,13 @@ import useAsyncHandler from "../../../../../../hooks/form/useAsyncHandler";
 import { UpdateProblemSetFormState } from "../../../types/createTask/createProblemSetTypes";
 
 const useUpdateProblemSetHandler = (formState: UpdateProblemSetFormState, userId: string | null, problemSet: ProblemSetRead, onSuccessUpdate: () => void, onFailedMessage?: string) => {
-  const { asyncStatus, errorMessage, callAsyncFunction, setErrorMessage, reset } = useAsyncHandler();
+  const { asyncStatus, errorMessage, callAsyncFunction, logError, reset } = useAsyncHandler();
 
   useEffectOnCondition(asyncStatus === "success", { onSuccess: [onSuccessUpdate, reset] });
 
   const handleUpdateProblemSet = () => {
     if (!userId) {
-      console.error('User is not authenticated.');
-      setErrorMessage("ユーザーが認証されていません。ログインしてください。");
+      logError("User is not authenticated.", "ユーザーが認証されていません。ログインしてください。");
       return;
     }
     const problemSetService = serviceFactory.createProblemSetService();

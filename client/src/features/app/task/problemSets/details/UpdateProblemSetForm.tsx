@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import useUpdateProblemSetHandler from '../../shared/hooks/problemSet/crud/useUpdateProblemSetHandler';
 import { ProblemSetRead } from '../../../../../types/firebase/db/task/taskStructure';
 import { Box, Button, TextField, Typography } from '@mui/material';

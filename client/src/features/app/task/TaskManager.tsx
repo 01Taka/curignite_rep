@@ -47,6 +47,7 @@ const CreateTask: React.FC<CreateTaskProps> = ({ isFabVisible, isIndividual, onF
 
 const TaskManager: React.FC<TaskManagerProps> = () => {
   const [isFabVisible, setIsFabVisible] = useState(true);
+  const [displayComponentId, setDisplayComponentId] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useDefaultNavigation(appPaths.task.list._abs, getPathList(appPaths.task, { includeRoot: false }));
@@ -56,11 +57,16 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
     { id: "problemSet", label: "問題集", path: appPaths.task.problemSets, element: <ProblemSets />}
   ], { navigateOptions: { replace: true }});
 
-  const { Component, isUsingDefaultComponent, switchToDefault, switchComponent } = useSwitchComponents([
-    { id: "createIndividual", Component: <CreateIndividualTask /> },
-    { id: "createProblemSet", Component: <CreateProblemSet /> }
-  ])
-
+  const { Component, isUsingDefaultComponent, switchToDefault, switchComponent } = useSwitchComponents({
+    components: [
+      { id: "createIndividual", Component: <CreateIndividualTask onSuccessCreate={() => setDisplayComponentId(null)} /> },
+      { id: "createProblemSet", Component: <CreateProblemSet onSuccessProblemSet={() => setDisplayComponentId(null)}/> }
+    ],
+    externalState: {
+      displayComponentId,
+      setDisplayComponentId
+    }
+  })
 
   const handleScroll = () => {
     if (containerRef.current) {

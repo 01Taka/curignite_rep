@@ -8,7 +8,7 @@ export interface ProblemSetCategoryForm {
   totalProblemNumber: number;
 }
 
-export interface CreateProblemSetViewFormState {
+export interface CreateProblemSetFormState {
   name: string;
   description: string;
   activityManagementMethod: ProblemSetActivityManagementMethod;

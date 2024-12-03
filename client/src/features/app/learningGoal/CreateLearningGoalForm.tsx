@@ -40,6 +40,7 @@ const CreateLearningGoalForm: FC<CreateLearningGoalFormProps> = ({ onCreated }) 
   const handleStartLearningGoal = async () => {
     if (uid) {
       const success = await callAsyncFunction(
+        startLearningGoal,
         [
           uid,
           formState.objectives,
@@ -47,7 +48,6 @@ const CreateLearningGoalForm: FC<CreateLearningGoalFormProps> = ({ onCreated }) 
           formState.targetDurationMin * MINUTES_IN_MILLISECOND,
           dispatch
         ],
-        startLearningGoal,
         "学習の開始に失敗しました"
       )
 

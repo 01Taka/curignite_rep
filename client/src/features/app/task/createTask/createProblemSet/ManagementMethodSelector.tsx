@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { CreateProblemSetViewFormState, ProblemSetCategoryForm } from '../../shared/types/createTask/createProblemSetTypes';
+import { CreateProblemSetFormState, ProblemSetCategoryForm } from '../../shared/types/createTask/createProblemSetTypes';
 import useArrayState from '../../../../hooks/form/useArrayState';
 import { Box, Button, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
 import QuickNumberField from '../../../../../components/input/field/number/QuickNumberField';
@@ -10,7 +10,7 @@ import { ProblemSetActivityManagementMethod } from '../../../../../types/firebas
 const ManagementMethodSelector: React.FC<{
   managementMethod: ProblemSetActivityManagementMethod;
   setManagementMethod: (method: ProblemSetActivityManagementMethod) => void;
-  updateField: (fieldName: keyof CreateProblemSetViewFormState, value: any) => void;
+  updateField: (fieldName: keyof CreateProblemSetFormState, value: any) => void;
 }> = ({ managementMethod, setManagementMethod, updateField }) => {
   const { array: mainQuestions, push, pop, update } = useArrayState<ProblemSetCategoryForm>([
     { name: '問', timePerProblem: 10, totalProblemNumber: 30 },

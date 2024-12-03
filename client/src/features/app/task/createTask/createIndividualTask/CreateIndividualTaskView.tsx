@@ -1,6 +1,5 @@
 import React, { FC, useMemo } from 'react';
 import { FormStateChangeFunc } from '../../../../../types/util/componentsTypes';
-import { CreateIndividualTaskViewFormState } from '../../../../../types/app/task/taskForm';
 import { keyMirror } from '../../../../../functions/utils/objectUtils';
 import { StringField } from '../../../../../components/input/inputIndex';
 import MultilineField from '../../../../../components/input/field/MultilineField';
@@ -8,9 +7,10 @@ import { Box, Button, Typography } from '@mui/material';
 import DateField from '../../../../../components/input/field/DateField';
 import QuickNumberField from '../../../../../components/input/field/number/QuickNumberField';
 import { createNumberSelectItems } from '../../../../../functions/utils/formUtils';
+import { CreateIndividualTaskFormState } from '../../shared/types/createTask/createIndividualTaskTypes';
 
 interface CreateIndividualTaskViewProps {
-  formState: CreateIndividualTaskViewFormState;
+  formState: CreateIndividualTaskFormState;
   onFormStateChange: FormStateChangeFunc;
   onCreate: () => void;
 }

@@ -1,41 +1,23 @@
 import { FC } from 'react'
 import CreateIndividualTaskView from './CreateIndividualTaskView'
-import { CreateIndividualTaskViewFormState } from '../../../../../types/app/task/taskForm';
-import serviceFactory from '../../../../../firebase/db/factory';
 import { useAppSelector } from '../../../../../redux/hooks';
-import { useNavigate } from 'react-router-dom';
-import { MINUTES_IN_MILLISECOND } from '../../../../../constants/utils/dateTimeConstants';
 import useFormState from '../../../../hooks/form/useFormState';
-import useAsyncHandler from '../../../../hooks/form/useAsyncHandler';
-import { DocumentData, DocumentReference } from 'firebase/firestore';
-import { IndividualTaskWrite } from '../../../../../types/firebase/db/task/taskStructure';
+import { CreateIndividualTaskFormState } from '../../shared/types/createTask/createIndividualTaskTypes';
+import useCreateIndividualTaskHandler from '../../shared/hooks/individualTask/crud/useCreateIndividualTaskHandler';
 
-const CreateIndividualTask: FC = () => {
-  const navigate = useNavigate();
+interface CreateIndividualTaskProps {
+  onSuccessCreate: () => void;
+}
+
+const CreateIndividualTask: FC<CreateIndividualTaskProps> = ({ onSuccessCreate }) => {
   const { uid } = useAppSelector(state => state.userSlice);
-  const { formState, onChangeFormState } = useFormState<CreateIndividualTaskViewFormState>({
+  const { formState, onChangeFormState } = useFormState<CreateIndividualTaskFormState>({
     title: "",
     dueDateTime: null,
     taskNote: "",
-    priority: "medium",
     estimatedDuration: 10,
   });
-  const { callAsyncFunction } = useAsyncHandler<DocumentReference<IndividualTaskWrite, DocumentData>>();
-
-  const handleCreateIndividualTask = async () => {
-    if (uid) {
-      const individualTaskService = serviceFactory.createIndividualTaskService();
-        callAsyncFunction(individualTaskService.createTask.bind(individualTaskService),[
-          uid,
-          formState.title,
-          formState.dueDateTime,
-          formState.taskNote,
-          formState.estimatedDuration * MINUTES_IN_MILLISECOND
-        ])
-    } else {
-      console.error('User is not authenticated or user data is missing.'); // 認証エラー
-    }
-  };
+  const { handleCreateIndividualTask } = useCreateIndividualTaskHandler(formState, uid, onSuccessCreate);
 
   return <CreateIndividualTaskView 
     formState={formState}

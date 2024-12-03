@@ -4,14 +4,15 @@ import { KeyMirrorObject } from '../../../../../functions/utils/objectUtils';
 import { StringField } from '../../../../../components/input/inputIndex';
 import MultilineField from '../../../../../components/input/field/MultilineField';
 import { Box, Button, Typography } from '@mui/material';
-import { CreateProblemSetViewFormState } from '../../shared/types/createTask/createProblemSetTypes';
 import ManagementMethodSelector from './ManagementMethodSelector';
+import { CreateProblemSetFormState } from '../../shared/types/createTask/createProblemSetTypes';
 
 interface CreateProblemSetViewProps {
-  formState: CreateProblemSetViewFormState;
-  names: KeyMirrorObject<CreateProblemSetViewFormState>;
+  formState: CreateProblemSetFormState;
+  names: KeyMirrorObject<CreateProblemSetFormState>;
+  isDisabledCreate: boolean;
   onFormStateChange: FormStateChangeFunc;
-  updateField: (fieldName: keyof CreateProblemSetViewFormState, value: any) => void;
+  updateField: (fieldName: keyof CreateProblemSetFormState, value: any) => void;
   onCreate: () => void;
 }
 
@@ -19,6 +20,7 @@ interface CreateProblemSetViewProps {
 const CreateProblemSetView: FC<CreateProblemSetViewProps> = ({
   formState,
   names,
+  isDisabledCreate,
   onFormStateChange,
   updateField,
   onCreate,
@@ -61,7 +63,7 @@ const CreateProblemSetView: FC<CreateProblemSetViewProps> = ({
         updateField={updateField}
       />
     </Box>
-    <Button onClick={onCreate} variant="contained" sx={{ marginTop: 2 }}>
+    <Button onClick={onCreate} variant="contained" sx={{ marginTop: 2 }} disabled={isDisabledCreate}>
       作成する
     </Button>
   </Box>

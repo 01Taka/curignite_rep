@@ -4,12 +4,11 @@ import { useAppSelector } from "../../../../../../../redux/hooks";
 
 const useDeleteActivityHandler = (problemSetId: string, activityId: string, onFailedMessage?: string) => {
   const userId = useAppSelector(state => state.userSlice.uid);
-  const { asyncStatus, errorMessage, callAsyncFunction, setErrorMessage } = useAsyncHandler();
+  const { asyncStatus, errorMessage, callAsyncFunction, logError } = useAsyncHandler();
 
   const handleDeleteActivity = () => {
     if (!userId) {
-      console.error('User is not authenticated.');
-      setErrorMessage("ユーザーが認証されていません。ログインしてください。");
+      logError("User is not authenticated.", "ユーザーが認証されていません。ログインしてください。");
       return;
     }
     const activityService = serviceFactory.createProblemSetActivityService();
