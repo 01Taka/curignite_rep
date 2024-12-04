@@ -3,7 +3,6 @@ import { forwardRef, useEffect, useImperativeHandle, useMemo } from "react";
 import RangeNumbersDisplay from "./RangeNumbersDisplay";
 import { isNumberInRange } from "../../../../../functions/utils/rangeUtils";
 import useRangeSelection from "../../../../hooks/range/useRangeSelection";
-import { ProblemContainerRef } from "../../step/problemSetStep/problemSetStepTypes";
 import SnackbarForRangeSelection from "./SnackbarForRangeSelection";
 
 interface ProblemContainerProps {
@@ -13,6 +12,11 @@ interface ProblemContainerProps {
   removeNumbers?: number[];
   onSelectProblemNumber: (num: number) => void;
   onSelectProblems: (name: string, numbers: number[]) => void;
+}
+
+interface ProblemContainerRef {
+  onCancelSelection: () => void;
+  deleteAllSelection: () => void;
 }
 
 const RangeSelector = forwardRef<ProblemContainerRef, ProblemContainerProps>(({

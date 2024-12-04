@@ -1,7 +1,7 @@
 import React from 'react';
 import { TaskData } from '../../../../../types/firebase/db/task/taskExpansionTypes';
-import { Box, Divider, SxProps, Typography } from '@mui/material';
-import ActivityRangesDisplay from '../../fixedTasks/submissions/ActivityRangesDisplay';
+import { Box, SxProps, Typography } from '@mui/material';
+import ActivityRangesDisplay from './ActivityRangesDisplay';
 
 interface TaskDetailHeadingProps {
   task: TaskData;
