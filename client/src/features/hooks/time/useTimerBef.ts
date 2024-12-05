@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback } from 'react';
 
 type CountDirection = 'up' | 'down';
 
@@ -9,7 +9,7 @@ interface UseTimerArgs {
   intervalMs: number;
 }
 
-const useTimer = ({
+const useTimerBef = ({
   initialElapsedTime = 0,
   countDirection = 'up',
   countDownLimit = 0,
@@ -83,4 +83,4 @@ const useTimer = ({
   };
 };
 
-export default useTimer;
+export default useTimerBef;

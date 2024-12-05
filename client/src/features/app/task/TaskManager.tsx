@@ -1,18 +1,15 @@
 import React, { useState, useRef } from 'react';
 import { Box, Fab, Zoom } from '@mui/material';
-import Tasks from './tasks/Tasks';
-import ProblemSets from './problemSets/ProblemSets';
 import { Add } from '@mui/icons-material';
 import usePulseOnChange from '../../hooks/usePulseOnChange';
 import Popup from '../../../components/display/popup/Popup';
 import CreateIndividualTask from './createTask/createIndividualTask/CreateIndividualTask';
 import useEventListener from '../../hooks/useEventListener';
 import CreateProblemSet from './createTask/createProblemSet/CreateProblemSet';
-import useLocationTab from '../../hooks/navigate/useLocationTab';
-import useDefaultNavigation from '../../hooks/navigate/useDefaultNavigation';
 import useSwitchComponents from '../../hooks/components/useSwitchComponents';
 import { appPaths } from '../../../constants/app/path/appPath';
-import { getPathList } from '../../../functions/utils/pathUtils';
+import { Outlet } from 'react-router-dom';
+import useNavigationTab from '../../hooks/navigate/useNavigationTab';
 
 interface TaskManagerProps {}
 
@@ -50,11 +47,10 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
   const [displayComponentId, setDisplayComponentId] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  useDefaultNavigation(appPaths.task.list._abs, getPathList(appPaths.task, { includeRoot: false }));
 
-  const { RouteElement, TabsElement, selectedItem } = useLocationTab([
-    { id: "list", label: "タスク一覧", path: appPaths.task.list, element: <Tasks /> },
-    { id: "problemSet", label: "問題集", path: appPaths.task.problemSets, element: <ProblemSets />}
+  const { TabsElement, selectedItem } = useNavigationTab([
+    { id: "list", label: "タスク一覧", path: appPaths.task.list },
+    { id: "problemSet", label: "問題集", path: appPaths.task.problemSets }
   ], { navigateOptions: { replace: true }});
 
   const { Component, isUsingDefaultComponent, switchToDefault, switchComponent } = useSwitchComponents({
@@ -81,7 +77,7 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
     <>
       <Box sx={{ height: '100vh', overflow: "auto" }} ref={containerRef}>
         <Box sx={{ m: 1 }}>{TabsElement}</Box>
-        {RouteElement}
+        <Outlet />
         <Box height={200} />
       </Box>
       <CreateTask

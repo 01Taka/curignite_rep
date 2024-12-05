@@ -14,6 +14,8 @@ const appPathStructure = {
     list: createPath(),
     problemSets: createPath()
   },
+  plan: createPath(),
+  learning: createPath(),
 };
 
 

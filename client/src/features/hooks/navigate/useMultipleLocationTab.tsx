@@ -1,11 +1,11 @@
 import { useCallback, useMemo } from "react";
-import { UseLocationTabReturnType, UseMultipleLocationTabReturnType } from "./shared/types/useLocationTabTypes";
+import { UseMultipleNavigationTabReturnType, UseNavigationTabReturnType } from "./shared/types/useLocationTabTypes";
 import { objectArrayToDict } from "../../../functions/utils/objectUtils";
 import { NavigateOptions } from "react-router-dom";
 
 const useMultipleLocationTab = (
-  args: { id: string, useLocationTabs: UseLocationTabReturnType, navOptions?: NavigateOptions }[]
-): UseMultipleLocationTabReturnType => {
+  args: { id: string, useLocationTabs: UseNavigationTabReturnType, navOptions?: NavigateOptions }[]
+): UseMultipleNavigationTabReturnType => {
   const argsMap = useMemo(() => {
     return objectArrayToDict(args, "id");
   }, [args]);
@@ -14,14 +14,6 @@ const useMultipleLocationTab = (
     const target = argsMap[id];
     if (target) {
       return target.useLocationTabs.TabsElement;
-    };
-    return undefined;
-  }, [argsMap]);
-
-  const getRouteElement = useCallback((id: string) => {
-    const target = argsMap[id];
-    if (target) {
-      return target.useLocationTabs.RouteElement;
     };
     return undefined;
   }, [argsMap]);
@@ -39,7 +31,7 @@ const useMultipleLocationTab = (
     return item && item.useLocationTabs.selectedItem ? { groupId: item.id, item: item.useLocationTabs.selectedItem } : undefined;
   }, [args]);
 
-  return { getRouteElement, getTabsElement, navigateById, selectedElement };
+  return { getTabsElement, navigateById, selectedElement };
 }
 
 export default useMultipleLocationTab

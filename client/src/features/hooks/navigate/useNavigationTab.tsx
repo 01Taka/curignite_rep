@@ -1,11 +1,11 @@
 import { Tabs, Tab } from "@mui/material";
 import { useMemo, useCallback } from "react";
-import { NavigateOptions, useLocation, useNavigate, Routes, Route } from "react-router-dom";
-import { UseLocationTabItem, UseLocationTabReturnType } from "./shared/types/useLocationTabTypes";
+import { NavigateOptions, useLocation, useNavigate } from "react-router-dom";
 import { removeParam } from "../../../functions/utils/pathUtils";
+import { UseNavigationTabItem, UseNavigationTabReturnType } from "./shared/types/useLocationTabTypes";
 
-const useLocationTab = (
-  items: UseLocationTabItem[],
+const useNavigationTab = (
+  items: UseNavigationTabItem[],
   options?: Partial<{
     defaultAbsPath: string;
     navigateOptions: NavigateOptions;
@@ -13,7 +13,7 @@ const useLocationTab = (
     tabProps: Omit<React.ComponentProps<typeof Tab>, "label" | "value">;
     onTabChange?: (newValue: string) => void;
   }>
-): UseLocationTabReturnType => {
+): UseNavigationTabReturnType => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
@@ -57,24 +57,6 @@ const useLocationTab = (
     );
   }, [items, cleanedPathname, removeParamPaths, options, handleChange]);
 
-  const RouteElement = useMemo(() => (
-    <Routes>
-      {items.map((item, index) => {
-        const children = item.children ? (Array.isArray(item.children) ? item.children : [item.children]) : undefined;
-        
-        return children ? (
-          <Route key={index} path={`${item.path._rel}/*`} element={item.element}>
-            {children.map((value, childIndex) => (
-              <Route key={`${index}-${childIndex}`} path={value.path._rel} element={value.element} />
-            ))}
-          </Route>
-        ) : (
-          <Route key={index} path={item.path._rel} element={item.element} />
-        );
-      })}
-    </Routes>
-  ), [items]);
-
   const navigateById = useCallback(
     (id: string, navOptions?: NavigateOptions) => {
       const targetItem = items.find(item => item.id === id);
@@ -87,7 +69,7 @@ const useLocationTab = (
     [items, navigate]
   );
 
-  return { RouteElement, TabsElement, selectedItem, navigateById };
+  return { TabsElement, selectedItem, navigateById };
 };
 
-export default useLocationTab;
+export default useNavigationTab;

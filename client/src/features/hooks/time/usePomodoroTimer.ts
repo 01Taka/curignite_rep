@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import useTimer from './useTimer'; // useTimer フックのインポート
+import useTimerBef from './useTimerBef'; // useTimerBef フックのインポート
 import { splitTimeForPomodoro } from '../../../functions/components/learningGoalUtils';
 import { MINUTES_IN_MILLISECOND } from '../../../constants/utils/dateTimeConstants';
 
@@ -24,7 +24,7 @@ const usePomodoroTimer = (
   workDurationMs: number= 25 * MINUTES_IN_MILLISECOND, // 作業時間（ミリ秒単位）
   breakDurationMs: number = 5 * MINUTES_IN_MILLISECOND, // 休憩時間（ミリ秒単位）
 ): PomodoroTimerReturn => {
-  const { isRunning, elapsedTime, startTimer, stopTimer, resetTimer, getElapsedTime } = useTimer({ initialElapsedTime });
+  const { isRunning, elapsedTime, startTimer, stopTimer, resetTimer, getElapsedTime } = useTimerBef({ initialElapsedTime });
 
   const startPomodoro = useCallback(() => {
     startTimer();

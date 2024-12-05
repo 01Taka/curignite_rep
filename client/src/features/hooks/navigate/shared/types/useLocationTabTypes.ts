@@ -1,33 +1,23 @@
-import { ReactNode } from "react";
 import { NavigateOptions } from "react-router-dom";
 import { PathStructure } from "../../../../../types/app/pathTypes";
 
-export interface UseLocationTabChildren {
-  path: PathStructure;
-  element: ReactNode;
-} 
-
-export interface UseLocationTabItem {
+export interface UseNavigationTabItem {
   id?: string;
   path: PathStructure;
   label: string;
-  element: ReactNode;
-  children?: UseLocationTabChildren | UseLocationTabChildren[];
 };
 
-export interface UseLocationTabReturnType {
-  RouteElement: JSX.Element; // ルート要素
+export interface UseNavigationTabReturnType {
   TabsElement: JSX.Element;  // タブ要素
-  selectedItem: UseLocationTabItem | undefined;
-  navigateById: (id: string, navOptions?: NavigateOptions) => UseLocationTabItem | undefined;
+  selectedItem: UseNavigationTabItem | undefined;
+  navigateById: (id: string, navOptions?: NavigateOptions) => UseNavigationTabItem | undefined;
 };
 
-export interface UseMultipleLocationTabReturnType {
-  getRouteElement: (id: string) => JSX.Element | undefined;
+export interface UseMultipleNavigationTabReturnType {
   getTabsElement: (id: string) => JSX.Element | undefined;
-  navigateById: (elementId: string) => UseLocationTabItem | undefined;
+  navigateById: (elementId: string) => UseNavigationTabItem | undefined;
   selectedElement: {
     groupId: string;
-    item: UseLocationTabItem;
+    item: UseNavigationTabItem;
   } | undefined;
 };

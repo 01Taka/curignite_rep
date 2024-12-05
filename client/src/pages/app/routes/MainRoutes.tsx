@@ -15,6 +15,7 @@ import LearningRoot from '../learning/LearningRoot';
 import TaskRoot from '../task/TaskRoot';
 import { initializeTasks, setupRealTimeUpdates } from '../../../redux/actions/task/taskActions';
 import { appPaths } from '../../../constants/app/path/appPath';
+import PlanRoot from '../plan/PlanRoot';
 
 
 const MainRoutes: FC = () => {
@@ -36,8 +37,10 @@ const MainRoutes: FC = () => {
         {userFetchState.state !== "success" && <Route path="/*" element={<CircularProgress />} />}
         <Route path="/" element={<Home />} />
         <Route path='*' element={<NotFound />} />
-        <Route path={mainRootPaths.learning} element={<LearningRoot />} />
         <Route path={`${appPaths.task._rel}/*`} element={<TaskRoot />} />
+        <Route path={`${appPaths.plan._rel}/*`} element={<PlanRoot />} />
+        <Route path={`${appPaths.learning._rel}/*`} element={<LearningRoot />} />
+        
         <Route path={mainRootPaths.focusLearning} element={<FocusLearning />} />
         <Route path={mainRootPaths.team} element={<TeamRoutes />} />
         <Route path={mainRootPaths.activeMember} element={<ActiveMemberRoutes />} />

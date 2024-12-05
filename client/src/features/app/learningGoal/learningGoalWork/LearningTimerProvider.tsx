@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, ReactNode, useMemo, useEffect, useCallback } from 'react';
-import useTimer from '../../../hooks/timerHooks/useTimer';
+import useTimerBef from '../../../hooks/time/useTimerBef';
 import { useAppSelector } from '../../../../redux/hooks';
 import { IndexedLearningGoalService } from '../../../../functions/browserStorage/indexedDB/services/indexedLearningGoalService';
 
@@ -34,7 +34,7 @@ export const LearningTimerProvider: React.FC<LearningTimerProviderProps> = ({ ch
     resetTimer,
     setTime,
     updateInitialElapsedTime,
-  } = useTimer({});
+  } = useTimerBef({});
 
   // 前回の経過時間を取得する関数をメモ化
   const handleCalcElapsedTime = useCallback(async () => {
