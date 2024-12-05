@@ -1,15 +1,15 @@
-import React, { FC, useMemo, useState } from 'react';
+import { FC, useState } from 'react';
 import { Typography } from '@mui/material';
 import SubjectIcon from '../../../../components/util/SubjectIcon';
 import CircularButton from '../../../../components/input/button/CircularButton';
 import { useAppSelector } from '../../../../redux/hooks';
-import { convertToMilliseconds, msToTime } from '../../../../functions/utils/dateTimeUtils';
-import { revertTimestampConversion } from '../../../../functions/db/dataFormatUtils';
+import { convertToMilliseconds } from '../../../../functions/utils/dateTimeUtils';
 import LearningGoalWorkTimer from './LearningGoalWorkTimer';
 import { useLearningTimer } from './LearningTimerProvider';
 import Popup from '../../../../components/display/popup/Popup';
 import ContinueLearningGoalWorkForm from './ContinueLearningGoalWorkForm';
 import FinishLearningGoalForm from './FinishLearningGoalForm';
+import { msToTime } from '../../../../functions/utils/timeFormatUtils';
 
 interface LearningGoalWorkDisplayProps {}
 
@@ -23,8 +23,6 @@ const LearningGoalWorkDisplay: FC<LearningGoalWorkDisplayProps> = () => {
     isOverTargetTime,
     startTimer,
     stopTimer,
-    resetTimer,
-    setTime,
    } = useLearningTimer();
 
 

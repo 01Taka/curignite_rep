@@ -1,11 +1,12 @@
 import { Box, Typography } from '@mui/material';
 import React from 'react';
 import { format } from 'date-fns';
-import { convertToDate, formatDateDifference, isBeforeDateTime } from '../../../../../functions/utils/dateTimeUtils';
+import { convertToDate, isBeforeDateTime } from '../../../../../functions/utils/dateTimeUtils';
 import { ja } from 'date-fns/locale';
 import TaskDetailHeading from './TaskDetailHeading';
 import { TaskData } from '../../../../../types/firebase/db/task/taskExpansionTypes';
 import { detailBoxStyle } from '../../shared/constants/problemSets/problemSetsConstants';
+import { formatDateDifference } from '../../../../../functions/utils/timeFormatUtils';
 
 interface TaskDetailsProps {
   task: TaskData;

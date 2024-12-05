@@ -1,13 +1,13 @@
 import React, { useMemo } from 'react';
 import { Box, Button, Typography } from '@mui/material';
-import { MINUTES_IN_MILLISECOND } from '../../../../constants/utils/dateTimeConstants';
-import RecommendedPlan from './RecommendedPlan';
-import Popup from '../../../../components/display/popup/Popup';
-import useToggle from '../../../hooks/useToggle';
+import Popup from '../../../components/display/popup/Popup';
+import { MINUTES_IN_MILLISECOND } from '../../../constants/utils/dateTimeConstants';
+import { useAppSelector } from '../../../redux/hooks';
+import useToggle from '../../hooks/useToggle';
 import CustomPlanMain from './customPlan/CustomPlanMain';
-import usePlan from '../shared/hooks/plan/usePlan';
-import { useTaskPlanManager } from '../shared/hooks/plan/useTaskPlanManager';
-import { useAppSelector } from '../../../../redux/hooks';
+import RecommendedPlan from './RecommendedPlan';
+import usePlan from './shared/hooks/plan/usePlan';
+import { useTaskPlanManager } from './shared/hooks/plan/useTaskPlanManager';
 
 interface PlanProps {}
 

@@ -18,8 +18,6 @@ export const sortByDueDateTime = <T extends Record<string, any>>(items: T[], key
   return [...sortedWithinTasks, ...noDeadlineTasks, ...sortedOverdueTasks];
 }
 
-export const millToMin = (mill: number) => Math.ceil(mill / MINUTES_IN_MILLISECOND);
-
 export const formatDueDateTime = (dueDateTime: TimeTypes | null) => {
   return dueDateTime 
   ? format(convertToDate(dueDateTime), 'MM/dd') 

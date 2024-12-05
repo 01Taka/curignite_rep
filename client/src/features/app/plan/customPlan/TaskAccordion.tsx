@@ -1,11 +1,11 @@
 // TaskAccordion.tsx
 import React from 'react';
 import { Accordion, AccordionSummary, AccordionDetails, Typography, Box } from '@mui/material';
-import { TaskData } from '../../../../../types/firebase/db/task/taskExpansionTypes';
-import { getId } from '../../shared/utils/plan/customPlanUtils';
-import RangeNumbersDisplay from '../../shared/components/RangeNumbersDisplay';
-import SnackbarForRangeSelection from '../../shared/components/SnackbarForRangeSelection';
-import { formatDueDateTime } from '../../shared/utils/taskUtils';
+import { TaskData } from '../../../../types/firebase/db/task/taskExpansionTypes';
+import RangeNumbersDisplay from '../../task/shared/components/RangeNumbersDisplay';
+import SnackbarForRangeSelection from '../../task/shared/components/SnackbarForRangeSelection';
+import { formatDueDateTime } from '../../task/shared/utils/taskUtils';
+import { getId } from '../shared/utils/plan/customPlanUtils';
 
 interface TaskAccordionProps {
   task: TaskData;

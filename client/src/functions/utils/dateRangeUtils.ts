@@ -1,10 +1,11 @@
 import { DateRange } from "../../types/util/componentsTypes";
 import { TimeSizeUnit } from "../../types/util/dateTimeTypes";
-import { convertToDate, timeUnitToMilliseconds } from "./dateTimeUtils";
+import { convertToDate } from "./dateTimeUtils";
 import { arrayToRanges } from "./rangeUtils";
+import { getMillisecondsPerUnit } from "./timeFormatUtils";
 
 export const dateArrayToRange = (dates: Date[], sizeUnit: TimeSizeUnit = 'days'): DateRange[] => {
-  const millisPerUnitSize = timeUnitToMilliseconds(sizeUnit);
+  const millisPerUnitSize = getMillisecondsPerUnit(sizeUnit);
 
   // 日付を指定された時間単位で数値配列に変換
   const dateNumbers = dates.map(date => Math.floor(date.getTime() / millisPerUnitSize));
@@ -17,7 +18,7 @@ export const dateArrayToRange = (dates: Date[], sizeUnit: TimeSizeUnit = 'days')
 };
 
 export const fillDateRange = (range: DateRange, unit: TimeSizeUnit): Date[] => {
-  const unitInMillis = timeUnitToMilliseconds(unit);
+  const unitInMillis = getMillisecondsPerUnit(unit);
   const dates: Date[] = [];
   
   let currentDate = range.start.getTime();

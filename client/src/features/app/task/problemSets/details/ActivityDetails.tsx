@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material';
 import React from 'react';
-import { convertToDate, formatDateDifference, timeOmissionFormat } from '../../../../../functions/utils/dateTimeUtils';
+import { convertToDate } from '../../../../../functions/utils/dateTimeUtils';
 import { objectArrayToDict } from '../../../../../functions/utils/objectUtils';
 import { sumRanges, rangesToString } from '../../../../../functions/utils/rangeUtils';
 import { format } from 'date-fns';
@@ -9,6 +9,7 @@ import { TaskData } from '../../../../../types/firebase/db/task/taskExpansionTyp
 import { ProblemSetActivityRead, ProblemSetCategoryRead } from '../../../../../types/firebase/db/task/taskStructure';
 import { Range } from '../../../../../types/util/componentsTypes';
 import { TimeTypes } from '../../../../../types/util/dateTimeTypes';
+import { formatDateDifference, timeOmissionFormat } from '../../../../../functions/utils/timeFormatUtils';
 
 interface ActivityDetailsProps {
   activities: ProblemSetActivityRead[];

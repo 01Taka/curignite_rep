@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Checkbox, FormControlLabel, Typography, Box, Slider } from '@mui/material';
-import { TaskData } from '../../../../../types/firebase/db/task/taskExpansionTypes';
-import { TodayIndividualTask } from '../../shared/types/plan/planTypes';
-import { formatDueDateTime, millToMin } from '../../shared/utils/taskUtils';
+import { convertMilliseconds } from '../../../../functions/utils/timeFormatUtils';
+import { TaskData } from '../../../../types/firebase/db/task/taskExpansionTypes';
+import { formatDueDateTime } from '../../task/shared/utils/taskUtils';
+import { TodayIndividualTask } from '../shared/types/plan/planTypes';
 
 interface TaskCheckboxProps {
   task: TaskData;
@@ -62,7 +63,7 @@ const TaskCheckbox: React.FC<TaskCheckboxProps> = ({ task, todayTask, onChangeSt
         <Typography variant="body2" color="textSecondary">締切日: {formatDeadline}</Typography>
       )}
       <Typography variant="body2" color="textSecondary">
-        推定 {millToMin(task.estimatedDuration)} 分
+        推定 {convertMilliseconds(task.estimatedDuration)} 分
       </Typography>
     </Box>
   );

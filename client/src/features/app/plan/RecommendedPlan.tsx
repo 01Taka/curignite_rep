@@ -1,8 +1,8 @@
+import { Box, Typography, Button } from '@mui/material';
 import React from 'react';
-import { TodayTasks } from '../shared/types/plan/planTypes';
-import { arrayToRangeString } from '../../../../functions/utils/rangeUtils';
-import { Box, Button, Typography } from '@mui/material';
-import { millToMin } from '../shared/utils/taskUtils';
+import { arrayToRangeString } from '../../../functions/utils/rangeUtils';
+import { TodayTasks } from './shared/types/plan/planTypes';
+import { convertMilliseconds } from '../../../functions/utils/timeFormatUtils';
 
 interface RecommendedPlanProps {
   todayTasks: TodayTasks;
@@ -16,7 +16,7 @@ const RecommendedPlan: React.FC<RecommendedPlanProps> = ({ todayTasks, studyTime
     <Box sx={{ p: 2, maxWidth: '100%', width: '100%', mx: 'auto', bgcolor: 'ghostwhite' }}>
       <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
         <Typography variant='h6'>合計 / 目標</Typography>
-        <Typography variant='h5'>{millToMin(todayTasks.estimatedDuration)}分 / {millToMin(studyTimeNeededToday)}分</Typography>
+        <Typography variant='h5'>{convertMilliseconds(todayTasks.estimatedDuration)}分 / {convertMilliseconds(studyTimeNeededToday)}分</Typography>
       </Box>
       <Box>
         {todayTasks.individualTasks.map((task, index) => (
@@ -25,7 +25,7 @@ const RecommendedPlan: React.FC<RecommendedPlanProps> = ({ todayTasks, studyTime
               {task.title}
             </Typography>
             <Typography sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>
-              {Math.ceil(task.todayProgress * 100)}%進行 推定{millToMin(task.estimatedDuration)}分
+              {Math.ceil(task.todayProgress * 100)}%進行 推定{convertMilliseconds(task.estimatedDuration)}分
             </Typography>
           </Box>
         ))}
@@ -34,12 +34,12 @@ const RecommendedPlan: React.FC<RecommendedPlanProps> = ({ todayTasks, studyTime
         {todayTasks.problemSetTasks.map((task, index) => (
           <Box key={index} sx={{ my: 2 }}>
             <Typography variant="h6" sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}>
-              {task.problemSetName} 推定{millToMin(task.estimatedDuration)}分
+              {task.problemSetName} 推定{convertMilliseconds(task.estimatedDuration)}分
             </Typography>
             {task.categories.map((category, catIndex) => (
               <Box key={catIndex} sx={{ pl: 2, mt: 1 }}>
                 <Typography variant="subtitle1" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>
-                  {category.categoryName} 推定{millToMin(category.estimatedDuration)}分
+                  {category.categoryName} 推定{convertMilliseconds(category.estimatedDuration)}分
                 </Typography>
                 <Typography sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' }, color: 'text.secondary' }}>
                   {arrayToRangeString(category.todayTaskProblemIds)}

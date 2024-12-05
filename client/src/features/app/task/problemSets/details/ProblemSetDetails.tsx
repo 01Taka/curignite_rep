@@ -3,13 +3,13 @@ import { ProblemSetRead } from '../../../../../types/firebase/db/task/taskStruct
 import { useAppSelector } from '../../../../../redux/hooks';
 import { Box, Button, IconButton, Typography } from '@mui/material';
 import { detailBoxStyle } from '../../shared/constants/problemSets/problemSetsConstants';
-import { timeOmissionFormat } from '../../../../../functions/utils/dateTimeUtils';
 import { sumRanges } from '../../../../../functions/utils/rangeUtils';
 import { dynamicStyles } from '../../../../../styles/mui/dynamicStyles';
 import { Edit } from '@mui/icons-material';
 import ActivityDetails from './ActivityDetails';
 import { sortByDueDateTime } from '../../shared/utils/taskUtils';
 import { commonStyles } from '../../../../../styles/mui/commonStyles';
+import { timeOmissionFormat } from '../../../../../functions/utils/timeFormatUtils';
 
 interface ProblemSetDetailsProps {
   problemSet: ProblemSetRead | undefined;
@@ -23,7 +23,7 @@ const ProblemSetDetails: React.FC<ProblemSetDetailsProps> = ({ problemSet, onCre
   
   const structure = problemSet ? problemSetStructureMap[problemSet.docId] : null;
   const categories = structure?.categoryIds.map(id => categoryMap[id]) || [];
-  const activities = structure?.activityIds.map(id => activityMap[id]) || [];
+  const activities = useMemo(() => structure?.activityIds.map(id => activityMap[id]) || [], [structure?.activityIds, activityMap]);
   const sortedActivities = useMemo(() => sortByDueDateTime(activities, "dueDateTime"), [activities]);
 
   // Null or undefined check for problemSet

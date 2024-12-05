@@ -239,29 +239,6 @@ const formatDateAsRelative = (
     return result;
 };
 
-/**
- * ミリ秒をフォーマットされた時間文字列に変換する。
- * @param millis - 変換するミリ秒。
- * @param decimalDigits - 含める小数桁数（デフォルトは0）。
- * @param flexMin - 分を柔軟に表示するかどうか（デフォルトは false）。
- * @returns フォーマットされた時間文字列。
- */
-export const millisToTime = (millis: number, decimalDigits: DecimalDigits = 0, flexMin: boolean = false): string => {
-    const totalSec = millis / 1000;
-    const sec = Math.floor(totalSec % 60);
-    const min = Math.floor((totalSec / 60) % 60);
-    const hours = Math.floor(totalSec / 3600);
-
-    const formattedSec = sec.toString().padStart(2, '0');
-    const formattedMin = (!flexMin || min > 0) ? `${min.toString().padStart(2, '0')} : ` : "";
-    const formattedHours = hours > 0 ? `${hours.toString()} : ` : "";
-
-    const fractionalPart = decimalDigits > 0
-        ? `.${((millis % 1000) / 1000).toFixed(decimalDigits).slice(2)}`
-        : '';
-
-    return `${formattedHours}${formattedMin}${formattedSec}${fractionalPart}`;
-};
 
 /**
  * 現在から見た過去の日時を取得し、オプションで切り捨てる。
@@ -299,6 +276,7 @@ const getPastTime = (unit: TimeSizeUnit, value: number, truncate: boolean = fals
     return pastTime;
 };
 
+
 /**
  * 指定された時間単位の値をミリ秒に変換する。
  * @param unit - 時間の単位。
@@ -314,9 +292,9 @@ const toMillis = (unit: TimeSizeUnit, value: number): number => {
         days: value * DAYS_IN_MILLISECOND,
         years: value * YEARS_IN_MILLISECOND,
     };
-
+  
     return unitToMillisMap[unit];
-};
+  };
 
 /**
  * 日付/時間を一連のフォーマットと条件に基づいて文字列に変換する。
@@ -329,12 +307,12 @@ export const dateTimeToString = (
     dateTime: TimeTypes,
     defaultFormat: Format,
     formatChanges?: FormatChange[]
-): string => {
+  ): string => {
     const date = convertToDate(dateTime);
-
+  
     if (formatChanges) {
         formatChanges.sort((a, b) => toMillis(a.borderUnit, a.borderDateTime) - toMillis(b.borderUnit, b.borderDateTime));
-
+  
         for (const formatChange of formatChanges) {
             if (date.getTime() < getPastTime(formatChange.borderUnit, formatChange.borderDateTime, formatChange.format.truncateNotReachDigit).getTime()) {
                 if (formatChange.format.isAbsolute) {
@@ -345,46 +323,13 @@ export const dateTimeToString = (
             }
         }
     }
-
+  
     return (
         `${defaultFormat.isAbsolute ? formatDateAsAbsolute(date, defaultFormat)
         : formatDateAsRelative(date, defaultFormat)}`
     );
-};
-
-export const msToTime = (ms: number, hideSeconds: boolean = true, hideZeroHour: boolean = true): string => {
-    const hours = Math.floor(ms / 3600000);
-    const minutes = Math.floor((ms % 3600000) / 60000);
-    const seconds = Math.floor((ms % 60000) / 1000);
-    return `${hideZeroHour && hours === 0 ? "" : `${hours}時間`}${minutes}分${hideSeconds ? "" : `${seconds}秒`}`;
-}
-
-export const timeOmissionFormat = (timeMs: number): string => {
-    const minutes = Math.floor(timeMs / MINUTES_IN_MILLISECOND);
-    const hours = (minutes / 60).toFixed(1);
-    const unit = minutes >= 60 ? 'h' : 'min';
-    const value = minutes >= 60 ? hours : String(minutes);
-    return `${value}${unit}`;
-}
-
-/**
- * 日付の差をフォーマットする関数
- * @param date - 比較対象の日付
- * @param format - 残りの日数が含まれるフォーマット
- * @param overFormat - 残りの日数がマイナスの場合のフォーマット
- * @param baseDate - 基準の日付（省略可能）
- * @returns フォーマットされた日付の差
- */
-export const formatDateDifference = (
-    date: TimeTypes,
-    format: string = 'd日後',
-    overFormat: string = 'd日前',
-    baseDate: TimeTypes = new Date()
-  ): string => {
-    const remainingDays = differenceInDays(getMidnightDate(date), getMidnightDate(baseDate));
-    const fom = remainingDays < 0 ? overFormat : format;
-    return fom.replace(/d/g, String(Math.abs(remainingDays)))
-};
+  };
+  
 
 const getDateElements = (date: Date, useUTC: boolean = false): DateElements => {
     if (useUTC) {
@@ -419,20 +364,3 @@ const getDateElements = (date: Date, useUTC: boolean = false): DateElements => {
 export const getDatesElements = (dates: Date[], useUTC: boolean = false) => {
     return applyFunctionToArray(getDateElements, dates, useUTC);
 }
-
-export const timeUnitToMilliseconds = (size: TimeSizeUnit): number => {
-    switch (size) {
-        case 'millis':
-            return 1
-        case 'seconds':
-            return SECONDS_IN_MILLISECOND
-        case 'minutes':
-            return MINUTES_IN_MILLISECOND
-        case 'hours':
-            return HOURS_IN_MILLISECOND
-        case 'days':
-            return DAYS_IN_MILLISECOND
-        case 'years':
-            return YEARS_IN_MILLISECOND
-    }
-};

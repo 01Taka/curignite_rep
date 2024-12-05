@@ -1,8 +1,9 @@
 import React from 'react';
 import { TaskData } from '../../../../types/firebase/db/task/taskExpansionTypes';
 import { Box, Typography } from '@mui/material';
-import { formatDateDifference, isBeforeDateTime } from '../../../../functions/utils/dateTimeUtils';
+import { isBeforeDateTime } from '../../../../functions/utils/dateTimeUtils';
 import { dynamicStyles } from '../../../../styles/mui/dynamicStyles';
+import { formatDateDifference } from '../../../../functions/utils/timeFormatUtils';
 
 interface SimpleTaskContainerProps {
   task: TaskData;

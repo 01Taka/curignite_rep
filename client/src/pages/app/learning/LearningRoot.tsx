@@ -6,7 +6,7 @@ import TaskPreview from '../../../features/app/learning/task/taskPreview/TaskPre
 import WorkOnTasksManager from '../../../features/app/learning/task/workOnTasks/WorkOnTasksManager';
 import { usePreviewTasks } from '../../../features/app/learning/task/shared/usePreviewTasks';
 import TaskOrder from '../../../features/app/learning/task/settings/TaskOrder';
-import Plan from '../../../features/app/task/plan/Plan';
+import Plan from '../../../features/app/plan/Plan';
 
 interface LearningRootProps { }
 

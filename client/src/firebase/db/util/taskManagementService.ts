@@ -8,7 +8,7 @@ import { ProblemSetService } from "../app/user/subCollection/task/problemSetServ
 import { ProblemSetActivityService } from "../app/user/subCollection/task/problemSetActivityService";
 import { ProblemSetCategoryService } from "../app/user/subCollection/task/problemSetCategoryService";
 import { IndividualTaskService } from "../app/user/subCollection/task/individualTaskService";
-import { timeOmissionFormat } from "../../../functions/utils/dateTimeUtils";
+import { timeOmissionFormat } from "../../../functions/utils/timeFormatUtils";
 
 export class TaskManagementService {
   static individualTaskToTaskData(individualTask: IndividualTaskRead): TaskData {

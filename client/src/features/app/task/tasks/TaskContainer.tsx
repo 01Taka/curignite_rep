@@ -1,10 +1,11 @@
 import React, { FC, useMemo } from 'react';
 import { Typography, Box, Divider, LinearProgress, Button } from '@mui/material';
 import { MINUTES_IN_MILLISECOND } from '../../../../constants/utils/dateTimeConstants';
-import { convertToDate, formatDateDifference } from '../../../../functions/utils/dateTimeUtils';
+import { convertToDate } from '../../../../functions/utils/dateTimeUtils';
 import MiniValueIcon from '../../../../components/display/container/MiniValueIcon';
 import { AccessTime } from '@mui/icons-material';
 import { ProblemSetActivityField, TaskData } from '../../../../types/firebase/db/task/taskExpansionTypes';
+import { formatDateDifference } from '../../../../functions/utils/timeFormatUtils';
 
 export interface TaskContainerProps {
   task: TaskData;

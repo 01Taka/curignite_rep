@@ -2,11 +2,11 @@ import { useEffect, useMemo, useState, useCallback } from 'react';
 import { arrayToRanges, rangesToArray, sumRanges } from '../../../../../../functions/utils/rangeUtils';
 import { TaskData } from '../../../../../../types/firebase/db/task/taskExpansionTypes';
 import useMultipleRangeSelections from '../../../../../hooks/range/useMultipleRangeSelections';
-import { getId, recoveryId } from '../../../shared/utils/plan/customPlanUtils';
-import { TodayCategoryTask, TodayIndividualTask, TodayProblemSetTask, TodayTasks } from '../../../shared/types/plan/planTypes';
-import { mathClamp } from '../../../../../../functions/utils/numberUtils';
+import { mathClamp } from '../../../../../../functions/utils/mathUtils';
 import { Range } from '../../../../../../types/util/componentsTypes';
 import { useAppSelector } from '../../../../../../redux/hooks';
+import { TodayTasks, TodayIndividualTask, TodayProblemSetTask, TodayCategoryTask } from '../../types/plan/planTypes';
+import { recoveryId, getId } from '../../utils/plan/customPlanUtils';
 
 const useCustomPlan = (
   _tasks?: TaskData[],
@@ -27,17 +27,7 @@ const useCustomPlan = (
     );
     console.log(recommendTask ? Object.fromEntries(recommendTask.problemSetTasks.map(task => [task.problemSetId, task])): {});
     
-  }, [recommendTask])
-
-  const taskNameMap = useMemo(
-    () => Object.fromEntries(tasks.map(task => [task.taskId, task.title])),
-    [tasks]
-  );
-
-  const taskProblemSetIdMap = useMemo(
-    () => Object.fromEntries(tasks.map(task => [task.taskId, task.problemSetActivityField?.problemSetId ?? null])),
-    [tasks]
-  );
+  }, [recommendTask]);
 
   const updateTodayProblemSetTask = useCallback(
     (id: string, ranges: Range[]) => {
@@ -76,7 +66,7 @@ const useCustomPlan = (
         };
       });
     },
-    [categoryMap, taskNameMap, taskProblemSetIdMap, todayProblemSetTask]
+    [categoryMap, problemSetMap, todayProblemSetTask]
   );
 
   const {
@@ -110,7 +100,7 @@ const useCustomPlan = (
         addRangeSelectionWithPairing(pairId, taskId);
       });
     });
-  }, [tasks, addRangeSelectionWithPairing]);
+  }, [tasks, categoryMap, addRangeSelectionWithPairing]);
 
   useEffect(() => {
     initializeSelections();

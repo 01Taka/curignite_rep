@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { mathClamp } from "../../functions/utils/numberUtils";
+import { mathClamp } from "../../functions/utils/mathUtils";
 
 interface UseNumberFormatOptions<T extends "" | number> {
   initialValue?: T | number;
