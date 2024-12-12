@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box } from '@mui/material';
-import { IndividualTaskPreview, ProblemSetTaskPreviewById } from '../shared/taskPreviewTypes';
+import { IndividualTaskPreview, ProblemSetTaskPreviewById } from '../../shared/types/task/taskPreviewTypes';
 
 interface TaskPreviewProps {
   tasks: (IndividualTaskPreview | ProblemSetTaskPreviewById)[]

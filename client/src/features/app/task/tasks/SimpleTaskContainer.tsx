@@ -4,6 +4,7 @@ import { Box, Typography } from '@mui/material';
 import { isBeforeDateTime } from '../../../../functions/utils/dateTimeUtils';
 import { dynamicStyles } from '../../../../styles/mui/dynamicStyles';
 import { formatDateDifference } from '../../../../functions/utils/timeFormatUtils';
+import { commonStyles } from '../../../../styles/mui/commonStyles';
 
 interface SimpleTaskContainerProps {
   task: TaskData;
@@ -15,7 +16,7 @@ const SimpleTaskContainer: React.FC<SimpleTaskContainerProps> = ({ task }) => {
   
   return (
     <Box sx={{
-      ...dynamicStyles.flexCenter({ direction: 'row' }),
+      ...commonStyles.flexCenter,
       ...dynamicStyles.card()
     }}>
       <Typography flex={4}>

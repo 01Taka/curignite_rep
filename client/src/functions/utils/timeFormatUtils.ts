@@ -1,5 +1,5 @@
 import { differenceInDays } from "date-fns";
-import { SECONDS_IN_MILLISECOND, MINUTES_IN_MILLISECOND, HOURS_IN_MILLISECOND, DAYS_IN_MILLISECOND, YEARS_IN_MILLISECOND, TIME_UNIT_IN_MILLISECONDS } from "../../constants/utils/dateTimeConstants";
+import { MINUTES_IN_MILLISECOND, TIME_UNIT_IN_MILLISECONDS } from "../../constants/utils/dateTimeConstants";
 import { DecimalDigits } from "../../types/util/componentsTypes";
 import { TimeSizeUnit, TimeTypes } from "../../types/util/dateTimeTypes";
 import { getMidnightDate } from "./dateTimeUtils";
@@ -29,14 +29,50 @@ export const millisToTime = (millis: number, decimalDigits: DecimalDigits = 0, f
   return `${formattedHours}${formattedMin}${formattedSec}${fractionalPart}`;
 };
 
-
-
 export const msToTime = (ms: number, hideSeconds: boolean = true, hideZeroHour: boolean = true): string => {
   const hours = Math.floor(ms / 3600000);
   const minutes = Math.floor((ms % 3600000) / 60000);
   const seconds = Math.floor((ms % 60000) / 1000);
   return `${hideZeroHour && hours === 0 ? "" : `${hours}時間`}${minutes}分${hideSeconds ? "" : `${seconds}秒`}`;
 }
+
+export const splitMillis = (ms: number): { millis: number, seconds: number, minutes: number, hours: number } => {
+  const millis = ms % 1000;
+  const seconds = Math.floor((ms % 60000) / 1000);
+  const minutes = Math.floor((ms % 3600000) / 60000);
+  const hours = Math.floor(ms / 3600000);
+
+  
+  return { millis, seconds, minutes, hours };
+}
+
+export const splitMillisWithFormat = (
+  ms: number, 
+  options?: Partial<{ millsDigit: number; hoursDigit: number; hideZeroHours: boolean }>
+) => {
+  const { millis, seconds, minutes, hours } = splitMillis(ms);
+  const { millsDigit, hoursDigit, hideZeroHours } = {
+    ...{ millsDigit: 2, hoursDigit: 2, hideZeroHours: false }, ...options
+  };
+
+  // ミリ秒、秒、分、時間をゼロ埋めしてフォーマット
+  const formattedMills = `${millis}`.padStart(millsDigit, '0');
+  const formattedMinutes = `${minutes}`.padStart(2, '0');
+  const formattedSeconds = `${seconds}`.padStart(2, '0');
+
+  // 時間部分をフォーマット
+  let formattedHours = '';
+  if (!hideZeroHours || hours > 0) {
+    formattedHours = `${hours}`.padStart(hoursDigit, '0');
+  }
+
+  return {
+    millis: formattedMills,
+    seconds: formattedSeconds,
+    minutes: formattedMinutes,
+    hours: formattedHours,
+  };
+};
 
 export const timeOmissionFormat = (timeMs: number, options?: Partial<{ minutesUnit: string; hoursUnit: string; }>): string => {
   const minutesUnit = options?.minutesUnit ?? 'min';

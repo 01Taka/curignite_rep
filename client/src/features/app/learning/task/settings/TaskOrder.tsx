@@ -2,7 +2,7 @@ import React from 'react';
 import DnD from '../../../../../components/inputs/DnD';
 import { Box } from '@mui/material';
 import useSortableList from '../../../../hooks/components/useSortableList';
-import { IndividualTaskPreview, ProblemSetTaskPreviewById } from '../shared/taskPreviewTypes';
+import { IndividualTaskPreview, ProblemSetTaskPreviewById } from '../../shared/types/task/taskPreviewTypes';
 
 interface TaskOrderProps {
   tasks: (IndividualTaskPreview | ProblemSetTaskPreviewById)[];

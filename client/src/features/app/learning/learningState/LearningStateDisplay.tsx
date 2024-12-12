@@ -1,7 +1,7 @@
 import React from 'react';
 import { LearningState } from '../../../../types/firebase/db/learning/learningSupplementTypes';
 import { Box, Button, Typography } from '@mui/material';
-import { learningStateLabels } from '../../../../constants/firebase/db/learningConstants';
+import { learningStateLabels } from '../shared/constants/learningConstants';
 import FireAnimation from '../animation/FireAnimation';
 import WaterRingAnimation from '../animation/WaterRingAnimation';
 import RotatingSquare from '../animation/RotatingSquare';

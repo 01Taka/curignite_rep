@@ -1,8 +1,8 @@
 import { useMemo } from "react";
-import { UserTaskPlanManager } from "../../../../../firebase/db/app/user/userTaskPlanManager";
-import { rangesToArray, isNumberInRange } from "../../../../../functions/utils/rangeUtils";
-import { useAppSelector } from "../../../../../redux/hooks";
-import { IndividualTaskPreview, ProblemSetTaskPreviewById } from "./taskPreviewTypes";
+import { UserTaskPlanManager } from "../../../../../../firebase/db/app/user/userTaskPlanManager";
+import { rangesToArray, isNumberInRange } from "../../../../../../functions/utils/rangeUtils";
+import { useAppSelector } from "../../../../../../redux/hooks";
+import { IndividualTaskPreview, ProblemSetTaskPreviewById } from "../../types/task/taskPreviewTypes";
 
 export const usePreviewTasks = () => {
   const { individualTaskMap, problemSetMap, categoryMap } = useAppSelector(state => state.taskSlice);

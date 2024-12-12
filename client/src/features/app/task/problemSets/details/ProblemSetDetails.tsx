@@ -3,13 +3,12 @@ import { ProblemSetRead } from '../../../../../types/firebase/db/task/taskStruct
 import { useAppSelector } from '../../../../../redux/hooks';
 import { Box, Button, IconButton, Typography } from '@mui/material';
 import { detailBoxStyle } from '../../shared/constants/problemSets/problemSetsConstants';
-import { sumRanges } from '../../../../../functions/utils/rangeUtils';
-import { dynamicStyles } from '../../../../../styles/mui/dynamicStyles';
 import { Edit } from '@mui/icons-material';
 import ActivityDetails from './ActivityDetails';
 import { sortByDueDateTime } from '../../shared/utils/taskUtils';
 import { commonStyles } from '../../../../../styles/mui/commonStyles';
 import { timeOmissionFormat } from '../../../../../functions/utils/timeFormatUtils';
+import { sumRanges } from '../../../../../functions/utils/rangeUtils';
 
 interface ProblemSetDetailsProps {
   problemSet: ProblemSetRead | undefined;
@@ -39,7 +38,7 @@ const ProblemSetDetails: React.FC<ProblemSetDetailsProps> = ({ problemSet, onCre
         </Box>
         <Box>
           {categories.map((category) => (
-            <Box key={category.docId} sx={{ ...dynamicStyles.flexCenter({ direction: "row", justifyContent: "space-between" }) }}>
+            <Box key={category.docId} sx={{ ...commonStyles.flexBetween }}>
               <Typography>{category?.name}</Typography>
               <Typography>
                 {category?.totalProblemNumber ?

@@ -1,4 +1,4 @@
-import { IndividualTaskPlanExpansion } from "../../../../../types/firebase/db/user/userTaskPlanStructure";
+import { IndividualTaskPlanExpansion } from "../../../../../../types/firebase/db/user/userTaskPlanStructure";
 
 export interface TaskDataPreview {
   id: string;

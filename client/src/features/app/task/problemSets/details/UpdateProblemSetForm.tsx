@@ -7,6 +7,7 @@ import { dynamicStyles } from '../../../../../styles/mui/dynamicStyles';
 import { useAppSelector } from '../../../../../redux/hooks';
 import useFormState from '../../../../hooks/form/useFormState';
 import { UpdateProblemSetFormState } from '../../shared/types/createTask/createProblemSetTypes';
+import { commonStyles } from '../../../../../styles/mui/commonStyles';
 
 interface UpdateProblemSetFormProps {
   problemSet: ProblemSetRead;
@@ -31,7 +32,7 @@ const UpdateProblemSetForm: React.FC<UpdateProblemSetFormProps> = ({ problemSet,
       <Typography variant='h6'>
         {problemSet.name}を編集
       </Typography>
-      <Box sx={{...dynamicStyles.flexCenter(), gap: 1, }}>
+      <Box sx={{...commonStyles.flexColumnCenter, gap: 1, }}>
         <TextField label='タイトル' name={names.name} value={formState.name} onChange={onChangeFormState} fullWidth />
         <MultilineField label='説明文' name={names.description} value={formState.description} rows={3} onChange={onChangeFormState} />
       </Box>
