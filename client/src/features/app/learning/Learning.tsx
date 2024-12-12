@@ -1,6 +1,5 @@
 import { Box } from '@mui/material';
 import React, { useState } from 'react';
-import ChooseSettingPopups from './popups/ChooseSettingPopups';
 import TaskOrder from './task/settings/TaskOrder';
 import TaskPreview from './task/taskPreview/TaskPreview';
 import WorkOnTasksManager from './task/workOnTasks/WorkOnTasksManager';
@@ -18,7 +17,7 @@ interface LearningProps { }
 const Learning: React.FC<LearningProps> = () => {
   const [learningState, setLearningState] = useState<LearningState>("study");
   const [openPopup, setOpenPopup] = useState<LearningPopup | null>(null);
-  const { taskPreviews } = usePreviewTasks();
+  const { expandTasks, taskPreviews } = usePreviewTasks();
 
   const {
     isRunning,
@@ -29,16 +28,13 @@ const Learning: React.FC<LearningProps> = () => {
   } = useLearningTimeManager({ learningState, setLearningState });
 
   return (
-    <div>
-      <TaskOrder tasks={taskPreviews} />
+    <Box>
       <Box>
         <LearningStateDisplay currentState={learningState} />
         <TimeDisplay timeMs={timeMs} />
       </Box>
       
-      <TaskPreview tasks={taskPreviews} />
       <WorkOnTasksManager />
-      <ChooseSettingPopups />
 
       <TopNavigation
         isRunning={isRunning}
@@ -52,10 +48,12 @@ const Learning: React.FC<LearningProps> = () => {
         isRunning={isRunning}
         timeMs={timeMs}
         learningState={learningState}
+        expandTasks={expandTasks}
+        taskPreviews={taskPreviews}
         switchRunning={switchRunning}
         onClose={() => setOpenPopup(null)}
       />
-    </div>
+    </Box>
   );
 };
 

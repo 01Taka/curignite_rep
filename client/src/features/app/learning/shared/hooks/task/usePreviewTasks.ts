@@ -7,13 +7,12 @@ import { IndividualTaskPreview, ProblemSetTaskPreviewById } from "../../types/ta
 export const usePreviewTasks = () => {
   const { individualTaskMap, problemSetMap, categoryMap } = useAppSelector(state => state.taskSlice);
   const user = useAppSelector(state => state.userSlice.userData);
-
   const expandTasks = useMemo(() => {
     if (user && user.taskPlan) {
       return UserTaskPlanManager.expandTaskPlan(user.taskPlan, individualTaskMap, problemSetMap, categoryMap);
     }
     return { individualTasks: [], problemSetTasks: [] };
-  }, [user, individualTaskMap, problemSetMap, categoryMap])
+  }, [user, individualTaskMap, problemSetMap, categoryMap]);
 
   const taskPreviews = useMemo(() => {
     const individualTaskPreviews = expandTasks.individualTasks.map(task => ({

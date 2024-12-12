@@ -1,8 +1,8 @@
 import { Box, Fab } from '@mui/material';
 import React from 'react';
-import { learningStates, learningStateColorLabel, learningStateLabels } from '../shared/constants/learningConstants';
-import { LearningState } from '../../../../types/firebase/db/learning/learningSupplementTypes';
-import { commonStyles } from '../../../../styles/mui/commonStyles';
+import { commonStyles } from '../../../../../styles/mui/commonStyles';
+import { LearningState } from '../../../../../types/firebase/db/learning/learningSupplementTypes';
+import { learningStates, learningStateColorLabel, learningStateLabels } from '../../shared/constants/learningConstants';
 
 interface SwitchModeButtonsProps {
   onClickState: (state: LearningState) => void;

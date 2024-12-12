@@ -1,11 +1,11 @@
-import React from 'react';
-import LearningTimeHistory from '../learningState/LearningTimeHistory';
-import { LearningState } from '../../../../types/firebase/db/learning/learningSupplementTypes';
-import LearningStateDisplay from '../learningState/LearningStateDisplay';
-import TimeDisplay from '../learningState/TimeDisplay';
+import { Stop, Start } from '@mui/icons-material';
 import { Box, Button, Typography } from '@mui/material';
-import { Start, Stop } from '@mui/icons-material';
-import { commonStyles } from '../../../../styles/mui/commonStyles';
+import React from 'react';
+import { commonStyles } from '../../../../../styles/mui/commonStyles';
+import { LearningState } from '../../../../../types/firebase/db/learning/learningSupplementTypes';
+import LearningStateDisplay from '../../learningState/LearningStateDisplay';
+import LearningTimeHistory from '../../learningState/LearningTimeHistory';
+import TimeDisplay from '../../learningState/TimeDisplay';
 
 interface TimerStatusProps {
   isRunning: boolean;

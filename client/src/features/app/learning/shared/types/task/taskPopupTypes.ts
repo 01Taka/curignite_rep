@@ -1,1 +1,1 @@
-export type LearningPopup = "timer"; 
+export type LearningPopup = "timer" | "task" | "exit"; 

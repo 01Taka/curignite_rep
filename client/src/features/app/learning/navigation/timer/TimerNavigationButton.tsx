@@ -1,10 +1,10 @@
+import { Timer, Stop, Start } from '@mui/icons-material';
 import { Box, Fab, IconButton } from '@mui/material';
 import React from 'react';
-import { LearningState } from '../../../../types/firebase/db/learning/learningSupplementTypes';
+import { LearningState } from '../../../../../types/firebase/db/learning/learningSupplementTypes';
+import { useLongPress } from '../../../../hooks/components/useLongPress';
+import useToggle from '../../../../hooks/useToggle';
 import SwitchStateButtons from './SwitchStateButtons';
-import { Start, Stop, Timer } from '@mui/icons-material';
-import useToggle from '../../../hooks/useToggle';
-import { useLongPress } from '../../../hooks/components/useLongPress';
 
 interface TimerNavigationButtonProps {
   isRunning: boolean;

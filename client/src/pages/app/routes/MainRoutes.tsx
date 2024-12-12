@@ -1,15 +1,10 @@
 import { FC, useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import Home from '../home/Home';
-import TeamRoutes from '../team/TeamRoutes';
+import HomeRoot from '../home/HomeRoot';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import NotFound from '../../error/NotFound';
-import { CircularProgress } from '@mui/material';
-import { mainRootPaths } from '../../../types/path/mainPaths';
 import { autoUpdateSpaces } from '../../../redux/actions/space/spaceActions';
 import { setApprovedTeams } from '../../../redux/actions/team/teamActions';
-import ActiveMemberRoutes from '../activeMember/ActiveMemberRoutes';
-import FocusLearning from '../../../features/app/focusLearning/FocusLearning';
 import { updateCurrentGoal } from '../../../redux/actions/learning/learningGoalActions';
 import LearningRoot from '../learning/LearningRoot';
 import TaskRoot from '../task/TaskRoot';
@@ -20,7 +15,7 @@ import PlanRoot from '../plan/PlanRoot';
 
 const MainRoutes: FC = () => {
   const dispatch = useAppDispatch();
-  const { uid, userFetchState } = useAppSelector(state => state.userSlice);
+  const { uid } = useAppSelector(state => state.userSlice);
 
   useEffect(() => {
     if (uid) {
@@ -31,19 +26,20 @@ const MainRoutes: FC = () => {
       setupRealTimeUpdates(uid, dispatch);
     }
   }, [dispatch, uid]);
-  
+
   return (
     <Routes>
-        {userFetchState.state !== "success" && <Route path="/*" element={<CircularProgress />} />}
-        <Route path="/" element={<Home />} />
-        <Route path='*' element={<NotFound />} />
+        {/* {userFetchState.state !== "success" && <Route path="/*" element={<CircularProgress />} />} */}
+        
+        <Route path={`/*`} element={<HomeRoot />} />
         <Route path={`${appPaths.task._rel}/*`} element={<TaskRoot />} />
         <Route path={`${appPaths.plan._rel}/*`} element={<PlanRoot />} />
         <Route path={`${appPaths.learning._rel}/*`} element={<LearningRoot />} />
         
-        <Route path={mainRootPaths.focusLearning} element={<FocusLearning />} />
+        {/* <Route path={mainRootPaths.focusLearning} element={<FocusLearning />} />
         <Route path={mainRootPaths.team} element={<TeamRoutes />} />
-        <Route path={mainRootPaths.activeMember} element={<ActiveMemberRoutes />} />
+        <Route path={mainRootPaths.activeMember} element={<ActiveMemberRoutes />} /> */}
+        <Route path='*' element={<NotFound />} />
       </Routes>
   );
 };

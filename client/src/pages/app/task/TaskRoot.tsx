@@ -6,7 +6,6 @@ import useDefaultNavigation from '../../../features/hooks/navigate/useDefaultNav
 import { getPathList } from '../../../functions/utils/pathUtils';
 import ProblemSets from '../../../features/app/task/problemSets/ProblemSets';
 import Tasks from '../../../features/app/task/tasks/Tasks';
-// import GoalSettingForm from '../../../features/app/task/goalSetting/GoalSettingForm';
 
 interface TaskRootProps {}
 
