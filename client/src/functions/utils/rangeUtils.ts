@@ -101,7 +101,7 @@ export const mergeRanges = (ranges: Range[]): Range[] => {
   if (ranges.length === 0) return [];
 
   // minの昇順にソートする
-  ranges.sort((a, b) => a.min - b.min);
+  [...ranges].sort((a, b) => a.min - b.min);
 
   const result: Range[] = [];
   let currentRange = ranges[0];
@@ -126,53 +126,61 @@ export const mergeRanges = (ranges: Range[]): Range[] => {
   return result;
 }
 
-export const subtractRanges = (ranges: Range[], toSubtract: Range[]): Range[] => {
-  if (ranges.length === 0) return [];
-  if (toSubtract.length === 0) return ranges;
+export const addRanges = (baseRanges: Range[], addRange: number[] | Range[]) => {
+  if (addRange.length === 0) return baseRanges;
 
-  // 入力の範囲を整列する
-  ranges = mergeRanges(ranges);
-  toSubtract = mergeRanges(toSubtract);
+  const numbers = rangesToArray(baseRanges);
+
+  const addNumbers = typeof addRange[0] === "number"
+    ? addRange as number[]
+    : rangesToArray(addRange as Range[]);
+
+  return arrayToRanges([...numbers, ...addNumbers]);
+};
+
+export const subtractRanges = (ranges: Range[], toSubtract: Range[]): Range[] => {
+  if (!ranges.length) return [];
+  if (!toSubtract.length) return ranges;
+
+  const mergedRanges = mergeRanges(ranges);
+  const mergedToSubtract = mergeRanges(toSubtract);
 
   const result: Range[] = [];
   let subtractIndex = 0;
 
-  for (const range of ranges) {
-      let currentRange = { ...range };
+  for (const range of mergedRanges) {
+    let currentRange = { ...range };
 
-      while (subtractIndex < toSubtract.length) {
-          const subRange = toSubtract[subtractIndex];
+    while (subtractIndex < mergedToSubtract.length) {
+      const subRange = mergedToSubtract[subtractIndex];
 
-          // 取り除く範囲が現在の範囲の前にある場合は無視
-          if (subRange.max < currentRange.min) {
-              subtractIndex++;
-              continue;
-          }
-
-          // 取り除く範囲が現在の範囲の後にある場合は終了
-          if (subRange.min > currentRange.max) {
-              break;
-          }
-
-          // currentRangeの一部がsubRangeと重なっている場合
-          if (subRange.min > currentRange.min) {
-              result.push({ min: currentRange.min, max: subRange.min - 1 });
-          }
-
-          if (subRange.max < currentRange.max) {
-              currentRange.min = subRange.max + 1;
-          } else {
-              currentRange = { min: NaN, max: NaN };
-              break;
-          }
-
-          subtractIndex++;
+      if (subRange.max < currentRange.min) {
+        subtractIndex++;
+        continue;
       }
 
-      if (currentRange) {
-          result.push(currentRange);
+      if (subRange.min > currentRange.max) {
+        break;
       }
+
+      if (subRange.min > currentRange.min) {
+        result.push({ min: currentRange.min, max: subRange.min - 1 });
+      }
+
+      if (subRange.max < currentRange.max) {
+        currentRange.min = subRange.max + 1;
+      } else {
+        currentRange = { min: NaN, max: NaN };
+        break;
+      }
+
+      subtractIndex++;
+    }
+
+    if (!isNaN(currentRange.min)) {
+      result.push(currentRange);
+    }
   }
 
-  return result.filter(range => !isNaN(range.min) && !isNaN(range.max));
+  return result;
 };

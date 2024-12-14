@@ -52,6 +52,20 @@ export class IndividualTaskService {
     }
   }
 
+  async setTasksProgress(userId: string, tasks: { taskId: string, progress: number }[]): Promise<void> {
+    const setProgressPromise = tasks.map(async task => {
+      await this.setProgress(userId, task.taskId, task.progress);
+    });
+    await Promise.all(setProgressPromise);
+  }
+
+  async setProgress(userId: string, taskId: string, progress: number) {
+    if (progress < 0 || progress > 1) {
+      throw new Error(`progressが範囲外です。0~1で指定してください。progress: ${progress}`);
+    }
+    this.updateTask(userId, taskId, { progress });
+  }
+
   async getAllTasks(userId: string, ...queryConstraints: QueryConstraint[]): Promise<IndividualTaskRead[]> {
     try {
       return await this.callFss(userId).getAll(...queryConstraints);

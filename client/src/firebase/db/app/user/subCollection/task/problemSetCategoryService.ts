@@ -3,6 +3,8 @@ import { Range } from "../../../../../../types/util/componentsTypes";
 import FirestoreService from "../../../../handler/firestoreService";
 import { ProblemSetCategoryRead, ProblemSetCategoryWrite } from "../../../../../../types/firebase/db/task/taskStructure";
 import { removeDuplicates } from "../../../../../../functions/utils/objectUtils";
+import { FieldValueSupported } from "../../../../../../types/firebase/db/formatTypes";
+import { addRanges, arrayToRanges, subtractRanges } from "../../../../../../functions/utils/rangeUtils";
 
 export class ProblemSetCategoryService {
   private fss: FirestoreService<ProblemSetCategoryRead, ProblemSetCategoryWrite>;
@@ -42,6 +44,46 @@ export class ProblemSetCategoryService {
 
   async getAllCategories(userId: string, problemSetId: string) {
     return this.callFss(userId, problemSetId).getAll();
+  }
+
+  async setCompletedIdsByCategory(
+    userId: string,
+    problemSetId: string,
+    data: {
+      categoryId: string,
+      toCompletedIds?: number[]
+      toIncompleteIds?: number[]
+    }[]
+  ) {
+    const setCompletedPromise = data.map(async( {categoryId, toCompletedIds, toIncompleteIds }) => {
+      await this.setCompletedId(userId, problemSetId, categoryId, { toCompletedIds, toIncompleteIds });
+    });
+    await Promise.all(setCompletedPromise);
+  }
+
+  async setCompletedId(
+    userId: string,
+    problemSetId: string,
+    categoryId: string,
+    {
+      toCompletedIds,
+      toIncompleteIds
+    }: {
+      toCompletedIds?: number[]
+      toIncompleteIds?: number[]
+    }
+  ) {
+    const category = await this.getCategory(userId, problemSetId, categoryId);
+    if (category) {      
+      const baseRanges = category.completedProblemIdsRange;
+      const addedRanges = toCompletedIds ? addRanges(baseRanges, toCompletedIds) : baseRanges;
+      const newRanges = toIncompleteIds ? subtractRanges(addedRanges, arrayToRanges(toIncompleteIds)) : addedRanges;
+      await this.updateCategory(userId, problemSetId, categoryId, { completedProblemIdsRange: newRanges });
+    }
+  }
+
+  async updateCategory(userId: string, problemSetId: string, categoryId: string, data: FieldValueSupported<Partial<ProblemSetCategoryWrite>>) {
+    return this.callFss(userId, problemSetId).update(categoryId, data);
   }
   
   addCollectionCallback(userId: string, problemSetId: string, callback: (data: ProblemSetCategoryRead[]) => void, callbackId?: string) {

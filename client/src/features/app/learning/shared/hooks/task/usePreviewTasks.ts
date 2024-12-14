@@ -4,9 +4,10 @@ import { rangesToArray, isNumberInRange } from "../../../../../../functions/util
 import { useAppSelector } from "../../../../../../redux/hooks";
 import { IndividualTaskPreview, ProblemSetTaskPreviewById } from "../../types/task/taskPreviewTypes";
 
-export const usePreviewTasks = () => {
+export const usePreviewTasks = ({ taskOrder }: { taskOrder: string[] }) => {
   const { individualTaskMap, problemSetMap, categoryMap } = useAppSelector(state => state.taskSlice);
   const user = useAppSelector(state => state.userSlice.userData);
+
   const expandTasks = useMemo(() => {
     if (user && user.taskPlan) {
       return UserTaskPlanManager.expandTaskPlan(user.taskPlan, individualTaskMap, problemSetMap, categoryMap);
@@ -25,10 +26,10 @@ export const usePreviewTasks = () => {
         const problemSetId = task.problemSetId;
         const categoryId = target.categoryId;
         const data = {
-          id: `${problemSetId}_${categoryId}`,
+          id: categoryId,
+          categoryId,
           problemSetId,
           problemSetName: task.problemSetName,
-          categoryId,
           categoryName: target.categoryName,
           estimatedDuration: target.timePerProblem,
           isIndividual: false

@@ -7,7 +7,7 @@ import { Box } from '@mui/material';
 import ExitPopup from './exit/ExitPopup';
 import TaskPopup from './task/TaskPopup';
 import { TaskPlanExpansion } from '../../../../types/firebase/db/user/userTaskPlanStructure';
-import { IndividualTaskPreview, ProblemSetTaskPreviewById } from '../shared/types/task/taskPreviewTypes';
+import { TaskPreview } from '../shared/types/task/taskPreviewTypes';
 
 interface LearningPopupsProps {
   openPopup: LearningPopup | null;
@@ -16,7 +16,7 @@ interface LearningPopupsProps {
   timeMs: number;
   learningState: LearningState;
   expandTasks: TaskPlanExpansion;
-  taskPreviews: (IndividualTaskPreview | ProblemSetTaskPreviewById)[];
+  taskPreviews: (TaskPreview)[];
   onClose: () => void;
   switchRunning: () => void;
 }

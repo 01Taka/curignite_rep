@@ -42,7 +42,10 @@ const useLearningTimeManager = ({ learningState, setLearningState }: { learningS
 
   const handleSetCurrentState = useCallback(
     (state: LearningState) => {
-      if (state === learningState) return;
+      if (state === learningState) {
+        start();
+        return;
+      };
       resetAndStart();
       setRecordedTime(0);
       setLearningState(state);

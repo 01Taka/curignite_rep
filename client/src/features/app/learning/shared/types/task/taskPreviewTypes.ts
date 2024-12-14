@@ -25,3 +25,5 @@ export interface ProblemSetTaskPreviewById {
 }
 
 export type IndividualTaskPreview = IndividualTaskPlanExpansion & { id: string, isIndividual: true };
+
+export type TaskPreview = IndividualTaskPreview | ProblemSetTaskPreviewById;

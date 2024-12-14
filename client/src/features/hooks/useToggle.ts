@@ -2,6 +2,7 @@ import { useState, useCallback, useMemo } from "react";
 
 interface UseToggleOption {
   initialState: boolean;
+  initialOpenIds: string[];
   openOnlyOne: boolean;
   onChange?: (open: boolean, id?: string) => void;
 }
@@ -11,11 +12,19 @@ const useToggle = (option: Partial<UseToggleOption> = {}) => {
     return {
       initialState: false,
       openOnlyOne: true,
+      initialOpenIds: [],
       ...option
     } as UseToggleOption
   }, [option]);
 
-  const [toggleMap, setToggleMap] = useState<Record<string, boolean>>({ default: setting.initialState });
+  const [toggleMap, setToggleMap] = useState<Record<string, boolean>>(() => {
+    if (!option.initialOpenIds) return { default: setting.initialState };
+    const map: Record<string, boolean> = {};
+    setting.initialOpenIds.forEach(id => {
+      map[id] = true;
+    });
+    return map;
+  });
 
   const normalizeId = (id: any) => (typeof id === 'string' ? id : 'default');
 

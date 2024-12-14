@@ -11,6 +11,7 @@ import TaskRoot from '../task/TaskRoot';
 import { initializeTasks, setupRealTimeUpdates } from '../../../redux/actions/task/taskActions';
 import { appPaths } from '../../../constants/app/path/appPath';
 import PlanRoot from '../plan/PlanRoot';
+import Profile from '../../../features/app/profile/Profile';
 
 
 const MainRoutes: FC = () => {
@@ -35,6 +36,7 @@ const MainRoutes: FC = () => {
         <Route path={`${appPaths.task._rel}/*`} element={<TaskRoot />} />
         <Route path={`${appPaths.plan._rel}/*`} element={<PlanRoot />} />
         <Route path={`${appPaths.learning._rel}/*`} element={<LearningRoot />} />
+        <Route path='/profile' element={<Profile />} />
         
         {/* <Route path={mainRootPaths.focusLearning} element={<FocusLearning />} />
         <Route path={mainRootPaths.team} element={<TeamRoutes />} />

@@ -33,7 +33,7 @@ export const msToTime = (ms: number, hideSeconds: boolean = true, hideZeroHour: 
   const hours = Math.floor(ms / 3600000);
   const minutes = Math.floor((ms % 3600000) / 60000);
   const seconds = Math.floor((ms % 60000) / 1000);
-  return `${hideZeroHour && hours === 0 ? "" : `${hours}時間`}${minutes}分${hideSeconds ? "" : `${seconds}秒`}`;
+  return `${hideZeroHour && hours === 0 ? "" : `${hours}時間`}${minutes.toString().padStart(2, '0')}分${hideSeconds ? "" : `${seconds}秒`}`;
 }
 
 export const splitMillis = (ms: number): { millis: number, seconds: number, minutes: number, hours: number } => {

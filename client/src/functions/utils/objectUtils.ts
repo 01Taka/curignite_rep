@@ -228,6 +228,58 @@ export const getValueBetween = <T extends number | string | StringNumber, K>(
 
   return valueMap[closestKey];
 };
+/**
+ * 与えられた値の配列を、指定された`map`の範囲に基づいてフィルタリングし、
+ * 範囲内に含まれる値だけを返します。範囲に該当しない値がある場合は、`defaultValue`を返します。
+ * 
+ * @param values - フィルタリングする値の配列
+ * @param map - 範囲の境界を指定する`Record`型オブジェクト。キーは範囲の境界値、値はその範囲に対応する任意の値。
+ * @param defaultValue - 範囲に該当しない値に設定するデフォルト値（オプション）。範囲外の値が見つかった場合に使用されます。
+ * 
+ * @returns 範囲内に該当する値のみを含む配列。範囲外の値は`defaultValue`が指定されていればその値が追加され、
+ *          指定されていない場合は除外されます。
+ */
+export const mapValuesByRange = <T>(
+  values: number[], 
+  map: Record<number, T>, 
+  defaultValue: T // デフォルト値をオプション引数で追加
+): T[] => {
+  // `map`をソート済みのエントリリストに変換
+  const mapEntries = Object.entries(map)
+    .map(([key, value]) => [Number(key), value] as [number, T])
+    .sort((a, b) => a[0] - b[0]);
+
+  const result: T[] = [];
+
+  values.forEach(value => {
+    // 二分探索で`value`の範囲を特定
+    let left = 0;
+    let right = mapEntries.length - 1;
+
+    while (left <= right) {
+      const mid = Math.floor((left + right) / 2);
+      if (mapEntries[mid][0] <= value) {
+        left = mid + 1;
+      } else {
+        right = mid - 1;
+      }
+    }
+
+    // 範囲内の値かどうかを確認
+    const lowerBound = mapEntries[left - 1]?.[0];
+    const upperBound = mapEntries[left]?.[0];
+    
+    // `lowerBound`と`upperBound`が有効な範囲内なら、その値を追加
+    if (lowerBound !== undefined && upperBound !== undefined && lowerBound <= value && value < upperBound) {
+      result.push(mapEntries[left - 1]?.[1] ?? defaultValue);
+    } else {
+      // 範囲外の場合にデフォルト値を追加
+      result.push(defaultValue);
+    }
+  });
+
+  return result;
+}
 
 /**
  * 配列から重複する要素を取り除く

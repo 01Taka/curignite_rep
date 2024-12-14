@@ -16,6 +16,12 @@ export const commonStyles = {
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+  flexColumnBetween: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   centerAlign: {
     display: 'flex',
     alignItems: 'center',

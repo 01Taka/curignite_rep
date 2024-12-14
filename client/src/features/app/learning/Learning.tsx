@@ -1,7 +1,5 @@
 import { Box } from '@mui/material';
 import React, { useState } from 'react';
-import TaskOrder from './task/settings/TaskOrder';
-import TaskPreview from './task/taskPreview/TaskPreview';
 import WorkOnTasksManager from './task/workOnTasks/WorkOnTasksManager';
 import { usePreviewTasks } from './shared/hooks/task/usePreviewTasks';
 import TopNavigation from './navigation/TopNavigation';
@@ -17,7 +15,7 @@ interface LearningProps { }
 const Learning: React.FC<LearningProps> = () => {
   const [learningState, setLearningState] = useState<LearningState>("study");
   const [openPopup, setOpenPopup] = useState<LearningPopup | null>(null);
-  const { expandTasks, taskPreviews } = usePreviewTasks();
+  const { expandTasks, taskPreviews } = usePreviewTasks({ taskOrder: [] });
 
   const {
     isRunning,
@@ -34,7 +32,9 @@ const Learning: React.FC<LearningProps> = () => {
         <TimeDisplay timeMs={timeMs} />
       </Box>
       
-      <WorkOnTasksManager />
+      <WorkOnTasksManager
+        taskPreviews={taskPreviews}
+      />
 
       <TopNavigation
         isRunning={isRunning}

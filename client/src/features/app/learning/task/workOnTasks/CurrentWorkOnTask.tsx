@@ -1,36 +1,61 @@
 import { Box, Button, Typography } from '@mui/material';
 import React from 'react';
-import { TaskData } from '../../../../../types/firebase/db/task/taskExpansionTypes';
+import { IndividualTaskPreview, ProblemSetTaskPreviewById, TaskPreview } from '../../shared/types/task/taskPreviewTypes';
+import { timeOmissionFormat } from '../../../../../functions/utils/timeFormatUtils';
+import TaskTitle from './TaskTitle';
 
 interface CurrentWorkOnTaskProps {
-  currentTask: TaskData | null;
-  onCompletedTask: (task: TaskData) => void;
+  currentTask: TaskPreview | null;
+  onSetIndividualProgress: (task: IndividualTaskPreview, progress: number) => void;
+  onSetProblemSetTaskCompleted: (task: ProblemSetTaskPreviewById, isCompleted: boolean) => void;
 }
 
-const CurrentWorkOnTask: React.FC<CurrentWorkOnTaskProps> = ({ currentTask, onCompletedTask }) => {
+const CurrentWorkOnTask: React.FC<CurrentWorkOnTaskProps> = ({ currentTask, onSetProblemSetTaskCompleted }) => {
   return (
-    <Box>
-      {currentTask &&
         <Box sx={{
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
-          width: '100%',
+          width: '90%',
+          height: 130,
           border: 2,
-          borderColor: 'red',
+          borderColor: "gray",
+          bgcolor: currentTask?.isCompleted ? "greenyellow" : "whitesmoke",
           borderRadius: 2,
-          padding: 2
+          padding: 1
         }}>
-          <Typography>
-            {currentTask.title}
-          </Typography>
-          <Button size='large' onClick={() => onCompletedTask(currentTask)} variant='contained' sx={{ mt: 2 }}>
-            完了
-          </Button>
-        </Box>
-      }
-    </Box>
+          {currentTask &&
+          <>
+            {currentTask.isIndividual ? (
+              <Typography>
+                {currentTask.title}
+              </Typography>
+            ) : (
+              <Box sx={{
+                width: "100%",
+                height: "100%"
+              }}>
+                <TaskTitle task={currentTask} />
+                <Typography>
+                  推定: {timeOmissionFormat(currentTask.estimatedDuration)}
+                </Typography>
+              </Box>
+            )}
+            <Button
+              sx={{
+                mt: 2,
+              }}
+              color={currentTask.isCompleted ? "success" : "error"}
+              size='large'
+              variant='contained'
+              onClick={() => onSetProblemSetTaskCompleted(currentTask as ProblemSetTaskPreviewById, !currentTask.isCompleted)}
+            >
+              {currentTask.isCompleted ? "完了済み" : "未完了"}
+            </Button>
+          </>
+        }
+      </Box>
   );
 };
 

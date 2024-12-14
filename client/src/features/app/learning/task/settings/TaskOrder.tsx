@@ -2,14 +2,15 @@ import React from 'react';
 import DnD from '../../../../../components/inputs/DnD';
 import { Box } from '@mui/material';
 import useSortableList from '../../../../hooks/components/useSortableList';
-import { IndividualTaskPreview, ProblemSetTaskPreviewById } from '../../shared/types/task/taskPreviewTypes';
+import { TaskPreview } from '../../shared/types/task/taskPreviewTypes';
+import useLog from '../../../../hooks/common/useLog';
 
 interface TaskOrderProps {
-  tasks: (IndividualTaskPreview | ProblemSetTaskPreviewById)[];
+  tasks: TaskPreview[];
 }
 
 const TaskOrder: React.FC<TaskOrderProps> = ({ tasks }) => {
-  const { ids, setIds, renderItem } = useSortableList({
+  const { ids, sortedItems, setIds, renderItem } = useSortableList({
     items: tasks,
     renderItem: (item) => {
       return item.isIndividual ? (
@@ -25,6 +26,8 @@ const TaskOrder: React.FC<TaskOrderProps> = ({ tasks }) => {
       )
     }
   });
+  
+  useLog(sortedItems)
 
   return (
     <DnD

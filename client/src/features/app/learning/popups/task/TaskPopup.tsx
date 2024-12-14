@@ -1,12 +1,11 @@
 import React from 'react';
 import { TaskPlanExpansion } from '../../../../../types/firebase/db/user/userTaskPlanStructure';
-import { IndividualTaskPreview, ProblemSetTaskPreviewById } from '../../shared/types/task/taskPreviewTypes';
 import TaskOrder from '../../task/settings/TaskOrder';
-import TaskPreview from '../../task/taskPreview/TaskPreview';
+import { TaskPreview } from '../../shared/types/task/taskPreviewTypes';
 
 interface TaskPopupProps {
   expandTasks: TaskPlanExpansion;
-  taskPreviews: (IndividualTaskPreview | ProblemSetTaskPreviewById)[];
+  taskPreviews: TaskPreview[];
 }
 
 const TaskPopup: React.FC<TaskPopupProps> = ({ taskPreviews }) => {
