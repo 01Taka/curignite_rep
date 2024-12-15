@@ -1,6 +1,6 @@
 import React from 'react';
 import { LearningState } from '../../../../types/firebase/db/learning/learningSupplementTypes';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { learningStateLabels } from '../shared/constants/learningConstants';
 import FireAnimation from '../animation/FireAnimation';
 import WaterRingAnimation from '../animation/WaterRingAnimation';
@@ -18,7 +18,7 @@ interface ShapeSelectorProps {
 const ShapeSelector: React.FC<ShapeSelectorProps> = ({ state }) => {
   switch (state) {
     case 'focus':
-      return <FireAnimation />
+      return <FireAnimation size={95} />
     case 'study':
       return <WaterRingAnimation />
     case 'break':

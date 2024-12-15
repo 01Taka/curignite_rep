@@ -2,9 +2,11 @@ import { Timestamp } from "firebase/firestore";
 import { Range } from "../../../util/componentsTypes";
 import { CategoryActivity, ProblemSetActivityManagementMethod } from "./taskSupplementTypes";
 import { DocumentRead, DocumentWrite } from "../baseTypes";
+import { Subject } from "../common/commonTypes";
 
 interface IndividualTaskDocument {
   title: string; // タスクのタイトル
+  subject: Subject;
   estimatedDuration: number; // 推定所要時間
   dueDateTime: number | null; // 期限
   progress: number; // 進捗率（0〜1）
@@ -14,6 +16,7 @@ interface IndividualTaskDocument {
 
 interface ProblemSetDocument {
   name: string; // 問題集の名前
+  subject: Subject;
   description: string; // 問題集の説明
   activityManagementMethod: ProblemSetActivityManagementMethod;
 }

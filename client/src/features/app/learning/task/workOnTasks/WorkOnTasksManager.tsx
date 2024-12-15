@@ -1,12 +1,11 @@
-import { Box, IconButton, Typography } from '@mui/material';
+import { Box, Divider } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import CurrentWorkOnTask from './CurrentWorkOnTask';
-import { ArrowBackIosNew, ArrowForwardIos } from '@mui/icons-material';
 import { TaskPreview } from '../../shared/types/task/taskPreviewTypes';
 import useUpdateTaskCompleted from '../../shared/hooks/task/useUpdateTaskCompleted';
 import { useAppSelector } from '../../../../../redux/hooks';
 import { commonStyles } from '../../../../../styles/mui/commonStyles';
-import TaskTitle from './TaskTitle';
+import TaskSwitchNavigation from './TaskSwitchNavigation';
 
 interface WorkOnTasksManagerProps {
   taskPreviews: TaskPreview[];
@@ -40,28 +39,20 @@ const WorkOnTasksManager: React.FC<WorkOnTasksManagerProps> = ({ taskPreviews })
   return (
     <Box sx={{
       ...commonStyles.flexColumnCenter,
-      width: "100%",
+      width: "90%",
+      mx: "auto",
       gap: '0.5rem',
+      boxShadow: 2,
+      borderRadius: 2,
+      padding: 0.5,
     }}>
-      <Box sx={{ display: "flex", gap: 0.5, width: "90%" }}>
-        <Typography variant="caption" >次のタスク: </Typography>
-        {nextTask &&
-          <TaskTitle task={nextTask} variant="caption" />
-        }
-      </Box>
       <CurrentWorkOnTask
         currentTask={tasks[currentTaskIndex] ?? null}
         onSetProblemSetTaskCompleted={addProblemSetTaskCompletedChanged}
         onSetIndividualProgress={addIndividualTaskProgressChanged}
       />
-      <Box sx={{ ...commonStyles.flexBetween, width: "100%" }}>
-        <IconButton size='large' onClick={() => incrementCurrentTaskIndex(-1)}>
-          <ArrowBackIosNew />
-        </IconButton>
-        <IconButton size='large' onClick={() => incrementCurrentTaskIndex(1)}>
-          <ArrowForwardIos />
-        </IconButton>
-      </Box>
+      <Divider sx={{ width: "100%" }} />
+      <TaskSwitchNavigation nextTask={nextTask} incrementCurrentTaskIndex={incrementCurrentTaskIndex} />
     </Box>
   );
 };

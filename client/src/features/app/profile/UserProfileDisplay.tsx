@@ -10,9 +10,9 @@ interface UserProfileDisplayProps {
 const UserProfileDisplay: React.FC<UserProfileDisplayProps> = ({ userProfile }) => {
   return (
     <Box sx={{ ...commonStyles.flexColumnCenter, gap: 1, width: '80%' }}>
-      <Card sx={{ display: "flex", flexDirection: "column", width: '100%', height: '250%', padding: 1 }}>
-        <Box sx={{ ...commonStyles.flexColumnCenter, width: '100%' }}>
-          <Typography variant="h6" sx={{ alignSelf: 'start' }}>
+      <Card sx={{ display: "flex", flexDirection: "column", width: '100%', height: '250%' }}>
+        <Box sx={{ ...commonStyles.flexColumnCenter, width: '100%', padding: 1 }}>
+          <Typography variant="h6" >
             {userProfile.username}
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '100%' }}>
@@ -30,7 +30,7 @@ const UserProfileDisplay: React.FC<UserProfileDisplayProps> = ({ userProfile }) 
         <CardMedia
           component="img"
           sx={{
-            height: 120, // 高さを指定
+            height: 140, // 高さを指定
             objectFit: "scale-down", // 画像を縦に合わせる
           }}
           image={userProfile.iconUrl}
@@ -40,12 +40,13 @@ const UserProfileDisplay: React.FC<UserProfileDisplayProps> = ({ userProfile }) 
 
       <Box
         sx={{
+          ...commonStyles.flexColumnCenter,
+          gap: 0.5,
           bgcolor: 'white',
           boxShadow: 1,
           borderRadius: 2,
           width: "100%",
           height: '100%',
-          padding: 1,
         }}
       >
         <Typography>直近の称号</Typography>

@@ -17,18 +17,16 @@ const CurrentWorkOnTask: React.FC<CurrentWorkOnTaskProps> = ({ currentTask, onSe
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
-          width: '90%',
-          height: 130,
-          border: 2,
-          borderColor: "gray",
-          bgcolor: currentTask?.isCompleted ? "greenyellow" : "whitesmoke",
-          borderRadius: 2,
-          padding: 1
+          width: '100%',
+          bgcolor: currentTask?.isCompleted ? "greenyellow" : "white",
+          borderRadius: 1,
+          px: 2,
+          py: 1
         }}>
           {currentTask &&
           <>
             {currentTask.isIndividual ? (
-              <Typography>
+              <Typography variant='h6'>
                 {currentTask.title}
               </Typography>
             ) : (
@@ -37,7 +35,7 @@ const CurrentWorkOnTask: React.FC<CurrentWorkOnTaskProps> = ({ currentTask, onSe
                 height: "100%"
               }}>
                 <TaskTitle task={currentTask} />
-                <Typography>
+                <Typography variant='h6'>
                   推定: {timeOmissionFormat(currentTask.estimatedDuration)}
                 </Typography>
               </Box>

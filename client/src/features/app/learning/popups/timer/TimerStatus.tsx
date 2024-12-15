@@ -13,27 +13,25 @@ interface TimerStatusProps {
   timeMs: number;
   learningHistory: Record<LearningState, number>;
   switchRunning: () => void;
+  onChangeState: (state: LearningState) => void;
 }
 
-const TimerStatus: React.FC<TimerStatusProps> = ({ isRunning, learningState, timeMs, learningHistory, switchRunning }) => {
+const TimerStatus: React.FC<TimerStatusProps> = ({ isRunning, learningState, timeMs, learningHistory, switchRunning, onChangeState }) => {
   return (
     <Box>
-      <LearningStateDisplay currentState={learningState} />
-      <TimeDisplay timeMs={timeMs} />
-      <Button size="large"  variant="outlined" onClick={switchRunning}>
-        {isRunning ? (
-          <Box sx={{ ...commonStyles.flexCenter, gap: 1 }} >
-            <Typography>停止</Typography>
-            <Stop />
-          </Box>
-        ) : (
-          <Box sx={{ ...commonStyles.flexCenter, gap: 1 }} >
-            <Typography>再開</Typography>
-            <Start />
-          </Box>
-        )}
-      </Button>
-      <LearningTimeHistory history={learningHistory} />
+      <Box sx={{ ...commonStyles.flexCenter, gap: 1, mt: 4  }}>
+        <LearningStateDisplay currentState={learningState} />
+        <Box sx={{ ...commonStyles.flexColumnCenter, gap: 2 }}>
+          <TimeDisplay timeMs={timeMs} />
+          <Button sx={{ ...commonStyles.flexCenter, gap: 1 }} size="large"  variant="outlined" onClick={switchRunning} >
+            <Typography>{isRunning ? "停止" : "再開"}</Typography>
+            {isRunning ? <Stop /> : <Start />}
+          </Button>
+        </Box>
+      </Box>
+      <Box sx={{ mt: 1 }}>
+        <LearningTimeHistory history={learningHistory} learningState={learningState} onChangeState={onChangeState} />
+      </Box>
     </Box>
   );
 };

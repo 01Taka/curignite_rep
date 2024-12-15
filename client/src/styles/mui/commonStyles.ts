@@ -27,8 +27,10 @@ export const commonStyles = {
     alignItems: 'center',
   },
   cardShadow: {
-    boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
-    borderRadius: '8px',
+    boxShadow: 2,
+    borderRadius: 2,
+    padding: 1,
+    bgcolor: "white"
   },
   fullWidth: {
     width: '100%',

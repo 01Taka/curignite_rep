@@ -19,6 +19,7 @@ interface LearningPopupsProps {
   taskPreviews: (TaskPreview)[];
   onClose: () => void;
   switchRunning: () => void;
+  onChangeState: (state: LearningState) => void;
 }
 
 const LearningPopups: React.FC<LearningPopupsProps> = ({
@@ -30,7 +31,8 @@ const LearningPopups: React.FC<LearningPopupsProps> = ({
   expandTasks,
   taskPreviews,
   onClose,
-  switchRunning
+  switchRunning,
+  onChangeState
   }) => {
   
   return (
@@ -43,6 +45,7 @@ const LearningPopups: React.FC<LearningPopupsProps> = ({
             learningState={learningState}
             learningHistory={learningHistory}
             switchRunning={switchRunning}
+            onChangeState={onChangeState}
           />
         ) : openPopup === "task" ? (
           <TaskPopup

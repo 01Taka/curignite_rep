@@ -3,6 +3,7 @@ import { ProblemSetRead, ProblemSetWrite } from "../../../../../../types/firebas
 import { ProblemSetActivityManagementMethod } from "../../../../../../types/firebase/db/task/taskSupplementTypes";
 import FirestoreService from "../../../../handler/firestoreService";
 import { FieldValueSupported } from "../../../../../../types/firebase/db/formatTypes";
+import { Subject } from "../../../../../../types/firebase/db/common/commonTypes";
 
 export class ProblemSetService {
   private fss: FirestoreService<ProblemSetRead, ProblemSetWrite>;
@@ -19,12 +20,14 @@ export class ProblemSetService {
   async createProblemSet(
     creatorId: string,
     problemSetName: string,
+    subject: Subject,
     description: string,
     activityManagementMethod: ProblemSetActivityManagementMethod
   ): Promise<DocumentReference<ProblemSetWrite, DocumentData>> {
     const data: ProblemSetWrite = {
       createdById: creatorId,
       name: problemSetName,
+      subject,
       description,
       activityManagementMethod
     }

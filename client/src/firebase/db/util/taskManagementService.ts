@@ -177,6 +177,7 @@ export class TaskManagementService {
       ...activity,
       taskId: activity.docId,
       title: problemSet.name,
+      subject: problemSet.subject,
       taskNote: '',
     });
 

@@ -1,16 +1,15 @@
-export enum Subject {
-  Math = "mathematics",
-  English = "english",
-  History = "history",
-  Geography = "geography",
-  Physics = "physics",
-  Chemistry = "chemistry",
-  Biology = "biology",
-  ComputerScience = "computerScience",
-  SocialStudies = "socialStudies",
-  JapaneseLanguage = "japaneseLanguage",
-  ClassicalLiterature = "classicalLiterature",
-  ClassicalChinese = "classicalChinese",
-  Other = "other",
-  NotSelected = "notSelected",
-}
+export type Subject = 
+  | "mathematics"
+  | "english"
+  | "history"
+  | "geography"
+  | "physics"
+  | "chemistry"
+  | "biology"
+  | "computerScience"
+  | "socialStudies"
+  | "japaneseLanguage"
+  | "classicalLiterature"
+  | "classicalChinese"
+  | "other"
+  | "notSelected";

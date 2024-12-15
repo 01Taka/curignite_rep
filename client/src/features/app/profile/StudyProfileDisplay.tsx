@@ -7,7 +7,7 @@ import useToggle from "../../hooks/useToggle";
 const StudyProfileDisplay: React.FC<{ userStudyProfile: UserStudyProfile }> = ({
   userStudyProfile,
 }) => {
-  const { isOpen, toOpen } = useToggle({ initialOpenIds: ["0"] });
+  const { isOpen, toOpen } = useToggle({ initialOpenIds: ["1"] });
 
   const timeFormat = (timeMs: number) => {
     const { minutes, hours } = splitMillisWithFormat(timeMs, { hoursDigit: 1, hideZeroHours: true });
@@ -29,13 +29,13 @@ const StudyProfileDisplay: React.FC<{ userStudyProfile: UserStudyProfile }> = ({
   const displayData = isOpen("0") ? currentData : recentData;
 
   return (
-    <Box sx={{ ...commonStyles.flexColumnCenter, width: "100%" }}>
-      <Typography variant="h6" sx={{ width: 100, borderBottom: 1, textAlign: "center" }}>
+    <Box sx={{ ...commonStyles.flexColumnCenter, width: "100%", boxShadow: 1, bgcolor: "white", borderRadius: 2, padding: 1 }}>
+      <Typography variant="h6" sx={{ width: 100, borderBottom: 1, borderColor: "gray", textAlign: "center" }}>
         学習記録
       </Typography>
       <Box sx={{ ...commonStyles.flexCenter, gap: 1, mt: 1 }}>
-        <Button variant={isOpen("1") ? "outlined" : "text"} color="primary" onClick={() => toOpen("1")}>最近</Button>
-        <Button variant={isOpen("0") ? "outlined" : "text"} color="secondary" onClick={() => toOpen("0")}>過去</Button>
+        <Button variant={isOpen("1") ? "outlined" : "text"} color="primary" sx={{ boxShadow: 1 }} onClick={() => toOpen("1")}>最近</Button>
+        <Button variant={isOpen("0") ? "outlined" : "text"} color="secondary" sx={{ boxShadow: 1 }} onClick={() => toOpen("0")}>過去</Button>
       </Box>
       <Box sx={{ display: "flex", flexDirection: "column",  gap: 0.5, width: "100%", mt: 0.5 }}>
         {displayData.map((item, index) => (

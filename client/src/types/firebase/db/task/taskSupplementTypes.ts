@@ -2,6 +2,7 @@ import { Timestamp } from "firebase/firestore";
 import { DayOfWeek } from "../../../../constants/utils/dateTimeConstants";
 import { Range } from "../../../util/componentsTypes";
 import { ActionAtExpired } from "./taskStep/taskStepSupplementTypes";
+import { Subject } from "../common/commonTypes";
 
 export type TaskPriority = "high" | "medium" | "low";
 
