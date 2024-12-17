@@ -50,7 +50,7 @@ const useLearningTimeManager = ({ learningState, setLearningState }: { learningS
       setRecordedTime(0);
       setLearningState(state);
     },
-    [learningState, resetAndStart, setLearningState]
+    [learningState, resetAndStart, setLearningState, start]
   );
 
   const totalLearningTime = useMemo(() => {

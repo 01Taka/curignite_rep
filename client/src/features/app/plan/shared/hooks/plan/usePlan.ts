@@ -1,9 +1,10 @@
 import { differenceInCalendarDays } from "date-fns";
 import { useMemo, useState } from "react";
 import { convertToDate } from "../../../../../../functions/utils/dateTimeUtils";
-import { removeDuplicates, groupingByKey } from "../../../../../../functions/utils/objectUtils";
+import { groupingByKey } from "../../../../../../functions/utils/dataStructureUtils/objectUtils";
 import { useAppSelector } from "../../../../../../redux/hooks";
 import { TodayIndividualTask, TodayCategoryTask, TodayTasks } from "../../types/plan/planTypes";
+import { removeDuplicates } from "../../../../../../functions/utils/dataStructureUtils/structureUtils";
 
 const usePlan = (containExpired: boolean) => {
   const { taskMap, problemSetMap, categoryMap } = useAppSelector(state => state.taskSlice);

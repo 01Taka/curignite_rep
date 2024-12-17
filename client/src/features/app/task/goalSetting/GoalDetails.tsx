@@ -5,8 +5,8 @@ import useFormState from '../../../hooks/form/useFormState';
 import useToggle from '../../../hooks/useToggle';
 import ClickableText from '../../../../components/navigation/ClickableText';
 import { MINUTES_IN_MILLISECOND } from '../../../../constants/utils/dateTimeConstants';
-import { seq } from '../../../../functions/utils/objectUtils';
 import { msToTime } from '../../../../functions/utils/timeFormatUtils';
+import { seq } from '../../../../functions/utils/dataStructureUtils/arrayUtils';
 
 interface GoalDetailsProps {
   target: string;

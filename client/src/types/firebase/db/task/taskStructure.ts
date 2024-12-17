@@ -8,7 +8,6 @@ interface IndividualTaskDocument {
   title: string; // タスクのタイトル
   subject: Subject;
   estimatedDuration: number; // 推定所要時間
-  dueDateTime: number | null; // 期限
   progress: number; // 進捗率（0〜1）
   taskNote: string; // タスクのノート
   completed: boolean; // 完了状態
@@ -30,17 +29,16 @@ interface ProblemSetCategoryDocument {
 }
 
 interface ProblemSetActivityDocument {
-  dueDateTime: number | null; // 課題の期限
   completed: boolean; // 課題の完了状態
   categoryActivities: CategoryActivity[]; // カテゴリの活動
 }
 
-export type IndividualTaskWrite = DocumentWrite<IndividualTaskDocument | { dueDateTime: Timestamp | null }>; 
+export type IndividualTaskWrite = DocumentWrite<IndividualTaskDocument & { dueDateTime: Timestamp | null }>; 
 export type ProblemSetWrite = DocumentWrite<ProblemSetDocument>; 
 export type ProblemSetCategoryWrite = DocumentWrite<ProblemSetCategoryDocument>; 
-export type ProblemSetActivityWrite = DocumentWrite<ProblemSetActivityDocument | { dueDateTime: Timestamp | null }>; 
+export type ProblemSetActivityWrite = DocumentWrite<ProblemSetActivityDocument & { dueDateTime: Timestamp | null }>; 
 
-export type IndividualTaskRead = DocumentRead<IndividualTaskDocument>; 
+export type IndividualTaskRead = DocumentRead<IndividualTaskDocument & { dueDateTime: number | null }>; 
 export type ProblemSetRead = DocumentRead<ProblemSetDocument>; 
 export type ProblemSetCategoryRead = DocumentRead<ProblemSetCategoryDocument>; 
-export type ProblemSetActivityRead = DocumentRead<ProblemSetActivityDocument>; 
+export type ProblemSetActivityRead = DocumentRead<ProblemSetActivityDocument & { dueDateTime: number | null }>; 

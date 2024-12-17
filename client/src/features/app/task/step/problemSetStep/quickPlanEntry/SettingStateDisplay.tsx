@@ -2,7 +2,7 @@ import React from 'react';
 import { ProblemSetCategoryRead } from '../../../../../../types/firebase/db/task/taskStructure';
 import { Box, Divider, Typography } from '@mui/material';
 import { arrayToRangeString } from '../../../../../../functions/utils/rangeUtils';
-import { dictToArray, groupingByKey } from '../../../../../../functions/utils/objectUtils';
+import { groupingByKey } from '../../../../../../functions/utils/dataStructureUtils/objectUtils';
 import { getDatesElements } from '../../../../../../functions/utils/dateTimeUtils';
 
 interface SettingStateDisplayProps {
@@ -13,7 +13,7 @@ interface SettingStateDisplayProps {
 }
 
 const SettingStateDisplay: React.FC<SettingStateDisplayProps> = ({ categoryMap, problems, dates, distributionRatio }) => {
-  const groupedDates = dictToArray(groupingByKey(getDatesElements(dates), 'months'));
+  const groupedDates = Object.values(groupingByKey(getDatesElements(dates), 'months'));
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', padding: 2 }}>

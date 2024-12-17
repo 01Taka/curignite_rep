@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material';
 import React from 'react';
 import { convertToDate } from '../../../../../functions/utils/dateTimeUtils';
-import { objectArrayToDict } from '../../../../../functions/utils/objectUtils';
+import { objectArrayToDict } from '../../../../../functions/utils/dataStructureUtils/objectUtils';
 import { sumRanges, rangesToString } from '../../../../../functions/utils/rangeUtils';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
@@ -9,7 +9,7 @@ import { TaskData } from '../../../../../types/firebase/db/task/taskExpansionTyp
 import { ProblemSetActivityRead, ProblemSetCategoryRead } from '../../../../../types/firebase/db/task/taskStructure';
 import { Range } from '../../../../../types/util/componentsTypes';
 import { TimeTypes } from '../../../../../types/util/dateTimeTypes';
-import { formatDateDifference, timeOmissionFormat } from '../../../../../functions/utils/timeFormatUtils';
+import { formatDateDifference } from '../../../../../functions/utils/timeFormatUtils';
 
 interface ActivityDetailsProps {
   activities: ProblemSetActivityRead[];
@@ -115,16 +115,17 @@ const CategoryDetails: React.FC<CategoryDetailsProps> = ({
   <Box>
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
       <Typography variant="subtitle2">{categoryName}</Typography>
-      <Typography variant="body2" color="text.secondary">
-        {remainingNumber} / {totalNumber}
-      </Typography>
+
     </Box>
     <Typography variant="body2" color="text.secondary">
       範囲: {rangesToString(problemIdsRange)}
     </Typography>
     <Typography variant="body2" color="text.secondary">
-      推定時間: {timeOmissionFormat(estimatedTime)}
+      進行度: {remainingNumber} / {totalNumber}
     </Typography>
+    {/* <Typography variant="body2" color="text.secondary">
+      推定時間: {timeOmissionFormat(estimatedTime)}
+    </Typography> */}
   </Box>
 );
 

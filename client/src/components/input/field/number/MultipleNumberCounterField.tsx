@@ -1,9 +1,9 @@
 import { Box, SxProps } from '@mui/material';
 import React, { useEffect } from 'react';
-import { seq } from '../../../../functions/utils/objectUtils';
 import NumberCounterField from './NumberCounterField';
 import { FormStateChangeEvent, FormStateChangeFunc } from '../../../../types/util/componentsTypes';
 import { handleCallOnChange } from '../../../../functions/utils/formUtils';
+import { seq } from '../../../../functions/utils/dataStructureUtils/arrayUtils';
 
 interface MultipleNumberCounterFieldProps {
   counterNumber: number;

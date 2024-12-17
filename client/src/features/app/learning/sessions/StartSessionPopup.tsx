@@ -2,7 +2,7 @@
 // import Popup from '../../../../components/util/Popup';
 // import { NumberField, StringField } from '../../../../components/input/inputIndex';
 // import { Subject } from '../../../../types/firebase/db/commonTypes';
-// import { keyMirror } from '../../../../functions/objectUtils';
+// import { keyMirror } from '../../../../functions/dataStructureUtils/objectUtils';
 // import { handleFormStateChange } from '../../../../functions/utils';
 // import { FormStateChangeEvent } from '../../../../types/util/componentsTypes';
 // import SelectField from '../../../../components/input/field/SelectField';

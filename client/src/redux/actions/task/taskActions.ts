@@ -4,7 +4,7 @@ import { ProblemSetCategoryService } from "../../../firebase/db/app/user/subColl
 import { ProblemSetService } from "../../../firebase/db/app/user/subCollection/task/problemSetService";
 import serviceFactory from "../../../firebase/db/factory";
 import { TaskManagementService } from "../../../firebase/db/util/taskManagementService";
-import { objectArrayToDict } from "../../../functions/utils/objectUtils";
+import { objectArrayToDict } from "../../../functions/utils/dataStructureUtils/objectUtils";
 import {
   IndividualTaskRead,
   ProblemSetActivityRead,

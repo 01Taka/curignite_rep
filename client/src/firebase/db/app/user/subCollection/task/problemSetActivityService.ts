@@ -2,9 +2,9 @@ import { DocumentData, DocumentReference, Firestore } from "firebase/firestore";
 import { CategoryActivity } from "../../../../../../types/firebase/db/task/taskSupplementTypes";
 import FirestoreService from "../../../../handler/firestoreService";
 import { ProblemSetActivityRead, ProblemSetActivityWrite } from "../../../../../../types/firebase/db/task/taskStructure";
-import { removeDuplicates } from "../../../../../../functions/utils/objectUtils";
 import { toTimestamp } from "../../../../../../functions/utils/dateTimeUtils";
 import { TimeTypes } from "../../../../../../types/util/dateTimeTypes";
+import { removeDuplicates } from "../../../../../../functions/utils/dataStructureUtils/structureUtils";
 
 export class ProblemSetActivityService {
   private fss: FirestoreService<ProblemSetActivityRead, ProblemSetActivityWrite>;

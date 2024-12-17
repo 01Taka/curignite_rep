@@ -2,7 +2,6 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../../types/module/redux/reduxTypes';
 import { getSpaceInfo } from '../../../../redux/actions/space/spaceActions';
 import { revertTimestampConversion } from '../../../../functions/db/dataFormatUtils';
-import { dictToArray } from '../../../../functions/utils/objectUtils';
 import { SpaceData } from '../../../../types/firebase/db/space/spaceStructure';
 
 export const useCurrentSpaceInfo = () => {
@@ -15,7 +14,7 @@ export const useSpaces = (): SpaceData[] => {
   return useSelector((state: RootState) => {
     const spaceInfoMap = state.spaceSlice.spaceInfoMap;
     const convertedData = revertTimestampConversion(spaceInfoMap);
-    const spacesArray = dictToArray(convertedData);
+    const spacesArray = Object.values(convertedData);
     return spacesArray.map(info => info.space).filter((space): space is SpaceData => space !== null);
   });
 };

@@ -1,18 +1,31 @@
-import React, { FC } from 'react'
-import { Subject } from '../../types/firebase/db/common/commonTypes'
+import React from 'react';
+import { Subject } from '../../types/firebase/db/common/commonTypes';
 import { subjectColors, subjectLabels } from '../../constants/label/subjectLabels';
-import { cn } from '../../functions/utils/utils';
+import { Box, SxProps, Typography } from '@mui/material';
+import { commonStyles } from '../../styles/mui/commonStyles';
+
 interface SubjectIconProps {
   subject: Subject;
-  className?: string;
+  sx?: SxProps;
 }
 
-const SubjectIcon: FC<SubjectIconProps> = ({ subject, className = "absolute top-0 right-0" }) => {
+const SubjectIcon: React.FC<SubjectIconProps> = ({ subject, sx }) => {
   return (
-    <div style={{ backgroundColor: subjectColors[subject] }} className={cn("w-16 h-8 rounded-md", className, "flex justify-center items-center")}>
-      {subjectLabels[subject]}
-    </div>
-  )
-}
+    <Box
+      sx={{
+        ...commonStyles.flexCenter,
+        width: 64,
+        height: 32,
+        borderRadius: 1,
+        ...sx,
+        backgroundColor: subjectColors[subject],
+      }}
+    >
+      <Typography variant="body2" sx={{ color: 'white' }}>
+        {subjectLabels[subject]}
+      </Typography>
+    </Box>
+  );
+};
 
-export default SubjectIcon
+export default SubjectIcon;

@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
 import { useAppSelector } from '../../../../redux/hooks';
-import { dictToArray } from '../../../../functions/utils/objectUtils';
 import { Avatar, Box, Typography } from '@mui/material';
 import { TeamData } from '../../../../types/firebase/db/team/teamStructure';
 import { ConvertTimestampToNumber } from '../../../../types/firebase/db/formatTypes';
@@ -12,7 +11,7 @@ interface TeamIconsProps {
 
 const TeamIcons: FC<TeamIconsProps> = ({ onClickTeam }) => {
   const teamsMap = useAppSelector(state => state.teamSlice.teams);
-  const teams = dictToArray(teamsMap);
+  const teams = Object.values(teamsMap);
   const { currentTeamId } = useAppSelector(state => state.teamSlice);
 
   return (

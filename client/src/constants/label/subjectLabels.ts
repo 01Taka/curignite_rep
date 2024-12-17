@@ -34,3 +34,20 @@ export const subjectColors: Record<Subject, HexColorCode> = {
   other: "#A9A9A9", // ダークグレー
   notSelected: "#C9C9C9", // ホワイトグレー
 };
+
+export const subjectColorsLight: Record<Subject, HexColorCode> = {
+  mathematics: "#A3B8F9", // ブライトブルー (薄く)
+  english: "#FF85A3", // ブライトレッド (薄く)
+  history: "#E18B4D", // チョコレートブラウン (薄く)
+  geography: "#7BEB7B", // ライムグリーン (薄く)
+  physics: "#7AE8D3", // ティール (薄く)
+  chemistry: "#FFB84D", // オレンジ (薄く)
+  biology: "#A7F8A5", // フォレストグリーン (薄く)
+  computerScience: "#D89CFE", // ラベンダー (薄く)
+  socialStudies: "#FFEB85", // ゴールド (薄く)
+  japaneseLanguage: "#FDB77F", // トマト (薄く)
+  classicalLiterature: "#FDA6D6", // ホットピンク (薄く)
+  classicalChinese: "#F5828D", // ファイヤーエンジンレッド (薄く)
+  other: "#D0D0D0", // ダークグレー (薄く)
+  notSelected: "#DADADA", // ホワイトグレー (薄く)
+};

@@ -13,6 +13,7 @@ const CreateProblemSet: FC<CreateProblemSetProps> = ({ onSuccessProblemSet }) =>
   const { uid } = useAppSelector(state => state.userSlice);
   const { formState, names, onChangeFormState, updateField } = useFormState<CreateProblemSetFormState>({
     name: "",
+    subject: "notSelected",
     description: "",
     activityManagementMethod: 'page',
     categories: []

@@ -4,6 +4,7 @@ import { AutoFieldToUndefined } from "../../../../../../types/firebase/db/format
 import FirestoreService from "../../../../handler/firestoreService";
 import { toTimestamp } from "../../../../../../functions/utils/dateTimeUtils";
 import { TimeTypes } from "../../../../../../types/util/dateTimeTypes";
+import { Subject } from "../../../../../../types/firebase/db/common/commonTypes";
 
 export class IndividualTaskService {
   private fss: FirestoreService<IndividualTaskRead, IndividualTaskWrite>;
@@ -20,6 +21,7 @@ export class IndividualTaskService {
   async createTask(
     creatorId: string,
     title: string,
+    subject: Subject,
     dueDateTime: TimeTypes | null,
     taskNote: string,
     estimatedDuration: number,
@@ -30,6 +32,7 @@ export class IndividualTaskService {
       const data: IndividualTaskWrite = {
         createdById: creatorId,
         title,
+        subject,
         dueDateTime: dueDateTime ? toTimestamp(dueDateTime) : null,
         taskNote,
         progress,

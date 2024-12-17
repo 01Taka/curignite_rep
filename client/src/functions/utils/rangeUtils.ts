@@ -1,5 +1,5 @@
 import { Range } from "../../types/util/componentsTypes";
-import { seq } from "./objectUtils";
+import { seq } from "./dataStructureUtils/arrayUtils";
 import { RangeOptions } from "./rangeUtilsTypes";
 
 

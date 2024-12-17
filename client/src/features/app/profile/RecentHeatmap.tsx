@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material';
 import React from 'react';
 import { commonStyles } from '../../../styles/mui/commonStyles';
-import { mapValuesByRange } from '../../../functions/utils/objectUtils';
+import { mapValuesByRange } from '../../../functions/utils/dataStructureUtils/objectUtils';
 import { HOURS_IN_MILLISECOND, MINUTES_IN_MILLISECOND } from '../../../constants/utils/dateTimeConstants';
 import { msToTime } from '../../../functions/utils/timeFormatUtils';
 import MobileTooltip from '../../../components/display/container/MobileTooltip';

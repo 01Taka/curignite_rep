@@ -26,6 +26,7 @@ const useCreateIndividualTaskHandler = (
       callAsyncFunction(individualTaskService.createTask.bind(individualTaskService),[
         userId,
         formState.title,
+        formState.subject,
         formState.dueDateTime,
         formState.taskNote,
         formState.estimatedDuration * MINUTES_IN_MILLISECOND

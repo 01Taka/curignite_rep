@@ -1,5 +1,5 @@
 import { CustomHTMLElement, FormStateChangeEvent, FormStateChangeFunc, SelectItem } from "../../types/util/componentsTypes";
-import { seq } from "./objectUtils";
+import { seq } from "./dataStructureUtils/arrayUtils";
 
 
 export const handleFormStateChange = <T>(

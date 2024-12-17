@@ -1,6 +1,6 @@
 import React, { FC, useMemo } from 'react';
 import { FormStateChangeFunc } from '../../../../../types/util/componentsTypes';
-import { keyMirror } from '../../../../../functions/utils/objectUtils';
+import { keyMirror } from '../../../../../functions/utils/dataStructureUtils/objectUtils';
 import { StringField } from '../../../../../components/input/inputIndex';
 import MultilineField from '../../../../../components/input/field/MultilineField';
 import { Box, Button, Typography } from '@mui/material';

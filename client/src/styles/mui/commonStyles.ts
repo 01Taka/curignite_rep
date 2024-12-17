@@ -5,6 +5,11 @@ export const commonStyles = {
     justifyContent: 'center',
     alignItems: 'center',
   },
+  flexStart: {
+    display: 'flex',
+    justifyContent: 'start',
+    alignItems: 'center',
+  },
   flexColumnCenter: {
     display: 'flex',
     flexDirection: 'column',

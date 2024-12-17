@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react';
 import serviceFactory from '../../../firebase/db/factory';
 import { Subject } from '../../../types/firebase/db/common/commonTypes';
 import { useAppSelector } from '../../../redux/hooks';
-import { keyMirror } from '../../../functions/utils/objectUtils';
+import { keyMirror } from '../../../functions/utils/dataStructureUtils/objectUtils';
 import SelectField from '../../../components/input/field/SelectField';
 import { subjectSelectItems } from '../../../constants/selectItems/subjectSelectItems';
 import FileUploadField from '../../../components/input/field/FileUploadField';
@@ -26,7 +26,7 @@ const CreateHelpForm: FC<CreateHelpFormProps> = ({ onSentHelp }) => {
 
   const { formState, onChangeFormState, resetFormState } = useFormState<HelpFromState>({
     question: "",
-    subject: Subject.NotSelected,
+    subject: "notSelected",
     files: [],
   });
 

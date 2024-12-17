@@ -1,5 +1,5 @@
-import { toKebabCase } from "../../functions/utils/stringUtils";
 import { PathStructure } from "../../types/app/pathTypes";
+import { toKebabCase } from "./dataStructureUtils/stringUtils";
 
 export const createPathStructure = (
   path: PathStructure,

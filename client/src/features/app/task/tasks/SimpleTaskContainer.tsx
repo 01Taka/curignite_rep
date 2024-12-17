@@ -5,6 +5,7 @@ import { isBeforeDateTime } from '../../../../functions/utils/dateTimeUtils';
 import { dynamicStyles } from '../../../../styles/mui/dynamicStyles';
 import { formatDateDifference } from '../../../../functions/utils/timeFormatUtils';
 import { commonStyles } from '../../../../styles/mui/commonStyles';
+import SubjectIcon from '../../../../components/util/SubjectIcon';
 
 interface SimpleTaskContainerProps {
   task: TaskData;
@@ -19,6 +20,7 @@ const SimpleTaskContainer: React.FC<SimpleTaskContainerProps> = ({ task }) => {
       ...commonStyles.flexCenter,
       ...dynamicStyles.card()
     }}>
+      <SubjectIcon subject={task.subject} sx={{ mr: 1 }} />
       <Typography flex={4}>
         {task.title}
       </Typography>

@@ -2,7 +2,7 @@
 // import { JoinRequestData } from "../../../types/firebase/db/common/joinRequest/joinRequestStructure";
 // import BaseDB from "../handler/firestoreService";
 // import { convertTimestampsToNumbers, revertTimestampConversion } from "../../../functions/db/dataFormatUtils";
-// import { sortObjectArray } from "../../../functions/utils/objectUtils";
+// import { sortObjectArray } from "../../../functions/utils/dataStructureUtils/objectUtils";
 // import { JoinRequestStatus } from "../../../types/firebase/db/common/joinRequest/joinRequestSupplementTypes";
 // import { AutoFieldToUndefined } from "../../../types/firebase/db/formatTypes";
 // import { autoFields } from "../../../constants/firebase/firestoreConstants";

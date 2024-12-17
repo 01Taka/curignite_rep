@@ -1,7 +1,7 @@
 // import { DocumentReference, Firestore, Timestamp, where } from "firebase/firestore";
 // import { ISODate, TimeTypes } from "../../../../../types/util/dateTimeTypes";
 // import { convertToMilliseconds, getMidnightTimestamp, convertToDate, toISODate, toTimestamp } from "../../../../../functions/dateTimeUtils";
-// import { getMinAndMaxFromObjectArray } from "../../../../../functions/objectUtils";
+// import { getMinAndMaxFromObjectArray } from "../../../../../functions/dataStructureUtils/objectUtils";
 // import BaseDB from "../../../base";
 // import { getInitialBaseDocumentData } from "../../../../../functions/db/dbUtils";
 // import { differenceInMilliseconds, startOfWeek } from "date-fns";

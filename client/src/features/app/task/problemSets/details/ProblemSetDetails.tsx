@@ -9,6 +9,8 @@ import { sortByDueDateTime } from '../../shared/utils/taskUtils';
 import { commonStyles } from '../../../../../styles/mui/commonStyles';
 import { timeOmissionFormat } from '../../../../../functions/utils/timeFormatUtils';
 import { sumRanges } from '../../../../../functions/utils/rangeUtils';
+import { subjectColorsLight } from '../../../../../constants/label/subjectLabels';
+import SubjectIcon from '../../../../../components/util/SubjectIcon';
 
 interface ProblemSetDetailsProps {
   problemSet: ProblemSetRead | undefined;
@@ -28,26 +30,38 @@ const ProblemSetDetails: React.FC<ProblemSetDetailsProps> = ({ problemSet, onCre
   // Null or undefined check for problemSet
   if (!problemSet) return null;
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem', padding: 2, bgcolor: 'beige', height: '95vh', overflow: 'auto' }}>
-      <Box sx={{ ...detailBoxStyle, mt: 4 }}>
-        <Box sx={{ ...commonStyles.centerAlign, justifyContent: 'space-between' }}>
-          <Typography variant='h5' sx={{ p: 1 }}>{problemSet.name}</Typography>
-          <IconButton size="small" onClick={onUpdateProblemSet} >
-            <Edit />
-          </IconButton>
-        </Box>
-        <Box>
-          {categories.map((category) => (
-            <Box key={category.docId} sx={{ ...commonStyles.flexBetween }}>
-              <Typography>{category?.name}</Typography>
-              <Typography>
-                {category?.totalProblemNumber ?
-                  `${sumRanges(category.completedProblemIdsRange)}/${category.totalProblemNumber}問`
-                  : `${sumRanges(category.completedProblemIdsRange)}問完了`}
-              </Typography>
-              <Typography>平均 {timeOmissionFormat(category.timePerProblem)}</Typography>
-            </Box>
-          ))}
+    <Box sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '1rem',
+      padding: 2,
+      borderRadius: 2,
+      bgcolor: subjectColorsLight[problemSet.subject] ?? "whitesmoke",
+      height: '95vh',
+      overflow: 'auto'
+    }}>
+      <Box >
+        <IconButton size="small" onClick={onUpdateProblemSet} >
+          <Edit />
+        </IconButton>
+        <Box sx={{ ...detailBoxStyle }}>
+          <Box sx={{ ...commonStyles.centerAlign, justifyContent: 'space-between' }}>
+            <Typography variant='h5' sx={{ p: 1 }}>{problemSet.name}</Typography>
+            <SubjectIcon subject={problemSet.subject} />
+          </Box>
+          <Box>
+            {categories.map((category) => (
+              <Box key={category.docId} sx={{ ...commonStyles.flexBetween }}>
+                <Typography>{category?.name}</Typography>
+                <Typography>
+                  {category?.totalProblemNumber ?
+                    `${sumRanges(category.completedProblemIdsRange)}/${category.totalProblemNumber}問`
+                    : `${sumRanges(category.completedProblemIdsRange)}問完了`}
+                </Typography>
+                <Typography>平均 {timeOmissionFormat(category.timePerProblem)}</Typography>
+              </Box>
+            ))}
+          </Box>
         </Box>
       </Box>
 

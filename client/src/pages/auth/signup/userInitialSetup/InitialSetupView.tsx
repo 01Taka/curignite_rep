@@ -7,7 +7,7 @@ import CircularButton from '../../../../components/input/button/CircularButton';
 import { FormStateChangeFunc } from '../../../../types/util/componentsTypes';
 import DateField from '../../../../components/input/field/DateField';
 import ImageUploadField from '../../../../components/input/field/ImageUploadField';
-import { keyMirror } from '../../../../functions/utils/objectUtils';
+import { keyMirror } from '../../../../functions/utils/dataStructureUtils/objectUtils';
 
 export interface InitialSetupFormState {
   username: string;

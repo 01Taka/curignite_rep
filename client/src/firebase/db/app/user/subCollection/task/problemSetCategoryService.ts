@@ -2,9 +2,9 @@ import { DocumentReference, Firestore } from "firebase/firestore";
 import { Range } from "../../../../../../types/util/componentsTypes";
 import FirestoreService from "../../../../handler/firestoreService";
 import { ProblemSetCategoryRead, ProblemSetCategoryWrite } from "../../../../../../types/firebase/db/task/taskStructure";
-import { removeDuplicates } from "../../../../../../functions/utils/objectUtils";
 import { FieldValueSupported } from "../../../../../../types/firebase/db/formatTypes";
 import { addRanges, arrayToRanges, subtractRanges } from "../../../../../../functions/utils/rangeUtils";
+import { removeDuplicates } from "../../../../../../functions/utils/dataStructureUtils/structureUtils";
 
 export class ProblemSetCategoryService {
   private fss: FirestoreService<ProblemSetCategoryRead, ProblemSetCategoryWrite>;

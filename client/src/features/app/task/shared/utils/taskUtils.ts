@@ -1,6 +1,6 @@
 import { endOfDay, format } from "date-fns";
 import { convertToDate, convertToMilliseconds } from "../../../../../functions/utils/dateTimeUtils";
-import { sortObjectArray } from "../../../../../functions/utils/objectUtils";
+import { sortObjectArray } from "../../../../../functions/utils/dataStructureUtils/objectUtils";
 import { MINUTES_IN_MILLISECOND } from "../../../../../constants/utils/dateTimeConstants";
 import { TimeTypes } from "../../../../../types/util/dateTimeTypes";
 

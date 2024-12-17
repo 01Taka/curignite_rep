@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { FormStateChangeEvent } from "../../../types/util/componentsTypes";
-import { keyMirror } from "../../../functions/utils/objectUtils";
+import { keyMirror } from "../../../functions/utils/dataStructureUtils/objectUtils";
 import { UpdateArrayFieldArgs } from "./AsyncHandlerTypes";
 import { handleFormStateChange } from "../../../functions/utils/formUtils";
 

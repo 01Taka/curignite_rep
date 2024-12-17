@@ -1,4 +1,4 @@
-import { groupingByKey, objectArrayToDict } from "../../../functions/utils/objectUtils";
+import { groupingByKey, objectArrayToDict } from "../../../functions/utils/dataStructureUtils/objectUtils";
 import { CategoryActivityStatus, ProblemSetActivityField, ProblemSetStructure, TaskData } from "../../../types/firebase/db/task/taskExpansionTypes";
 import { validateNumber } from "../../../functions/utils/formUtils";
 import { isNumberInRange, rangesToArray } from "../../../functions/utils/rangeUtils";

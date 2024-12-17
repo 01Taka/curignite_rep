@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { Alert, Box, Typography } from '@mui/material';
 import { NumberField, StringField } from '../../../components/input/inputIndex';
 import SelectField from '../../../components/input/field/SelectField';
-import { keyMirror } from '../../../functions/utils/objectUtils';
+import { keyMirror } from '../../../functions/utils/dataStructureUtils/objectUtils';
 import { FormStateChangeEvent } from '../../../types/util/componentsTypes';
 import { subjectSelectItems } from '../../../constants/selectItems/subjectSelectItems';
 import CircularButton from '../../../components/input/button/CircularButton';
@@ -30,7 +30,7 @@ const CreateLearningGoalForm: FC<CreateLearningGoalFormProps> = ({ onCreated }) 
 
   const { formState, onChangeFormState } = useFormState<CreateLearningGoalFormState>({
     objectives: "",
-    subject: Subject.NotSelected,
+    subject: "notSelected",
     targetDurationMin: 25,
   });
 

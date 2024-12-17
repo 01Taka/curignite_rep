@@ -1,5 +1,5 @@
 import { ReactNode, useState, useEffect, useCallback, useMemo } from "react";
-import { objectArrayToDict } from "../../../functions/utils/objectUtils";
+import { objectArrayToDict } from "../../../functions/utils/dataStructureUtils/objectUtils";
 
 interface UseSortableListArgs<T extends { id: string }> {
   items: T[];

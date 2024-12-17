@@ -3,7 +3,7 @@ import { TextField, Slider, Box, Button, Typography, Divider, IconButton } from 
 import { Delete as DeleteIcon } from "@mui/icons-material";
 import { FormStateChangeFunc, Range } from "../../../../types/util/componentsTypes";
 import { mergeRanges } from "../../../../functions/utils/rangeUtils";
-import { sortObjectArray } from "../../../../functions/utils/objectUtils";
+import { sortObjectArray } from "../../../../functions/utils/dataStructureUtils/objectUtils";
 
 interface RangeFieldProps {
   label: string;

@@ -2,7 +2,7 @@
 // import serviceFactory from '../../../firebase/db/factory';
 // import { useAppSelector } from '../../../redux/hooks';
 // import { UserGoalData } from '../../../types/firebase/db/user/userStructure';
-// import { removeDuplicatesByKey } from '../../../functions/objectUtils';
+// import { removeDuplicatesByKey } from '../../../functions/dataStructureUtils/objectUtils';
 // import { CircularProgress, Alert } from '@mui/material';
 // import { SECONDS_IN_MILLISECOND } from '../../../constants/utils/dateTimeConstants';
 // import GoalsView from './GoalsView';

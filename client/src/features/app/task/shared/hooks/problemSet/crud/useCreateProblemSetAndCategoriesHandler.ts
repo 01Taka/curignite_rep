@@ -57,7 +57,7 @@ const useCreateProblemSetAndCategoriesHandler = (
 
     const problemSetData = await callAsyncFunction(
       "createProblemSet",
-      [userId, formState.name, "", formState.description, formState.activityManagementMethod],
+      [userId, formState.name, formState.subject, formState.description, formState.activityManagementMethod],
       problemSetService.createProblemSet.bind(problemSetService),
       onFailedCreateProblemSetMessage
     );

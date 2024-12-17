@@ -6,7 +6,7 @@ import SelectField from '../../../../../components/input/field/SelectField';
 import { Range, SelectItem } from '../../../../../types/util/componentsTypes';
 import { UpdateArrayFieldArgs } from '../../../../hooks/form/AsyncHandlerTypes';
 import useArrayState from '../../../../hooks/form/useArrayState';
-import { objectArrayToDict } from '../../../../../functions/utils/objectUtils';
+import { objectArrayToDict } from '../../../../../functions/utils/dataStructureUtils/objectUtils';
 import { ProblemSetActivityManagementMethod } from '../../../../../types/firebase/db/task/taskSupplementTypes';
 import { CategoryActivityFormState, CreateActivityFormState } from '../../shared/types/createTask/createActivityTypes';
 

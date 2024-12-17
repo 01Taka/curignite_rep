@@ -2,7 +2,7 @@ import React from 'react';
 import { ProblemSetCategoryForm } from '../../shared/types/createTask/createProblemSetTypes';
 import { Box, IconButton, TextField } from '@mui/material';
 import { FormStateChangeFunc } from '../../../../../types/util/componentsTypes';
-import { keyMirror } from '../../../../../functions/utils/objectUtils';
+import { keyMirror } from '../../../../../functions/utils/dataStructureUtils/objectUtils';
 import QuickNumberField from '../../../../../components/input/field/number/QuickNumberField';
 import { createNumberSelectItems } from '../../../../../functions/utils/formUtils';
 import { Delete } from '@mui/icons-material';

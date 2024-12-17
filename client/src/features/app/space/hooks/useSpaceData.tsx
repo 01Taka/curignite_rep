@@ -4,7 +4,7 @@ import { DocumentIdMap } from '../../../../types/firebase/db/formatTypes';
 import { revertTimestampConversion } from '../../../../functions/db/dataFormatUtils';
 import serviceFactory from '../../../../firebase/db/factory';
 // import JoinRequestService from '../../../../firebase/db/common/joinRequestService';
-import { sortObjectArray } from '../../../../functions/utils/objectUtils';
+import { sortObjectArray } from '../../../../functions/utils/dataStructureUtils/objectUtils';
 import { UserRead } from '../../../../types/firebase/db/user/userStructure';
 import { JoinRequestData } from '../../../../types/firebase/db/common/joinRequest/joinRequestStructure';
 

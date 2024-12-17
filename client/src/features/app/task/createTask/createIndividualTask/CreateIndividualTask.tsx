@@ -13,6 +13,7 @@ const CreateIndividualTask: FC<CreateIndividualTaskProps> = ({ onSuccessCreate }
   const { uid } = useAppSelector(state => state.userSlice);
   const { formState, onChangeFormState } = useFormState<CreateIndividualTaskFormState>({
     title: "",
+    subject: "notSelected",
     dueDateTime: null,
     taskNote: "",
     estimatedDuration: 10,

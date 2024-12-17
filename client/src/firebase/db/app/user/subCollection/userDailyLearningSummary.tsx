@@ -4,7 +4,7 @@
 // import { ISODate, TimeTypes } from "../../../../../types/util/dateTimeTypes";
 // import { getInitialBaseDocumentData } from "../../../../../functions/db/dbUtils";
 // import { convertToDate, convertToMilliseconds, getMidnightTimestamp, toISODate } from "../../../../../functions/utils/dateTimeUtils";
-// import { getMinAndMaxFromObjectArray } from "../../../../../functions/utils/objectUtils";
+// import { getMinAndMaxFromObjectArray } from "../../../../../functions/utils/dataStructureUtils/objectUtils";
 // import { DAYS_IN_MILLISECOND } from "../../../../../constants/utils/dateTimeConstants";
 // import { startOfWeek } from "date-fns";
 // import { validateNumber } from "../../../../../functions/utils/formUtils";

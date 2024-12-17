@@ -6,7 +6,7 @@
 // import { Subject } from "../../../../../types/firebase/db/commonTypes";
 // import { toTimestamp } from "../../../../../functions/dateTimeUtils";
 // import { endOfDay, startOfDay } from "date-fns";
-// import { removeDuplicatesByKey } from "../../../../../functions/objectUtils";
+// import { removeDuplicatesByKey } from "../../../../../functions/dataStructureUtils/objectUtils";
 
 // export class UserGoalService {
 //   constructor(private firestore: Firestore) {}

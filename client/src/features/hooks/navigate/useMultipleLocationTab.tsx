@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { UseMultipleNavigationTabReturnType, UseNavigationTabReturnType } from "./shared/types/useLocationTabTypes";
-import { objectArrayToDict } from "../../../functions/utils/objectUtils";
+import { objectArrayToDict } from "../../../functions/utils/dataStructureUtils/objectUtils";
 import { NavigateOptions } from "react-router-dom";
 
 const useMultipleLocationTab = (

@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react';
 import { HelpAndAnswersWithFileUrls } from '../../../types/firebase/db/user/userStructure';
 import serviceFactory from '../../../firebase/db/factory';
 import { useAppSelector } from '../../../redux/hooks';
-import { keyMirror } from '../../../functions/utils/objectUtils';
+import { keyMirror } from '../../../functions/utils/dataStructureUtils/objectUtils';
 import { FormStateChangeEvent } from '../../../types/util/componentsTypes';
 import FileUploadField from '../../../components/input/field/FileUploadField';
 import HelpCard from './HelpCard';

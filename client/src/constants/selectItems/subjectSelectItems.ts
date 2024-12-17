@@ -1,20 +1,19 @@
-import { SelectItem } from "../../types/util/componentsTypes";
 import { Subject } from "../../types/firebase/db/common/commonTypes";
 
 // Subject用のSelectItemリスト
-export const subjectSelectItems: SelectItem<Subject>[] = [
-  { label: "数学", value: Subject.Math },
-  { label: "化学", value: Subject.Chemistry },
-  { label: "物理", value: Subject.Physics },
-  { label: "生物", value: Subject.Biology },
-  { label: "英語", value: Subject.English },
-  { label: "国語", value: Subject.JapaneseLanguage },
-  { label: "古典", value: Subject.ClassicalLiterature },
-  { label: "漢文", value: Subject.ClassicalChinese },
-  { label: "社会", value: Subject.SocialStudies },
-  { label: "歴史", value: Subject.History },
-  { label: "地理", value: Subject.Geography },
-  { label: "情報", value: Subject.ComputerScience },
-  { label: "未選択", value: Subject.NotSelected },
-  { label: "その他", value: Subject.Other },
+export const subjectSelectItems: { label: string, value: Subject }[] = [
+  { label: "数学", value: "mathematics" },
+  { label: "化学", value: "chemistry" },
+  { label: "物理", value: "physics" },
+  { label: "生物", value: "biology" },
+  { label: "英語", value: "english" },
+  { label: "国語", value: "japaneseLanguage" },
+  { label: "古典", value: "classicalLiterature" },
+  { label: "漢文", value: "classicalChinese" },
+  { label: "社会", value: "socialStudies" },
+  { label: "歴史", value: "history" },
+  { label: "地理", value: "geography" },
+  { label: "情報", value: "computerScience" },
+  { label: "未選択", value: "notSelected" },
+  { label: "その他", value: "other" },
 ];

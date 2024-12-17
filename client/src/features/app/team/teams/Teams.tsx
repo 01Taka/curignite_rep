@@ -1,9 +1,8 @@
-import { dictToArray } from '../../../../functions/utils/objectUtils';
 import { useAppSelector } from '../../../../redux/hooks'
 
 const Teams = () => { // TODO 1 チームのメンバーなども含めて表示するためのコンポーネントを作成
   const teamsMap = useAppSelector(state => state.teamSlice.teams);
-  const teams = dictToArray(teamsMap);
+  const teams = Object.values(teamsMap);
 
   return (
     teams.map(team => (

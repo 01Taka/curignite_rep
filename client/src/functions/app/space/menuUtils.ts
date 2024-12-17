@@ -1,6 +1,6 @@
 import { BaseMemberRole } from "../../../types/firebase/db/baseTypes";
 import { SpaceData } from "../../../types/firebase/db/space/spaceStructure";
-import { sortByOrder } from "../../utils/objectUtils";
+import { sortByOrder } from "../../utils/dataStructureUtils/arrayUtils";
 
 export const sortSpaceMembers = (space: SpaceData) => {
   const order: BaseMemberRole[] = [BaseMemberRole.Admin, BaseMemberRole.Moderator, BaseMemberRole.Member, BaseMemberRole.Guest];

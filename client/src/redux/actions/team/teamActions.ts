@@ -11,7 +11,7 @@ import { PathParam } from '../../../types/path/paths';
 import { arrayToDictWithTimestampToNumbers, convertTimestampsToNumbers } from '../../../functions/db/dataFormatUtils';
 import { TeamData, TeamWithSupplementary } from '../../../types/firebase/db/team/teamStructure';
 import { AsyncThunkStatus } from '../../../types/module/redux/asyncThunkTypes';
-import { objectArrayToDict } from '../../../functions/utils/objectUtils';
+import { objectArrayToDict } from '../../../functions/utils/dataStructureUtils/objectUtils';
 import { DocumentIdMap } from '../../../types/firebase/db/formatTypes';
 
 export const setApprovedTeams = async (dispatch: AppDispatch, uid: string) => { // TODO 安全性を高めるためのエラーハンドリングなどを追加

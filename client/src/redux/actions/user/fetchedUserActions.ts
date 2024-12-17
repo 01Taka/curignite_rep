@@ -1,6 +1,7 @@
 import serviceFactory from "../../../firebase/db/factory";
 import { convertTimestampsToNumbers, revertTimestampConversion } from "../../../functions/db/dataFormatUtils";
-import { objectArrayToDict, removeDuplicates } from "../../../functions/utils/objectUtils";
+import { removeDuplicates } from "../../../functions/utils/dataStructureUtils/structureUtils";
+import { objectArrayToDict } from "../../../functions/utils/dataStructureUtils/objectUtils";
 import { ConvertTimestampToNumber, DocumentIdMap } from "../../../types/firebase/db/formatTypes";
 import { UserRead } from "../../../types/firebase/db/user/userStructure";
 import { AppDispatch } from "../../../types/module/redux/reduxTypes";
