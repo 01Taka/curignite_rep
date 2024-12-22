@@ -7,10 +7,11 @@ import { Range, SelectItem } from '../../../../../types/util/componentsTypes';
 import useArrayState from '../../../../hooks/form/useArrayState';
 import { objectArrayToDict } from '../../../../../functions/utils/dataStructureUtils/objectUtils';
 import { ProblemSetActivityManagementMethod } from '../../../../../types/firebase/db/task/taskSupplementTypes';
-import { CategoryActivityFormState } from '../../shared/types/createTask/createActivityTypes';
+import { CategoryActivityFormState, CreateActivityFormState } from '../../shared/types/createTask/createActivityTypes';
 import { ArrayFieldChangeAction, FormStateChangeAction } from '../../../../../types/app/formStateTypes';
 
 interface ActivityRangeFormProps {
+  name: keyof CreateActivityFormState;
   managementMethod: ProblemSetActivityManagementMethod;
   activityFormState: CategoryActivityFormState[];
   categories: ProblemSetCategoryRead[];
@@ -18,8 +19,10 @@ interface ActivityRangeFormProps {
   onChangeArrayField: (action: ArrayFieldChangeAction) => void;
 }
 
-const ActivityRangeForm: React.FC<ActivityRangeFormProps> = ({ managementMethod, activityFormState, categories, onChangeFormState, onChangeArrayField }) => {
+const ActivityRangeForm: React.FC<ActivityRangeFormProps> = ({ name, managementMethod, activityFormState, categories, onChangeFormState, onChangeArrayField }) => {
   const { array, push, update } = useArrayState<string>();
+  
+  console.log(categories);
   
   // 未選択のカテゴリをフィルタリングして項目リストを生成
   const selectItems: SelectItem<string>[] = useMemo(() => {
@@ -31,11 +34,10 @@ const ActivityRangeForm: React.FC<ActivityRangeFormProps> = ({ managementMethod,
   }, [categories]);
 
   // カテゴリ選択の変更ハンドラ
-  const handleSelectChange = useCallback(
-    (index: number, categoryId: string) => {
+  const handleSelectChange = useCallback((index: number, categoryId: string) => {
       onChangeArrayField({
         operation: "replace",
-        name: 'categoryActivities',
+        name,
         index,
         value: { ...activityFormState[index], categoryId },
       });
@@ -49,7 +51,7 @@ const ActivityRangeForm: React.FC<ActivityRangeFormProps> = ({ managementMethod,
     (index: number, problemRanges: Range[]) => {
       onChangeArrayField({
         operation: "replace",
-        name: 'categoryActivities',
+        name,
         index,
         value: { ...activityFormState[index], problemRanges },
       });
@@ -61,7 +63,7 @@ const ActivityRangeForm: React.FC<ActivityRangeFormProps> = ({ managementMethod,
   const handleAddCategoryActivity = useCallback(() => {
     onChangeArrayField({
       operation: "push",
-      name: 'categoryActivities',
+      name,
       value: { categoryId: '', problemRanges: [] } as CategoryActivityFormState,
     });
     push('');
@@ -71,7 +73,10 @@ const ActivityRangeForm: React.FC<ActivityRangeFormProps> = ({ managementMethod,
     if (activityFormState.length === 0) {
       handleAddCategoryActivity();
     }
-  }, [handleAddCategoryActivity]);
+  }, [activityFormState, handleAddCategoryActivity]);
+
+  console.log(activityFormState);
+  
 
   return (
     <div>
@@ -92,7 +97,7 @@ const ActivityRangeForm: React.FC<ActivityRangeFormProps> = ({ managementMethod,
             value={state.categoryId}
             selectItems={selectItems}
             exceptValues={array.filter((_, i) => i !== index)}
-            onChangeFormState={onChangeFormState}
+            onChange={(e) => handleSelectChange(index, e.target.value)}
           />
           <RangeField
             defaultRange={{ min: 1, max: 5 }}
@@ -101,7 +106,7 @@ const ActivityRangeForm: React.FC<ActivityRangeFormProps> = ({ managementMethod,
             value={state.problemRanges}
             min={1}
             max={categoryIdMap[state.categoryId]?.totalProblemCount ?? 512}
-            onChange={onChangeFormState}
+            onChange={(action) => handleRangeChange(index, action.value)}
           />
         </Box>
       ))}
@@ -113,3 +118,6 @@ const ActivityRangeForm: React.FC<ActivityRangeFormProps> = ({ managementMethod,
 };
 
 export default ActivityRangeForm;
+
+
+

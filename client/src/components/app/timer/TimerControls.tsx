@@ -35,7 +35,7 @@ const TimerControls: React.FC<TimerControlsProps> = ({
           selectItems={timerModeSelectItems}
           value={timerMode}
           variant="outlined"
-          onChangeFormState={onChangeFormState}
+          onChange={(e) => onChangeFormState({ name: e.target.name, value: e.target.value })}
         />
       </div>
       }

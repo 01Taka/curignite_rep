@@ -77,7 +77,7 @@ const CreateLearningGoalForm: FC<CreateLearningGoalFormProps> = ({ onCreated }) 
           value={formState.subject}
           name={names.subject}
           selectItems={subjectSelectItems}
-          onChangeFormState={onChangeFormState}
+          onChange={(e) => onChangeFormState({ name: e.target.name, value: e.target.value })}
         />
         <NumberField
           label='目標時間 (分)'

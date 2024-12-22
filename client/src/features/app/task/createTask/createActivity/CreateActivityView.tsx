@@ -55,6 +55,7 @@ const CreateActivityView: FC<CreateActivityViewProps> = ({
           onChangeFormState={onChangeFormState}
         />
         <ActivityRangeForm
+          name={"categoryActivities"}
           managementMethod={managementMethod}
           activityFormState={formState.categoryActivities}
           categories={categories}

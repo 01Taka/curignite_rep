@@ -12,6 +12,7 @@ import DeleteProblemSetForm from './details/DeleteProblemSetForm';
 import { useNavigate } from 'react-router-dom';
 import { appPaths } from '../../../../constants/app/path/appPath';
 import UpdateProblemSetForm from './details/UpdateProblemSetForm';
+import useTasks from '../../../hooks/app/useTasks';
 
 interface ProblemSetsProps {
   
@@ -21,7 +22,7 @@ type ProblemSetAction = 'createActivity' | 'updateProblemSet' | 'deleteProblemSe
 
 const ProblemSets: React.FC<ProblemSetsProps> = () => {
   const navigate = useNavigate();
-  const { problemSetMap, categoryMap } = useAppSelector(state => state.taskSlice);
+  const { problemSetMap, getProblemSetData } = useTasks();
   const [createActivityTargetSet, setCreateActivityTargetSet] = useState<ProblemSetRead | null>(null);
   const [displayDetailProblemSet, setDisplayDetailProblemSet] = useState<null | ProblemSetRead>(null);
   const [problemSetActionType, setProblemSetActionType] = useState<ProblemSetAction | null>(null);
@@ -69,7 +70,7 @@ const ProblemSets: React.FC<ProblemSetsProps> = () => {
           }}>
             <CreateActivity
               problemSet={createActivityTargetSet}
-              categories={Object.values(categoryMap)}
+              categories={getProblemSetData(createActivityTargetSet.docId).categories}
               onSuccessCreate={() => handleProblemSetAction("createActivity")}
             />
           </Box>

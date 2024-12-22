@@ -1,4 +1,4 @@
-export type FormStateChangeAction<T extends string = string> = {
+export type FormStateChangeAction<T extends string | number | symbol= string> = {
     name: T;
     value: any;
 }

@@ -83,7 +83,7 @@ const CreateHelpForm: FC<CreateHelpFormProps> = ({ onSentHelp }) => {
         label='教科' 
         value={formState.subject} 
         name={names.subject} 
-        onChangeFormState={onChangeFormState} 
+        onChange={(e) => onChangeFormState({ name: e.target.name, value: e.target.value })}
         selectItems={subjectSelectItems} 
       />
       <FileUploadField 
