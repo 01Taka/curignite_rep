@@ -23,7 +23,7 @@ const CreateIndividualTask: FC<CreateIndividualTaskProps> = ({ onSuccessCreate }
 
   return <CreateIndividualTaskView 
     formState={formState}
-    onFormStateChange={onChangeFormState}
+    onChangeFormState={onChangeFormState}
     onCreate={handleCreateIndividualTask}
   />
 }

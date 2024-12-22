@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react';
-import { FormStateChangeFunc, SelectItem } from '../../../../types/util/componentsTypes';
+import { SelectItem } from '../../../../types/util/componentsTypes';
 import PopupSelectField from '../../popupField/PopupSelectField';
 import { Box, Button, Typography } from '@mui/material';
 import useTabIndex from '../../../../features/hooks/useTabIndex';
-import { handleCallOnChange } from '../../../../functions/utils/formUtils';
 import NumberField from './../number/NumberField';
 import Popup from '../../../display/popup/Popup';
+import { FormStateChangeAction } from '../../../../types/app/formStateTypes';
 
 interface QuickNumberFieldProps {
   name: string;
@@ -15,7 +15,7 @@ interface QuickNumberFieldProps {
   initialValue?: number;
   min?: number;
   max?: number;
-  onChange: FormStateChangeFunc;
+  onChangeFormState: (action: FormStateChangeAction) => void;
 }
 
 const QuickNumberField: React.FC<QuickNumberFieldProps> = ({
@@ -26,7 +26,7 @@ const QuickNumberField: React.FC<QuickNumberFieldProps> = ({
   initialValue,
   min,
   max,
-  onChange,
+  onChangeFormState,
 }) => {
   const { tabIndex, changeTab, resetTab } = useTabIndex(2, null);
 
@@ -40,7 +40,7 @@ const QuickNumberField: React.FC<QuickNumberFieldProps> = ({
       return;
     }
     if (selectedValue !== null) {
-      handleCallOnChange(selectedValue, name, onChange);
+      onChangeFormState({ name, value: selectedValue });
     }
     resetTab();
   };
@@ -96,7 +96,7 @@ const QuickNumberField: React.FC<QuickNumberFieldProps> = ({
           min={min}
           max={max}
           initialValue={initialValue}
-          onChange={onChange}
+          onChangeFormState={onChangeFormState}
         />
         </Box>
       </Popup>
@@ -106,6 +106,7 @@ const QuickNumberField: React.FC<QuickNumberFieldProps> = ({
         name={name}
         selectItems={items}
         onSelected={handleSelectionChange}
+        onChangeFormState={onChangeFormState}
       />
     </Box>
   );

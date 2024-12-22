@@ -10,7 +10,7 @@ const InitialSetup: React.FC = () => {
   const navigate = useNavigate();
   const [uid, setUid] = useState<string | null>(null);
   const [isLoadingName, setIsLoadingName] = useState(true);
-  const { formState, updateField, onChangeFormState } = useFormState<InitialSetupFormState>({ username: "", birthday: null, iconFile: null });
+  const { formState, onChangeFormState } = useFormState<InitialSetupFormState>({ username: "", birthday: null, iconFile: null });
   const [submitDisabled, setSubmitDisabled] = useState(false);
   const [error, setError] = useState("");
 
@@ -29,14 +29,14 @@ const InitialSetup: React.FC = () => {
     const initializeUser = async () => {
       setIsLoadingName(true);
       const uniqueName = await getUniqueName(null);
-      updateField('username', uniqueName);
+      onChangeFormState({ name: 'username', value: uniqueName });
       setIsLoadingName(false);
     };
 
     if (uid) {
       initializeUser();
     }
-  }, [uid, updateField]);
+  }, [uid, onChangeFormState]);
 
   const handleSubmit = async () => {
     if (!uid) return;
@@ -64,7 +64,7 @@ const InitialSetup: React.FC = () => {
       formState={formState}
       submitDisabled={submitDisabled}
       error={error}
-      onFormStateChange={onChangeFormState}
+      onChangeFormState={onChangeFormState}
       onSubmit={handleSubmit}
     />
   );

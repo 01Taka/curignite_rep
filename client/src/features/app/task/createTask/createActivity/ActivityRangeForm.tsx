@@ -1,23 +1,26 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useEffect } from 'react';
 import { ProblemSetCategoryRead } from '../../../../../types/firebase/db/task/taskStructure';
 import { Box, Button } from '@mui/material';
 import RangeField from '../../../../../components/input/field/number/RangeField';
 import SelectField from '../../../../../components/input/field/SelectField';
 import { Range, SelectItem } from '../../../../../types/util/componentsTypes';
-import { UpdateArrayFieldArgs } from '../../../../hooks/form/AsyncHandlerTypes';
 import useArrayState from '../../../../hooks/form/useArrayState';
 import { objectArrayToDict } from '../../../../../functions/utils/dataStructureUtils/objectUtils';
 import { ProblemSetActivityManagementMethod } from '../../../../../types/firebase/db/task/taskSupplementTypes';
-import { CategoryActivityFormState, CreateActivityFormState } from '../../shared/types/createTask/createActivityTypes';
+import { CategoryActivityFormState } from '../../shared/types/createTask/createActivityTypes';
+import { ArrayFieldChangeAction, FormStateChangeAction } from '../../../../../types/app/formStateTypes';
 
 interface ActivityRangeFormProps {
   managementMethod: ProblemSetActivityManagementMethod;
-  formState: CategoryActivityFormState[];
+  activityFormState: CategoryActivityFormState[];
   categories: ProblemSetCategoryRead[];
-  updateArrayField: (args: UpdateArrayFieldArgs<CreateActivityFormState, any>) => void;
+  onChangeFormState: (action: FormStateChangeAction) => void;
+  onChangeArrayField: (action: ArrayFieldChangeAction) => void;
 }
 
-const ActivityRangeForm: React.FC<ActivityRangeFormProps> = ({ managementMethod, formState, categories, updateArrayField }) => {
+const ActivityRangeForm: React.FC<ActivityRangeFormProps> = ({ managementMethod, activityFormState, categories, onChangeFormState, onChangeArrayField }) => {
+  const { array, push, update } = useArrayState<string>();
+  
   // 未選択のカテゴリをフィルタリングして項目リストを生成
   const selectItems: SelectItem<string>[] = useMemo(() => {
     return categories.map(category => ({ label: category.name, value: category.docId }));
@@ -27,46 +30,52 @@ const ActivityRangeForm: React.FC<ActivityRangeFormProps> = ({ managementMethod,
     return objectArrayToDict(categories, 'docId');
   }, [categories]);
 
-  const { array, push, update } = useArrayState<string>();
-
   // カテゴリ選択の変更ハンドラ
   const handleSelectChange = useCallback(
     (index: number, categoryId: string) => {
-      updateArrayField({
-        fieldName: 'categoryActivities',
+      onChangeArrayField({
+        operation: "replace",
+        name: 'categoryActivities',
         index,
-        data: { ...formState[index], categoryId },
+        value: { ...activityFormState[index], categoryId },
       });
       update(index, categoryId);
     },
-    [updateArrayField, update, formState]
+    [onChangeArrayField, update, activityFormState]
   );
 
   // 範囲選択の変更ハンドラ
   const handleRangeChange = useCallback(
     (index: number, problemRanges: Range[]) => {
-      updateArrayField({
-        fieldName: 'categoryActivities',
+      onChangeArrayField({
+        operation: "replace",
+        name: 'categoryActivities',
         index,
-        data: { ...formState[index], problemRanges },
+        value: { ...activityFormState[index], problemRanges },
       });
     },
-    [updateArrayField, formState]
+    [onChangeArrayField, activityFormState]
   );
 
   // 新しいカテゴリアクティビティを追加
   const handleAddCategoryActivity = useCallback(() => {
-    updateArrayField({
-      fieldName: 'categoryActivities',
-      index: 'push',
-      data: { categoryId: '', problemRanges: [] } as CategoryActivityFormState,
+    onChangeArrayField({
+      operation: "push",
+      name: 'categoryActivities',
+      value: { categoryId: '', problemRanges: [] } as CategoryActivityFormState,
     });
     push('');
-  }, [updateArrayField, push]);
+  }, [onChangeArrayField, push]);
+
+  useEffect(() => {
+    if (activityFormState.length === 0) {
+      handleAddCategoryActivity();
+    }
+  }, [handleAddCategoryActivity]);
 
   return (
     <div>
-      {formState.map((state, index) => (
+      {activityFormState.map((state, index) => (
         <Box
           key={index}
           sx={{
@@ -83,7 +92,7 @@ const ActivityRangeForm: React.FC<ActivityRangeFormProps> = ({ managementMethod,
             value={state.categoryId}
             selectItems={selectItems}
             exceptValues={array.filter((_, i) => i !== index)}
-            onChange={(event) => handleSelectChange(index, event.target.value as string)}
+            onChangeFormState={onChangeFormState}
           />
           <RangeField
             defaultRange={{ min: 1, max: 5 }}
@@ -92,7 +101,7 @@ const ActivityRangeForm: React.FC<ActivityRangeFormProps> = ({ managementMethod,
             value={state.problemRanges}
             min={1}
             max={categoryIdMap[state.categoryId]?.totalProblemCount ?? 512}
-            onChange={(event) => handleRangeChange(index, event.target.value as Range[])}
+            onChange={onChangeFormState}
           />
         </Box>
       ))}

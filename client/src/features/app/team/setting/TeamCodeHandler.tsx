@@ -5,7 +5,6 @@ import { useAppSelector } from '../../../../redux/hooks';
 import { Alert, Divider, Typography } from '@mui/material';
 import CircularButton from '../../../../components/input/button/CircularButton';
 import DateField from '../../../../components/input/field/DateField';
-import { FormStateChangeEvent } from '../../../../types/util/componentsTypes';
 import CopyButton from '../../../../components/input/button/CopyButton';
 import { dateTimeToString } from '../../../../functions/utils/dateTimeUtils';
 import { TeamCodeData } from '../../../../types/firebase/db/team/teamCodeStructure';
@@ -115,7 +114,7 @@ const TeamCodeHandler: FC<TeamCodeHandlerProps> = ({ team }) => {
           <Typography>新しいコードを発行する：</Typography>
           <div className='flex'>
             <div className='mx-2'>
-              <DateField label='期限' name='period' onChange={(e: FormStateChangeEvent) => setNewCodePeriod(e.target.value as TimeTypes)} />
+              <DateField label='期限' name='period' onChangeFormState={() => {}} />
             </div>
             <CircularButton onClick={reissueTeamCode} className='hover:bg-green-400'>発行</CircularButton>
           </div>

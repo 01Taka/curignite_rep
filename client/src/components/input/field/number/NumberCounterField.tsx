@@ -1,9 +1,8 @@
 import { Box, IconButton } from '@mui/material';
 import React, { useEffect, useCallback } from 'react';
-import { FormStateChangeFunc } from '../../../../types/util/componentsTypes';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import useNumberFormat from '../../../../features/hooks/useNumberFormat';
-import { handleCallOnChange } from '../../../../functions/utils/formUtils';
+import { FormStateChangeAction } from '../../../../types/app/formStateTypes';
 
 interface NumberCounterFieldProps {
   value: number | string;
@@ -12,7 +11,7 @@ interface NumberCounterFieldProps {
   emptyValue?: '' | number;
   min?: number;
   max?: number;
-  onChange: FormStateChangeFunc;
+  onChangeFormState: (action: FormStateChangeAction) => void;
 }
 
 const NumberCounterField: React.FC<NumberCounterFieldProps> = ({
@@ -22,15 +21,15 @@ const NumberCounterField: React.FC<NumberCounterFieldProps> = ({
   emptyValue,
   min,
   max,
-  onChange,
+  onChangeFormState,
 }) => {
   const { value: formatValue, onChangeValue } = useNumberFormat({ initialValue, emptyValue, min, max });
 
   useEffect(() => {
     if (formatValue !== value) {
-      handleCallOnChange(formatValue, name, onChange);
+      onChangeFormState({ name, value: formatValue });
     }
-  }, [formatValue, name, onChange, value]);
+  }, [formatValue, name, onChangeFormState, value]);
 
   const increment = useCallback(
     (size: number) => {

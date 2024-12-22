@@ -1,20 +1,20 @@
 import { Box, Button } from "@mui/material";
 import { FC } from "react";
-import { FormStateChangeFunc } from "../../../types/util/componentsTypes";
+import { FormStateChangeAction } from "../../../types/app/formStateTypes";
 
 interface FileSelectorProps {
-  onFileChange: FormStateChangeFunc;
+  onChangeFormState: (action: FormStateChangeAction) => void;
   handleClose: () => void;
 }
 
-const FileSelector: FC<FileSelectorProps> = ({ onFileChange, handleClose }) => {
+const FileSelector: FC<FileSelectorProps> = ({ onChangeFormState, handleClose }) => {
   return (
     <Box p={2}>
     <div>
       <input
         type="file"
         id="file-upload"
-        onChange={onFileChange}
+        onChange={(e) => onChangeFormState({ name: e.target.name, value: e.target.value })}
         multiple
         style={{ display: "none" }}
       />

@@ -1,18 +1,18 @@
 import React, { FC } from 'react';
-import { FormStateChangeFunc } from '../../../../../types/util/componentsTypes';
 import { KeyMirrorObject } from '../../../../../functions/utils/dataStructureUtils/objectUtils';
 import { StringField } from '../../../../../components/input/inputIndex';
 import MultilineField from '../../../../../components/input/field/MultilineField';
 import { Box, Button, Typography } from '@mui/material';
 import ManagementMethodSelector from './ManagementMethodSelector';
 import { CreateProblemSetFormState } from '../../shared/types/createTask/createProblemSetTypes';
+import { ArrayFieldChangeAction, FormStateChangeAction } from '../../../../../types/app/formStateTypes';
 
 interface CreateProblemSetViewProps {
   formState: CreateProblemSetFormState;
   names: KeyMirrorObject<CreateProblemSetFormState>;
   isDisabledCreate: boolean;
-  onFormStateChange: FormStateChangeFunc;
-  updateField: (fieldName: keyof CreateProblemSetFormState, value: any) => void;
+  onChangeFormState: (action: FormStateChangeAction) => void;
+  onChangeArrayField: (action: ArrayFieldChangeAction) => void;
   onCreate: () => void;
 }
 
@@ -21,8 +21,8 @@ const CreateProblemSetView: FC<CreateProblemSetViewProps> = ({
   formState,
   names,
   isDisabledCreate,
-  onFormStateChange,
-  updateField,
+  onChangeFormState,
+  onChangeArrayField,
   onCreate,
 }) => (
   <Box
@@ -48,19 +48,19 @@ const CreateProblemSetView: FC<CreateProblemSetViewProps> = ({
         label="名前"
         name={names.name}
         value={formState.name}
-        onChange={onFormStateChange}
+        onChange={(e) => onChangeFormState({ name: e.target.name, value: e.target.value })}
       />
       <MultilineField
         label="説明"
         rows={3}
         name={names.description}
         value={formState.description}
-        onChange={onFormStateChange}
+        onChange={(e) => onChangeFormState({ name: e.target.name, value: e.target.value })}
       />
       <ManagementMethodSelector
         managementMethod={formState.activityManagementMethod}
-        setManagementMethod={(value) => updateField("activityManagementMethod", value)}
-        updateField={updateField}
+        onChangeFormState={onChangeFormState}
+        onChangeArrayField={onChangeArrayField}
       />
     </Box>
     <Button onClick={onCreate} variant="contained" sx={{ marginTop: 2 }} disabled={isDisabledCreate}>

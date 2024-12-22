@@ -1,31 +1,20 @@
-import React from 'react';
 import { Box, Button, ButtonGroup } from '@mui/material';
-import { BaseHTMLElement, FormStateChangeEvent, FormStateChangeFunc, SelectItem } from '../../../types/util/componentsTypes';
+import { SelectItem } from '../../../types/util/componentsTypes';
+import { FormStateChangeAction } from '../../../types/app/formStateTypes';
 
 interface QuickSelectionFieldProps<T extends string | number> {
   name: string;
   selectItems: SelectItem<T>[];
   orientation?: "horizontal" | "vertical",
-  onChange: FormStateChangeFunc;
+  onChangeFormState: (action: FormStateChangeAction) => void;
 }
 
 const QuickSelectionField = <T extends string | number>({
   name,
   selectItems,
   orientation,
-  onChange,
+  onChangeFormState,
 }: QuickSelectionFieldProps<T>) => {
-  const handleChange = (value: T) => {
-    const event: FormStateChangeEvent = {
-      target: {
-        name,
-        value,
-        type: 'unknown',
-      },
-    } as unknown as React.ChangeEvent<BaseHTMLElement<T, "unknown">>;
-    onChange(event);
-  };
-
   return (
     <Box
       sx={{
@@ -35,7 +24,7 @@ const QuickSelectionField = <T extends string | number>({
     >
       <ButtonGroup orientation={orientation} aria-label={name} variant="text">
         {selectItems.map((item, index) => (
-          <Button key={index} onClick={() => handleChange(item.value)}>
+          <Button key={index} onClick={() => onChangeFormState({ name, value: item })}>
             {item.label}
           </Button>
         ))}

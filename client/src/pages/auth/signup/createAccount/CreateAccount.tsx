@@ -39,7 +39,7 @@ const CreateAccount: React.FC = () => {
       formState={formState}
       error={error}
       submitDisabled={submitDisabled}
-      onFormStateChange={onChangeFormState}
+      onChangeFormState={onChangeFormState}
       onEmailSignUp={handleEmailSignUp}
     />
   );

@@ -1,12 +1,13 @@
 import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from '@mui/material';
-import { FormStateChangeFunc, SelectItem } from '../../../types/util/componentsTypes';
+import { SelectItem } from '../../../types/util/componentsTypes';
+import { FormStateChangeAction } from '../../../types/app/formStateTypes';
 
 interface RadioGroupFieldProps<T extends string | number> {
   label: string;
   name: string;
   selectItems: SelectItem<T>[];
   value: T;
-  onChange: FormStateChangeFunc;
+  onChangeFormState: (action: FormStateChangeAction) => void;
 }
 
 const RadioGroupField = <T extends string | number>({
@@ -14,7 +15,7 @@ const RadioGroupField = <T extends string | number>({
   name,
   selectItems,
   value,
-  onChange,
+  onChangeFormState,
 }: RadioGroupFieldProps<T>) => {
   // 選択肢に一致する value があるかチェック
   const isValidValue = selectItems.some(item => item.value === value);
@@ -26,7 +27,7 @@ const RadioGroupField = <T extends string | number>({
         aria-labelledby={`radio-${name}-label`}
         name={name}
         value={isValidValue ? value : ''}
-        onChange={onChange}
+        onChange={(e) => onChangeFormState({ name: e.target.name, value: e.target.value })}
       >
         {selectItems.map((item, index) => (
           <FormControlLabel

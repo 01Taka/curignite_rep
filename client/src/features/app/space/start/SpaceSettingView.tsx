@@ -1,11 +1,10 @@
-import React, { FC, useEffect, useMemo, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { SpaceSettingViewProps } from '../../../../types/app/space/spaceTypes';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import StringField from '../../../../components/input/field/StringField';
 import MultilineField from '../../../../components/input/field/MultilineField';
 import CheckBoxField from '../../../../components/input/field/CheckBoxField';
 import CircularButton from '../../../../components/input/button/CircularButton';
-import SelectField from '../../../../components/input/field/SelectField';
 import FormContainer from '../../../../components/container/FormContainer';
 import { Alert, CircularProgress, Typography } from '@mui/material';
 import { keyMirror } from '../../../../functions/utils/dataStructureUtils/objectUtils';
@@ -36,14 +35,14 @@ const SpaceSettingView: FC<SpaceSettingViewProps> = ({ formState, isStarting, on
             type="text"
             name={names.spaceName}
             value={formState.spaceName}
-            onChange={onChangeFormState}
+            onChange={(e) => onChangeFormState({ name: e.target.name, value: e.target.value })}
           />
           <MultilineField
             label='紹介文'
             rows={4}
             name={names.description}
             value={formState.description}
-            onChange={onChangeFormState}
+            onChange={(e) => onChangeFormState({ name: e.target.name, value: e.target.value })}
           />
           {/* <SelectField
             label='公開対象'
@@ -56,7 +55,7 @@ const SpaceSettingView: FC<SpaceSettingViewProps> = ({ formState, isStarting, on
             label="参加には承認が必要"
             name={names.requiresApproval}
             checked={formState.requiresApproval}
-            onChange={onChangeFormState}
+            onChange={(e) => onChangeFormState({ name: e.target.name, value: e.target.value })}
           />
           <div className='flex self-end space-x-4'>
             <CircularButton onClick={handleUpdateDefaultSetting} size="lg" looks="frame">

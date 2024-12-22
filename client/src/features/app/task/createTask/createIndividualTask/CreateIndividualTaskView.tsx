@@ -1,5 +1,4 @@
 import React, { FC, useMemo } from 'react';
-import { FormStateChangeFunc } from '../../../../../types/util/componentsTypes';
 import { keyMirror } from '../../../../../functions/utils/dataStructureUtils/objectUtils';
 import { StringField } from '../../../../../components/input/inputIndex';
 import MultilineField from '../../../../../components/input/field/MultilineField';
@@ -8,16 +7,17 @@ import DateField from '../../../../../components/input/field/DateField';
 import QuickNumberField from '../../../../../components/input/field/number/QuickNumberField';
 import { createNumberSelectItems } from '../../../../../functions/utils/formUtils';
 import { CreateIndividualTaskFormState } from '../../shared/types/createTask/createIndividualTaskTypes';
+import { FormStateChangeAction } from '../../../../../types/app/formStateTypes';
 
 interface CreateIndividualTaskViewProps {
   formState: CreateIndividualTaskFormState;
-  onFormStateChange: FormStateChangeFunc;
+  onChangeFormState: (action: FormStateChangeAction) => void;
   onCreate: () => void;
 }
 
 const CreateIndividualTaskView: FC<CreateIndividualTaskViewProps> = ({
   formState,
-  onFormStateChange,
+  onChangeFormState,
   onCreate,
 }) => {
   const names = useMemo(() => keyMirror(formState), [formState]);
@@ -42,13 +42,13 @@ const CreateIndividualTaskView: FC<CreateIndividualTaskViewProps> = ({
           label='提出日時'
           name={names.dueDateTime}
           value={formState.dueDateTime}
-          onChange={onFormStateChange}
+          onChangeFormState={onChangeFormState}
         />
         <StringField
           label='タイトル'
           name={names.title}
           value={formState.title}
-          onChange={onFormStateChange}
+          onChange={(e) => onChangeFormState({ name: e.target.name, value: e.target.value })}
         />
         <QuickNumberField
           label='推定所要時間 (分)'
@@ -56,22 +56,15 @@ const CreateIndividualTaskView: FC<CreateIndividualTaskViewProps> = ({
           value={formState.estimatedDuration}
           selectItems={createNumberSelectItems(5, 181, 5, 1, '分')}
           min={0}
-          onChange={onFormStateChange}
+          onChangeFormState={onChangeFormState}
         />
         <MultilineField
           label='補足説明'
           rows={3}
           name={names.taskNote}
           value={formState.taskNote}
-          onChange={onFormStateChange}
+          onChange={(e) => onChangeFormState({ name: e.target.name, value: e.target.value })}
         />
-        {/* <SelectField
-          label='優先度'
-          name={names.priority}
-          selectItems={taskPrioritySelectItem}
-          value={formState.priority}
-          onChange={onFormStateChange}
-        /> */}
       </Box>
       <Button onClick={onCreate} variant='contained' sx={{ marginTop: 2 }}>
         作成する

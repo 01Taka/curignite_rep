@@ -76,21 +76,21 @@ const CreateHelpForm: FC<CreateHelpFormProps> = ({ onSentHelp }) => {
         label='質問内容' 
         value={formState.question} 
         name={names.question} 
-        onChange={onChangeFormState} 
+        onChange={(e) => onChangeFormState({ name: e.target.name, value: e.target.value })} 
         required 
       />
       <SelectField 
         label='教科' 
         value={formState.subject} 
         name={names.subject} 
-        onChange={onChangeFormState} 
+        onChangeFormState={onChangeFormState} 
         selectItems={subjectSelectItems} 
       />
       <FileUploadField 
         label='添付ファイル' 
         value={formState.files} 
         name={names.files} 
-        onChange={onChangeFormState} 
+        onChangeFormState={onChangeFormState} 
         maxHeight={200} 
         maxFiles={3}
       />

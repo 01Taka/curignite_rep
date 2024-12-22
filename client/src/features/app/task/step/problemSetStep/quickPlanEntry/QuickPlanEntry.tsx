@@ -111,7 +111,7 @@ const QuickPlanEntry: React.FC<QuickPlanEntryProps> = ({ taskData, categoryMap }
           emptyValue={0}
           min={0}
           max={30}
-          onChange={(e) => setDistributionRatio(e.target.value)}
+          onChangeFormState={() => {}}
           counterNumber={7}
         />
       </MotionBox>

@@ -24,7 +24,7 @@ const GoalDetails: React.FC<GoalDetailsProps> = ({ target, timeMs, extent, exten
   ]
 
   const { open, toOpen, toClose } = useToggle();
-  const { formState, names, updateField } = useFormState({ time: timeMs, extent });
+  const { formState, names, onChangeFormState } = useFormState({ time: timeMs, extent });
 
   const formatTime = msToTime(formState.time);
 
@@ -51,7 +51,7 @@ const GoalDetails: React.FC<GoalDetailsProps> = ({ target, timeMs, extent, exten
         open={open}
         name={names.time}
         selectItems={selectItem}
-        updateField={updateField}
+        onChangeFormState={onChangeFormState}
         onSelected={toClose}
       />
     </Box>

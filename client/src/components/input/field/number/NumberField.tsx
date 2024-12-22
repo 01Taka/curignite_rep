@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { SxProps, TextField } from '@mui/material';
-import { FormStateChangeFunc } from '../../../../types/util/componentsTypes';
+import { FormStateChangeAction } from '../../../../types/app/formStateTypes';
 
 interface NumberFieldProps {
   value: number | string;
@@ -9,33 +9,27 @@ interface NumberFieldProps {
   initialValue?: number;
   min?: number;
   max?: number;
-  onChange: FormStateChangeFunc;
+  onChangeFormState: (action: FormStateChangeAction) => void;
   fullWidth?: boolean;
   sx?: SxProps;
 }
 
-const NumberField: React.FC<NumberFieldProps> = ({
+const NumberField = ({
   value,
   name,
   label = name,
   initialValue,
   min = -Infinity,
   max = Infinity,
-  onChange,
+  onChangeFormState,
   fullWidth = true,
   sx
-}) => {
+}: NumberFieldProps) => {
   useEffect(() => {
     if (initialValue !== undefined && value === '') {
-      onChange({
-        target: {
-          name,
-          value: initialValue.toString(),
-          type: 'number',
-        },
-      } as React.ChangeEvent<HTMLInputElement>);
+      onChangeFormState({ name, value: initialValue.toString() });
     }
-  }, [initialValue, value, name, onChange]);
+  }, [initialValue, value, name, onChangeFormState]);
 
   const clampValue = (num: number) => Math.min(Math.max(num, min), max);
 
@@ -44,7 +38,7 @@ const NumberField: React.FC<NumberFieldProps> = ({
     if (!isNaN(inputValue)) {
       e.target.value = clampValue(inputValue).toString();
     }
-    onChange(e);
+    onChangeFormState({ ...e.target });
   };
   
   const getDisplayValue = (val: number | string): string => {
@@ -54,13 +48,7 @@ const NumberField: React.FC<NumberFieldProps> = ({
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     if (isNaN(parseFloat(e.target.value))) {
-      onChange({
-        target: {
-          name,
-          value: initialValue || min !== -Infinity ? min.toString() : max !== Infinity ? max.toString() : '0',
-          type: 'number',
-        },
-      } as React.ChangeEvent<HTMLInputElement>);
+      onChangeFormState({ name, value: initialValue || min !== -Infinity ? min.toString() : max !== Infinity ? max.toString() : '0' })
     }
   };
 

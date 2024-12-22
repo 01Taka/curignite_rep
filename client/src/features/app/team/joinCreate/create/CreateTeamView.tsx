@@ -5,9 +5,9 @@ import { StringField } from '../../../../../components/input/inputIndex';
 import CheckBoxField from '../../../../../components/input/field/CheckBoxField';
 import MultilineField from '../../../../../components/input/field/MultilineField';
 import CircularButton from '../../../../../components/input/button/CircularButton';
-import { FormStateChangeFunc } from '../../../../../types/util/componentsTypes';
 import { keyMirror } from '../../../../../functions/utils/dataStructureUtils/objectUtils';
 import ImageUploadField from '../../../../../components/input/field/ImageUploadField';
+import { FormStateChangeAction } from '../../../../../types/app/formStateTypes';
 
 export type CreateTeamFormState = {
   teamName: string;
@@ -19,14 +19,14 @@ export type CreateTeamFormState = {
 interface CreateTeamViewProps {
   formState: CreateTeamFormState;
   creating: boolean;
-  onFormStateChange: FormStateChangeFunc;
+  onChangeFormState: (action: FormStateChangeAction) => void;
   onCreate: () => void;
 }
 
 const CreateTeamView: FC<CreateTeamViewProps> = ({
   formState,
   creating,
-  onFormStateChange,
+  onChangeFormState,
   onCreate,
 }) => {
   const names = useMemo(() => keyMirror(formState), [formState]);
@@ -42,13 +42,13 @@ const CreateTeamView: FC<CreateTeamViewProps> = ({
           label="チーム名"
           name={names.teamName}
           required
-          onChange={onFormStateChange}
+          onChange={(e) => onChangeFormState({ name: e.target.name, value: e.target.value })}
         />
         <ImageUploadField 
           label='チームアイコン'
           name={names.iconImage}
           value={formState.iconImage}
-          onChange={onFormStateChange}
+          onChangeFormState={onChangeFormState}
           shape='circle'
           borderStyle='dashed'
         />
@@ -56,14 +56,14 @@ const CreateTeamView: FC<CreateTeamViewProps> = ({
           label="参加には承認が必要"
           name={names.requiresApproval}
           checked={formState.requiresApproval}
-          onChange={onFormStateChange}
+          onChange={(e) => onChangeFormState({ name: e.target.name, value: e.target.value })}
         />
         <MultilineField
           value={formState.description}
           label="チームの紹介"
           name={names.description}
           rows={5}
-          onChange={onFormStateChange}
+          onChange={(e) => onChangeFormState({ name: e.target.name, value: e.target.value })}
         />
       </div>
       <CircularButton size="lg" bgColor="main" onClick={onCreate} className='ml-auto mt-2' invalidation={creating}>

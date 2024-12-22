@@ -51,7 +51,7 @@ const ChatRoom: React.FC<ChatProps> = ({ chatRoomId }) => {
         <ChatRoomView
             chatState={formState}
             chats={chats}
-            onChatStateChange={onChangeFormState}
+            onChangeFormState={onChangeFormState}
             onSendChat={handleSendChat}
             onScrollToEnd={getAdditionalChat}
         />

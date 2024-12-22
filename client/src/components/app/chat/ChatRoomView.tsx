@@ -2,18 +2,17 @@ import React, { FC, useEffect, useRef, useState } from 'react';
 import Chat from './Chat';
 import ChatInput, { ChatFormState } from '../../input/message/ChatInput';
 import { ChatData } from '../../../types/firebase/db/chat/chatRoomStructure';
-import { FormStateChangeFunc } from '../../../types/util/componentsTypes';
-
+import { FormStateChangeAction } from '../../../types/app/formStateTypes';
 
 interface ChatRoomViewProps {
     chatState: ChatFormState;
     chats: ChatData[];
-    onChatStateChange: FormStateChangeFunc;
+    onChangeFormState: (action: FormStateChangeAction) => void;
     onSendChat: () => void;
     onScrollToEnd: () => void;
 }
 
-const ChatRoomView: FC<ChatRoomViewProps> = ({ chatState, chats, onChatStateChange, onSendChat, onScrollToEnd }) => {
+const ChatRoomView: FC<ChatRoomViewProps> = ({ chatState, chats, onChangeFormState, onSendChat, onScrollToEnd }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const scrollEndRef = useRef<HTMLDivElement>(null);
     const [scrolledToEnd, setScrolledToEnd] = useState(false);
@@ -64,7 +63,7 @@ const ChatRoomView: FC<ChatRoomViewProps> = ({ chatState, chats, onChatStateChan
             <div className='fixed bottom-0 flex justify-center w-full bg-primaryBase p-1 pb-4'>
                 <ChatInput
                     formState={chatState}
-                    onFormStateChange={onChatStateChange}
+                    onChangeFormState={onChangeFormState}
                     onSendChat={onSendChat}
                     placeholder='メッセージを入力'
                 />

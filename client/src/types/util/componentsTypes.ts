@@ -16,9 +16,6 @@ export type HTMLAnyTypeElement = BaseHTMLElement<any, "unknown">
 
 export type CustomHTMLElement = HTMLDateElement | HTMLRangeElement | HTMLFileElement | HTMLFilesElement | HTMLAnyTypeElement;
 
-export type FormStateChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | CustomHTMLElement>;
-
-export type FormStateChangeFunc = (e: FormStateChangeEvent) => void;
 
 export type SelectFieldChange = (event: SelectChangeEvent<string | number>, child: ReactNode) => void;
 

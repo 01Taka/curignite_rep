@@ -4,12 +4,13 @@ import { useAppDispatch, useAppSelector } from '../../../../redux/hooks';
 import { MINUTES_IN_MILLISECOND } from '../../../../constants/utils/dateTimeConstants';
 import RadioGroupField from '../../../../components/input/field/RadioGroupField';
 import QuickSelectionField from '../../../../components/input/field/QuickSelectionField';
-import { FormStateChangeEvent, SelectItem } from '../../../../types/util/componentsTypes';
+import { SelectItem } from '../../../../types/util/componentsTypes';
 import { NumberField } from '../../../../components/input/inputIndex';
 import CircularButton from '../../../../components/input/button/CircularButton';
 import { addAllowedOverflowLearningTime, endLearningGoal } from '../../../../services/learning/learningGoalActionService';
 import { useLearningTimer } from './LearningTimerProvider';
 import { LearningGoalStatus } from '../../../../types/firebase/db/user/userSupplementTypes';
+import { FormStateChangeAction } from '../../../../types/app/formStateTypes';
 
 type LearningGoalContinueStatus = "continue" | "procrastinate" | "complete";
 
@@ -38,16 +39,16 @@ const ContinueLearningGoalWorkForm: FC<ContinueLearningGoalWorkFormProps> = ({ o
   const [learningState, setLearningState] = useState<LearningGoalContinueStatus>("continue");
   const [continueTimeMin, setContinueTimeMin] = useState<number>(10);
 
-  const handleLearningStateChange = (event: FormStateChangeEvent) => {
-    setLearningState(event.target.value as LearningGoalContinueStatus);
+  const handleLearningStateChange = (action: FormStateChangeAction) => {
+    setLearningState(action.value as LearningGoalContinueStatus);
   };
 
-  const handleTimeChange = (event: FormStateChangeEvent) => {
-    setContinueTimeMin(Number(event.target.value));
+  const handleTimeChange = (action: FormStateChangeAction) => {
+    setContinueTimeMin(Number(action.value));
   };
 
-  const handleQuickSelectionChange = (event: FormStateChangeEvent) => {
-    setContinueTimeMin(Number(event.target.value));
+  const handleQuickSelectionChange = (action: FormStateChangeAction) => {
+    setContinueTimeMin(Number(action.value));
   };
 
   if (!currentLearningGoal) {
@@ -100,7 +101,7 @@ const ContinueLearningGoalWorkForm: FC<ContinueLearningGoalWorkFormProps> = ({ o
           name='learningStatus'
           selectItems={learningStatusSelectItems}
           value={learningState}
-          onChange={handleLearningStateChange}
+          onChangeFormState={handleLearningStateChange}
         />
       </Box>
 
@@ -113,13 +114,13 @@ const ContinueLearningGoalWorkForm: FC<ContinueLearningGoalWorkFormProps> = ({ o
               min={0}
               max={180}
               value={continueTimeMin} 
-              onChange={handleTimeChange} 
+              onChangeFormState={handleTimeChange} 
             />
           </Box>
           <QuickSelectionField
             name='continueTimeMin'
             selectItems={continueTimeSelection}
-            onChange={handleQuickSelectionChange}
+            onChangeFormState={handleQuickSelectionChange}
           />
         </Box>
       )}

@@ -11,7 +11,7 @@ interface CreateProblemSetProps {
 
 const CreateProblemSet: FC<CreateProblemSetProps> = ({ onSuccessProblemSet }) => {
   const { uid } = useAppSelector(state => state.userSlice);
-  const { formState, names, onChangeFormState, updateField } = useFormState<CreateProblemSetFormState>({
+  const { formState, names, onChangeFormState, onChangeArrayField } = useFormState<CreateProblemSetFormState>({
     name: "",
     subject: "notSelected",
     description: "",
@@ -25,8 +25,8 @@ const CreateProblemSet: FC<CreateProblemSetProps> = ({ onSuccessProblemSet }) =>
     formState={formState}
     names={names}
     isDisabledCreate={isLoading}
-    onFormStateChange={onChangeFormState}
-    updateField={updateField}
+    onChangeFormState={onChangeFormState}
+    onChangeArrayField={onChangeArrayField}
     onCreate={handleCreateProblemSet}
   />
 }

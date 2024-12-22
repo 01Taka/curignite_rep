@@ -1,22 +1,22 @@
 import React from 'react';
 import SelectField from '../../input/field/SelectField';
-import { FormStateChangeFunc, SelectItem } from '../../../types/util/componentsTypes';
 import { TimerMode } from '../../../types/components/TimerTypes';
 import { timerModeSelectItems } from '../../../constants/selectItems/timerSelectItems';
+import { FormStateChangeAction } from '../../../types/app/formStateTypes';
 
 
 interface TimerControlsProps {
   cycleNumber: number;
   timerMode: TimerMode;
   active: boolean;
-  onTimerModeChange: FormStateChangeFunc;
+  onChangeFormState: (action: FormStateChangeAction) => void;
 }
 
 const TimerControls: React.FC<TimerControlsProps> = ({
   cycleNumber,
   timerMode,
   active,
-  onTimerModeChange,
+  onChangeFormState,
 }) => {
   return (
     <>
@@ -35,7 +35,7 @@ const TimerControls: React.FC<TimerControlsProps> = ({
           selectItems={timerModeSelectItems}
           value={timerMode}
           variant="outlined"
-          onChange={onTimerModeChange}
+          onChangeFormState={onChangeFormState}
         />
       </div>
       }

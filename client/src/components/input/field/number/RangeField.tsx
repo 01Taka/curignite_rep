@@ -1,15 +1,16 @@
 import React, { FC, useCallback, useEffect, useState, memo } from "react";
 import { TextField, Slider, Box, Button, Typography, Divider, IconButton } from "@mui/material";
 import { Delete as DeleteIcon } from "@mui/icons-material";
-import { FormStateChangeFunc, Range } from "../../../../types/util/componentsTypes";
+import { Range } from "../../../../types/util/componentsTypes";
 import { mergeRanges } from "../../../../functions/utils/rangeUtils";
 import { sortObjectArray } from "../../../../functions/utils/dataStructureUtils/objectUtils";
+import { FormStateChangeAction } from "../../../../types/app/formStateTypes";
 
 interface RangeFieldProps {
   label: string;
   name: string;
   value: Range[];
-  onChange: FormStateChangeFunc;
+  onChange: (action: FormStateChangeAction) => void;
   fullWidth?: boolean;
   min?: number;
   max?: number;
@@ -34,7 +35,7 @@ const RangeField: FC<RangeFieldProps> = ({
 
   const updateRanges = useCallback((updatedRanges: Range[]) => {
     setRanges(updatedRanges);
-    onChange({ target: { name, value: updatedRanges, type: "range" } } as unknown as React.ChangeEvent<HTMLInputElement>);
+    onChange({ name, value: updatedRanges });
   }, [name, onChange]);
 
   const handleChange = useCallback((index: number, minValue: number, maxValue: number) => {

@@ -4,10 +4,10 @@ import { Alert, Box, CircularProgress } from '@mui/material';
 import { UserNameField } from '../../../../components/input/inputIndex';
 import Heading from '../../../../components/container/Heading';
 import CircularButton from '../../../../components/input/button/CircularButton';
-import { FormStateChangeFunc } from '../../../../types/util/componentsTypes';
 import DateField from '../../../../components/input/field/DateField';
 import ImageUploadField from '../../../../components/input/field/ImageUploadField';
 import { keyMirror } from '../../../../functions/utils/dataStructureUtils/objectUtils';
+import { FormStateChangeAction } from '../../../../types/app/formStateTypes';
 
 export interface InitialSetupFormState {
   username: string;
@@ -20,7 +20,7 @@ interface InitialSetupViewProps {
   isLoading: boolean;
   submitDisabled: boolean;
   error: string;
-  onFormStateChange: FormStateChangeFunc;
+  onChangeFormState: (action: FormStateChangeAction) => void;
   onSubmit: () => void;
 }
 
@@ -35,7 +35,7 @@ const InitialSetupView: React.FC<InitialSetupViewProps> = ({
   formState,
   submitDisabled,
   error,
-  onFormStateChange,
+  onChangeFormState,
   onSubmit,
 }) => {
   const names = keyMirror(formState);
@@ -49,19 +49,19 @@ const InitialSetupView: React.FC<InitialSetupViewProps> = ({
           <form className='flex flex-col w-80 space-y-6 mt-12' onSubmit={e => { e.preventDefault(); onSubmit(); }}>
             <UserNameField
               username={formState.username}
-              onUserNameChange={onFormStateChange}
+              onUserNameChange={(e) => onChangeFormState({ name: e.target.name, value: e.target.value })}
             />
             <DateField
               label="生年月日"
               value={formState.birthday}
               name={names.birthday}
-              onChange={onFormStateChange}
+              onChangeFormState={onChangeFormState}
             />
             <ImageUploadField
               label='アイコン'
               value={formState.iconFile}
               name={names.iconFile}
-              onChange={onFormStateChange}
+              onChangeFormState={onChangeFormState}
               
             />
             <CircularButton

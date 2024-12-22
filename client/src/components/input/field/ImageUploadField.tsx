@@ -1,15 +1,16 @@
 import React, { FC, useState } from 'react';
 import { Typography, Box, IconButton } from '@mui/material';
-import { FormStateChangeEvent, FormStateChangeFunc, HTMLFileElement } from '../../../types/util/componentsTypes';
+import { HTMLFileElement } from '../../../types/util/componentsTypes';
 import { cva } from 'class-variance-authority';
 import { cn } from '../../../functions/utils/utils';
 import { Edit } from '@mui/icons-material';
+import { FormStateChangeAction } from '../../../types/app/formStateTypes';
 
 interface ImageUploadFieldProps {
   name: string;
   label: string;
   value: File | null;
-  onChange: FormStateChangeFunc;
+  onChangeFormState: (action: FormStateChangeAction) => void;
   size?: 'sm' | 'md' | 'lg';
   shape?: 'circle' | 'square';
   borderStyle?: 'none' | 'solid' | 'dashed';
@@ -43,7 +44,7 @@ const ImageUploadField: FC<ImageUploadFieldProps> = ({
   name,
   label,
   value,
-  onChange,
+  onChangeFormState,
   size = 'md',
   shape = 'circle',
   borderStyle = 'dashed',
@@ -55,14 +56,7 @@ const ImageUploadField: FC<ImageUploadFieldProps> = ({
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setImageUrl(imageUrl);
-      const event: FormStateChangeEvent = {
-        target: {
-          name,
-          value: file,
-          type: 'url',
-        },
-      } as unknown as React.ChangeEvent<HTMLFileElement>;
-      onChange(event);
+      onChangeFormState({ name, value: file });
     }
   };
 

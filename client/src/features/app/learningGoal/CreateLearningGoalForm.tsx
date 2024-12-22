@@ -7,11 +7,11 @@ import { Alert, Box, Typography } from '@mui/material';
 import { NumberField, StringField } from '../../../components/input/inputIndex';
 import SelectField from '../../../components/input/field/SelectField';
 import { keyMirror } from '../../../functions/utils/dataStructureUtils/objectUtils';
-import { FormStateChangeEvent } from '../../../types/util/componentsTypes';
 import { subjectSelectItems } from '../../../constants/selectItems/subjectSelectItems';
 import CircularButton from '../../../components/input/button/CircularButton';
 import { MINUTES_IN_MILLISECOND } from '../../../constants/utils/dateTimeConstants';
 import useFormState from '../../hooks/form/useFormState';
+import { FormStateChangeAction } from '../../../types/app/formStateTypes';
 
 
 interface CreateLearningGoalFormState {
@@ -55,8 +55,8 @@ const CreateLearningGoalForm: FC<CreateLearningGoalFormProps> = ({ onCreated }) 
     }
   }
 
-  const formStateChangeHandler = (e: FormStateChangeEvent) => {
-    onChangeFormState(e);
+  const formStateChangeHandler = (action: FormStateChangeAction) => {
+    onChangeFormState(action);
     reset();
   };
 
@@ -70,20 +70,20 @@ const CreateLearningGoalForm: FC<CreateLearningGoalFormProps> = ({ onCreated }) 
           label="目標"
           value={formState.objectives}
           name={names.objectives}
-          onChange={formStateChangeHandler}
+          onChange={(e) => formStateChangeHandler({ ...e.target })}
         />
         <SelectField
           label='教科'
           value={formState.subject}
           name={names.subject}
           selectItems={subjectSelectItems}
-          onChange={formStateChangeHandler}
+          onChangeFormState={onChangeFormState}
         />
         <NumberField
           label='目標時間 (分)'
           value={formState.targetDurationMin}
           name={names.targetDurationMin}
-          onChange={formStateChangeHandler}
+          onChangeFormState={formStateChangeHandler}
           max={180}
         />
       </Box>

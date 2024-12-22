@@ -14,7 +14,7 @@ interface CreateActivityProps {
 
 const CreateActivity: FC<CreateActivityProps> = ({ problemSet, categories, onSuccessCreate }) => {
   const { uid } = useAppSelector(state => state.userSlice);
-  const { formState, names, onChangeFormState, updateArrayField } = useFormState<CreateActivityFormState>({
+  const { formState, names, onChangeFormState, onChangeArrayField } = useFormState<CreateActivityFormState>({
     dueDateTime: null,
     informStartDaysBeforeDue: null,
     categoryActivities: []
@@ -32,8 +32,8 @@ const CreateActivity: FC<CreateActivityProps> = ({ problemSet, categories, onSuc
       names={names}
       formState={formState}
       categories={categories}
-      onFormStateChange={onChangeFormState}
-      updateArrayField={updateArrayField}
+      onChangeFormState={onChangeFormState}
+      onChangeArrayField={onChangeArrayField}
       onCreate={handleCreateActivity}
       loading={asyncStatus === 'loading'}
     />

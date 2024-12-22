@@ -1,30 +1,41 @@
 import React, { useEffect, useState } from 'react';
-import { CreateProblemSetFormState, ProblemSetCategoryForm } from '../../shared/types/createTask/createProblemSetTypes';
+import { ProblemSetCategoryForm } from '../../shared/types/createTask/createProblemSetTypes';
 import useArrayState from '../../../../hooks/form/useArrayState';
 import { Box, Button, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
-import QuickNumberField from '../../../../../components/input/field/number/QuickNumberField';
-import { createNumberSelectItems, updateFiledByEvent } from '../../../../../functions/utils/formUtils';
 import CategoryForm from './CategoryForm';
 import { ProblemSetActivityManagementMethod } from '../../../../../types/firebase/db/task/taskSupplementTypes';
+import TimeAndProblemCountField from './TimeAndProblemCountField';
+import { commonStyles } from '../../../../../styles/mui/commonStyles';
+import { ArrayFieldChangeAction, FormStateChangeAction } from '../../../../../types/app/formStateTypes';
 
 const ManagementMethodSelector: React.FC<{
   managementMethod: ProblemSetActivityManagementMethod;
-  setManagementMethod: (method: ProblemSetActivityManagementMethod) => void;
-  updateField: (fieldName: keyof CreateProblemSetFormState, value: any) => void;
-}> = ({ managementMethod, setManagementMethod, updateField }) => {
-  const { array: mainQuestions, push, pop, update } = useArrayState<ProblemSetCategoryForm>([
-    { name: '問', timePerProblem: 10, totalProblemCount: 30 },
-  ]);
+  pageMethodName?: string;
+  onChangeFormState: (action: FormStateChangeAction) => void;
+  onChangeArrayField: (action: ArrayFieldChangeAction) => void;
+}> = ({
+  managementMethod,
+  pageMethodName = "ページ",
+  onChangeFormState,
+  onChangeArrayField
+}) => {
+  const [, setProblemCount] = useState(2);
+
+  const getInitialCategoryState = (name: string = "問") => {
+    return { name, timePerProblem: 10, totalProblemCount: 30 };
+  }
   
+  const { array: mainQuestions, push, pop, update } = useArrayState<ProblemSetCategoryForm>([getInitialCategoryState()]);
+
   const [pageSettings, setPageSettings] = useState<ProblemSetCategoryForm>({
-    name: 'page',
+    name: pageMethodName,
     timePerProblem: 10,
     totalProblemCount: 200,
   });
 
   useEffect(() => {
-    updateField("categories", managementMethod === 'page' ? [pageSettings] : mainQuestions);
-  }, [managementMethod, pageSettings, mainQuestions, updateField]);
+    onChangeFormState({ name: "categories", value: managementMethod === 'page' ? [pageSettings] : mainQuestions });
+  }, [managementMethod, pageSettings, mainQuestions, onChangeFormState]);
 
   return (
     <Box>
@@ -35,43 +46,43 @@ const ManagementMethodSelector: React.FC<{
           marginY: 1,
         }}
         exclusive
-        onChange={(_, newValue) => newValue && setManagementMethod(newValue)}
+        onChange={(_, newValue) => newValue && onChangeFormState({ name: "activityManagementMethod", value: newValue })}
       >
         <ToggleButton value="page">ページ</ToggleButton>
         <ToggleButton value="mainQuestion">問題番号</ToggleButton>
       </ToggleButtonGroup>
       {managementMethod === 'page' ? (
-        <Box sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '0.2rem'
-        }}>
-          <QuickNumberField
-            name="timePerProblem"
-            label="1ページ当たりの時間(分)"
-            value={pageSettings.timePerProblem}
-            selectItems={createNumberSelectItems(5, 181, 5, 1, '分')}
-            onChange={(e) => setPageSettings(updateFiledByEvent(pageSettings, e))}
-          />
-          <QuickNumberField
-            name="totalProblemCount"
-            label="総ページ数"
-            value={pageSettings.totalProblemCount}
-            selectItems={createNumberSelectItems(10, 501, 10, 1, 'ページ')}
-            onChange={(e) => setPageSettings(updateFiledByEvent(pageSettings, e))}
-          />
-        </Box>
+        <TimeAndProblemCountField
+          time={pageSettings.timePerProblem}
+          timeFormLabel="1ページ当たりの時間(分)"
+          onTimeChange={(action) => setPageSettings({ ...pageSettings, name: action.name, timePerProblem: action.value })}
+          problemCount={pageSettings.totalProblemCount}
+          problemCountFormLabel="総ページ数"
+          problemCountUnit='ページ'
+          onProblemCountChange={(action) =>setPageSettings({ ...pageSettings, name: action.name, totalProblemCount: action.value })}
+          boxSx={{
+            ...commonStyles.flexColumnCenter,
+            gap: 1
+          }}
+        />
       ) : (
         <Box>
           {mainQuestions.map((category, index) => (
             <CategoryForm
               key={index}
-              formState={category}
-              onChange={(e) => update(index, updateFiledByEvent(category, e))}
-              onDelete={() => pop(index)}
+              category={category}
+              onChangeCategoryState={(newCategory) => update(
+                index, { ...category, ...newCategory }
+              )}
+              onDelete={() => {if (mainQuestions.length > 1) pop(index)}}
             />
           ))}
-          <Button onClick={() => push({ name: '', timePerProblem: 0, totalProblemCount: 0 })}>
+          <Button onClick={() => {
+            setProblemCount(prev => {
+              push(getInitialCategoryState(`問${prev}`))
+              return prev + 1;
+            })
+          }}>
             追加
           </Button>
         </Box>

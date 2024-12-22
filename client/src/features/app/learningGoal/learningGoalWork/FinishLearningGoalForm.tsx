@@ -63,7 +63,7 @@ const FinishLearningGoalForm: FC<FinishLearningGoalFormProps> = ({ onEnter }) =>
           name='learningStatus'
           selectItems={learningFinishStatusSelectItems}
           value={learningState}
-          onChange={(e) => setLearningState(e.target.value)}
+          onChangeFormState={(action) => setLearningState(action.value)}
         />
       </Box>
       <div className='flex justify-end'>

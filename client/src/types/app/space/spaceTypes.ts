@@ -1,5 +1,6 @@
 import { SpaceData } from "../../firebase/db/space/spaceStructure";
-import { FormStateChangeFunc, SelectItem } from "../../util/componentsTypes";
+import { SelectItem } from "../../util/componentsTypes";
+import { FormStateChangeAction } from "../formStateTypes";
 
 export interface SpaceStartFormState {
   spaceName: string;
@@ -21,7 +22,7 @@ export interface SpaceStartActionsViewProps {
 export interface SpaceSettingViewProps {
   formState: SpaceStartFormState;
   isStarting: boolean;
-  onChangeFormState: FormStateChangeFunc;
+  onChangeFormState: (action: FormStateChangeAction) => void;
   onCompletion: () => void;
   onUpdateDefaultSetting: () => void;
 }

@@ -2,8 +2,8 @@ import React, { FC, useState } from 'react';
 import { Divider, IconButton, InputBase, Paper, Popover } from '@mui/material';
 import AddLinkIcon from '@mui/icons-material/AddLink';
 import SendIcon from '@mui/icons-material/Send';
-import { FormStateChangeFunc } from '../../../types/util/componentsTypes';
 import FileSelector from './FileSelector';
+import { FormStateChangeAction } from '../../../types/app/formStateTypes';
 
 export interface ChatFormState {
   content: string;
@@ -14,11 +14,11 @@ export interface ChatFormState {
 interface ChatInputProps {
   formState: ChatFormState;
   placeholder: string;
-  onFormStateChange: FormStateChangeFunc;
+  onChangeFormState: (action: FormStateChangeAction) => void;
   onSendChat: () => void;
 }
 
-const ChatInput: FC<ChatInputProps> = ({ formState, placeholder, onFormStateChange, onSendChat }) => {
+const ChatInput: FC<ChatInputProps> = ({ formState, placeholder, onChangeFormState, onSendChat }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleClickOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -50,7 +50,7 @@ const ChatInput: FC<ChatInputProps> = ({ formState, placeholder, onFormStateChan
           placeholder={placeholder}
           inputProps={{ 'aria-label': placeholder }}
           value={formState.content}
-          onChange={onFormStateChange}
+          onChange={(e) => onChangeFormState({ name: e.target.name, value: e.target.value })}
         />
         <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
         <IconButton color="primary" sx={{ p: '10px' }} aria-label="directions" onClick={onSendChat}>
@@ -69,7 +69,7 @@ const ChatInput: FC<ChatInputProps> = ({ formState, placeholder, onFormStateChan
         }}
       >
         <FileSelector 
-          onFileChange={onFormStateChange}
+          onChangeFormState={onChangeFormState}
           handleClose={handleClose}
         />
       </Popover>

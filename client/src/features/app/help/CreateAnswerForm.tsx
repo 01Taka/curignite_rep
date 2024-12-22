@@ -1,9 +1,7 @@
-import React, { FC, useState } from 'react';
+import { FC, useState } from 'react';
 import { HelpAndAnswersWithFileUrls } from '../../../types/firebase/db/user/userStructure';
-import serviceFactory from '../../../firebase/db/factory';
 import { useAppSelector } from '../../../redux/hooks';
 import { keyMirror } from '../../../functions/utils/dataStructureUtils/objectUtils';
-import { FormStateChangeEvent } from '../../../types/util/componentsTypes';
 import FileUploadField from '../../../components/input/field/FileUploadField';
 import HelpCard from './HelpCard';
 import { Alert, CircularProgress, Typography } from '@mui/material';
@@ -80,14 +78,14 @@ const CreateAnswerForm: FC<CreateAnswerFormProps> = ({ targetHelpAndAnswersInfo,
           label='回答'
           value={formState.answer}
           name={names.answer}
-          onChange={onChangeFormState}
+          onChange={(e) => onChangeFormState({ name: e.target.name, value: e.target.value })}
         />
         
         <FileUploadField
           label='添付ファイル'
           value={formState.files}
           name={names.files}
-          onChange={onChangeFormState}
+          onChangeFormState={onChangeFormState}
           maxFiles={3}
         />
 

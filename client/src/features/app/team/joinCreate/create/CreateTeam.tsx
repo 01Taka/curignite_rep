@@ -1,8 +1,7 @@
-import React, { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAppSelector } from '../../../../../redux/hooks';
 import CreateTeamView, { CreateTeamFormState } from './CreateTeamView';
-import serviceFactory from '../../../../../firebase/db/factory';
 import { TeamData } from '../../../../../types/firebase/db/team/teamStructure';
 import { DocumentData, DocumentReference } from 'firebase/firestore';
 import useFormState from '../../../../hooks/form/useFormState';
@@ -15,7 +14,7 @@ const CreateTeam: FC<CreateTeamProps> = ({ onCreatedTeam }) => {
   const { name } = useParams<{ name: string }>();
   const { uid } = useAppSelector(state => state.userSlice);
 
-  const { formState, updateField, onChangeFormState } = useFormState<CreateTeamFormState>({
+  const { formState, onChangeFormState } = useFormState<CreateTeamFormState>({
     teamName: '',
     iconImage: null,
     description: '',
@@ -26,7 +25,7 @@ const CreateTeam: FC<CreateTeamProps> = ({ onCreatedTeam }) => {
 
   useEffect(() => {
     if (name) {
-      updateField('teamName', name);
+      onChangeFormState({ name: 'teamName', value: name });
     }
   }, [name]);
 
@@ -59,7 +58,7 @@ const CreateTeam: FC<CreateTeamProps> = ({ onCreatedTeam }) => {
     <CreateTeamView
       formState={formState}
       creating={creating}
-      onFormStateChange={onChangeFormState}
+      onChangeFormState={onChangeFormState}
       onCreate={handleCreateTeam}
     />
   );

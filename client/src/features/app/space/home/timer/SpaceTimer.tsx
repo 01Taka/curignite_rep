@@ -105,7 +105,7 @@ const SpaceTimer: FC<SpaceTimerProps> = ({ spaceId }) => {
         cycleNumber={cycleNumber}
         timerMode={timerMode}
         active={active}
-        onTimerModeChange={(e) => setTimerMode(e.target.value as SpaceTimerMode)}
+        onChangeFormState={(e) => setTimerMode(e.value)}
       />
     </div>
   );

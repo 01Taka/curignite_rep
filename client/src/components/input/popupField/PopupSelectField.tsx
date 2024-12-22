@@ -1,12 +1,13 @@
 import React from 'react';
 import { SelectItem } from '../../../types/util/componentsTypes';
 import { Menu, MenuItem } from '@mui/material';
+import { FormStateChangeAction } from '../../../types/app/formStateTypes';
 
 interface PopupSelectFieldProps<T extends string | number, K extends string> {
   open: boolean;
   name: K;
   selectItems: SelectItem<T>[];
-  updateField?: (fieldName: K, value: T) => void;
+  onChangeFormState: (action: FormStateChangeAction) => void;
   onSelected: (value: T | null) => void;
 }
 
@@ -14,7 +15,7 @@ const PopupSelectField = <T extends string | number, K extends string>({
   open,
   name,
   selectItems,
-  updateField,
+  onChangeFormState,
   onSelected,
 }: PopupSelectFieldProps<T, K>) => {
   return (
@@ -36,7 +37,7 @@ const PopupSelectField = <T extends string | number, K extends string>({
             key={index}
             value={item.value}
             onClick={() => {
-              if (updateField) updateField(name, item.value);
+              if (onChangeFormState) onChangeFormState({ name, value: item.value });
               onSelected(item.value); // 項目がクリックされたら閉じる
             }}
           >

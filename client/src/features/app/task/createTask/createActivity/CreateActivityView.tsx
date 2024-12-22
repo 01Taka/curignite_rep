@@ -1,12 +1,11 @@
-import React, { FC } from 'react';
-import { FormStateChangeFunc } from '../../../../../types/util/componentsTypes';
+import { FC } from 'react';
 import { Box, Button, CircularProgress, Typography } from '@mui/material';
 import ActivityRangeForm from './ActivityRangeForm';
-import { UpdateArrayFieldArgs } from '../../../../hooks/form/AsyncHandlerTypes';
 import DateField from '../../../../../components/input/field/DateField';
 import { ProblemSetActivityManagementMethod } from '../../../../../types/firebase/db/task/taskSupplementTypes';
 import { ProblemSetCategoryRead } from '../../../../../types/firebase/db/task/taskStructure';
 import { CreateActivityFormState } from '../../shared/types/createTask/createActivityTypes';
+import { ArrayFieldChangeAction, FormStateChangeAction } from '../../../../../types/app/formStateTypes';
 
 interface CreateActivityViewProps {
   problemSetName: string;
@@ -15,8 +14,8 @@ interface CreateActivityViewProps {
   categories: ProblemSetCategoryRead[]
   names: Record<string, string>;
   loading: boolean;
-  onFormStateChange: FormStateChangeFunc;
-  updateArrayField: (args: UpdateArrayFieldArgs<CreateActivityFormState, any>) => void
+  onChangeFormState: (event: FormStateChangeAction) => void;
+  onChangeArrayField: (event: ArrayFieldChangeAction) => void
   onCreate: () => void;
 }
 
@@ -27,8 +26,8 @@ const CreateActivityView: FC<CreateActivityViewProps> = ({
   categories,
   names,
   loading,
-  onFormStateChange,
-  updateArrayField,
+  onChangeFormState,
+  onChangeArrayField,
   onCreate
 }) => {
   return (
@@ -53,34 +52,15 @@ const CreateActivityView: FC<CreateActivityViewProps> = ({
           label='提出日時'
           name={names.dueDateTime}
           value={formState.dueDateTime}
-          onChange={onFormStateChange}
+          onChangeFormState={onChangeFormState}
         />
         <ActivityRangeForm
           managementMethod={managementMethod}
-          formState={formState.categoryActivities}
+          activityFormState={formState.categoryActivities}
           categories={categories}
-          updateArrayField={updateArrayField}
+          onChangeArrayField={onChangeArrayField}
+          onChangeFormState={onChangeFormState}
         />
-        {/* <StringField
-          label='タイトル'
-          name={names.title}
-          value={formState.title}
-          onChange={onFormStateChange}
-        /> 
-        <MultilineField
-          label='補足説明'
-          rows={3}
-          name={names.taskNote}
-          value={formState.taskNote}
-          onChange={onFormStateChange}
-        /> 
-        <SelectField
-          label='優先度'
-          name={names.priority}
-          selectItems={taskPrioritySelectItem}
-          value={formState.priority}
-          onChange={onFormStateChange}
-        /> */}
       </Box>
       <Button onClick={onCreate} variant='contained' sx={{ marginTop: 2 }} disabled={loading}>
         {loading ? <CircularProgress /> : "作成する"}

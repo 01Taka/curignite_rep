@@ -1,6 +1,9 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
-import { FormStateChangeFunc, SelectFieldChange, SelectItem } from '../../../types/util/componentsTypes';
+import { SelectItem } from '../../../types/util/componentsTypes';
 import { useMemo } from 'react';
+import { FormStateChangeAction } from '../../../types/app/formStateTypes';
+
+type Rec = Record<string, any>
 
 // ジェネリック型に制約を追加
 interface SelectFieldProps<T extends string | number> {
@@ -10,11 +13,11 @@ interface SelectFieldProps<T extends string | number> {
   exceptValues?: (string | number)[];
   value: T;
   variant?: "standard" | "filled" | "outlined";
-  onChange: FormStateChangeFunc;
+  onChangeFormState: (action: FormStateChangeAction) => void;
 }
 
 // ジェネリック型 T を使用してコンポーネントを定義
-const SelectField = <T extends string | number>({ label, name, selectItems, exceptValues = [], value, variant = "filled", onChange }: SelectFieldProps<T>) => {
+const SelectField = <T extends string | number>({ label, name, selectItems, exceptValues = [], value, variant = "filled", onChangeFormState }: SelectFieldProps<T>) => {
   // 選択肢に一致する value があるかチェック
   const isValidValue = selectItems.some(item => item.value === value);
   const items = useMemo(() => {
@@ -33,7 +36,7 @@ const SelectField = <T extends string | number>({ label, name, selectItems, exce
         type="select"
         name={name}
         value={isValidValue ? value : ''} // 無効な値の場合、空文字を設定
-        onChange={onChange as SelectFieldChange}
+        onChange={(e) => onChangeFormState({...e.target})}
       >
         {items.map((item, index) => (
           <MenuItem key={index} value={item.value}>

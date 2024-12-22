@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import useEffectOnCondition from "../../../../../../hooks/common/useEffectOnCondition";
-import { CreateProblemSetFormState, CreateProblemSetStateTypes } from "../../../types/createTask/createProblemSetTypes";
+import { CreateProblemSetFormState, CreateProblemSetStateTypes, ProblemSetCategoryForm } from "../../../types/createTask/createProblemSetTypes";
 import useMultipleAsyncHandler from "../../../../../../hooks/form/useMultipleAsyncHandler";
 import { MINUTES_IN_MILLISECOND } from "../../../../../../../constants/utils/dateTimeConstants";
 import serviceFactory from "../../../../../../../firebase/db/factory";
@@ -44,11 +44,26 @@ const useCreateProblemSetAndCategoriesHandler = (
     }
   );
 
+  const validateCategory = useCallback((categories: ProblemSetCategoryForm[]): boolean => {
+    const usedName = new Set<string>();
+    for(let category of categories) {
+      if (usedName.has(category.name)) {
+        handleError(new Error("Duplicate category name."), "問題の名前が重複しないようにしてください。")
+        return false;
+      }
+      usedName.add(category.name);
+    }
+    return true;
+  }, [handleError]);
+
   const handleCreateProblemSet = useCallback(async () => {
     if (!userId) {
       handleError(new Error("User is not authenticated."), "ユーザーが認証されていません。ログインしてください。");
       return;
     }
+
+    const isValid = validateCategory(formState.categories);
+    if (!isValid) return;
 
     setIsLoading(true);
 
@@ -66,6 +81,9 @@ const useCreateProblemSetAndCategoriesHandler = (
       setIsLoading(false);
       return;
     };
+
+    console.log(formState.categories);
+    
 
     // カテゴリ作成
     formState.categories.forEach((category) =>
@@ -85,7 +103,7 @@ const useCreateProblemSetAndCategoriesHandler = (
     );
 
     // useEffectOnCondition内でisLoadingをリセット
-  }, [userId, formState, callAsyncFunction, handleError, onFailedCreateProblemSetMessage, onFailedCreateCategoriesMessage]);
+  }, [userId, formState, callAsyncFunction, handleError, validateCategory, onFailedCreateProblemSetMessage, onFailedCreateCategoriesMessage]);
 
   return { asyncStates, allMatchStates, isLoading, handleCreateProblemSet };
 };

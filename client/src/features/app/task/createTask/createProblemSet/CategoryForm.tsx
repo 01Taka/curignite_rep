@@ -1,25 +1,21 @@
 import React from 'react';
 import { ProblemSetCategoryForm } from '../../shared/types/createTask/createProblemSetTypes';
 import { Box, IconButton, TextField } from '@mui/material';
-import { FormStateChangeFunc } from '../../../../../types/util/componentsTypes';
-import { keyMirror } from '../../../../../functions/utils/dataStructureUtils/objectUtils';
-import QuickNumberField from '../../../../../components/input/field/number/QuickNumberField';
-import { createNumberSelectItems } from '../../../../../functions/utils/formUtils';
 import { Delete } from '@mui/icons-material';
+import { commonStyles } from '../../../../../styles/mui/commonStyles';
+import TimeAndProblemCountField from './TimeAndProblemCountField';
 
 interface CategoryFormProps {
-  formState: ProblemSetCategoryForm;
-  onChange: FormStateChangeFunc;
+  category: ProblemSetCategoryForm;
+  onChangeCategoryState: (category: Partial<ProblemSetCategoryForm>) => void;
   onDelete: () => void;
 }
 
 const CategoryForm: React.FC<CategoryFormProps> = ({
-  formState,
-  onChange,
+  category,
+  onChangeCategoryState,
   onDelete
 }) => {
-  const names = keyMirror(formState);
-
   return (
     <Box sx={{
       display: 'flex',
@@ -31,36 +27,25 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
       borderColor: 'gray',
       borderRadius: 2
     }}>
-      <Box sx={{
-        display: 'flex',
-        justifyContent: 'space-between'
-      }}>
-        <TextField name={names.name} label='大問名' value={formState.name} onChange={onChange}/>
-        <IconButton onClick={onDelete}>
+      <Box sx={{ ...commonStyles.flexBetween }}>
+        <TextField name="name" label='大問名' value={category.name} onChange={(e) => onChangeCategoryState({ name: e.target.value })}/>
+        <IconButton size="small" onClick={onDelete}>
           <Delete />
         </IconButton>
       </Box>
-      <Box sx={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        gap: '0.2rem',
-        width: '100%',
-      }}>
-        <QuickNumberField
-          name={names.timePerProblem}
-          label='1問の時間(分)'
-          value={formState.timePerProblem}
-          selectItems={createNumberSelectItems(5, 181, 5, 1, '分')}
-          onChange={onChange}
-        />
-        <QuickNumberField
-          name={names.totalProblemCount}
-          label='総問題数'
-          value={formState.totalProblemCount}
-          selectItems={createNumberSelectItems(10, 501, 10, 1, '問')}
-          onChange={onChange}
-        />
-      </Box>
+      <TimeAndProblemCountField
+        time={category.timePerProblem}
+        timeFormLabel="1問の時間(分)"
+        onTimeChange={(action) => onChangeCategoryState({ timePerProblem: action.value })}
+        problemCount={category.totalProblemCount}
+        problemCountFormLabel="総問題数"
+        problemCountUnit='問'
+        onProblemCountChange={(action) => onChangeCategoryState({ totalProblemCount: action.value })}
+        boxSx={{
+          ...commonStyles.flexBetween,
+          gap: 1
+        }}
+      />
     </Box>
   );
 };

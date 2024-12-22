@@ -1,61 +1,53 @@
 import { useState, useCallback } from "react";
-import { FormStateChangeEvent } from "../../../types/util/componentsTypes";
 import { keyMirror } from "../../../functions/utils/dataStructureUtils/objectUtils";
-import { UpdateArrayFieldArgs } from "./AsyncHandlerTypes";
-import { handleFormStateChange } from "../../../functions/utils/formUtils";
+import { ArrayFieldChangeAction, FormStateChangeAction } from "../../../types/app/formStateTypes";
 
 const useFormState = <T extends Record<string, any>>(initialState: T) => {
   const [formState, setFormState] = useState<T>(initialState);
   const names = keyMirror(initialState);
 
-  const onChangeFormState = useCallback(
-    (event: FormStateChangeEvent) => handleFormStateChange(event, setFormState),
-    []
-  );
+  const onChangeFormState = useCallback((action: FormStateChangeAction) => {
+    setFormState((prev) => ({
+      ...prev,
+      [action.name]: action.value
+    }));
+  }, []);
 
   const resetFormState = useCallback(() => {
     setFormState({ ...initialState });
   }, [initialState]);
 
-  const updateField = useCallback(
-    (fieldName: keyof T, value: any) => {
-      setFormState((prevState) => ({
-        ...prevState,
-        [fieldName]: value,
-      }));
-    },
-    []
-  );
+  const onChangeArrayField = useCallback((action: ArrayFieldChangeAction) => {
+      const { operation, name } = action;
+      setFormState((prev) => {
+        const prevData = prev[name];
 
-  const updateArrayField = useCallback(
-    ({ fieldName, index, data, deleteItem }: UpdateArrayFieldArgs<T>) => {
-      setFormState((prevState) => {
-        const prevData = prevState[fieldName];
         if (!Array.isArray(prevData)) {
-          console.error(`Field ${String(fieldName)} is not an array`);
-          return prevState;
+          console.error(`Field ${String(name)} is not an array`);
+          return prev;
         }
 
-        const newData = [...prevData]; // Create an immutable copy
+        const newData = [...prevData];
 
-        if (deleteItem && index !== 'push' && index >= 0 && index < newData.length) {
-          newData.splice(index, 1);
-        }
-
-        if (data === undefined) {
-          console.error('delete以外の操作ではdataの入力が必須です。');
-          return prevState;
-        }
-
-        if (index === "push") {
-          newData.push(data);
-        } else if (index >= 0 && index < newData.length) {
-          newData[index] = data;
+        switch (operation) {
+          case "replace":
+            if (action.index >= 0 && action.index < newData.length) {
+              newData[action.index] = action.value;
+            }
+            break;
+          case "delete":
+            if (action.index >= 0 && action.index < newData.length) {
+              newData.splice(action.index, 1);
+            }
+            break;
+          case "push":
+            newData.push(action.value);
+            break;
         }
 
         return {
-          ...prevState,
-          [fieldName]: newData,
+          ...prev,
+          [name]: newData,
         };
       });
     },
@@ -67,9 +59,8 @@ const useFormState = <T extends Record<string, any>>(initialState: T) => {
     names,
     setFormState,
     onChangeFormState,
+    onChangeArrayField,
     resetFormState,
-    updateField,
-    updateArrayField,
   };
 };
 

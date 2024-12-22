@@ -1,9 +1,8 @@
 import { Box, SxProps } from '@mui/material';
 import React, { useEffect } from 'react';
 import NumberCounterField from './NumberCounterField';
-import { FormStateChangeEvent, FormStateChangeFunc } from '../../../../types/util/componentsTypes';
-import { handleCallOnChange } from '../../../../functions/utils/formUtils';
 import { seq } from '../../../../functions/utils/dataStructureUtils/arrayUtils';
+import { FormStateChangeAction } from '../../../../types/app/formStateTypes';
 
 interface MultipleNumberCounterFieldProps {
   counterNumber: number;
@@ -14,7 +13,7 @@ interface MultipleNumberCounterFieldProps {
   min?: number;
   max?: number;
   sx?: SxProps;
-  onChange: FormStateChangeFunc;
+  onChangeFormState: (action: FormStateChangeAction) => void;
 }
 
 const MultipleNumberCounterField: React.FC<MultipleNumberCounterFieldProps> = ({
@@ -26,7 +25,7 @@ const MultipleNumberCounterField: React.FC<MultipleNumberCounterFieldProps> = ({
   min,
   max,
   sx,
-  onChange,
+  onChangeFormState,
 }) => {
 
   const fillMissingValues = (values: (number | string)[]) => {
@@ -39,18 +38,9 @@ const MultipleNumberCounterField: React.FC<MultipleNumberCounterFieldProps> = ({
   useEffect(() => {
     const newValue = fillMissingValues(value);
     if (JSON.stringify(newValue) !== JSON.stringify(value)) {
-      handleCallOnChange(newValue, name, onChange);
+      onChangeFormState({ name, value: newValue });
     }
-  }, [value, counterNumber, initialValue, emptyValue, name, onChange]);
-
-  const handleOnChange = (index: number, event: FormStateChangeEvent) => {
-    const inputValue = event.target.value;
-    const newData = fillMissingValues(value);
-    if (index >= 0 && index < newData.length) {
-      newData[index] = inputValue;
-      handleCallOnChange(newData, name, onChange);
-    }
-  };
+  }, [value, counterNumber, initialValue, emptyValue, name, onChangeFormState]);
 
   return (
     <Box sx={{ display: 'flex', ...sx }}>
@@ -63,7 +53,7 @@ const MultipleNumberCounterField: React.FC<MultipleNumberCounterFieldProps> = ({
             emptyValue={emptyValue}
             min={min}
             max={max}
-            onChange={(e) => handleOnChange(index, e)}
+            onChangeFormState={onChangeFormState}
           />
         </Box>
       ))}

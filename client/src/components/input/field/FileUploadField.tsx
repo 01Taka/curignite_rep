@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Button, Typography, IconButton, Alert } from '@mui/material';
 import { Add, Delete as DeleteIcon } from '@mui/icons-material';
-import { FormStateChangeEvent, FormStateChangeFunc, HTMLFilesElement } from '../../../types/util/componentsTypes';
+import { HTMLFilesElement } from '../../../types/util/componentsTypes';
+import { FormStateChangeAction } from '../../../types/app/formStateTypes';
 
 interface FileUploadFieldProps {
   label: string;
@@ -10,10 +11,10 @@ interface FileUploadFieldProps {
   maxHeight?: number;
   maxFiles?: number;
   acceptedFileTypes?: string;
-  onChange: FormStateChangeFunc;
+  onChangeFormState: (action: FormStateChangeAction) => void;
 }
 
-const FileUploadField: React.FC<FileUploadFieldProps> = ({ label, name, value, maxHeight, maxFiles = 10, acceptedFileTypes, onChange }) => {
+const FileUploadField: React.FC<FileUploadFieldProps> = ({ label, name, value, maxHeight, maxFiles = 10, acceptedFileTypes, onChangeFormState }) => {
   const [fileNumber, setFileNumber] = useState(0);
   const [error, setError] = useState("");
 
@@ -33,27 +34,12 @@ const FileUploadField: React.FC<FileUploadFieldProps> = ({ label, name, value, m
       return;
     }
 
-    const event: FormStateChangeEvent = {
-      target: {
-        name,
-        value: [...value, ...newFiles],
-        type: 'file',
-      },
-    } as unknown as React.ChangeEvent<HTMLFilesElement>;
-    onChange(event);
+    onChangeFormState({ name, value: [...value, ...newFiles] })
   };
 
   const handleFileRemove = (indexToRemove: number) => {
     const newFiles = value.filter((_, index) => index !== indexToRemove);
-
-    const event: FormStateChangeEvent = {
-      target: {
-        name,
-        value: newFiles,
-        type: 'file',
-      },
-    } as unknown as React.ChangeEvent<HTMLFilesElement>;
-    onChange(event);
+    onChangeFormState({ name, value: newFiles })
   };
 
   return (

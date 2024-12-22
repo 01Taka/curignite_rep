@@ -33,8 +33,8 @@ const UpdateProblemSetForm: React.FC<UpdateProblemSetFormProps> = ({ problemSet,
         {problemSet.name}を編集
       </Typography>
       <Box sx={{...commonStyles.flexColumnCenter, gap: 1, }}>
-        <TextField label='タイトル' name={names.name} value={formState.name} onChange={onChangeFormState} fullWidth />
-        <MultilineField label='説明文' name={names.description} value={formState.description} rows={3} onChange={onChangeFormState} />
+        <TextField label='タイトル' name={names.name} value={formState.name} onChange={(e) => onChangeFormState({ name: e.target.name, value: e.target.value })} fullWidth />
+        <MultilineField label='説明文' name={names.description} value={formState.description} rows={3} onChange={(e) => onChangeFormState({ name: e.target.name, value: e.target.value })} />
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
       <Button variant='outlined' sx={{ alignSelf: 'end', width: '45%' }} onClick={onCancel} >

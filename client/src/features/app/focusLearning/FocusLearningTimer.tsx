@@ -98,7 +98,7 @@ const FocusLearningTimer: FC<SpaceTimerProps> = () => {
         cycleNumber={cycleNumber}
         timerMode={timerMode}
         active={active}
-        onTimerModeChange={(e) => setTimerMode(e.target.value as TimerMode)}
+        onChangeFormState={(action) => setTimerMode(action.value as TimerMode)}
       />
     </div>
   );

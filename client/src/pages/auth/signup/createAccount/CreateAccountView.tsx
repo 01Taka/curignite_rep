@@ -2,7 +2,7 @@ import React, { FormEvent } from 'react'
 import { Alert, Button } from '@mui/material';
 import { FormContainer, Heading } from '../../../../components/container/containerIndex';
 import { EmailField, PasswordField, UserNameField } from '../../../../components/input/inputIndex';
-import { FormStateChangeFunc } from '../../../../types/util/componentsTypes';
+import { FormStateChangeAction } from '../../../../types/app/formStateTypes';
 
 export interface CreateAccountFormState {
     username: string;
@@ -14,7 +14,7 @@ interface CreateAccountViewProps {
     formState: CreateAccountFormState;
     error: string;
     submitDisabled: boolean;
-    onFormStateChange: FormStateChangeFunc
+    onChangeFormState: (action: FormStateChangeAction) => void;
     onEmailSignUp: (e: FormEvent) => void;
 }
   
@@ -22,7 +22,7 @@ interface CreateAccountViewProps {
     formState,
     error,
     submitDisabled,
-    onFormStateChange,
+    onChangeFormState,
     onEmailSignUp,
   }) => {
     const handleSubmit = (e: React.FormEvent<Element>) => {
@@ -34,9 +34,9 @@ interface CreateAccountViewProps {
             <FormContainer flexCenter>
                 <Heading children='アカウントを作成' level={1} className='mt-20'/>
                 <form onSubmit={handleSubmit} className='flex flex-col items-center space-y-4 w-80 mt-12'>
-                    <EmailField email={formState.email} onEmailChange={onFormStateChange} />
-                    <UserNameField username={formState.username} onUserNameChange={onFormStateChange} />
-                    <PasswordField password={formState.password} onPasswordChange={onFormStateChange} />
+                    <EmailField email={formState.email} onEmailChange={(e) => onChangeFormState({ name: e.target.name, value: e.target.value })} />
+                    <UserNameField username={formState.username} onUserNameChange={(e) => onChangeFormState({ name: e.target.name, value: e.target.value })} />
+                    <PasswordField password={formState.password} onPasswordChange={(e) => onChangeFormState({ name: e.target.name, value: e.target.value })} />
                     <div className='w-full pt-12'>
                         <Button
                             disabled={submitDisabled}
