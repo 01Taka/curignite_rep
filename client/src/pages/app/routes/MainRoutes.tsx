@@ -13,7 +13,6 @@ import { appPaths } from '../../../constants/app/path/appPath';
 import PlanRoot from '../plan/PlanRoot';
 import Profile from '../../../features/app/profile/Profile';
 
-
 const MainRoutes: FC = () => {
   const dispatch = useAppDispatch();
   const { uid } = useAppSelector(state => state.userSlice);

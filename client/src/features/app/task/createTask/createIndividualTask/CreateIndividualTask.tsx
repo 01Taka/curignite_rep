@@ -15,6 +15,7 @@ const CreateIndividualTask: FC<CreateIndividualTaskProps> = ({ onSuccessCreate }
     title: "",
     subject: "notSelected",
     dueDateTime: null,
+    informStartDaysBeforeDue: null,
     taskNote: "",
     estimatedDuration: 10,
   });

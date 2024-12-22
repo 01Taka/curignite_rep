@@ -13,13 +13,13 @@ const ManagementMethodSelector: React.FC<{
   updateField: (fieldName: keyof CreateProblemSetFormState, value: any) => void;
 }> = ({ managementMethod, setManagementMethod, updateField }) => {
   const { array: mainQuestions, push, pop, update } = useArrayState<ProblemSetCategoryForm>([
-    { name: '問', timePerProblem: 10, totalProblemNumber: 30 },
+    { name: '問', timePerProblem: 10, totalProblemCount: 30 },
   ]);
   
   const [pageSettings, setPageSettings] = useState<ProblemSetCategoryForm>({
     name: 'page',
     timePerProblem: 10,
-    totalProblemNumber: 200,
+    totalProblemCount: 200,
   });
 
   useEffect(() => {
@@ -54,9 +54,9 @@ const ManagementMethodSelector: React.FC<{
             onChange={(e) => setPageSettings(updateFiledByEvent(pageSettings, e))}
           />
           <QuickNumberField
-            name="totalProblemNumber"
+            name="totalProblemCount"
             label="総ページ数"
-            value={pageSettings.totalProblemNumber}
+            value={pageSettings.totalProblemCount}
             selectItems={createNumberSelectItems(10, 501, 10, 1, 'ページ')}
             onChange={(e) => setPageSettings(updateFiledByEvent(pageSettings, e))}
           />
@@ -71,7 +71,7 @@ const ManagementMethodSelector: React.FC<{
               onDelete={() => pop(index)}
             />
           ))}
-          <Button onClick={() => push({ name: '', timePerProblem: 0, totalProblemNumber: 0 })}>
+          <Button onClick={() => push({ name: '', timePerProblem: 0, totalProblemCount: 0 })}>
             追加
           </Button>
         </Box>

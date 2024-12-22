@@ -14,6 +14,7 @@ const Home: React.FC<HomeProps> = () => {
       <Button onClick={() => navigate(appPaths.plan._abs)} >プラン</Button>
       <Button onClick={() => navigate(appPaths.learning._abs)} >学習</Button>
       <Button onClick={() => navigate("/app/profile")} >プロフィール</Button>
+      <Button onClick={() => navigate("/app/mission")} >ミッション</Button>
     </Box>
   );
 };

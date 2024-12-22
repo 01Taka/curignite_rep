@@ -44,6 +44,40 @@ export const seq = (start: number, stop?: number, step: number = 1): number[] =>
   return Array.from({ length }, (_, i) => actualStart + i * step);
 };
 
+export const findMissingNumbers = (
+  list: number[],
+  start: number,
+  stop?: number
+): number[] => {
+  const actualStart = stop !== undefined ? start : 0;
+  const actualEnd = stop !== undefined ? stop : start;
+
+  const allNumbers = new Set(Array.from({ length: actualEnd - actualStart + 1 }, (_, i) => actualStart + i));
+  const listSet = new Set(list);
+
+  // `allNumbers` に存在するが `listSet` に存在しない値を返す
+  return Array.from(allNumbers).filter(num => !listSet.has(num));
+}
+
+export const generateNumbersWithoutForbidden = (
+  n: number, 
+  forbiddenNumbers: number[],
+  start: number = 0
+): number[] => {
+  const forbiddenSet = new Set(forbiddenNumbers);
+  const result: number[] = [];
+  let current = start;
+
+  while (result.length < n) {
+    if (!forbiddenSet.has(current)) {
+      result.push(current);
+    }
+    current++;
+  }
+
+  return result;
+}
+
 
 /**
  * 指定された順序に従って配列を並び替えます。

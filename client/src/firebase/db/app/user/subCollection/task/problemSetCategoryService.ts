@@ -24,7 +24,7 @@ export class ProblemSetCategoryService {
     name: string | '',
     isPage: boolean,
     timePerProblem: number,
-    totalProblemNumber: number | null,
+    totalProblemCount: number | null,
     completedProblemIdsRange: Range[] = []
   ): Promise<DocumentReference<ProblemSetCategoryWrite>> {
     const data: ProblemSetCategoryWrite = {
@@ -32,7 +32,7 @@ export class ProblemSetCategoryService {
       name: isPage ? 'page' : name,
       isPage,
       timePerProblem,
-      totalProblemNumber,
+      totalProblemCount,
       completedProblemIdsRange,
     };
     return await this.callFss(creatorId, problemSetId).create(data);

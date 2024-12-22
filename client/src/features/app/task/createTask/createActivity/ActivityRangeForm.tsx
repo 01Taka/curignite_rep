@@ -91,7 +91,7 @@ const ActivityRangeForm: React.FC<ActivityRangeFormProps> = ({ managementMethod,
             name={`range-${index}`}
             value={state.problemRanges}
             min={1}
-            max={categoryIdMap[state.categoryId]?.totalProblemNumber ?? 512}
+            max={categoryIdMap[state.categoryId]?.totalProblemCount ?? 512}
             onChange={(event) => handleRangeChange(index, event.target.value as Range[])}
           />
         </Box>

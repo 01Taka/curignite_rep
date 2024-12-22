@@ -7,6 +7,7 @@ import { Subject } from "../common/commonTypes";
 interface IndividualTaskDocument {
   title: string; // タスクのタイトル
   subject: Subject;
+  informStartDaysBeforeDue: number | null;
   estimatedDuration: number; // 推定所要時間
   progress: number; // 進捗率（0〜1）
   taskNote: string; // タスクのノート
@@ -24,11 +25,12 @@ interface ProblemSetCategoryDocument {
   name: string | 'page'; // カテゴリの名前
   isPage: boolean;
   timePerProblem: number;
-  totalProblemNumber: number | null; // カテゴリ内の問題の総数
+  totalProblemCount: number | null; // カテゴリ内の問題の総数
   completedProblemIdsRange: Range[]; // 完了した問題番号
 }
 
 interface ProblemSetActivityDocument {
+  informStartDaysBeforeDue: number | null;
   completed: boolean; // 課題の完了状態
   categoryActivities: CategoryActivity[]; // カテゴリの活動
 }

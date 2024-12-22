@@ -54,8 +54,8 @@ const ProblemSetDetails: React.FC<ProblemSetDetailsProps> = ({ problemSet, onCre
               <Box key={category.docId} sx={{ ...commonStyles.flexBetween }}>
                 <Typography>{category?.name}</Typography>
                 <Typography>
-                  {category?.totalProblemNumber ?
-                    `${sumRanges(category.completedProblemIdsRange)}/${category.totalProblemNumber}問`
+                  {category?.totalProblemCount ?
+                    `${sumRanges(category.completedProblemIdsRange)}/${category.totalProblemCount}問`
                     : `${sumRanges(category.completedProblemIdsRange)}問完了`}
                 </Typography>
                 <Typography>平均 {timeOmissionFormat(category.timePerProblem)}</Typography>

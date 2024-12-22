@@ -10,6 +10,15 @@ export const commonStyles = {
     justifyContent: 'start',
     alignItems: 'center',
   },
+  flexEnd: {
+    display: 'flex',
+    justifyContent: 'end',
+    alignItems: 'center',
+  },
+  flexColumn: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
   flexColumnCenter: {
     display: 'flex',
     flexDirection: 'column',

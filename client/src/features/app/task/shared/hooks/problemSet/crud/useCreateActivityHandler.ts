@@ -27,7 +27,8 @@ const useCreateActivityHandler = (
     const activityService = serviceFactory.createProblemSetActivityService();
       const categoryActivities: CategoryActivity[] = formState.categoryActivities.map(activity => ({
         categoryId: activity.categoryId,
-        problemIdsRange: mergeRanges(activity.problemRanges)
+        problemIdsRange: mergeRanges(activity.problemRanges),
+        informStartDaysBeforeDue: null
       }))
       callAsyncFunction(
       activityService.createActivity.bind(activityService),
@@ -35,6 +36,7 @@ const useCreateActivityHandler = (
         userId,
         problemSetId,
         formState.dueDateTime,
+        formState.informStartDaysBeforeDue,
         categoryActivities
       ], 
       onFailedMessage

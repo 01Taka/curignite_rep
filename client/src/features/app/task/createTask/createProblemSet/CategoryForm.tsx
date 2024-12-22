@@ -54,9 +54,9 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
           onChange={onChange}
         />
         <QuickNumberField
-          name={names.totalProblemNumber}
+          name={names.totalProblemCount}
           label='総問題数'
-          value={formState.totalProblemNumber}
+          value={formState.totalProblemCount}
           selectItems={createNumberSelectItems(10, 501, 10, 1, '問')}
           onChange={onChange}
         />

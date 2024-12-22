@@ -6,7 +6,7 @@ import { Subject } from "../../../../../../types/firebase/db/common/commonTypes"
 export interface ProblemSetCategoryForm {
   name: string;
   timePerProblem: number;
-  totalProblemNumber: number;
+  totalProblemCount: number;
 }
 
 export interface CreateProblemSetFormState {

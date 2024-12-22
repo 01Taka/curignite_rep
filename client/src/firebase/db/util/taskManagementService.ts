@@ -9,12 +9,14 @@ import { ProblemSetActivityService } from "../app/user/subCollection/task/proble
 import { ProblemSetCategoryService } from "../app/user/subCollection/task/problemSetCategoryService";
 import { IndividualTaskService } from "../app/user/subCollection/task/individualTaskService";
 import { timeOmissionFormat } from "../../../functions/utils/timeFormatUtils";
+import { differenceInDays, subDays } from "date-fns";
 
 export class TaskManagementService {
   static individualTaskToTaskData(individualTask: IndividualTaskRead): TaskData {
     const remainingEstimatedDuration = (1 - individualTask.progress) * individualTask.estimatedDuration
     return {
       ...individualTask,
+      ...this.calculateDaysUntilDue(individualTask),
       taskId: individualTask.docId,
       isIndividual: true,
       remainingEstimatedDuration,
@@ -118,6 +120,29 @@ export class TaskManagementService {
     return { individualTaskMap: objectArrayToDict(data.individualTasks, 'docId'), ...formatData}
   }
 
+  static calculateDaysUntilDue = (
+    { dueDateTime, informStartDaysBeforeDue }: {dueDateTime: number | null, informStartDaysBeforeDue: number | null}
+  ) => {
+    if (!dueDateTime) return {
+      daysUntilInformBegins: 0,
+      daysRemainingUntilSubmission: null
+    };
+    const today = new Date();
+    const daysRemainingUntilSubmission = differenceInDays(dueDateTime, today);
+
+    if (informStartDaysBeforeDue === null || informStartDaysBeforeDue === undefined) return {
+      daysUntilInformBegins: 0,
+      daysRemainingUntilSubmission
+    };
+    
+    const startNotificationDate = subDays(dueDateTime, informStartDaysBeforeDue);
+
+    return {
+      daysUntilInformBegins: differenceInDays(startNotificationDate, today),
+      daysRemainingUntilSubmission
+    }
+  }
+
   static createProblemSetStructure = (
     problemSet: ProblemSetRead,
     categoriesByParent: Record<string, ProblemSetCategoryRead[]>,
@@ -175,6 +200,7 @@ export class TaskManagementService {
 
     const createBaseData = (activity: ProblemSetActivityRead) => ({
       ...activity,
+      ...this.calculateDaysUntilDue(activity),
       taskId: activity.docId,
       title: problemSet.name,
       subject: problemSet.subject,
@@ -186,7 +212,7 @@ export class TaskManagementService {
         (acc, act) => TaskManagementService.processCategoryActivity(acc, act, categoryMap),
         {
           totalProblemCount: 0,
-          totalRemainingProblemNumber: 0,
+          totalRemainingProblemCount: 0,
           totalEstimatedDuration: 0,
           completedCount: 0,
           remainingEstimatedDuration: 0,
@@ -202,7 +228,7 @@ export class TaskManagementService {
       const baseData = createBaseData(activity);
       const {
         totalProblemCount,
-        totalRemainingProblemNumber,
+        totalRemainingProblemCount,
         totalEstimatedDuration,
         completedCount,
         remainingEstimatedDuration,
@@ -215,7 +241,8 @@ export class TaskManagementService {
         problemSetId: problemSet.docId,
         problemSetName: problemSet.name,
         totalProblemCount,
-        totalRemainingProblemNumber,
+        totalCompletedProblemCount: totalProblemCount - totalRemainingProblemCount,
+        totalRemainingProblemCount,
         activityManagementMethod: problemSet.activityManagementMethod,
         completionRate: `${completedCount}/${totalProblemCount}`,
         activityStatus,
@@ -237,7 +264,7 @@ export class TaskManagementService {
   private static processCategoryActivity(
     acc: {
       totalProblemCount: number;
-      totalRemainingProblemNumber: number;
+      totalRemainingProblemCount: number;
       totalEstimatedDuration: number;
       completedCount: number;
       remainingEstimatedDuration: number;
@@ -271,7 +298,7 @@ export class TaskManagementService {
     const timePerProblem = category.timePerProblem ?? 0;
 
     acc.totalProblemCount += problemCount;
-    acc.totalRemainingProblemNumber += remainingIds.length;
+    acc.totalRemainingProblemCount += remainingIds.length;
     acc.totalEstimatedDuration += problemCount * timePerProblem;
     acc.completedCount += completedProblems;
     acc.remainingEstimatedDuration += remainingIds.length * timePerProblem;
@@ -279,6 +306,8 @@ export class TaskManagementService {
     acc.activityStatus.push({
       categoryId: category.docId,
       categoryName: category.name,
+      categoryTotalProblemCount: category.totalProblemCount,
+      timePerProblem: category.timePerProblem,
       problemIdsRange: act.problemIdsRange,
       completedProblemIds: completedIds,
       remainingProblemIds: remainingIds,

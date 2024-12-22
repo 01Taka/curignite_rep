@@ -28,6 +28,7 @@ const useCreateIndividualTaskHandler = (
         formState.title,
         formState.subject,
         formState.dueDateTime,
+        formState.informStartDaysBeforeDue,
         formState.taskNote,
         formState.estimatedDuration * MINUTES_IN_MILLISECOND
       ], onFailedMessage)

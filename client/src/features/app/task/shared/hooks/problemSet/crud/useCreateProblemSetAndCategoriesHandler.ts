@@ -77,7 +77,7 @@ const useCreateProblemSetAndCategoriesHandler = (
           category.name,
           formState.activityManagementMethod === "page",
           category.timePerProblem * MINUTES_IN_MILLISECOND,
-          category.totalProblemNumber
+          category.totalProblemCount
         ],
         categoryService.createCategory.bind(categoryService),
         onFailedCreateCategoriesMessage

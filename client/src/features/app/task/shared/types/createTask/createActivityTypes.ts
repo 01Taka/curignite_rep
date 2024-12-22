@@ -7,5 +7,6 @@ export interface CategoryActivityFormState {
 
 export interface CreateActivityFormState {
   dueDateTime: Date | null;
+  informStartDaysBeforeDue: number | null;
   categoryActivities: CategoryActivityFormState[];
 }

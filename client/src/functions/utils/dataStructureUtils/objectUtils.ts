@@ -15,7 +15,29 @@ export const mergeObjects = <Key extends string | number | symbol, Value>(
   // 各オブジェクトを処理し、結果に値を追加
   objects.forEach(object => {
     Object.entries(object).forEach(([key, value]) => {
-      result[key].push(value as Value);
+      result[key].push(...(Array.isArray(value) ? value : [value] as Value[]));
+    });
+  });
+
+  return result;
+};
+
+export const mergeArrayValueObjects = <Key extends string | number | symbol, Value>(
+  ...objects: Record<Key, Value[]>[]
+): Record<string, Value[]> => {
+  // すべてのオブジェクトのキーをフラットにし、重複を削除
+  const uniqueKeys = [...new Set(objects.flatMap(object => Object.keys(object)))];
+
+  // 結果オブジェクトを作成
+  const result: Record<string, Value[]> = uniqueKeys.reduce((acc, key) => {
+    acc[key] = [];  // 各キーに空の配列を初期化
+    return acc;
+  }, {} as Record<string, Value[]>);
+
+  // 各オブジェクトを処理し、結果に値を追加
+  objects.forEach(object => {
+    Object.entries(object).forEach(([key, value]) => {
+      result[key].push(...value as Value[]);
     });
   });
 

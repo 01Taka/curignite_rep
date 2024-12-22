@@ -22,12 +22,14 @@ export class ProblemSetActivityService {
     creatorId: string,
     problemSetId: string,
     dueDateTime: TimeTypes | null, // 課題の期限
+    informStartDaysBeforeDue: number | null,
     categoryActivities: CategoryActivity[],
     completed = false,
   ): Promise<DocumentReference<ProblemSetActivityWrite, DocumentData> >{
     const data: ProblemSetActivityWrite = {
       createdById: creatorId,
       dueDateTime: dueDateTime ? toTimestamp(dueDateTime) : null,
+      informStartDaysBeforeDue,
       categoryActivities,
       completed
     }

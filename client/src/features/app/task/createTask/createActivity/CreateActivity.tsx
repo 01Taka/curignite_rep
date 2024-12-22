@@ -16,6 +16,7 @@ const CreateActivity: FC<CreateActivityProps> = ({ problemSet, categories, onSuc
   const { uid } = useAppSelector(state => state.userSlice);
   const { formState, names, onChangeFormState, updateArrayField } = useFormState<CreateActivityFormState>({
     dueDateTime: null,
+    informStartDaysBeforeDue: null,
     categoryActivities: []
   });
 
