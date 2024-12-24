@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Box, IconButton, Typography } from '@mui/material';
 import { commonStyles } from '../../../../styles/mui/commonStyles';
 import useTasks from '../../../hooks/app/useTasks';
@@ -16,6 +16,7 @@ import { WorkOnPlan, WorkOnProblemSet } from '../shared/types/plan/workOnPlanTyp
 type PlanContainerProps = {
   planTarget: PlanTarget;
   workOnProblemSet: WorkOnProblemSet | null;
+  isExistPlan: (planTarget: PlanTarget, task?: TaskData) => boolean;
   addWorkOnProblemSetTask: (problemSet: ProblemSetRead, task: TaskData, workOnNumber: number) => void;
   addIndividualPlan: (task: TaskData, progress: number | null) => void;
   getWorkOnTasks: (planTarget: PlanTarget) => WorkOnPlan[];
@@ -26,6 +27,7 @@ type PlanContainerProps = {
 const PlanContainer: React.FC<PlanContainerProps> = ({
   planTarget,
   workOnProblemSet,
+  isExistPlan,
   addWorkOnProblemSetTask,
   addIndividualPlan,
   getWorkOnTasks,
@@ -36,6 +38,7 @@ const PlanContainer: React.FC<PlanContainerProps> = ({
   const { getProblemSetData } = useTasks();
   const title = isIndividual ? target.title : target.name;
   const tasks = isIndividual ? [] : getProblemSetData(target.docId).tasks;
+  const workOnTasks = useMemo(() => getWorkOnTasks(planTarget), [planTarget, getWorkOnTasks]);
 
   return (
     <Box sx={{ ...commonStyles.cardShadow, width: "95%" }}>
@@ -60,51 +63,61 @@ const PlanContainer: React.FC<PlanContainerProps> = ({
           提出: 
         </Typography>
           {isIndividual ? (
-            <Box sx={{ ...commonStyles.flexStart, gap: 1.5 }}>
-              <DaySelectButton
-                task={target}
-                emergencyDaysBorder={7}
-                onSelectedDay={() => addIndividualPlan(target, null)}
-              />
-              <TaskOverview task={target} />
-            </Box>
+            <>{!isExistPlan(planTarget) &&
+              <Box sx={{ ...commonStyles.flexStart, gap: 1.5 }}>
+                <DaySelectButton
+                  task={target}
+                  emergencyDaysBorder={7}
+                  onSelectedDay={() => addIndividualPlan(target, null)}
+                />
+                <TaskOverview task={target} />
+              </Box>
+            }</>
           ) : (
             <DaySelectButtonForProblemSet
               tasks={tasks}
               emergencyDaysBorder={7}
               displayNumber={5}
               onSelectedDay={(task) => addWorkOnProblemSetTask(target, task, 0)}
+              isExistPlan={(task) => isExistPlan(planTarget, task)}
             />
           )}
         </Box>
         
-        {workOnProblemSet &&
-          <WorkOnPlanDisplay
-          workOnPlan={workOnProblemSet}
-          isIndividual={isIndividual}
-          onAddWorkOnPlan={(value) =>
-            addWorkOnProblemSet(workOnProblemSet.problemSet, getProblemSetData(workOnProblemSet.problemSet.docId).categories, value)
-          }
-          onSelectProblemSetWorkOnItems={() => {}}
-        />
-        }
-        {getWorkOnTasks(planTarget).map(plan => (
-          <WorkOnPlanDisplay
-            workOnPlan={plan}
+        <Box sx={{
+          ...commonStyles.flexColumn,
+          gap: 1,
+          mt: (workOnProblemSet || workOnTasks.length > 0) ? 2 : 0,
+          width: "100%" }}
+        >
+          {workOnProblemSet &&
+            <WorkOnPlanDisplay
+            workOnPlan={workOnProblemSet}
             isIndividual={isIndividual}
-            onAddWorkOnPlan={(value) => {
-              if (isIndividual) {
-                return addIndividualPlan(target, value / 100);
-              } else if (plan.planType === "problemSetTask") {
-                return addWorkOnProblemSetTask(target, plan.task, value);
-              }
-            }}            
-            onSelectProblemSetWorkOnItems={isIndividual ?
-              () => {}
-              : () => onSelectProblemSetWorkOnItems(target, plan.task?.problemSetActivityField?.activityStatus ?? [])
+            onAddWorkOnPlan={(value) =>
+              addWorkOnProblemSet(workOnProblemSet.problemSet, getProblemSetData(workOnProblemSet.problemSet.docId).categories, value)
             }
+            onSelectProblemSetWorkOnItems={() => {}}
           />
-        ))}
+          }
+          {getWorkOnTasks(planTarget).map(plan => (
+            <WorkOnPlanDisplay
+              workOnPlan={plan}
+              isIndividual={isIndividual}
+              onAddWorkOnPlan={(value) => {
+                if (isIndividual) {
+                  return addIndividualPlan(target, value / 100);
+                } else if (plan.planType === "problemSetTask") {
+                  return addWorkOnProblemSetTask(target, plan.task, value);
+                }
+              }}            
+              onSelectProblemSetWorkOnItems={isIndividual ?
+                () => {}
+                : () => onSelectProblemSetWorkOnItems(target, plan.task?.problemSetActivityField?.activityStatus ?? [])
+              }
+            />
+          ))}
+        </Box>
     </Box>
   );
 };

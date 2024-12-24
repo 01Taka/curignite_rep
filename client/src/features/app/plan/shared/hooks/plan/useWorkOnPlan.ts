@@ -115,7 +115,18 @@ const useWorkOnPlan = () => {
     }
   }, [workOnIndividualTask, getProblemSetTask]);
 
-  return { workOnProblemSetMap, addWorkOnProblemSetTask, addWorkOnProblemSet, addIndividualTask, getWorkOnTasks }
+  const isExistPlan = (planTarget: PlanTarget, task?: TaskData): boolean => {
+    const { isIndividual, target } = planTarget;
+    if (isIndividual) {
+      return !!workOnIndividualTask[target.taskId];
+    } else if (task) {
+      return !!workOnProblemSetTask[task.taskId];
+    } else {
+      return !!workOnProblemSetMap[target.docId];
+    }
+  }
+
+  return { workOnProblemSetMap, addWorkOnProblemSetTask, addWorkOnProblemSet, addIndividualTask, getWorkOnTasks, isExistPlan }
 }
 
 export default useWorkOnPlan

@@ -10,7 +10,7 @@ interface PlanTargetProps { }
 
 const PlanTarget: React.FC<PlanTargetProps> = () => {
   const { taskMap, individualTasks, problemSets } = useTasks();
-  const { workOnProblemSetMap, addIndividualTask, addWorkOnProblemSetTask, addWorkOnProblemSet, getWorkOnTasks } = useWorkOnPlan();
+  const { workOnProblemSetMap, addIndividualTask, addWorkOnProblemSetTask, addWorkOnProblemSet, getWorkOnTasks, isExistPlan } = useWorkOnPlan();
 
   const targets = useMemo(() => {
     return [
@@ -26,6 +26,7 @@ const PlanTarget: React.FC<PlanTargetProps> = () => {
         <PlanContainer
           planTarget={target}
           workOnProblemSet={!target.isIndividual ? workOnProblemSetMap[target.target.docId] ?? null : null}
+          isExistPlan={isExistPlan}
           addWorkOnProblemSetTask={addWorkOnProblemSetTask}
           addIndividualPlan={addIndividualTask}
           addWorkOnProblemSet={addWorkOnProblemSet}

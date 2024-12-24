@@ -19,7 +19,6 @@ interface WorkOnPlanDisplayProps {
 const WorkOnPlanDisplay: React.FC<WorkOnPlanDisplayProps> = ({ workOnPlan, isIndividual, onAddWorkOnPlan, onSelectProblemSetWorkOnItems }) => {
   return (
     <Box sx={{ ...commonStyles.cardShadow }}>
-      {workOnPlan.planType}
       <Box sx={{ ...commonStyles.flexStart, gap: 1.5 }}>
         {workOnPlan.planType !== "problemSet" &&
           <>

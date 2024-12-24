@@ -13,14 +13,16 @@ interface DaySelectButtonForProblemSetProps {
   emergencyDaysBorder: number;
   displayNumber: number;
   onSelectedDay: (task: TaskData) => void;
+  isExistPlan: (task: TaskData) => boolean;
 }
 
-const DaySelectButtonForProblemSet: React.FC<DaySelectButtonForProblemSetProps> = ({ tasks, emergencyDaysBorder, displayNumber, onSelectedDay }) => {
+const DaySelectButtonForProblemSet: React.FC<DaySelectButtonForProblemSetProps> = ({ tasks, emergencyDaysBorder, displayNumber, onSelectedDay, isExistPlan }) => {
   const sortedTasks = useMemo(() => sortObjectArray(tasks, "dueDateTime"), [tasks]);
+  const filterTasks = useMemo(() => sortedTasks.filter(task => !isExistPlan(task)), [sortedTasks]);
 
   return (
     <Box sx={{ ...commonStyles.flexColumn, gap: 1 }}>
-      {sortedTasks.slice(0, displayNumber).map(task => (
+      {filterTasks.slice(0, displayNumber).map(task => (
         <Box sx={{ ...commonStyles.flexStart, gap: 1.5 }}>
           <DaySelectButton
             task={task}
